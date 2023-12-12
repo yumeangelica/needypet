@@ -2,26 +2,24 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const requestLogger = require('./middlewares/requestLoggerMiddleware')
+const errorHandler = require('./middlewares/errorHandlerMiddleware')
 const petsRoutes = require('./routes/petsRoutes')
+const unknownEndpoint = require('./middlewares/unknownEndpointHandler')
 
 // middleware
 app.use(express.json()) // json parser for post requests
-app.use(requestLogger) // custom middleware for logging requests
-app.use(cors()) // allows cross-origin resource sharing
-
-// routes
-app.use(petsRoutes)
+app.use(requestLogger)
+app.use(cors())
 
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>')
 })
 
-// unknown endpoint handler
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
+// routes
+app.use('/api', petsRoutes)
 
 app.use(unknownEndpoint)
+app.use(errorHandler)
 
 // listen
 const PORT = 5002
