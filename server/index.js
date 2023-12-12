@@ -1,10 +1,12 @@
 const express = require('express')
 const app = express()
 const requestLogger = require('./middlewares/requestLoggerMiddleware')
+const cors = require('cors')
 
 // middleware
 app.use(express.json()) // json parser for post requests
 app.use(requestLogger) // custom middleware for logging requests
+app.use(cors()) // allows cross-origin resource sharing
 
 
 
