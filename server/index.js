@@ -1,7 +1,12 @@
 const express = require('express')
 const app = express()
+const requestLogger = require('./middlewares/requestLoggerMiddleware')
 
+// middleware
 app.use(express.json()) // json parser for post requests
+app.use(requestLogger) // custom middleware for logging requests
+
+
 
 // mock data for pets
 let pets = [
@@ -64,6 +69,15 @@ app.delete('/api/pets/:id', (request, response) => {
   pets = pets.filter(pet => pet.id !== id)
   response.status(204).end()
 })
+
+
+
+// unknown endpoint handler
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 
 // listen
