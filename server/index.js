@@ -5,11 +5,15 @@ const requestLogger = require('./middlewares/requestLoggerMiddleware')
 const errorHandler = require('./middlewares/errorHandlerMiddleware')
 const petsRoutes = require('./routes/petsRoutes')
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler')
+const connectDatabase = require('./database/mongoConnection')
 
 // middleware
 app.use(express.json()) // json parser for post requests
 app.use(requestLogger)
 app.use(cors())
+
+// connect to database
+connectDatabase()
 
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>')
