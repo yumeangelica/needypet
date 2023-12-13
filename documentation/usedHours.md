@@ -8,4 +8,9 @@
 |           | Implement basic REST operations using mock data                                   | 2           |
 |           | Refactor routes, add controller file, implement request logger and error handling | 2           |
 |           |                                                                                   |             |
-| **Total** |                                                                                   | **12**      |
+| 13.12.23  | Setup MongoDB database, install modules, connect to server, and remove mock data  | 2           |
+|           | Create basic model for pets                                                       | 1           |
+|           | Refactor and improve pet controller file, add new route for put requests          | 2           |
+|           | Start improving petModel and testing its functionality                            | 3           |
+|           |                                                                                   |             |
+| **Total** |                                                                                   | **20**      |
