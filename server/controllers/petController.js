@@ -1,20 +1,20 @@
-let pets = require('../database/mockDataConnection') // temporary mock data for pets, later I will use mongodb
+const Pet = require('../models/petModel');
 
 // get all pets
-const getAllPets = (request, response) => {
-  response.json(pets)
-}
+const getAllPets = async (request, response) => {
+  const pets = await Pet.find({});
+  response.json(pets);
+};
 
 // get pet by id
-const getPetById = (request, response, next) => {
-  try {
-    const id = Number(request.params.id);
-    const pet = pets.find(pet => pet.id === id);
+const getPetById = async (request, response, next) => {
+  const id = request.params.id;
 
+  try {
+    const pet = await Pet.findById(id);
     if (!pet) {
       throw new Error('Pet not found');
     }
-
     response.json(pet);
   } catch (error) {
     error.name = 'NotFound';
@@ -23,34 +23,62 @@ const getPetById = (request, response, next) => {
 };
 
 // add new pet
-const addNewPet = (request, response, next) => {
+const addNewPet = async (request, response, next) => {
   try {
-    const pet = request.body;
-
-    if (!pet.petName) {
-      throw new Error('Content missing');
-    }
-
-    pets = pets.concat(pet);
-    response.json(pet);
+    const newPet = new Pet(request.body);
+    await newPet.save();
+    response.status(201).json(newPet);
   } catch (error) {
-    error.name = 'BadRequest';
-    next(error);
+    if (error.name === 'ValidationError') {
+      next(error);
+    } else {
+      error.name = 'BadRequest';
+      next(error);
+    }
   }
 };
 
-// delete pet
-const deletePet = (request, response) => {
-  const id = Number(request.params.id);
-  pets = pets.filter(pet => pet.id !== id);
-  response.status(204).end();
+// update pet by id
+const updatePet = async (request, response, next) => {
+  const id = request.params.id;
+  const updateData = request.body;
+
+  try {
+    const updatedPet = await Pet.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+    if (!updatedPet) {
+      throw new Error('Pet not found');
+    }
+    response.json(updatedPet);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      next(error);
+    } else {
+      error.name = 'NotFound';
+      next(error);
+    }
+  }
 };
 
+// delete pet by id
+const deletePet = async (request, response, next) => {
+  const id = request.params.id;
 
+  try {
+    const deletedPet = await Pet.findByIdAndDelete(id);
+    if (!deletedPet) {
+      throw new Error('Pet not found');
+    }
+    response.status(204).end();
+  } catch (error) {
+    error.name = 'NotFound';
+    next(error);
+  }
+};
 
 module.exports = {
   getAllPets,
   getPetById,
   addNewPet,
+  updatePet,
   deletePet
-}
+};
