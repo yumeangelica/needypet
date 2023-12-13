@@ -24,18 +24,21 @@ const getPetById = async (request, response, next) => {
 
 // add new pet
 const addNewPet = async (request, response, next) => {
-  try {
-    const newPet = new Pet(request.body);
-    await newPet.save();
-    response.status(201).json(newPet);
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      next(error);
-    } else {
-      error.name = 'BadRequest';
-      next(error);
+
+    const newPet = {
+      name: request.body.name,
+      breed: request.body.breed,
+      description: request.body.description,
+      birthday: request.body.birthday,
     }
-  }
+
+    try {
+      const pet = await Pet.addNewPet(newPet); // custom function for adding new pet
+      response.status(201).json(pet);
+    } catch (error) {
+      next(error)
+    }
+
 };
 
 // update pet by id
