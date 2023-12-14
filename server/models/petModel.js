@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
+const User = require('./userModel');
 
-// will be continued
-
-// pet schema
 const petSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -10,9 +8,13 @@ const petSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 40
   },
+  species:{
+    type: String,
+    minlength: 3,
+    maxlength: 30
+  },
   breed: {
     type: String,
-    required: true,
     minlength: 3,
     maxlength: 30
   },
@@ -23,6 +25,14 @@ const petSchema = new mongoose.Schema({
   birthday: {
     type: Date
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  careTakers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   needs: [{
     category: {
       type: String,
@@ -92,50 +102,52 @@ const petSchema = new mongoose.Schema({
     careRecord: [
       {
         date: {
-          type: Date,
-          default: Date.now
+          type: Date
         },
         careTaker: { // user id, later will be connected to user model
-          type: String,
-          maxlength: 30
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User'
         },
         note: {
           type: String,
           maxlength: 200
         }
       }
-    ]
+    ],
+    archived: { // when date is past, set to true
+      type: Boolean,
+      default: false
+    }
   }]
 });
 
-// custom methods
 
-// petSchema.methods.checkIfNeedCompleted = async function (needId) {
-//   // check if needId is completed via careRecord length === quantity
-//   const pet = await Pet.findById(this._id);
-//   if (!pet) {
-//     return "no pet"
-//   }
-//   const need = pet.needs.id(needId);
-//   if (!need) {
-//     return "no need"
-//   }
-//   const careRecordLength = need.careRecord.length;
-//   const quantity = need.quantity.value;
-//   return careRecordLength === quantity; // true or false
-// }
+
+petSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString() // change the _id property of the returned object to string id
+    
+    delete returnedObject._id
+    delete returnedObject.__v
+
+    if (returnedObject.birthday) {
+      returnedObject.birthday = returnedObject.birthday.toISOString().split('T')[0]; // yyyy-mm-dd
+    }
+  
+  }
+})
+
 
 
 const Pet = mongoose.model('Pet', petSchema);
 
 
-// custom functions
+// custom functions, not included in the model
 
 // add new pet
 Pet.addNewPet = async function (pet) {
   const newPet = new Pet(pet);
   try {
-    await newPet.save();
     return newPet;
   } catch (error) {
     return error;
@@ -158,25 +170,42 @@ Pet.addNewNeed = async function (need) {
 }
 
 // add new record
-Pet.addNewRecord = async function (needId, record) {
+Pet.addNewRecord = async function (petId, needId, careTakerId, note) {
   const currentDate = new Date().toISOString().split('T')[0]; // yyyy-mm-dd
 
-  const newRecord = {
-    date: currentDate,
-    careTaker: record.careTaker,
-    note: record.note
-  };
-  const pet = await Pet.findById(this._id);
+  
+  const pet = await Pet.findById(petId); // find pet by id
+  
   if (!pet) {
     return "no pet"
   }
-  const need = pet.needs.id(needId);
-  if (!need) {
+  
+  const need = pet.needs.id(needId); // find need by id
+  
+  if (!need || need.archived) {
     return "no need"
   }
-  need.careRecord.push(newRecord);
+
+  const careTaker = await User.findById(careTakerId); // find care taker by id
+
+  if (!careTaker) {
+    return "no user"
+  }
+
+  if (!pet.careTakers.includes(careTaker._id)) {
+    return "not a care taker"
+  }
+
+  const newRecord = {
+    date: currentDate,
+    careTaker: careTaker,
+    note: note
+  };
+
   try {
+    need.careRecord.push(newRecord);
     await pet.save();
+    return newRecord;
   } catch (error) {
     return error;
   }
