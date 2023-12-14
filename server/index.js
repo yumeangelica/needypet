@@ -3,7 +3,8 @@ const cors = require('cors')
 const app = express()
 const requestLogger = require('./middlewares/requestLoggerMiddleware')
 const errorHandler = require('./middlewares/errorHandlerMiddleware')
-const petsRoutes = require('./routes/petsRoutes')
+const petsRoutes = require('./routes/petRoutes')
+const usersRoutes = require('./routes/userRoutes')
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler')
 const connectDatabase = require('./database/mongoConnection')
 
@@ -20,6 +21,7 @@ app.get('/', (request, response) => {
 })
 
 // routes
+app.use('/auth', usersRoutes)
 app.use('/api', petsRoutes)
 
 app.use(unknownEndpoint)
