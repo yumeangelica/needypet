@@ -5,7 +5,7 @@ const User = require('../models/userModel')
 const getAllUsers = async (request, response) => { // only for dev, later will be removed
 
   try{
-    const users = await User.find({})
+    const users = await User.find({}).populate('pets', 'name');
     response.json(users)
   }
   catch(error){
