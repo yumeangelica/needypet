@@ -120,10 +120,61 @@ const deletePet = async (request, response, next) => {
   }
 };
 
+const addNewNeed = async (request, response, next) => {
+  const petId = request.params.id;
+
+  const pet = await Pet.findById(petId); // find pet by id
+
+  if (!pet) {
+    return response.status(404).json({ error: 'Pet not found' });
+  }
+
+  const adderUser = await User.findById(request.body.adderId); // find adderUser by id
+
+  if (!adderUser) {
+    return response.status(404).json({ error: 'User not found' });
+  }
+
+  if (adderUser.id.toString() !== pet.owner.toString()) { // check if adderUser from request is the owner of the pet. Id comes from mongoose object, so it needs to be converted to string
+    return response.status(401).json({ error: 'Unauthorized' });
+  }
+
+  // will be updated with more fields
+  const newNeedObject = {
+    category: request.body.need.category,
+    description: request.body.need.description,
+  }
+
+  if (request.body.need.quantity) { // if quantity is provided
+    newNeedObject.quantity = {
+      value: request.body.need.quantity.value,
+      unit: request.body.need.quantity.unit
+    }
+  }
+
+  if (request.body.need.duration) { // if duration is provided
+    newNeedObject.duration = {
+      timeLength: request.body.need.duration.timeLength,
+      unit: request.body.need.duration.unit
+    }
+  }
+
+  pet.needs.push(newNeedObject);
+
+  try {
+    await pet.save();
+    response.status(201).json(pet);
+  } catch (error) {
+    next(error)
+  }
+
+}
+
 module.exports = {
   getAllPets,
   getPetById,
   addNewPet,
   updatePet,
-  deletePet
+  deletePet,
+  addNewNeed
 };

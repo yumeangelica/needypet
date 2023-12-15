@@ -92,7 +92,7 @@ const petSchema = new mongoose.Schema({
       },
       unit: {
         type: String,
-        enum: ['seconds', 'minutes', 'hours']
+        enum: ['second', 'seconds', 'minute', 'minutes', 'hour', 'hours']
       }
     },
     completed: { // automatically changes when all tasks of this need are completed -- logic need to be implemented
@@ -133,7 +133,15 @@ petSchema.set('toJSON', {
     if (returnedObject.birthday) {
       returnedObject.birthday = returnedObject.birthday.toISOString().split('T')[0]; // yyyy-mm-dd
     }
-  
+    
+    if (returnedObject.needs) { // change needs _id to string id
+      returnedObject.needs.forEach(need => {
+        if (need._id) {
+          need.id = need._id.toString();
+          delete need._id;
+        }
+      })
+    }
   }
 })
 
