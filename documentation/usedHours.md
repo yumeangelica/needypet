@@ -18,5 +18,6 @@
 |           | Modify petModel, add custom functions, set toJSON, connect userModel and petModel                                                                            | 5           |
 |           |                                                                                                                                                              |             |
 | 15.12.23  | Create addNewNeed function, add validations, and new route. Fix pet's need \_id to id. Update error handler. Also, test functionality with REST client calls | 2.5         |
+|           | Write requirementSpecification document and update readme file                                                                                               | 2           |
 |           |                                                                                                                                                              |             |
-| **Total** |                                                                                                                                                              | **30.5**    |
+| **Total** |                                                                                                                                                              | **32.5**    |
