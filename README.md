@@ -14,11 +14,11 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
 
 ## Technologies
 
-Will be updated later.
+MongoDB, Express.js, Node.js
 
 ## Hours spent
 
-Will be updated later.
+Link to the [work log](https://github.com/yumeangelica/needypet/blob/3323811399859cdfe63fb1a61fe44f67a40f5c39/documentation/usedHours.md) where I keep track of used hours and specific tasks for the NeedyPet project.
 
 ## Getting Started
 
