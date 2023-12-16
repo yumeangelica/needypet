@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const User = require('../models/userModel')
 
 const getAllUsers = async (request, response) => { // only for dev, later will be removed
@@ -13,8 +11,6 @@ const getAllUsers = async (request, response) => { // only for dev, later will b
     console.log(error);
   }
 }
-
-
 
 const createNewUser = async (request, response, next) => {
   const { userName, password } = request.body;

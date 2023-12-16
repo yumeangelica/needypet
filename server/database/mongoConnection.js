@@ -1,10 +1,9 @@
-require('dotenv').config();
+const config = require('../utils/config');
 const mongoose = require('mongoose');
 
 const connectDatabase = () => {
-  const mongoUri = process.env.MONGO_URI;
 
-  mongoose.connect(mongoUri)
+  mongoose.connect(config.databaseUrl)
     .then(() => {
       console.log('Connected to MongoDB');
     })
