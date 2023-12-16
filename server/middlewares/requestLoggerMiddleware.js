@@ -1,10 +1,27 @@
+const config = require('../utils/config');
+
 const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
-  next()
-}
+  const start = new Date();
+  
+  response.on('finish', () => {
+    const duration = new Date() - start;
+    const logMessage = [
+      new Date().toISOString(),
+      request.method,
+      request.originalUrl,
+      'Status:', response.statusCode,
+      `Duration: ${duration}ms`
+    ];
 
+    if (config.isDevelopment) { // log request body only in development mode
+      logMessage.push('Query:', JSON.stringify(request.query));
+      logMessage.push('Body:', JSON.stringify(request.body));
+    }
 
-module.exports = requestLogger
+    console.log(logMessage.join(' '));
+  });
+
+  next();
+};
+
+module.exports = requestLogger;
