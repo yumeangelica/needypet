@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
+const config = require('./utils/config')
 const requestLogger = require('./middlewares/requestLoggerMiddleware')
 const errorHandler = require('./middlewares/errorHandlerMiddleware')
 const petsRoutes = require('./routes/petRoutes')
@@ -28,7 +29,6 @@ app.use(unknownEndpoint)
 app.use(errorHandler)
 
 // listen
-const PORT = 5002
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`)
 })
