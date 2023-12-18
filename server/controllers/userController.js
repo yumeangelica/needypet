@@ -32,7 +32,27 @@ const createNewUser = async (request, response, next) => {
 }
 
 
+// userController.js
+const loginUser = async (request, response, next) => {
+  const { userName, password } = request.body;
+
+  try {
+    const user = await User.findOne({ userName }); // find user by username
+    
+    if (!user || !(await user.isValidPassword(password))) { // if user not found or password is wrong
+      return response.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    const token = user.generateJWT(); // generate token with method from userModel
+    response.status(200).json({ token, userName: user.userName, id: user._id });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 module.exports = {
   getAllUsers,
-  createNewUser
+  createNewUser,
+  loginUser
 }
