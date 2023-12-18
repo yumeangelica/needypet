@@ -12,6 +12,14 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'Unauthorized') {
     return response.status(401).json({ error: 'Unauthorized', message: error.message });
   }
+
+  if (error.name === 'TokenExpiredError') {
+    return response.status(401).json({ error: 'Token Expired', message: error.message });
+  }
+
+  if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({ error: 'Invalid token', message: error.message });
+  }
   
   if (error.name === 'Forbidden') {
     return response.status(403).json({ error: 'Forbidden', message: error.message });
@@ -32,6 +40,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'ValidationError') {
     return response.status(422).json({ error: 'Validation error', errors: error.errors });
   }
+
   // other errors, for example database errors
   response.status(500).json({ error: 'Internal Server Error' });
 };

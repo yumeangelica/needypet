@@ -24,4 +24,10 @@
 | 16.12.23  | Create and configure config file, and set NODE_ENV for different environments                   | 1           |
 |           | Update requestLogger for enhanced functionality and environment-based logging, and also test it | 1.5         |
 |           |                                                                                                 |             |
-| **Total** |                                                                                                 | **35**      |
+| 18.12.23  | Implement token-based authentication with expiration, handle expired tokens in errorHandler     | 2           |
+|           | Develop login functionality and corresponding route                                             | 1           |
+|           | Implement token validation middleware, update errorHandler for JsonWebTokenError                | 1           |
+|           | Perform REST client tests to check code functionality and validate token expiration mechanism   | 0.5         |
+|           |                                                                                                 |             |
+|           |                                                                                                 |             |
+| **Total** |                                                                                                 | **39.5**    |

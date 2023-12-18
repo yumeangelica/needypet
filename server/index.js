@@ -2,12 +2,13 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const config = require('./utils/config')
+const connectDatabase = require('./database/mongoConnection')
+const authenticateToken = require('./middlewares/tokenValidatorMiddleware')
 const requestLogger = require('./middlewares/requestLoggerMiddleware')
 const errorHandler = require('./middlewares/errorHandlerMiddleware')
+const unknownEndpoint = require('./middlewares/unknownEndpointHandler')
 const petsRoutes = require('./routes/petRoutes')
 const usersRoutes = require('./routes/userRoutes')
-const unknownEndpoint = require('./middlewares/unknownEndpointHandler')
-const connectDatabase = require('./database/mongoConnection')
 
 // middleware
 app.use(express.json()) // json parser for post requests
@@ -23,7 +24,9 @@ app.get('/', (request, response) => {
 
 // routes
 app.use('/auth', usersRoutes)
-app.use('/api', petsRoutes)
+
+// app.use('/api', petsRoutes) // no authentication needed for this route, enable for testing if needed
+app.use('/api', authenticateToken, petsRoutes)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
