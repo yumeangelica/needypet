@@ -52,7 +52,7 @@ userSchema.methods.generateJWT = function generateJWT() {
   return jwt.sign({
     userName: this.userName,
     id: this._id
-  }, config.jwtSecret, { expiresIn: '1h' }); // token expires in 1 hour
+  }, config.jwtSecret, { expiresIn: 60 * 30 }); // token expires in 30 minutes
 };
 
 
