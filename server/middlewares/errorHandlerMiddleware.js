@@ -12,6 +12,10 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'Unauthorized') {
     return response.status(401).json({ error: 'Unauthorized', message: error.message });
   }
+
+  if (error.name === 'TokenExpiredError') {
+    return response.status(401).json({ error: 'Token Expired', message: error.message });
+  }
   
   if (error.name === 'Forbidden') {
     return response.status(403).json({ error: 'Forbidden', message: error.message });
