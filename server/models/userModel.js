@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+const config = require('../utils/config');
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -31,15 +32,27 @@ userSchema.set('toJSON', {
   }
 })
 
-// method to check if password is correct in login
-userSchema.methods.isValidPassword = function isValidPassword(password) {
-  return bcrypt.compareSync(password, this.passwordHash); // returns true if password is correct
-};
+
+
+// custom schema methods for the User model
 
 // method to set passwordHash in register
 userSchema.methods.setPassword = function setPassword(password) {
   const saltRounds = 10;
   this.passwordHash = bcrypt.hashSync(password, saltRounds);
+};
+
+// method to check if password is correct in login
+userSchema.methods.isValidPassword = function isValidPassword(password) {
+  return bcrypt.compareSync(password, this.passwordHash); // returns true if password is correct
+};
+
+// method to generate JWT token for user in login
+userSchema.methods.generateJWT = function generateJWT() {
+  return jwt.sign({
+    userName: this.userName,
+    id: this._id
+  }, config.jwtSecret, { expiresIn: '1h' }); // token expires in 1 hour
 };
 
 
