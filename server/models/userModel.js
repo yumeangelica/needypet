@@ -9,53 +9,47 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     minlength: 3,
-    maxlength: 40
+    maxlength: 40,
   },
   passwordHash: {
-    type: String
+    type: String,
   },
   pets: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Pet'
-  }]
+    ref: 'Pet',
+  }],
 });
 
-
-
 userSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString() // change the _id property of the returned object to string id
-    delete returnedObject._id
-    delete returnedObject.__v
-    // the passwordHash should not be revealed
-    delete returnedObject.passwordHash
-  }
-})
+  transform(document, returnedObject) {
+    returnedObject.id = returnedObject._id.toString(); // Change the _id property of the returned object to string id
+    delete returnedObject._id;
+    delete returnedObject.__v;
+    // The passwordHash should not be revealed
+    delete returnedObject.passwordHash;
+  },
+});
 
-
-
-// custom schema methods for the User model
+// Custom schema methods for the User model
 
 // method to set passwordHash in register
-userSchema.methods.setPassword = function setPassword(password) {
+userSchema.methods.setPassword = function (password) {
   const saltRounds = 10;
   this.passwordHash = bcrypt.hashSync(password, saltRounds);
 };
 
-// method to check if password is correct in login
-userSchema.methods.isValidPassword = function isValidPassword(password) {
-  return bcrypt.compareSync(password, this.passwordHash); // returns true if password is correct
+// Method to check if password is correct in login
+userSchema.methods.isValidPassword = function (password) {
+  return bcrypt.compareSync(password, this.passwordHash); // Returns true if password is correct
 };
 
-// method to generate JWT token for user in login
-userSchema.methods.generateJWT = function generateJWT() {
+// Method to generate JWT token for user in login
+userSchema.methods.generateJWT = function () {
   return jwt.sign({
     userName: this.userName,
-    id: this._id
-  }, config.jwtSecret, { expiresIn: 60 * 30 }); // token expires in 30 minutes
+    id: this._id,
+  }, config.jwtSecret, { expiresIn: 60 * 30 }); // Token expires in 30 minutes
 };
-
-
 
 const User = mongoose.model('User', userSchema);
 
