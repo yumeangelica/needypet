@@ -3,6 +3,7 @@ module.exports = {
     commonjs: true,
     es2021: true,
     node: true,
+    jest: true,
   },
   extends: 'xo',
   overrides: [
@@ -33,5 +34,10 @@ module.exports = {
     semi: ['error', 'always'], // Semicolons
     'no-trailing-spaces': 'error',
     'no-console': 0, // Allow console.log
+    'capitalized-comments': [ // Capitalize first letter of comments
+      'error', 'always', {
+        ignoreConsecutiveComments: true,
+      },
+    ],
   },
 };
