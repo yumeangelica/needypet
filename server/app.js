@@ -24,7 +24,9 @@ app.get('/', (request, response) => {
 // Routes
 app.use('/auth', usersRoutes);
 
-// App.use('/api', petsRoutes) // No authentication needed for this route, enable for testing if needed
+// Outcommented, enable if needed for testing purposes
+// app.use('/api', petsRoutes); // No authentication needed for this route
+
 app.use('/api', authenticateToken, petsRoutes);
 
 app.use(unknownEndpoint);
