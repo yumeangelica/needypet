@@ -34,5 +34,10 @@ module.exports = {
     semi: ['error', 'always'], // Semicolons
     'no-trailing-spaces': 'error',
     'no-console': 0, // Allow console.log
+    'capitalized-comments': [ // Capitalize first letter of comments
+      'error', 'always', {
+        ignoreConsecutiveComments: true,
+      },
+    ],
   },
 };
