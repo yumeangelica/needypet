@@ -137,7 +137,6 @@ const addNewNeed = async (request, response, next) => {
     return response.status(401).json({ error: 'Unauthorized' });
   }
 
-  // Will be updated with more fields
   const newNeedObject = {
     category: request.body.need.category,
     description: request.body.need.description,
@@ -148,9 +147,7 @@ const addNewNeed = async (request, response, next) => {
       value: request.body.need.quantity.value,
       unit: request.body.need.quantity.unit,
     };
-  }
-
-  if (request.body.need.duration) { // If duration is provided
+  } else if (request.body.need.duration) { // If duration is provided
     newNeedObject.duration = {
       timeLength: request.body.need.duration.timeLength,
       unit: request.body.need.duration.unit,
@@ -167,6 +164,67 @@ const addNewNeed = async (request, response, next) => {
   }
 };
 
+const addNewRecord = async (request, response, next) => {
+  const petId = request.params.id;
+
+  const pet = await Pet.findById(petId);
+
+  if (!pet) {
+    return response.status(404).json({ error: 'Pet not found' });
+  }
+
+  const need = pet.needs.id(request.body.needId);
+
+  if (!need) {
+    return response.status(404).json({ error: 'Need not found' });
+  }
+
+  const careTaker = await User.findById(request.body.careTakerId);
+
+  if (!careTaker) {
+    return response.status(404).json({ error: 'User not found' });
+  }
+
+  if (!pet.careTakers.includes(careTaker.id)) { // Check if care taker is in care takers array
+    return response.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (need.quantity.value && need.quantity.unit && !request.body.quantity.value && !request.body.quantity.unit) { // If pet need has quantity and request body doesn't
+    return response.status(400).json({ error: 'Quantity required' });
+  }
+
+  if (need.duration.timeLength && need.duration.unit && !request.body.duration.timeLength && !request.body.duration.unit) { // If pet need has duration and request body doesn't
+    return response.status(400).json({ error: 'Duration required' });
+  }
+
+  const newRecordObject = {
+    careTaker: careTaker.id,
+    date: new Date(),
+    note: request.body.note,
+  };
+
+  if (need.quantity && request.body.quantity) { // If quantity is provided
+    newRecordObject.quantity = {
+      value: request.body.quantity.value,
+      unit: request.body.quantity.unit,
+    };
+  } else if (need.duration && request.body.duration) { // If duration is provided
+    newRecordObject.duration = {
+      timeLength: request.body.duration.timeLength,
+      unit: request.body.duration.unit,
+    };
+  }
+
+  need.careRecords.push(newRecordObject); // Push new record to care records array
+
+  try {
+    await pet.save();
+    response.status(201).json(pet);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPets,
   getPetById,
@@ -174,4 +232,5 @@ module.exports = {
   updatePet,
   deletePet,
   addNewNeed,
+  addNewRecord,
 };
