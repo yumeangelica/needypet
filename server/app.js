@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const connectDatabase = require('./database/mongoConnection');
-const authenticateToken = require('./middlewares/tokenValidatorMiddleware');
+// Outcommented for testing purposes
+// const authenticateToken = require('./middlewares/tokenValidatorMiddleware');
 const requestLogger = require('./middlewares/requestLoggerMiddleware');
 const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
@@ -25,9 +26,10 @@ app.get('/', (request, response) => {
 app.use('/auth', usersRoutes);
 
 // Outcommented, enable if needed for testing purposes
-// app.use('/api', petsRoutes); // No authentication needed for this route
+app.use('/api', petsRoutes); // No authentication needed for this route
 
-app.use('/api', authenticateToken, petsRoutes);
+// Outcommented for testing purposes
+// app.use('/api', authenticateToken, petsRoutes);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

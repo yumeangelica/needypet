@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const User = require('./userModel');
 
 const petSchema = new mongoose.Schema({
   name: {
@@ -99,21 +98,37 @@ const petSchema = new mongoose.Schema({
       type: Boolean,
       default: false,
     },
-    careRecord: [
-      {
-        date: {
-          type: Date,
+    careRecords: [{
+      date: {
+        type: Date,
+      },
+      careTaker: { // User id, later will be connected to user model
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      note: {
+        type: String,
+        maxlength: 300,
+      },
+      quantity: {
+        value: {
+          type: Number,
         },
-        careTaker: { // User id, later will be connected to user model
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
-        },
-        note: {
+        unit: { // For measurement unit
           type: String,
-          maxlength: 200,
+          maxlength: 20,
         },
       },
-    ],
+      duration: {
+        timeLength: {
+          type: Number,
+        },
+        unit: {
+          type: String,
+          enum: ['second', 'seconds', 'minute', 'minutes', 'hour', 'hours'],
+        },
+      },
+    }],
     archived: { // When date is past, set to true
       type: Boolean,
       default: false,
@@ -138,6 +153,15 @@ petSchema.set('toJSON', {
           need.id = need._id.toString();
           delete need._id;
         }
+
+        if (need.careRecords) { // Change careRecords _id to string id
+          need.careRecords.forEach(record => {
+            if (record._id) {
+              record.id = record._id.toString();
+              delete record._id;
+            }
+          });
+        }
       });
     }
   },
@@ -147,7 +171,7 @@ const Pet = mongoose.model('Pet', petSchema);
 
 // Custom functions, not included in the model
 
-// add new pet
+// Add new pet
 Pet.addNewPet = async function (pet) {
   const newPet = new Pet(pet);
   try {
@@ -167,47 +191,6 @@ Pet.addNewNeed = async function (need) {
   pet.needs.push(need);
   try {
     await pet.save();
-  } catch (error) {
-    return error;
-  }
-};
-
-// Add new record
-Pet.addNewRecord = async function (petId, needId, careTakerId, note) {
-  const currentDate = new Date().toISOString().split('T')[0]; // Yyyy-mm-dd
-
-  const pet = await Pet.findById(petId); // Find pet by id
-
-  if (!pet) {
-    return 'no pet';
-  }
-
-  const need = pet.needs.id(needId); // Find need by id
-
-  if (!need || need.archived) {
-    return 'no need';
-  }
-
-  const careTaker = await User.findById(careTakerId); // Find care taker by id
-
-  if (!careTaker) {
-    return 'no user';
-  }
-
-  if (!pet.careTakers.includes(careTaker._id)) {
-    return 'not a care taker';
-  }
-
-  const newRecord = {
-    date: currentDate,
-    careTaker,
-    note,
-  };
-
-  try {
-    need.careRecord.push(newRecord);
-    await pet.save();
-    return newRecord;
   } catch (error) {
     return error;
   }
