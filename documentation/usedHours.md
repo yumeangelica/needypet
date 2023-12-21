@@ -36,5 +36,8 @@
 |           | Add Supertest, write a basic API test, and resolve a globalTeardown issue by adding a globalTeardown file to utils                                     | 3           |
 |           |                                                                                                                                                        |             |
 | 21.12.23  | Add addNewRecord functionality and route, update careRecords array in the model, change object \_id to id in careRecords array, and test functionality | 2           |
+|           | Update need and careRecord objects: Update unit and value properties, adjust emit validation, and rename timeLength to value in duration               | 1           |
+|           | Update validations for addNewNeed and addNewRecord functions, configure ESlint, test code functionality with REST client                               | 1.5         |
 |           |                                                                                                                                                        |             |
-| **Total** |                                                                                                                                                        | **52**      |
+|           |                                                                                                                                                        |             |
+| **Total** |                                                                                                                                                        | **54.5**    |

@@ -43,5 +43,6 @@ module.exports = {
         ignoreConsecutiveComments: true,
       },
     ],
+    complexity: ['warn', { max: 40 }],
   },
 };

@@ -83,15 +83,17 @@ const petSchema = new mongoose.Schema({
       unit: { // For measurement unit
         type: String,
         maxlength: 20,
+        emit: ['ml', 'g'],
       },
     },
     duration: {
-      timeLength: {
+      value: {
         type: Number,
+        max: 1440, // 24 hours
       },
       unit: {
         type: String,
-        enum: ['second', 'seconds', 'minute', 'minutes', 'hour', 'hours'],
+        emit: ['minute', 'minutes'],
       },
     },
     completed: { // Automatically changes when all tasks of this need are completed -- logic need to be implemented
@@ -117,15 +119,17 @@ const petSchema = new mongoose.Schema({
         unit: { // For measurement unit
           type: String,
           maxlength: 20,
+          emit: ['ml', 'g'],
         },
       },
       duration: {
-        timeLength: {
+        value: {
           type: Number,
+          max: 1440, // 24 hours
         },
         unit: {
           type: String,
-          enum: ['second', 'seconds', 'minute', 'minutes', 'hour', 'hours'],
+          emit: ['minute', 'minutes'],
         },
       },
     }],
