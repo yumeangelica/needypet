@@ -23,19 +23,23 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
-    indent: ['error', 2], // Indent with 2 spaces
+    indent: ['error', 2], // 2 spaces
     eqeqeq: ['error', 'always'], // Always use === and !==
     'object-curly-spacing': ['error', 'always'], // Space between curly braces in objects
     'block-spacing': ['error', 'always'], // Space between curly braces in functions
     'arrow-spacing': [ // Space before and after arrow functions
       'error', { before: true, after: true },
     ],
-    quotes: ['error', 'single'], // Single quotes
-    semi: ['error', 'always'], // Semicolons
+    quotes: ['error', 'single'],
+    semi: ['error', 'always'],
     'no-trailing-spaces': 'error',
     'no-console': 0, // Allow console.log
-    'capitalized-comments': [ // Capitalize first letter of comments
-      'error', 'always', {
+    'capitalized-comments': [
+      'error',
+      'always',
+      {
+        ignorePattern: 'pragma|ignored',
+        ignoreInlineComments: true,
         ignoreConsecutiveComments: true,
       },
     ],
