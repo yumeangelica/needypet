@@ -137,6 +137,34 @@ const addNewNeed = async (request, response, next) => {
     return response.status(401).json({ error: 'Unauthorized' });
   }
 
+  if (request.body.need.quantity && !request.body.need.quantity.unit) {
+    return response.status(400).json({ error: 'Quantity unit required' });
+  }
+
+  if (request.body.need.quantity && !request.body.need.quantity.value) {
+    return response.status(400).json({ error: 'Quantity value required' });
+  }
+
+  if (request.body.need.quantity && request.body.need.quantity.unit !== 'ml' && request.body.need.quantity.unit !== 'g') {
+    return response.status(400).json({ error: 'Quantity unit ml or g required' });
+  }
+
+  if (request.body.need.duration && !request.body.need.duration.unit) {
+    return response.status(400).json({ error: 'Duration unit required' });
+  }
+
+  if (request.body.need.duration && !request.body.need.duration.value) {
+    return response.status(400).json({ error: 'Duration time length required' });
+  }
+
+  if (request.body.need.duration && request.body.need.duration.value > 1440) {
+    return response.status(400).json({ error: 'Duration time length cannot be over 1440 minutes' });
+  }
+
+  if (request.body.need.duration && request.body.need.duration.unit !== 'minute' && request.body.need.duration.unit !== 'minutes') {
+    return response.status(400).json({ error: 'Duration unit minute(s) required ' });
+  }
+
   const newNeedObject = {
     category: request.body.need.category,
     description: request.body.need.description,
@@ -149,7 +177,7 @@ const addNewNeed = async (request, response, next) => {
     };
   } else if (request.body.need.duration) { // If duration is provided
     newNeedObject.duration = {
-      timeLength: request.body.need.duration.timeLength,
+      value: request.body.need.duration.value,
       unit: request.body.need.duration.unit,
     };
   }
@@ -189,12 +217,44 @@ const addNewRecord = async (request, response, next) => {
     return response.status(401).json({ error: 'Unauthorized' });
   }
 
-  if (need.quantity.value && need.quantity.unit && !request.body.quantity.value && !request.body.quantity.unit) { // If pet need has quantity and request body doesn't
-    return response.status(400).json({ error: 'Quantity required' });
+  if (request.body.quantity && !request.body.quantity.value) { // If pet need has quantity and request body doesn't
+    return response.status(400).json({ error: 'Quantity value required' });
   }
 
-  if (need.duration.timeLength && need.duration.unit && !request.body.duration.timeLength && !request.body.duration.unit) { // If pet need has duration and request body doesn't
-    return response.status(400).json({ error: 'Duration required' });
+  if (request.body.quantity && !request.body.quantity.unit) { // If pet need has quantity and request body doesn't
+    return response.status(400).json({ error: 'Quantity unit required' });
+  }
+
+  if (request.body.duration && !request.body.duration.value) { // If pet need has duration and request body doesn't
+    return response.status(400).json({ error: 'Duration time length required' });
+  }
+
+  if (request.body.duration && !request.body.duration.unit) { // If pet need has duration and request body doesn't
+    return response.status(400).json({ error: 'Duration unit required' });
+  }
+
+  if (request.body.quantity && request.body.quantity.unit !== 'ml' && request.body.quantity.unit !== 'g') { // If quantity unit is not ml or g
+    return response.status(400).json({ error: 'Quantity unit ml or g required' });
+  }
+
+  if (request.body.duration && request.body.duration.value > 1440) {
+    return response.status(400).json({ error: 'Duration time length cannot be over 1440 minutes' });
+  }
+
+  if (need.quantity && request.body.quantity && request.body.quantity.unit !== need.quantity.unit) {
+    return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
+  }
+
+  if (need.quantity && request.body.duration && request.body.duration.unit !== need.quantity.unit) {
+    return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
+  }
+
+  if (need.duration && request.body.duration && request.body.duration.unit !== need.duration.unit) {
+    return response.status(400).json({ error: `Classification need to be duration and unit need to be ${need.duration.unit}` });
+  }
+
+  if (need.duration && request.body.quantity && request.body.quantity.unit !== need.duration.unit) {
+    return response.status(400).json({ error: `Classification need to be duration and unit need to be ${need.duration.unit}` });
   }
 
   const newRecordObject = {
@@ -210,7 +270,7 @@ const addNewRecord = async (request, response, next) => {
     };
   } else if (need.duration && request.body.duration) { // If duration is provided
     newRecordObject.duration = {
-      timeLength: request.body.duration.timeLength,
+      value: request.body.duration.value,
       unit: request.body.duration.unit,
     };
   }
