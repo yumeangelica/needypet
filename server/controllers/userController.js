@@ -11,10 +11,11 @@ const getAllUsers = async (request, response) => { // Only for dev, later will b
 };
 
 const createNewUser = async (request, response, next) => {
-  const { userName, password } = request.body;
+  const { userName, email, password } = request.body;
 
   const newUserObject = {
     userName,
+    email,
   };
 
   const newUser = new User(newUserObject); // Creating new user without password
