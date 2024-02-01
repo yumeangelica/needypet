@@ -23,12 +23,11 @@ app.get('/', (request, response) => {
 });
 
 // Routes
-app.use('/auth', usersRoutes);
-
-// Outcommented, enable if needed for testing purposes
-app.use('/api', petsRoutes); // No authentication needed for this route
+app.use('/auth', usersRoutes); // No authentication needed for this route - only for testing purposes
+app.use('/api', petsRoutes); // No authentication needed for this route - only for testing purposes
 
 // Outcommented for testing purposes
+// app.use('/api', authenticateToken, usersRoutes);
 // app.use('/api', authenticateToken, petsRoutes);
 
 app.use(unknownEndpoint);
