@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../utils/config');
@@ -11,6 +12,13 @@ const userSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 40,
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    minlength: 5,
+    maxlength: 40,
+  },
   passwordHash: {
     type: String,
   },
@@ -19,6 +27,8 @@ const userSchema = new mongoose.Schema({
     ref: 'Pet',
   }],
 });
+
+userSchema.plugin(uniqueValidator);
 
 userSchema.set('toJSON', {
   transform(document, returnedObject) {

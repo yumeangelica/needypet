@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const petSchema = new mongoose.Schema({
   name: {
@@ -139,6 +140,8 @@ const petSchema = new mongoose.Schema({
     },
   }],
 });
+
+petSchema.plugin(uniqueValidator);
 
 petSchema.set('toJSON', {
   transform(document, returnedObject) {
