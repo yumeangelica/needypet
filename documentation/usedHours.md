@@ -39,5 +39,12 @@
 |           | Update need and careRecord objects: Update unit and value properties, adjust emit validation, and rename timeLength to value in duration               | 1           |
 |           | Update validations for addNewNeed and addNewRecord functions, configure ESlint, test code functionality with REST client                               | 1.5         |
 |           |                                                                                                                                                        |             |
+|           | ----- Note: 1 month break; Christmas holiday and focusing on other studies & my job -----                                                              |             |
 |           |                                                                                                                                                        |             |
-| **Total** |                                                                                                                                                        | **54.5**    |
+| 01.02.24  | Update user functionality: Add getUserById, updateUser, and deleteUser functions, and corresponding routes. Add email field for user                   | 2           |
+|           | Update dependencies, install mongoose-unique-validator and use it in models, configurate eslint --fix script to package.json                           | 0.5         |
+|           | Create and use passwordStrengthValidator middleware for ensuring strong password when creating and updating user                                       | 1           |
+|           | Test with REST client calls that everything works                                                                                                      | 0.5         |
+|           |                                                                                                                                                        |             |
+|           |                                                                                                                                                        |             |
+| **Total** |                                                                                                                                                        | **58.5**    |
