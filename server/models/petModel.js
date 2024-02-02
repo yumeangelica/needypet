@@ -34,6 +34,10 @@ const petSchema = new mongoose.Schema({
     ref: 'User',
   }],
   needs: [{
+    dateFor: {
+      type: Date,
+      required: true,
+    },
     category: {
       type: String,
       required: true,
@@ -159,6 +163,10 @@ petSchema.set('toJSON', {
         if (need._id) {
           need.id = need._id.toString();
           delete need._id;
+        }
+
+        if (need.dateFor) {
+          need.dateFor = need.dateFor.toISOString().split('T')[0]; // Yyyy-mm-dd
         }
 
         if (need.careRecords) { // Change careRecords _id to string id
