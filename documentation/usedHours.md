@@ -46,5 +46,9 @@
 |           | Create and use passwordStrengthValidator middleware for ensuring strong password when creating and updating user                                       | 1           |
 |           | Test with REST client calls that everything works                                                                                                      | 0.5         |
 |           |                                                                                                                                                        |             |
+| 02.02.24  | Implemented dateFor validation, added formatted dateFor to newNeedObject. Updated need quantity and duration validations                               | 1.5         |
+|           | Added dailyTaskCompleter function that toggles the need as completed if daily records meet the need, including its use to toggle daily tasks           |             |
+|           | Ensured all updates were tested thoroughly to confirm functionality                                                                                    |             |
 |           |                                                                                                                                                        |             |
-| **Total** |                                                                                                                                                        | **58.5**    |
+|           |                                                                                                                                                        |             |
+| **Total** |                                                                                                                                                        | **60.0**    |

@@ -1,5 +1,6 @@
 const Pet = require('../models/petModel');
 const User = require('../models/userModel');
+const helper = require('../helper');
 
 // Get all pets
 const getAllPets = async (request, response) => {
@@ -127,6 +128,8 @@ const addNewNeed = async (request, response, next) => {
     return response.status(404).json({ error: 'Pet not found' });
   }
 
+  const dateFor = new Date(request.body.need.dateFor.slice(0, 10)); // If date has time, remove it, format it to Yyyy-mm-dd
+
   const adderUser = await User.findById(request.body.adderId); // Find adderUser by id
 
   if (!adderUser) {
@@ -135,6 +138,10 @@ const addNewNeed = async (request, response, next) => {
 
   if (adderUser.id.toString() !== pet.owner.toString()) { // Check if adderUser from request is the owner of the pet. Id comes from mongoose object, so it needs to be converted to string
     return response.status(401).json({ error: 'Unauthorized' });
+  }
+
+  if (request.body.need.dateFor && dateFor < new Date().setHours(0, 0, 0, 0)) {
+    return response.status(400).json({ error: 'Date for need cannot be in the past' });
   }
 
   if (request.body.need.quantity && !request.body.need.quantity.unit) {
@@ -166,6 +173,7 @@ const addNewNeed = async (request, response, next) => {
   }
 
   const newNeedObject = {
+    dateFor,
     category: request.body.need.category,
     description: request.body.need.description,
   };
@@ -241,20 +249,12 @@ const addNewRecord = async (request, response, next) => {
     return response.status(400).json({ error: 'Duration time length cannot be over 1440 minutes' });
   }
 
-  if (need.quantity && request.body.quantity && request.body.quantity.unit !== need.quantity.unit) {
+  if (Object.prototype.hasOwnProperty.call(need, 'quantity') && Object.prototype.hasOwnProperty.call(request.body, 'duration')) {
     return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
   }
 
-  if (need.quantity && request.body.duration && request.body.duration.unit !== need.quantity.unit) {
+  if (Object.prototype.hasOwnProperty.call(need, 'duration') && Object.prototype.hasOwnProperty.call(request.body, 'quantity')) {
     return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
-  }
-
-  if (need.duration && request.body.duration && request.body.duration.unit !== need.duration.unit) {
-    return response.status(400).json({ error: `Classification need to be duration and unit need to be ${need.duration.unit}` });
-  }
-
-  if (need.duration && request.body.quantity && request.body.quantity.unit !== need.duration.unit) {
-    return response.status(400).json({ error: `Classification need to be duration and unit need to be ${need.duration.unit}` });
   }
 
   const newRecordObject = {
@@ -275,9 +275,9 @@ const addNewRecord = async (request, response, next) => {
     };
   }
 
-  need.careRecords.push(newRecordObject); // Push new record to care records array
-
   try {
+    need.careRecords.push(newRecordObject); // Push new record to care records array
+    helper.dailyTaskCompleter(need); // Check if daily task is completed and change need.completed to true if it is
     await pet.save();
     response.status(201).json(pet);
   } catch (error) {
