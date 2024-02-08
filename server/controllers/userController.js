@@ -85,7 +85,7 @@ const updateUser = async (request, response, next) => {
       user.email = email;
     }
 
-    if (timezone) {
+    if (timezone && helper.tzIdentifierChecker(timezone) && timezone !== user.timezone) { // Check if there is timezone, it is valid and it is different from the current timezone
       user.timezone = timezone;
     }
 
