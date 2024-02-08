@@ -37,6 +37,15 @@ const dailyTaskCompleter = need => {
   }
 };
 
+const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsinki'
+  const momentTimezoneData = require('moment-timezone/data/meta/latest.json');
+
+  const timezones = Object.keys(momentTimezoneData.zones);
+
+  return timezones.includes(timezone); // Check if list of timezones includes the given timezone, return true or false
+};
+
 module.exports = {
   dailyTaskCompleter,
+  tzIdentifierChecker,
 };
