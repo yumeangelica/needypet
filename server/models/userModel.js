@@ -16,8 +16,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    minlength: 5,
-    maxlength: 40,
+    minlength: 6,
+    maxlength: 100,
+    match: [/\S+@\S+\.\S+/, 'is invalid'], // Formated as email address
   },
   passwordHash: {
     type: String,
@@ -26,6 +27,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Pet',
   }],
+  timezone: { // Format 'Europe/Helsinki'
+    type: String,
+    required: true,
+  },
 });
 
 userSchema.plugin(uniqueValidator);

@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const helper = require('../helper');
 
 const getAllUsers = async (request, response) => { // Only for dev, later will be removed
   try {
@@ -27,11 +28,30 @@ const getUserById = async (request, response, next) => {
 };
 
 const createNewUser = async (request, response, next) => {
-  const { userName, email, password } = request.body;
+  const { userName, email, password, timezone } = request.body;
 
+  // Validations
+  if (!userName) {
+    return response.status(400).json({ error: 'Username is required' });
+  }
+
+  if (!email) {
+    return response.status(400).json({ error: 'Email is required' });
+  }
+
+  if (!password) {
+    return response.status(400).json({ error: 'Password is required' });
+  }
+
+  if (!timezone || !helper.tzIdentifierChecker(timezone)) { // Check if there is timezone or it is valid
+    return response.status(400).json({ error: 'Invalid timezone' });
+  }
+
+  // Create new user object
   const newUserObject = {
     userName,
     email,
+    timezone,
   };
 
   const newUser = new User(newUserObject); // Creating new user without password
@@ -47,7 +67,11 @@ const createNewUser = async (request, response, next) => {
 
 const updateUser = async (request, response, next) => {
   const { id } = request.params;
-  const { userName, email, password } = request.body;
+  const { userName, email, password, timezone } = request.body;
+
+  if (helper.tzIdentifierChecker(timezone)) {
+    return response.status(400).json({ error: 'Invalid timezone' });
+  }
 
   try {
     const user = await User.findById(id); // Find user by id
@@ -63,6 +87,10 @@ const updateUser = async (request, response, next) => {
 
     if (email) {
       user.email = email;
+    }
+
+    if (timezone && timezone !== user.timezone) { // Check if there is timezone, it is valid and it is different from the current timezone
+      user.timezone = timezone;
     }
 
     // Check if password is given
