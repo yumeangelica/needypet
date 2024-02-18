@@ -1,6 +1,10 @@
 const User = require('../models/userModel');
-const helper = require('../helper');
-
+const { passwordStrengthValidator } = require('../middlewares/passwordStrengthValidator');
+/**
+ * @description Gets all users (only for dev, later will be removed)
+ * @param {*} request
+ * @param {*} response
+ */
 const getAllUsers = async (request, response) => { // Only for dev, later will be removed
   try {
     const users = await User.find({}).populate('pets', 'name');
@@ -11,24 +15,30 @@ const getAllUsers = async (request, response) => { // Only for dev, later will b
   }
 };
 
+/**
+ * @description Gets the user by id
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ */
 const getUserById = async (request, response, next) => {
-  const { id } = request.params;
-
   try {
-    const user = await User.findById(id).populate('pets', 'name');
-
-    if (!user) {
-      return response.status(404).json({ error: 'User not found' });
-    }
-
+    const user = request.user; // User is attached to the request object by getUserHandler middleware
     response.status(200).json(user);
   } catch (error) {
     next(error);
   }
 };
 
+/**
+ * @description Creates a new user
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
 const createNewUser = async (request, response, next) => {
-  const { userName, email, password, timezone } = request.body;
+  const { userName, email, newPassword, timezone } = request.body;
 
   // Validations
   if (!userName) {
@@ -39,12 +49,8 @@ const createNewUser = async (request, response, next) => {
     return response.status(400).json({ error: 'Email is required' });
   }
 
-  if (!password) {
-    return response.status(400).json({ error: 'Password is required' });
-  }
-
-  if (!timezone || !helper.tzIdentifierChecker(timezone)) { // Check if there is timezone or it is valid
-    return response.status(400).json({ error: 'Invalid timezone' });
+  if (!newPassword) {
+    return response.status(400).json({ error: 'newPassword is required' });
   }
 
   // Create new user object
@@ -54,10 +60,10 @@ const createNewUser = async (request, response, next) => {
     timezone,
   };
 
-  const newUser = new User(newUserObject); // Creating new user without password
+  const newUser = new User(newUserObject); // Creating new user without newPassword
 
   try {
-    newUser.setPassword(password); // Setting password with method from userModel which hashes the password
+    newUser.setPassword(newPassword); // Setting password with method from userModel which hashes the password
     await newUser.save();
     response.status(201).json(newUser);
   } catch (error) {
@@ -65,19 +71,58 @@ const createNewUser = async (request, response, next) => {
   }
 };
 
-const updateUser = async (request, response, next) => {
-  const { id } = request.params;
-  const { userName, email, password, timezone } = request.body;
+/**
+ * @description Updates the user password
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+*/
 
-  if (helper.tzIdentifierChecker(timezone)) {
-    return response.status(400).json({ error: 'Invalid timezone' });
+const updateUserPassword = async (request, response, next) => {
+  try {
+    const user = request.user; // User is attached to the request object by getUserHandler middleware
+
+    const { newPassword, currentPassword } = request.body;
+
+    if (!newPassword) {
+      return response.status(400).json({ error: 'New password is required' });
+    }
+
+    if (currentPassword && !user.isValidPassword(currentPassword)) {
+      return response.status(401).json({ error: 'Invalid current password' });
+    }
+
+    user.setPassword(newPassword);
+    await user.save();
+    response.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    next(error);
+  }
+};
+
+/**
+ * @description Updates the user
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
+const updateUser = async (request, response, next) => {
+  if (request.body.newPassword && request.body.currentPassword) {
+    await passwordStrengthValidator(request, response, next);
+    await updateUserPassword(request, response, next);
+    return;
   }
 
-  try {
-    const user = await User.findById(id); // Find user by id
+  const { userName, email, currentPassword, timezone } = request.body;
 
-    if (!user) {
-      return response.status(404).json({ error: 'User not found' });
+  try {
+    const user = request.user; // User is attached to the request object by getUserHandler middleware
+
+    if (!currentPassword || !user.isValidPassword(currentPassword)) {
+      return response.status(401).json({ error: 'Invalid current password' });
     }
 
     // Update user properties
@@ -89,13 +134,8 @@ const updateUser = async (request, response, next) => {
       user.email = email;
     }
 
-    if (timezone && timezone !== user.timezone) { // Check if there is timezone, it is valid and it is different from the current timezone
+    if (timezone) { // Check if there is timezone, it is valid and it is different from the current timezone
       user.timezone = timezone;
-    }
-
-    // Check if password is given
-    if (password) {
-      user.setPassword(password); // Password is hashed with method from userModel
     }
 
     await user.save(); // Save updated user to database
@@ -106,11 +146,17 @@ const updateUser = async (request, response, next) => {
   }
 };
 
+/**
+ * @description Deletes the user
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
 const deleteUser = async (request, response, next) => {
-  const { id } = request.params;
-
   try {
-    const result = await User.findByIdAndDelete(id);
+    const user = request.user; // User is attached to the request object by getUserHandler middleware
+    const result = await User.findByIdAndDelete(user.id);
 
     if (!result) {
       return response.status(404).json({ error: 'User not found' });
@@ -123,7 +169,13 @@ const deleteUser = async (request, response, next) => {
   }
 };
 
-// Login functionality
+/**
+ * @description Logs in the user
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
 const loginUser = async (request, response, next) => {
   const { userName, password } = request.body;
 
