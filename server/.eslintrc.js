@@ -44,5 +44,9 @@ module.exports = {
       },
     ],
     complexity: ['warn', { max: 40 }],
+    'prefer-destructuring': ['off', {
+      object: false,
+      array: false,
+    }],
   },
 };
