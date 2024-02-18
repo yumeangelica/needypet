@@ -1,5 +1,11 @@
 const config = require('../utils/config');
 
+/**
+ * @description Logs request method, url, status and duration
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ */
 const requestLogger = (request, response, next) => {
   const start = new Date();
 

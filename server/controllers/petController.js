@@ -2,7 +2,11 @@ const Pet = require('../models/petModel');
 const User = require('../models/userModel');
 const helper = require('../helper');
 
-// Get all pets
+/**
+ * @description Gets all pets (only for dev, later will be removed)
+ * @param {*} request
+ * @param {*} response
+ */
 const getAllPets = async (request, response) => {
   try {
     const pets = await Pet.find({}).populate('owner', 'userName').populate('careTakers', 'userName');
@@ -13,15 +17,15 @@ const getAllPets = async (request, response) => {
   }
 };
 
-// Get pet by id
+/**
+ * @description Gets the pet by id
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ */
 const getPetById = async (request, response, next) => {
-  const { id } = request.params;
-
   try {
-    const pet = await Pet.findById(id);
-    if (!pet) {
-      throw new Error('Pet not found');
-    }
+    const pet = request.pet;
 
     response.json(pet);
   } catch (error) {
@@ -30,7 +34,13 @@ const getPetById = async (request, response, next) => {
   }
 };
 
-// Add new pet
+/**
+ * @description Creates a new pet
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
 const addNewPet = async (request, response, next) => {
   const newPetObject = {
     name: request.body.name,
@@ -41,11 +51,7 @@ const addNewPet = async (request, response, next) => {
     careTakers: [],
   };
 
-  const owner = await User.findById(request.body.owner); // Find owner by id
-
-  if (!owner) {
-    return 'no user';
-  }
+  const owner = request.user; // Owner is the user who is making the request
 
   newPetObject.owner = owner.id;
 
@@ -80,65 +86,68 @@ const addNewPet = async (request, response, next) => {
   }
 };
 
-// Update pet by id
+/**
+ * @description Updates pet by id
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
 const updatePet = async (request, response, next) => {
-  const { id } = request.params;
   const updateData = request.body;
 
   try {
-    const updatedPet = await Pet.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+    const updatedPet = await Pet.findOneAndUpdate({ // Finds pet by id, validates by owner and updates it
+      _id: request.pet.id,
+      owner: request.user.id,
+    }, updateData, { new: true, runValidators: true });
+
     if (!updatedPet) {
-      throw new Error('Pet not found');
+      return response.status(404).json({ error: 'Pet not found' });
     }
 
     response.json(updatedPet);
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      next(error);
-    } else {
-      error.name = 'NotFound';
-      next(error);
-    }
-  }
-};
-
-// Delete pet by id
-const deletePet = async (request, response, next) => {
-  const { id } = request.params;
-
-  try {
-    const deletedPet = await Pet.findByIdAndDelete(id);
-    if (!deletedPet) {
-      throw new Error('Pet not found');
-    }
-
-    response.status(204).end();
-  } catch (error) {
-    error.name = 'NotFound';
+    console.log(error);
     next(error);
   }
 };
 
-const addNewNeed = async (request, response, next) => {
-  const petId = request.params.id;
+/**
+ * @description Deletes pet by id
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
+const deletePet = async (request, response, next) => {
+  try {
+    const deletedPet = await Pet.findOneAndDelete({
+      _id: request.pet.id,
+      owner: request.user.id,
+    }, { runValidators: true });
 
-  const pet = await Pet.findById(petId); // Find pet by id
+    if (deletedPet === null) {
+      return response.status(404).json({ error: 'Pet not found' });
+    }
 
-  if (!pet) {
-    return response.status(404).json({ error: 'Pet not found' });
+    response.status(204).end();
+  } catch (error) {
+    next(error);
   }
+};
+
+/**
+ * @description Adds a new need to the pet
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
+const addNewNeed = async (request, response, next) => {
+  const pet = request.pet;
 
   const dateFor = new Date(request.body.need.dateFor.slice(0, 10)); // If date has time, remove it, format it to Yyyy-mm-dd
-
-  const adderUser = await User.findById(request.body.adderId); // Find adderUser by id
-
-  if (!adderUser) {
-    return response.status(404).json({ error: 'User not found' });
-  }
-
-  if (adderUser.id.toString() !== pet.owner.toString()) { // Check if adderUser from request is the owner of the pet. Id comes from mongoose object, so it needs to be converted to string
-    return response.status(401).json({ error: 'Unauthorized' });
-  }
 
   if (request.body.need.dateFor && dateFor < new Date().setHours(0, 0, 0, 0)) {
     return response.status(400).json({ error: 'Date for need cannot be in the past' });
@@ -200,29 +209,20 @@ const addNewNeed = async (request, response, next) => {
   }
 };
 
+/**
+ * @description Adds a new record to the pet need
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
 const addNewRecord = async (request, response, next) => {
-  const petId = request.params.id;
-
-  const pet = await Pet.findById(petId);
-
-  if (!pet) {
-    return response.status(404).json({ error: 'Pet not found' });
-  }
+  const pet = request.pet; // Pet comes from request.pet, which is attached to the request object by getPetHandler middleware
 
   const need = pet.needs.id(request.body.needId);
 
   if (!need) {
     return response.status(404).json({ error: 'Need not found' });
-  }
-
-  const careTaker = await User.findById(request.body.careTakerId);
-
-  if (!careTaker) {
-    return response.status(404).json({ error: 'User not found' });
-  }
-
-  if (!pet.careTakers.includes(careTaker.id)) { // Check if care taker is in care takers array
-    return response.status(401).json({ error: 'Unauthorized' });
   }
 
   if (request.body.quantity && !request.body.quantity.value) { // If pet need has quantity and request body doesn't
@@ -258,7 +258,7 @@ const addNewRecord = async (request, response, next) => {
   }
 
   const newRecordObject = {
-    careTaker: careTaker.id,
+    careTaker: request.user.id,
     date: new Date(),
     note: request.body.note,
   };

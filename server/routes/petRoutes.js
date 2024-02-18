@@ -1,14 +1,17 @@
 const express = require('express');
 // eslint-disable-next-line new-cap
 const router = express.Router();
-const { getAllPets, getPetById, addNewPet, updatePet, deletePet, addNewNeed, addNewRecord } = require('../controllers/petController'); // Controller functions
+const { getPetById, addNewPet, updatePet, deletePet, addNewNeed, addNewRecord } = require('../controllers/petController'); // Controller functions
 
-router.get('/pets', getAllPets);
-router.get('/pets/:id', getPetById);
-router.post('/pets', addNewPet);
-router.post('/pets/need/:id', addNewNeed); // Route for adding new need
-router.post('/pets/need/record/:id', addNewRecord); // Route for adding new record
-router.put('/pets/:id', updatePet);
-router.delete('/pets/:id', deletePet);
+const petCareTakerValidationMiddleware = require('../middlewares/petCareTakerValidationMiddleware'); // Middleware for checking if user is pet care taker
+const petOwnerValidationMiddleware = require('../middlewares/petOwnerValidationMiddleware'); // Middleware for checking if user is pet owner
+const getPetHandler = require('../middlewares/getPetHandler');
+
+router.get('/pets/:id', getPetHandler, petCareTakerValidationMiddleware, getPetById);
+router.post('/pets', petOwnerValidationMiddleware, addNewPet);
+router.post('/pets/need/:id', getPetHandler, petOwnerValidationMiddleware, addNewNeed); // Route for adding new need
+router.post('/pets/need/record/:id', getPetHandler, petCareTakerValidationMiddleware, addNewRecord); // Route for adding new record
+router.put('/pets/:id', getPetHandler, petOwnerValidationMiddleware, updatePet);
+router.delete('/pets/:id', getPetHandler, petOwnerValidationMiddleware, deletePet);
 
 module.exports = router;

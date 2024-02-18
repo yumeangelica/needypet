@@ -1,3 +1,11 @@
+/**
+ * @description Error handler middleware
+ * @param {*} error
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+*/
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (error, request, response, next) => {
   console.error(error);

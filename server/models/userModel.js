@@ -3,6 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../utils/config');
+const helper = require('../helper');
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -30,6 +31,10 @@ const userSchema = new mongoose.Schema({
   timezone: { // Format 'Europe/Helsinki'
     type: String,
     required: true,
+    validate: {
+      validator: helper.tzIdentifierChecker,
+      message: 'Invalid timezone',
+    },
   },
 });
 

@@ -1,9 +1,17 @@
 const jwt = require('jsonwebtoken');
 const config = require('../utils/config');
 
+/**
+ * @description Authenticates token and attaches decoded token to request object
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
 const authenticateToken = (request, response, next) => {
   const authHeader = request.headers.authorization; // Get authorization header
   let token = null; // Initialize token so it can be used outside of if statement
+  request.decodedToken = null; // Initialize user so it can be used outside of try-catch block
 
   if (!authHeader) {
     return response.status(401).json({ error: 'Token missing or invalid' });
@@ -20,11 +28,12 @@ const authenticateToken = (request, response, next) => {
       return response.status(401).json({ error: 'Token invalid' });
     }
 
-    request.user = decodedToken; // Add decoded token to request object
-    next();
+    request.decodedToken = decodedToken; // Add decoded token to request object
   } catch (error) {
     next(error);
   }
+
+  next();
 };
 
 module.exports = authenticateToken;

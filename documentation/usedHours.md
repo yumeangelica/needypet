@@ -52,4 +52,10 @@
 |           |                                                                                                                                                        |             |
 | 08.02.24  | Add moment-timezone dependency, add timezone field for user, add helper which checks that timezone is valid, add validations                           | 0.5         |
 |           |                                                                                                                                                        |             |
-| **Total** |                                                                                                                                                        | **60.5**    |
+| 19.02.24  | Update JSDoc comments, add middleware validators for token, pet owner, and caretaker.                                                                  |             |
+|           | Implement handlers for validating/setting user and pet to request, and retrieving them from request.                                                   |             |
+|           | Integrate validators and handlers with the router, add timezone validation to userModel.                                                               |             |
+|           | Disable object destructuring rule in ESLint, conduct manual functionality tests.                                                                       | 5.5         |
+|           |                                                                                                                                                        |             |
+|           |                                                                                                                                                        |             |
+| **Total** |                                                                                                                                                        | **66.0**    |

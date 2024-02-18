@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const connectDatabase = require('./database/mongoConnection');
-// Outcommented for testing purposes
-// const authenticateToken = require('./middlewares/tokenValidatorMiddleware');
+const authenticateToken = require('./middlewares/tokenValidatorMiddleware');
+const getUserHandler = require('./middlewares/getUserHandler');
 const requestLogger = require('./middlewares/requestLoggerMiddleware');
 const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
@@ -22,13 +22,13 @@ app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>');
 });
 
+// For dev purposes
+app.get('/api/pets', require('./controllers/petController'));
+app.get('/auth/users', require('./controllers/userController'));
+
 // Routes
 app.use('/auth', usersRoutes); // No authentication needed for this route - only for testing purposes
-app.use('/api', petsRoutes); // No authentication needed for this route - only for testing purposes
-
-// Outcommented for testing purposes
-// app.use('/api', authenticateToken, usersRoutes);
-// app.use('/api', authenticateToken, petsRoutes);
+app.use('/api', authenticateToken, getUserHandler, petsRoutes); // No authentication needed for this route - only for testing purposes
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

@@ -1,3 +1,8 @@
+/**
+ * @description Completes the daily task if the total quantity or duration is greater than or equal to the need quantity or duration
+ * @param {*} need
+ * @returns
+ */
 const dailyTaskCompleter = need => {
   if (!need.careRecords) {
     return false;
@@ -37,6 +42,11 @@ const dailyTaskCompleter = need => {
   }
 };
 
+/**
+ * @description Checks if the given timezone is valid
+ * @param {*} timezone
+ * @returns
+ */
 const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsinki'
   const momentTimezoneData = require('moment-timezone/data/meta/latest.json');
 
