@@ -48,5 +48,6 @@ module.exports = {
       object: false,
       array: false,
     }],
+    'logical-assignment-operators': 'off',
   },
 };
