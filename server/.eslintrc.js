@@ -33,7 +33,7 @@ module.exports = {
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
     'no-trailing-spaces': 'error',
-    'no-console': 0, // Allow console.log
+    'no-console': 'off', // Allow console.log
     'capitalized-comments': [
       'error',
       'always',
