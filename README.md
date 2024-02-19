@@ -18,7 +18,7 @@ MongoDB, Express.js, Node.js
 
 ## Hours spent
 
-Link to the [work log](https://github.com/yumeangelica/needypet/blob/3323811399859cdfe63fb1a61fe44f67a40f5c39/documentation/usedHours.md) where I keep track of used hours and specific tasks for the NeedyPet project.
+Link to the [work log](https://github.com/yumeangelica/needypet/blob/main/documentation/usedHours.md) where I keep track of used hours and specific tasks for the NeedyPet project.
 
 ## Getting Started
 
