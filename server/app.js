@@ -10,6 +10,10 @@ const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 
+// For dev purposes
+const petController = require('./controllers/petController');
+const userController = require('./controllers/userController');
+
 // Middleware
 app.use(express.json()); // Json parser for post requests
 app.use(requestLogger);
@@ -23,8 +27,8 @@ app.get('/', (request, response) => {
 });
 
 // For dev purposes
-app.get('/api/pets', require('./controllers/petController'));
-app.get('/auth/users', require('./controllers/userController'));
+app.get('/api/pets', petController.getAllPets);
+app.get('/auth/users', userController.getAllUsers);
 
 // Routes
 app.use('/auth', usersRoutes); // No authentication needed for this route - only for testing purposes
