@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 /**
- * @description Configuration object
+ * @description Configuration object, contains environment variables
  */
 const config = {
   isDevelopment: process.env.NODE_ENV === 'development', // True if development mode

@@ -52,18 +52,28 @@ userSchema.set('toJSON', {
 
 // Custom schema methods for the User model
 
-// method to set passwordHash in register
+/**
+ * @description Method to set password for user in registration
+ * @param {*} password
+ */
 userSchema.methods.setPassword = function (password) {
   const saltRounds = 10;
   this.passwordHash = bcrypt.hashSync(password, saltRounds);
 };
 
-// Method to check if password is correct in login
+/**
+ * @description Method to check if the password is valid for user in login
+ * @param {*} password
+ * @returns true if password is correct
+ */
 userSchema.methods.isValidPassword = function (password) {
-  return bcrypt.compareSync(password, this.passwordHash); // Returns true if password is correct
+  return bcrypt.compareSync(password, this.passwordHash);
 };
 
-// Method to generate JWT token for user in login
+/**
+ * @description Method to generate JWT token for user in login
+ * @returns JWT token for user
+ */
 userSchema.methods.generateJWT = function () {
   return jwt.sign({
     userName: this.userName,
