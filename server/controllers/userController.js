@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 const { passwordStrengthValidator } = require('../middlewares/passwordStrengthValidator');
+
 /**
  * @description Gets all users (only for dev, later will be removed)
  * @param {*} request
@@ -139,7 +140,9 @@ const updateUser = async (request, response, next) => {
     }
 
     await user.save(); // Save updated user to database
-    response.status(200).json({ message: 'User updated successfully', id: user._id, userName: user.userName, email: user.email });
+    response.status(200).json({
+      message: 'User updated successfully', id: user._id, userName: user.userName, email: user.email,
+    });
   } catch (error) {
     console.error('Error updating user:', error);
     next(error);
@@ -174,7 +177,7 @@ const deleteUser = async (request, response, next) => {
  * @param {*} request
  * @param {*} response
  * @param {*} next
- * @returns
+ * @returns JWT token and user details
  */
 const loginUser = async (request, response, next) => {
   const { userName, password } = request.body;
