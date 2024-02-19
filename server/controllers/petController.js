@@ -249,11 +249,11 @@ const addNewRecord = async (request, response, next) => {
     return response.status(400).json({ error: 'Duration time length cannot be over 1440 minutes' });
   }
 
-  if (Object.prototype.hasOwnProperty.call(need, 'quantity') && Object.prototype.hasOwnProperty.call(request.body, 'duration')) {
+  if (Object.hasOwn(need, 'quantity') && Object.hasOwn(request.body, 'duration')) {
     return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
   }
 
-  if (Object.prototype.hasOwnProperty.call(need, 'duration') && Object.prototype.hasOwnProperty.call(request.body, 'quantity')) {
+  if (Object.hasOwn(need, 'duration') && Object.hasOwn(request.body, 'quantity')) {
     return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
   }
 

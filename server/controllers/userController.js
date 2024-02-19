@@ -139,7 +139,9 @@ const updateUser = async (request, response, next) => {
     }
 
     await user.save(); // Save updated user to database
-    response.status(200).json({ message: 'User updated successfully', id: user._id, userName: user.userName, email: user.email });
+    response.status(200).json({
+      message: 'User updated successfully', id: user._id, userName: user.userName, email: user.email,
+    });
   } catch (error) {
     console.error('Error updating user:', error);
     next(error);

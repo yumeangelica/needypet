@@ -12,7 +12,7 @@ const dailyTaskCompleter = need => {
     return;
   }
 
-  const taskType = Object.prototype.hasOwnProperty.call(need, 'quantity') ? 'quantity' : 'duration'; // Check if need object has quantity or duration
+  const taskType = Object.hasOwn(need, 'quantity') ? 'quantity' : 'duration'; // Check if need object has quantity or duration
 
   switch (taskType) {
   case 'quantity':
