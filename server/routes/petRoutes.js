@@ -1,7 +1,7 @@
 const express = require('express');
 // eslint-disable-next-line new-cap
 const router = express.Router();
-const { getPetById, addNewPet, updatePet, deletePet, addNewNeed, addNewRecord } = require('../controllers/petController');
+const { getPetById, addNewPet, updatePet, deletePet, addNewNeed, addNewRecord, deleteNeed } = require('../controllers/petController');
 
 const petCareTakerValidationMiddleware = require('../middlewares/petCareTakerValidationMiddleware');
 const petOwnerValidationMiddleware = require('../middlewares/petOwnerValidationMiddleware');
@@ -13,5 +13,6 @@ router.post('/pets/need/:id', getPetHandler, petOwnerValidationMiddleware, addNe
 router.post('/pets/need/record/:id', getPetHandler, petCareTakerValidationMiddleware, addNewRecord);
 router.put('/pets/:id', getPetHandler, petOwnerValidationMiddleware, updatePet);
 router.delete('/pets/:id', getPetHandler, petOwnerValidationMiddleware, deletePet);
+router.delete('/pets/:id/need/:needid', getPetHandler, petOwnerValidationMiddleware, deleteNeed);
 
 module.exports = router;
