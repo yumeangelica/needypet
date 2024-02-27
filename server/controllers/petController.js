@@ -9,7 +9,14 @@ const helper = require('../helper');
  */
 const getAllPets = async (request, response) => {
   try {
-    const pets = await Pet.find({}).populate('owner', 'userName').populate('careTakers', 'userName');
+    const pets = await Pet.find({})
+      .populate('owner', 'userName')
+      .populate('careTakers', 'userName')
+      .populate({
+        path: 'needs',
+        match: { archived: false },
+      });
+
     response.json(pets);
   } catch (error) {
     console.log('error getting pets');
@@ -130,6 +137,12 @@ const deletePet = async (request, response, next) => {
     if (deletedPet === null) {
       return response.status(404).json({ error: 'Pet not found' });
     }
+
+    // Remove pet from owner's pets array
+    await User.updateMany(
+      { pets: request.pet.id },
+      { $pull: { pets: request.pet.id } },
+    );
 
     response.status(204).end();
   } catch (error) {
@@ -285,6 +298,24 @@ const addNewRecord = async (request, response, next) => {
   }
 };
 
+const deleteNeed = async (request, response, next) => {
+  const pet = request.pet;
+
+  const need = pet.needs.id(request.params.needid);
+
+  if (!need) {
+    return response.status(404).json({ error: 'Need not found' });
+  }
+
+  try {
+    pet.needs.remove(need);
+    await pet.save();
+    response.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllPets,
   getPetById,
@@ -293,4 +324,5 @@ module.exports = {
   deletePet,
   addNewNeed,
   addNewRecord,
+  deleteNeed,
 };
