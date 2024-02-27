@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const cron = require('node-cron');
 const connectDatabase = require('./database/mongoConnection');
 const authenticateToken = require('./middlewares/tokenValidatorMiddleware');
 const getUserHandler = require('./middlewares/getUserHandler');
@@ -9,10 +10,11 @@ const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
+const { petNeedstoNextDays } = require('./helper');
 
 // For dev purposes
-const petController = require('./controllers/petController');
-const userController = require('./controllers/userController');
+const { getAllPets } = require('./controllers/petController');
+const { getAllUsers } = require('./controllers/userController');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
@@ -22,13 +24,16 @@ app.use(cors());
 // Connect to database
 connectDatabase();
 
+// Run every hour
+cron.schedule('0 * * * *', petNeedstoNextDays);
+
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>');
 });
 
 // For dev purposes
-app.get('/api/pets', petController.getAllPets);
-app.get('/auth/users', userController.getAllUsers);
+app.get('/api/pets', getAllPets);
+app.get('/auth/users', getAllUsers);
 
 // Routes
 app.use('/auth', usersRoutes); // No authentication needed for this route - only for testing purposes
