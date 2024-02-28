@@ -1,4 +1,4 @@
-const config = require('../utils/config');
+const { isDevelopment } = require('../utils/config');
 
 /**
  * @description Logs request method, url, status and duration
@@ -20,7 +20,7 @@ const requestLogger = (request, response, next) => {
       `Duration: ${duration}ms`,
     ];
 
-    if (config.isDevelopment) { // Log request body only in development mode
+    if (isDevelopment) { // Log request body only in development mode
       logMessage.push('Query:', JSON.stringify(request.query));
       logMessage.push('Body:', JSON.stringify(request.body));
     }

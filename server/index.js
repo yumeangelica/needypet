@@ -1,8 +1,8 @@
 const app = require('./app');
-const config = require('./utils/config');
+const { backendPort } = require('./utils/config');
 
 // Listen
-app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
+app.listen(backendPort, () => {
+  console.log(`Server running on port ${backendPort}`);
 });
 

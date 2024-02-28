@@ -1,11 +1,11 @@
-const config = require('../utils/config');
+const { mongodbUri } = require('../utils/config');
 const mongoose = require('mongoose');
 
 /**
  * @description Connects to the MongoDB database
  */
 const connectDatabase = () => {
-  mongoose.connect(config.databaseUrl)
+  mongoose.connect(mongodbUri)
     .then(() => {
       console.log('Connected to MongoDB');
     })

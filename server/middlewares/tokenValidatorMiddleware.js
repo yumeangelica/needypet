@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const config = require('../utils/config');
+const { jwtSecret } = require('../utils/config');
 
 /**
  * @description Authenticates token and attaches decoded token to request object
@@ -22,7 +22,7 @@ const authenticateToken = (request, response, next) => {
   }
 
   try {
-    const decodedToken = jwt.verify(token, config.jwtSecret); // Verify token with secret key
+    const decodedToken = jwt.verify(token, jwtSecret); // Verify token with secret key
 
     if (!decodedToken.id) {
       return response.status(401).json({ error: 'Token invalid' });
