@@ -1,14 +1,18 @@
 require('dotenv').config();
 
-/**
- * @description Configuration object, contains environment variables
- */
-const config = {
-  isDevelopment: process.env.NODE_ENV === 'development', // True if development mode
-  isProduction: process.env.NODE_ENV === 'production', // True if production mode
-  databaseUrl: process.env.NODE_ENV === 'test' ? process.env.TEST_MONGODB_URI : process.env.MONGODB_URI,
-  port: process.env.PORT,
-  jwtSecret: process.env.JWT_SECRET,
-};
+// Environment variables
+const isDevelopment = process.env.NODE_ENV === 'development'; // True if development mode
+const isProduction = process.env.NODE_ENV === 'production'; // True if production mode
+const mongodbUri = process.env.NODE_ENV === 'test' ? process.env.TEST_MONGODB_URI : process.env.MONGODB_URI; // MongoDB URI based on environment
+const backendPort = process.env.BACKEND_PORT;
+const jwtSecret = process.env.JWT_SECRET;
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
 
-module.exports = config;
+module.exports = {
+  isDevelopment,
+  isProduction,
+  mongodbUri,
+  backendPort,
+  jwtSecret,
+  allowedOrigins,
+};
