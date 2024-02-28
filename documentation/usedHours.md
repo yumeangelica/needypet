@@ -63,4 +63,9 @@
 |           | Add node-cron dependency, and set hourly cron job for petNeedsToNextDays. Add deleteNeed function. Add populate methods to getAllUsers function                  |             |
 |           | Add deleteNeed function, add populate methods to getAllUsers function, and add corresponding route for deleteNeed. Test that everything works                    | 10          |
 |           |                                                                                                                                                                  |             |
-| **Total** |                                                                                                                                                                  | **77.0**    |
+| 28.02.24  | Update CORS configuration by creating a corsConfig.js file. Refactor config.js to export and import variables individually, improving security and modularity    |             |
+|           | Improve environment variable naming and apply necessary changes across files, update dependencies, and rename routes to plural form                              | 2           |
+|           |                                                                                                                                                                  |             |
+|           |                                                                                                                                                                  |             |
+|           |                                                                                                                                                                  |             |
+| **Total** |                                                                                                                                                                  | **79.0**    |

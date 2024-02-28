@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../models/userModel');
-const config = require('../utils/config');
+const { mongodbUri } = require('../utils/config');
 const { createNewUser } = require('../controllers/userController');
 
 describe('User creation and validation tests', () => {
@@ -8,7 +8,7 @@ describe('User creation and validation tests', () => {
 
   // Connect to database before running tests
   beforeAll(async () => {
-    await mongoose.connect(config.databaseUrl);
+    await mongoose.connect(mongodbUri);
   });
 
   // Test to create user
