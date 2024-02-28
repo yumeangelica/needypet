@@ -14,12 +14,20 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
 
 ## Technologies
 
-MongoDB, Express.js, Node.js
+Back-end: MongoDB, Express.js, Node.js
 
 ## Hours spent
 
 Link to the [work log](https://github.com/yumeangelica/needypet/blob/main/documentation/usedHours.md) where I keep track of used hours and specific tasks for the NeedyPet project.
 
-## Getting Started
+## Credits
 
-To get started with this project, clone this repository and follow the setup instructions. Will be updated later.
+This project was developed by yumeangelica. For more information on how this work can be used, please refer to the LICENSE.txt file.
+
+Copyright © 2023 - present; yumeangelica
+
+## License
+
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. This allows you to share the work, with appropriate credit given, but not to use it for commercial purposes or to create derivative works.
+
+For more details about the license, please visit [Creative Commons License](https://creativecommons.org/licenses/by-nc-nd/4.0/).
