@@ -11,6 +11,7 @@ const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 const { petNeedstoNextDays } = require('./helper');
+const corsOptions = require('./utils/corsConfig');
 
 // For dev purposes
 const { getAllPets } = require('./controllers/petController');
@@ -19,7 +20,9 @@ const { getAllUsers } = require('./controllers/userController');
 // Middleware
 app.use(express.json()); // Json parser for post requests
 app.use(requestLogger);
-app.use(cors());
+
+// Cors configuration
+app.use(cors(corsOptions));
 
 // Connect to database
 connectDatabase();
