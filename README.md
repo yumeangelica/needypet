@@ -23,3 +23,9 @@ Link to the [work log](https://github.com/yumeangelica/needypet/blob/main/docume
 ## Getting Started
 
 To get started with this project, clone this repository and follow the setup instructions. Will be updated later.
+
+## License
+
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. This allows you to share the work, with appropriate credit given, but not to use it for commercial purposes or to create derivative works.
+
+For more details about the license, please visit [Creative Commons License](https://creativecommons.org/licenses/by-nc-nd/4.0/).
