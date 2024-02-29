@@ -17,6 +17,8 @@ const corsOptions = require('./utils/corsConfig');
 const { getAllPets } = require('./controllers/petController');
 const { getAllUsers } = require('./controllers/userController');
 
+let isPetNeedsUpdating = false;
+
 // Middleware
 app.use(express.json()); // Json parser for post requests
 app.use(requestLogger);
@@ -28,7 +30,20 @@ app.use(cors(corsOptions));
 connectDatabase();
 
 // Run every hour
-cron.schedule('0 * * * *', petNeedstoNextDays);
+cron.schedule('0 * * * *', async () => {
+  isPetNeedsUpdating = true;
+  await petNeedstoNextDays();
+  isPetNeedsUpdating = false;
+});
+
+// Middleware for maintenance, check if pet needs are updating
+app.use((request, response, next) => {
+  if (isPetNeedsUpdating) {
+    return response.status(503).send('Server is updating pet needs');
+  }
+
+  next();
+});
 
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>');
