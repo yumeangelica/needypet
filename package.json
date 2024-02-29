@@ -1,0 +1,15 @@
+{
+  "name": "needypet",
+  "version": "1.0.0",
+  "description": "Pet care management app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "yumeangelica",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "@ionic/cli": "^7.2.0"
+  }
+}
