@@ -141,6 +141,10 @@ const petSchema = new mongoose.Schema({
       type: Boolean,
       default: false,
     },
+    isActive: { // In case user wants to pause the need
+      type: Boolean,
+      default: true,
+    },
   }],
 });
 
