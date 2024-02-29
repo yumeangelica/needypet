@@ -72,4 +72,6 @@
 | 29.02.24  | Optimize cron function for asynchronous operation. Enhance pet management with improved need handling and model updates                                            |             |
 |           | Add user search and timezone-aware date formatting functionalities. Adjust eslint settings. Test that everything works properly                                    | 4           |
 |           |                                                                                                                                                                    |             |
-| **Total** |                                                                                                                                                                    | **85.0**    |
+| 29.02.24  | Read about Ionic framework and how to use it with Vue.js. Initialize frontend for the project                                                                      | 3           |
+|           |                                                                                                                                                                    |             |
+| **Total** |                                                                                                                                                                    | **88.0**    |
