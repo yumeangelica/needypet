@@ -49,5 +49,6 @@ module.exports = {
       array: false,
     }],
     'logical-assignment-operators': 'off',
+    'no-unneeded-ternary': 'off',
   },
 };

@@ -32,6 +32,27 @@ const getUserById = async (request, response, next) => {
 };
 
 /**
+ * @description Gets the user by username and returns id and username
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
+const getUserByName = async (request, response, next) => {
+  try {
+    const userName = request.params.userName;
+    const user = await User.findOne({ userName });
+    if (!user) {
+      return response.status(404).json({ error: 'User not found' });
+    }
+
+    response.status(200).json({ id: user._id, userName: user.userName });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @description Creates a new user
  * @param {*} request
  * @param {*} response
@@ -199,6 +220,7 @@ const loginUser = async (request, response, next) => {
 module.exports = {
   getAllUsers,
   getUserById,
+  getUserByName,
   createNewUser,
   updateUser,
   deleteUser,

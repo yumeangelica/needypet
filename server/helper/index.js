@@ -58,6 +58,18 @@ const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsi
 };
 
 /**
+ * @description Checks the local date by timezone, returns the formatted date
+ * @param {*} timezone
+ * @returns
+  */
+const checkLocalDateByTimezone = timezone => {
+  const moment = require('moment-timezone');
+  const newDate = moment.tz(timezone);
+  const formattedDate = newDate.format('YYYY-MM-DD');
+  return formattedDate;
+};
+
+/**
  * @description Algorithm for processing and archiving past day's pet needs for users in midnight timezones, while generating fresh, unfulfilled tasks for the new day
  * @param {*} _request
  * @param {*} _response
@@ -123,7 +135,7 @@ const petNeedstoNextDays = async (_request, _response, next) => {
 
     allPets.forEach(pet => {
       // Find all needs which are not archived by pet
-      const notArchivedNeeds = pet.needs.filter(need => !need.archived);
+      const notArchivedNeeds = pet.needs.filter(need => !need.archived && need.isActive); // Filter needs which are not archived and are active
 
       notArchivedNeeds.forEach(need => {
         if (need.dateFor >= localDateObject) { // Check if dateFor is not past
@@ -131,13 +143,15 @@ const petNeedstoNextDays = async (_request, _response, next) => {
         }
 
         need.archived = true;
-        const howManyDaysDifference = moment(localDateObject).diff(moment(need.dateFor), 'days'); // Check how many days are between the last need date and today
-
+        need.isActive = false;
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
-        for (let i = 1; i <= howManyDaysDifference; i++) {
+        const howManyDaysDifference = moment(localDateObject).diff(moment(newNeedCopy.dateFor), 'days'); // Check how many days are between the last need date and today
+        console.log('howManyDaysDifference', howManyDaysDifference);
+        for (let i = 1; i <= howManyDaysDifference; i++) { // Loop through between the last need date and today
           let newNeed = {
-            dateFor: moment(need.dateFor).add(i, 'days').toDate(),
-            archived: i < howManyDaysDifference, // Only current day get false, past get true
+            dateFor: moment(newNeedCopy.dateFor).add(i, 'days').toDate(),
+            archived: i === howManyDaysDifference ? false : true, // If it's the last day, it's not archived
+            isActive: i === howManyDaysDifference ? true : false, // If it's the last day, it's active
             category: newNeedCopy.category,
             completed: false,
             careRecords: [],
@@ -153,6 +167,7 @@ const petNeedstoNextDays = async (_request, _response, next) => {
         }
       });
       pet.save();
+      console.log('needs updated');
     });
   } catch (error) {
     console.error('Error in petNeedstoNextDays', error);
@@ -165,4 +180,5 @@ module.exports = {
   dailyTaskCompleter,
   tzIdentifierChecker,
   petNeedstoNextDays,
+  checkLocalDateByTimezone,
 };

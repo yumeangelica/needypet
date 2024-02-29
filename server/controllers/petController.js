@@ -1,6 +1,6 @@
 const Pet = require('../models/petModel');
 const User = require('../models/userModel');
-const helper = require('../helper');
+const { dailyTaskCompleter, checkLocalDateByTimezone } = require('../helper');
 
 /**
  * @description Gets all pets (only for dev, later will be removed)
@@ -25,16 +25,26 @@ const getAllPets = async (request, response) => {
 };
 
 /**
- * @description Gets the pet by id
+ * @description Gets the pet by id, returns pet with past and upcoming needs
  * @param {*} request
  * @param {*} response
  * @param {*} next
  */
 const getPetById = async (request, response, next) => {
+  const moment = require('moment-timezone');
   try {
     const pet = request.pet;
+    const currentDate = checkLocalDateByTimezone(request.user.timezone);
+    const pastNeeds = pet.needs.filter(need => moment(need.dateFor).isBefore(currentDate));
+    const futureNeeds = pet.needs.filter(need => moment(need.dateFor).isSameOrAfter(currentDate));
 
-    response.json(pet);
+    const returnPet = {
+      ...pet.toJSON(),
+      pastNeeds,
+      needs: futureNeeds,
+    };
+
+    response.json(returnPet);
   } catch (error) {
     error.name = 'NotFound';
     next(error);
@@ -101,7 +111,21 @@ const addNewPet = async (request, response, next) => {
  * @returns
  */
 const updatePet = async (request, response, next) => {
-  const updateData = request.body;
+  const { name, species, breed, description, birthday, careTakers } = request.body;
+
+  // eslint-disable-next-line prefer-const
+  let updateData = {
+    name: name ? name : request.pet.name,
+    species: species ? species : request.pet.species,
+    breed: breed ? breed : request.pet.breed,
+    description: description ? description : request.pet.description,
+    birthday: birthday ? birthday : request.pet.birthday,
+    careTakers: careTakers ? careTakers : request.pet.careTakers,
+  };
+
+  if (careTakers) {
+    updateData.careTakers.push(request.pet.owner); // Owner is also a care taker, so adding it to the array
+  }
 
   try {
     const updatedPet = await Pet.findOneAndUpdate({ // Finds pet by id, validates by owner and updates it
@@ -290,7 +314,7 @@ const addNewRecord = async (request, response, next) => {
 
   try {
     need.careRecords.push(newRecordObject); // Push new record to care records array
-    helper.dailyTaskCompleter(need); // Check if daily task is completed and change need.completed to true if it is
+    dailyTaskCompleter(need); // Check if daily task is completed and change need.completed to true if it is
     await pet.save();
     response.status(201).json(pet);
   } catch (error) {
