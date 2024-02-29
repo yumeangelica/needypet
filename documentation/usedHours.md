@@ -69,4 +69,7 @@
 | 28.02.24  | Read about licensing and add Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License, update readme and package.json to contain license |             |
 |           | Update readme to contain credits. Add robots.txt to prevent search engine indexing.                                                                                | 2           |
 |           |                                                                                                                                                                    |             |
-| **Total** |                                                                                                                                                                    | **81.0**    |
+| 29.02.24  | Optimize cron function for asynchronous operation. Enhance pet management with improved need handling and model updates                                            |             |
+|           | Add user search and timezone-aware date formatting functionalities. Adjust eslint settings. Test that everything works properly                                    | 4           |
+|           |                                                                                                                                                                    |             |
+| **Total** |                                                                                                                                                                    | **85.0**    |
