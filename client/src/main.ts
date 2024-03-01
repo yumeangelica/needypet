@@ -1,8 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router';
+import router from '@/router/index';
 
 import { IonicVue } from '@ionic/vue';
+
+import { checkAndValidateToken } from '@/services/auth/index';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -23,10 +25,24 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-const app = createApp(App)
-  .use(IonicVue)
-  .use(router);
+async function initApp() {
+  const app = createApp(App).use(IonicVue).use(router);
 
-router.isReady().then(() => {
+  // wait until router is ready before mounting to ensure everything is ready
+  await router.isReady();
+
+  const isValidToken = await checkAndValidateToken();
+
+  // if token is not valid and user is not on login page, redirect to login page
+  if (!isValidToken && router.currentRoute.value.name !== 'login') {
+    router.replace({ name: 'login' });
+  }
+
   app.mount('#app');
-});
+}
+
+initApp();
+
+
+
+
