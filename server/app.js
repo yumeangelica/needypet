@@ -11,39 +11,27 @@ const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 const { petNeedstoNextDays } = require('./helper');
-const corsOptions = require('./utils/corsConfig');
+const { corsHeaders, corsOptions } = require('./utils/corsConfig');
 
 // For dev purposes
 const { getAllPets } = require('./controllers/petController');
 const { getAllUsers } = require('./controllers/userController');
 
-let isPetNeedsUpdating = false;
-
 // Middleware
 app.use(express.json()); // Json parser for post requests
 app.use(requestLogger);
 
-// Cors configuration
-app.use(cors(corsOptions));
-
 // Connect to database
 connectDatabase();
 
+// Cors configuration
+app.use(cors(corsOptions));
+
+// Cors headers
+app.use(corsHeaders);
+
 // Run every hour
-cron.schedule('0 * * * *', async () => {
-  isPetNeedsUpdating = true;
-  await petNeedstoNextDays();
-  isPetNeedsUpdating = false;
-});
-
-// Middleware for maintenance, check if pet needs are updating
-app.use((request, response, next) => {
-  if (isPetNeedsUpdating) {
-    return response.status(503).send('Server is updating pet needs');
-  }
-
-  next();
-});
+cron.schedule('0 * * * *', () => petNeedstoNextDays());
 
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>');

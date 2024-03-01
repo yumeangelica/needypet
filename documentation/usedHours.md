@@ -74,4 +74,10 @@
 |           |                                                                                                                                                                    |             |
 | 29.02.24  | Read about Ionic framework and how to use it with Vue.js. Initialize frontend for the project                                                                      | 3           |
 |           |                                                                                                                                                                    |             |
-| **Total** |                                                                                                                                                                    | **88.0**    |
+| 01.03.24  | Create login and logout functionality for frontend, add axios dependency. Create api and auth service files. Configure frontend                                    |             |
+|           | Create login page and update home page. Show username and logout button in navbar                                                                                  |             |
+|           | Fix cors configuration, and cron function in backend                                                                                                               |             |
+|           | Add validateUserToken function which validates the token, and add route for it. Update token expiresIn. Test that everything works                                 | 10          |
+|           |                                                                                                                                                                    |             |
+|           |                                                                                                                                                                    |             |
+| **Total** |                                                                                                                                                                    | **98.0**    |

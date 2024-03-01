@@ -78,7 +78,8 @@ userSchema.methods.generateJWT = function () {
   return jwt.sign({
     userName: this.userName,
     id: this._id,
-  }, config.jwtSecret, { expiresIn: 60 * 30 }); // Token expires in 30 minutes
+    // eslint-disable-next-line quotes
+  }, config.jwtSecret, { expiresIn: "10h" });
 };
 
 const User = mongoose.model('User', userSchema);

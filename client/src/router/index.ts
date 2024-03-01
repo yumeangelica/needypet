@@ -6,7 +6,13 @@ import PageHome from '@/pages/PageHome.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
+    name: 'home',
     component: PageHome
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/pages/PageLogin.vue')
   },
   // {
   //   path: '/tabs/',
@@ -23,7 +29,7 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  // smoothScroll: true
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {
       return {

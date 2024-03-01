@@ -146,7 +146,6 @@ const petNeedstoNextDays = async (_request, _response, next) => {
         need.isActive = false;
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
         const howManyDaysDifference = moment(localDateObject).diff(moment(newNeedCopy.dateFor), 'days'); // Check how many days are between the last need date and today
-        console.log('howManyDaysDifference', howManyDaysDifference);
         for (let i = 1; i <= howManyDaysDifference; i++) { // Loop through between the last need date and today
           let newNeed = {
             dateFor: moment(newNeedCopy.dateFor).add(i, 'days').toDate(),
