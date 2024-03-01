@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const { passwordStrengthValidator } = require('../middlewares/passwordStrengthValidator');
-
+const jwt = require('jsonwebtoken');
+const { jwtSecret } = require('../utils/config');
 /**
  * @description Gets all users (only for dev, later will be removed)
  * @param {*} request
@@ -211,7 +212,33 @@ const loginUser = async (request, response, next) => {
     }
 
     const token = user.generateJWT(); // Generate token with method from userModel
-    response.status(200).json({ token, userName: user.userName, id: user._id });
+    // response.status(200).json({ token, userName: user.userName, id: user._id });
+    response.status(200).json({ token, user: { userName: user.userName, id: user._id } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const validateUserToken = async (request, response, next) => {
+  const authHeader = request.headers.authorization; // Get authorization header
+  let token = null; // Initialize token so it can be used outside of if statement
+  if (!authHeader) {
+    return response.status(401).json({ error: 'Token missing or invalid' });
+  }
+
+  if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+    token = authHeader.substring(7); // Extract token from header starting from index 7
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, jwtSecret); // Verify token with secret key
+
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'Token invalid' });
+    }
+
+    console.log('Token validated:', token);
+    response.status(200).json({ token });
   } catch (error) {
     next(error);
   }
@@ -225,4 +252,5 @@ module.exports = {
   updateUser,
   deleteUser,
   loginUser,
+  validateUserToken,
 };
