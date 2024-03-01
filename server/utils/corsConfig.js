@@ -6,8 +6,13 @@ const { allowedOrigins } = require('./config');
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-module.exports = corsOptions;
+const corsHeaders = (request, response, next) => {
+  response.header('Access-Control-Allow-Origin', allowedOrigins);
+  response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+  next();
+};
+
+module.exports = { corsOptions, corsHeaders };

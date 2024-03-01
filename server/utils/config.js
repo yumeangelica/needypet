@@ -6,7 +6,7 @@ const isProduction = process.env.NODE_ENV === 'production'; // True if productio
 const mongodbUri = process.env.NODE_ENV === 'test' ? process.env.TEST_MONGODB_URI : process.env.MONGODB_URI; // MongoDB URI based on environment
 const backendPort = process.env.BACKEND_PORT;
 const jwtSecret = process.env.JWT_SECRET;
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
+const allowedOrigins = process.env.ALLOWED_ORIGINS;
 
 module.exports = {
   isDevelopment,
