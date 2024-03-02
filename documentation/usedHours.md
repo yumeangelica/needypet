@@ -81,5 +81,8 @@
 |           |                                                                                                                                                                    |             |
 | 02.03.24  | Update pet update function, so updated pet is added to all new caretakers pet list                                                                                 | 0.25        |
 |           |                                                                                                                                                                    |             |
+| 02.03.24  | Backend: Update dev routes, and add getAllUserPets GET route. Fix addNewPet route by disabling petOwnerValidationMiddleware. Update comments.                      |             |
+|           | Add getAllUserPets function. Improve pet ownership/caretaker validation. Test that everything works                                                                |             |
+|           | Frontend: Implement getAllUserPets function, add getToken function                                                                                                 | 2           |
 |           |                                                                                                                                                                    |             |
-| **Total** |                                                                                                                                                                    | **98.25**   |
+| **Total** |                                                                                                                                                                    | **100.25**  |

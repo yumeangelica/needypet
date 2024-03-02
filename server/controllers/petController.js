@@ -52,6 +52,38 @@ const getPetById = async (request, response, next) => {
 };
 
 /**
+ * @description Gets all pets for the user.
+ * Includes careTakers if the user is the owner.
+ * Filters and returns past and upcoming needs.
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ */
+const getAllUserPets = async (request, response, next) => {
+  try {
+    const user = request.user; // User obj is attached to the request object by getUserHandler middleware
+
+    const pets = (await Pet.find({ $or: [{ owner: user.id }, { careTakers: user.id }] }) // Find all pets that the user is the owner or care taker
+      .populate('needs')
+      .populate('owner', 'userName')
+      .populate('careTakers', 'userName')).map(pet => {
+      // Remove the caretakers list if the user is not the owner
+      if (pet.owner._id.toString() !== user.id.toString()) {
+        // Return only the user in careTakers list
+        pet.careTakers = pet.careTakers.filter(careTaker => careTaker._id.toString() === user.id.toString());
+      }
+
+      return pet;
+    });
+
+    response.json(pets);
+  } catch (error) {
+    console.log('error getting user pets');
+    next(error);
+  }
+};
+
+/**
  * @description Creates a new pet
  * @param {*} request
  * @param {*} response
@@ -71,8 +103,6 @@ const addNewPet = async (request, response, next) => {
   const owner = request.user; // Owner is the user who is making the request
 
   newPetObject.owner = owner.id;
-
-  newPetObject.careTakers.push(owner.id); // Owner is also a care taker
 
   let careTaker;
 
@@ -124,8 +154,6 @@ const updatePet = async (request, response, next) => {
   };
 
   if (careTakers) {
-    updateData.careTakers.push(request.pet.owner); // Owner is also a care taker, so adding it to the array
-
     // Add pet id to care takers pets array
     await User.updateMany(
       { _id: { $in: careTakers } },
@@ -355,4 +383,5 @@ module.exports = {
   addNewNeed,
   addNewRecord,
   deleteNeed,
+  getAllUserPets,
 };

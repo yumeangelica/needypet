@@ -38,8 +38,8 @@ app.get('/', (request, response) => {
 });
 
 // For dev purposes
-app.get('/api/pets', getAllPets);
-app.get('/auth/users', getAllUsers);
+app.get('/dev/pets', getAllPets);
+app.get('/dev/users', getAllUsers);
 
 // Routes
 app.use('/auth', usersRoutes); // No authentication needed for this route - only for testing purposes
