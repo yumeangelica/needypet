@@ -151,29 +151,37 @@ const petSchema = new mongoose.Schema({
 petSchema.plugin(uniqueValidator);
 
 petSchema.set('toJSON', {
-  transform(document, returnedObject) {
-    returnedObject.id = returnedObject._id.toString(); // Change the _id property of the returned object to string id
-
+  transform(doc, returnedObject) {
+    // Convert _id to id
+    returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
+
+    // Remove the __v field
     delete returnedObject.__v;
 
+    // Format birthday
     if (returnedObject.birthday) {
       returnedObject.birthday = returnedObject.birthday.toISOString().split('T')[0]; // Yyyy-mm-dd
     }
 
-    if (returnedObject.needs) { // Change needs _id to string id
+    // Process needs array
+    if (returnedObject.needs) {
       returnedObject.needs.forEach(need => {
+        // Convert _id to id for each need
         if (need._id) {
           need.id = need._id.toString();
           delete need._id;
         }
 
+        // Format dateFor
         if (need.dateFor) {
           need.dateFor = need.dateFor.toISOString().split('T')[0]; // Yyyy-mm-dd
         }
 
-        if (need.careRecords) { // Change careRecords _id to string id
+        // Process careRecords array within each need
+        if (need.careRecords) {
           need.careRecords.forEach(record => {
+            // Convert _id to id for each care record
             if (record._id) {
               record.id = record._id.toString();
               delete record._id;
