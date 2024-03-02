@@ -17,7 +17,7 @@ const getPetHandler = async (request, response, next) => {
       throw new Error('Pet not found');
     }
 
-    request.pet = pet; // Attaching pet to the request object
+    request.pet = pet;
   } catch (error) {
     error.name = 'NotFound';
     next(error);
