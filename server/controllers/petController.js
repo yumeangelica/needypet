@@ -125,6 +125,12 @@ const updatePet = async (request, response, next) => {
 
   if (careTakers) {
     updateData.careTakers.push(request.pet.owner); // Owner is also a care taker, so adding it to the array
+
+    // Add pet id to care takers pets array
+    await User.updateMany(
+      { _id: { $in: careTakers } },
+      { $addToSet: { pets: request.pet.id } },
+    );
   }
 
   try {

@@ -79,5 +79,7 @@
 |           | Fix cors configuration, and cron function in backend                                                                                                               |             |
 |           | Add validateUserToken function which validates the token, and add route for it. Update token expiresIn. Test that everything works                                 | 10          |
 |           |                                                                                                                                                                    |             |
+| 02.03.24  | Update pet update function, so updated pet is added to all new caretakers pet list                                                                                 | 0.25        |
 |           |                                                                                                                                                                    |             |
-| **Total** |                                                                                                                                                                    | **98.0**    |
+|           |                                                                                                                                                                    |             |
+| **Total** |                                                                                                                                                                    | **98.25**   |
