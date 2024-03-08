@@ -4,8 +4,6 @@ import router from '@/router/index';
 
 import { IonicVue } from '@ionic/vue';
 
-import { checkAndValidateToken } from '@/services/auth/index';
-
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
 
@@ -25,24 +23,38 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-async function initApp() {
-  const app = createApp(App).use(IonicVue).use(router);
+/* Custom styles */
+import './theme/styles.css';
 
-  // wait until router is ready before mounting to ensure everything is ready
+import { createPinia } from 'pinia';
+import { useUserStore } from '@/store/user';
+import { usePetStore } from './store/pet';
+
+async function initApp() {
+
+  const app = createApp(App)
+  .use(IonicVue)
+  .use(router)
+  .use(createPinia());
+
+  const userStore = useUserStore();
+  const petStore = usePetStore();
+
   await router.isReady();
 
-  const isValidToken = await checkAndValidateToken();
+  if (!userStore.token) { // if the token is not in the store, try to get it from the local storage
+    await userStore.initializeFromLocalStorage();
+  }
 
-  // if token is not valid and user is not on login page, redirect to login page
-  if (!isValidToken && router.currentRoute.value.name !== 'login') {
-    router.replace({ name: 'login' });
+  const isValidToken = await userStore.checkAndValidateToken();
+  if (isValidToken) {
+    await petStore.getAllPets();
+    router.push({ name: 'home' });
+  } else {
+    router.push({ name: 'login' });
   }
 
   app.mount('#app');
 }
 
 initApp();
-
-
-
-
