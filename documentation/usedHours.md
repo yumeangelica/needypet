@@ -100,7 +100,7 @@
 |           | Create a dedicated Axios instance file for backend connectivity, ensuring efficient and centralized API communication.                                             |             |
 |           | Innovate a Pinia store dedicated to application UI, managing screen states for enhanced user interface control.                                                    |             |
 |           | Create styles CSS file for the app.                                                                                                                                |             |
-|           | Create a 'Pet Card' component that showcases pet names and serves as a navigational link to individual pet views.                                                  | 12          |
-|           |                                                                                                                                                                    |             |
+|           | Create a 'Pet Card' component that showcases pet names and serves as a navigational link to individual pet views.                                                  |             |
+|           | Test that everything works properly.                                                                                                                               | 12          |
 |           |                                                                                                                                                                    |             |
 | **Total** |                                                                                                                                                                    | **112.25**  |
