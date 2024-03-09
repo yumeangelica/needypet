@@ -1,0 +1,24 @@
+body, h2, h3, p, li {
+  font-family: 'Arial', sans-serif;
+  color: #555555;
+  line-height: 1.6;
+}
+
+h2 {
+  color: #333333;
+  font-size: 28px;
+}
+
+h3 {
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 5px;
+}

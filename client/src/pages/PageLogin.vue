@@ -1,86 +1,77 @@
 <template>
-  <div class="login-container">
-    <h1>Login</h1>
-    <form @submit.prevent="login" class="login-form">
-      <div class="form-group">
-        <label for="userName">Username</label>
-        <input type="text" id="userName" placeholder="Username" v-model="userName">
+  <ion-page>
+    <ion-header v-if="!isMobile">
+      <ion-toolbar>
+        <ion-title>Login</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <div class="login-container">
+
+        <form @submit.prevent="login">
+          <ion-item>
+            <ion-input type="text" v-model="userName" placeholder="Enter your username" aria-label="Username"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input type="password" v-model="password" placeholder="Enter your password" aria-label="Password"></ion-input>
+          </ion-item>
+
+          <ion-button expand="full" type="submit" class="login-button">Login</ion-button>
+
+          <div v-if="loginError" class="error-message">
+            Signing in failed. Please check your credentials and try again.
+          </div>
+        </form>
       </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Password" v-model="password">
-      </div>
-      <button type="submit" class="login-button">Login</button>
-      <div v-if="loginError" class="error-message">
-        Signing in failed. Please check your credentials and try again.
-      </div>
-    </form>
-  </div>
+    </ion-content>
+  </ion-page>
 </template>
 
-<script>
-import { loginUser } from '@/services/auth';
+<script setup>
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/user';
+import { useAppStore } from '@/store/app';
+import { usePetStore } from '@/store/pet';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonInput, IonButton } from '@ionic/vue';
 
-export default {
-  data() {
-    return {
-      userName: '',
-      password: '',
-      loginError: false,
-    };
-  },
-  methods: {
-    async login() {
-      this.loginError = false; // Reset error on new submission
-      const isSuccess = await loginUser(this.userName, this.password);
-      if (!isSuccess) {
-        this.loginError = true;
-        return false;
-      }
-        this.$router.replace({ name: 'home' });
-        return true;
-    },
+
+const userName = ref('');
+const password = ref('');
+const loginError = ref(false);
+const router = useRouter();
+const userStore = useUserStore();
+const appStore = useAppStore();
+const petStore = usePetStore();
+const isMobile = computed(() => appStore.isMobile);
+
+const login = async () => {
+
+  // loginError is boolean, set to true if login fails
+  loginError.value = !await userStore.login(userName.value, password.value);
+
+  // If login was successful, redirect to home page
+  if (!loginError.value) {
+    await petStore.getAllPets();
+    router.push({ name: 'home' });
   }
-}
+};
 </script>
 
 <style scoped>
 .login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh; /* Use full screen height */
-}
-
-.login-form {
-  width: 100%;
-  max-width: 320px; /* Set max-width for the form */
+  max-width: 500px;
   margin: 0 auto;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better styling */
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.login-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #5c6bc0;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-.login-button:hover {
-  background-color: #3f51b5;
 }
 
 .error-message {
   color: red;
   text-align: center;
+  margin-top: 20px;
+}
+
+.login-button {
   margin-top: 20px;
 }
 </style>

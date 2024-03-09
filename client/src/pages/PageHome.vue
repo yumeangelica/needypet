@@ -1,45 +1,53 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Home</ion-title>
-        <div slot="end" style="display: flex; align-items: center;">
-          <span>Welcome, {{ userName }}!</span>
-          <ion-button fill="clear" color="medium" @click="logout">Logout</ion-button>
-        </div>
-      </ion-toolbar>
-    </ion-header>
     <ion-content :fullscreen="true">
-
+      <div class="content-wrapper">
+        <div v-if="petStore.pets.length > 0">
+          <h2>Pets that you own:</h2>
+          <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
+        </div>
+        <div v-if="petStore.pets.length > 0">
+          <h2>Pets that you take care of:</h2>
+          <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
+        </div>
+      </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton } from '@ionic/vue';
-import { ref, onMounted } from 'vue';
-import { getAllUserPets } from '@/services/api';
+import { IonPage, IonContent } from '@ionic/vue';
+import { ref } from 'vue';
+import { usePetStore } from '@/store/pet';
+import ThePetCard from '@/components/ThePetCard.vue';
 
-const userName = ref(localStorage.getItem('userName') || 'Guest');
-const pets = ref([]);
+const petStore = usePetStore();
+const ownPets = ref(petStore.getOwnerPets());
+const carerPets = ref(petStore.getCarerPets());
 
-const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userName');
-  localStorage.removeItem('id');
-  window.location.href = '/login';
-};
-
-onMounted(async () => {
-  const petsData = await getAllUserPets();
-  pets.value = petsData;
-});
 </script>
-
 <style scoped>
 ion-buttons span {
   margin-right: 1rem;
   color: #fff;
+}
+
+.pet-container {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pet-container h2 {
+  margin-top: 0;
+}
+
+
+.content-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-top: 60px; /* Lisätään ylimääräistä tilaa yläpalkin ja sisällön väliin */
 }
 
 .pet-container {
