@@ -85,4 +85,22 @@
 |           | Add getAllUserPets function. Improve pet ownership/caretaker validation. Test that everything works                                                                |             |
 |           | Frontend: Implement getAllUserPets function, add getToken function                                                                                                 | 2           |
 |           |                                                                                                                                                                    |             |
-| **Total** |                                                                                                                                                                    | **100.25**  |
+| 08.03.24  | Comprehensive update of login, routing, and pet features. Update the login page to utilize Ionic framework, enhancing user experience.                             |             |
+|           | Implement a dynamic header display for mobile and desktop.                                                                                                         |             |
+|           | Integrate Pinia for state management, enabling improved login functionality and seamless state persistence.                                                        |             |
+|           | Add 'initializeFromLocalStorage' to maintain user session.                                                                                                         |             |
+|           | Redesign file structure: Isolate header into its own component for better modularity, complemented with basic styling adjustments.                                 |             |
+|           | Implement adaptive routing views for mobile and desktop, enhancing the app's responsiveness and user interaction.                                                  |             |
+|           | Develop a comprehensive Pinia store for pets, featuring actions like 'getAllPets', and getters including 'getOwnerPets', 'getCarerPets', and 'getPetById'.         |             |
+|           | Establish a user-focused Pinia store, adding critical functionalities such as 'logout', 'login', 'initializeFromLocalStorage', and token validation methods.       |             |
+|           | Create 'TheHeader' component, showcasing home button, username, and logout features, visible only to logged-in users and hidden in mobile mode.                    |             |
+|           | In mobile mode, transition the header to an Ionic tab, positioned at the bottom of the application, optimizing user interface for mobile users.                    |             |
+|           | Develop 'PagePet' component to display detailed pet information based on ID.                                                                                       |             |
+|           | Modify the router configuration to include a route for 'PagePet', streamlining navigation within the application.                                                  |             |
+|           | Create a dedicated Axios instance file for backend connectivity, ensuring efficient and centralized API communication.                                             |             |
+|           | Innovate a Pinia store dedicated to application UI, managing screen states for enhanced user interface control.                                                    |             |
+|           | Create styles CSS file for the app.                                                                                                                                |             |
+|           | Create a 'Pet Card' component that showcases pet names and serves as a navigational link to individual pet views.                                                  | 12          |
+|           |                                                                                                                                                                    |             |
+|           |                                                                                                                                                                    |             |
+| **Total** |                                                                                                                                                                    | **112.25**  |
