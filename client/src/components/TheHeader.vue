@@ -11,6 +11,7 @@
     </ion-toolbar>
   </ion-header>
 </template>
+
 <script setup>
 import { IonHeader, IonToolbar, IonButton, IonButtons } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
@@ -22,9 +23,8 @@ const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
 const appStore = useAppStore();
-const userName = userStore.userName;
+const userName = computed(() => userStore.userName);
 const isMobile = computed(() => appStore.isMobile);
-
 const isLoginPage = computed(() => route.name === 'login');
 
 const logout = async () => {
