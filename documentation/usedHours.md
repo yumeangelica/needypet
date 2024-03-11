@@ -103,4 +103,8 @@
 |           | Create a 'Pet Card' component that showcases pet names and serves as a navigational link to individual pet views.                                                  |             |
 |           | Test that everything works properly.                                                                                                                               | 12          |
 |           |                                                                                                                                                                    |             |
-| **Total** |                                                                                                                                                                    | **112.25**  |
+|           | Create types for the frontend. Create 'TheMobileHeader' component for mobile mode. Enhance functions and Pinia state with type annotations.                        |             |
+|           | Integrate 'TheMobileHeader' into the app.vue file. Bugfixes: modify the 'userName' handling to utilize a computed method.                                          |             |
+|           | Also refactor the homepage functionality to fetch filtered pets initially. Implement a watch method for dynamic list updates. Test with different browsers.        | 4           |
+|           |                                                                                                                                                                    |             |
+| **Total** |                                                                                                                                                                    | **116.25**  |
