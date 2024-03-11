@@ -2,12 +2,13 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 import { axiosInstance } from '@/services';
 import { useUserStore } from './user';
+import { PetState, Pet } from '@/types/pet';
 
 const servicePath = '/api';
 
 export const usePetStore = defineStore({
   id: 'pet',
-  state: () => ({
+  state: (): PetState => ({
     pets: [],
   }),
   actions: {
@@ -15,7 +16,7 @@ export const usePetStore = defineStore({
      * @description Get all user's pets from the server
      * @returns
      */
-    async getAllPets() {
+    async getAllPets(): Promise<boolean> {
       const userStore = useUserStore();
       const token = userStore.token;
 
@@ -46,15 +47,15 @@ export const usePetStore = defineStore({
     },
   },
   getters: {
-    getOwnerPets: (state) => () => {
+    getOwnerPets: (state) => async (): Promise<Pet[]> => {
       const userStore = useUserStore();
       return state.pets.filter(pet => pet.owner.id === userStore.id);
     },
-    getCarerPets: (state) => () => {
+    getCarerPets: (state) => async (): Promise<Pet[]> => {
       const userStore = useUserStore();
       return state.pets.filter(pet => pet.owner.id !== userStore.id);
     },
-    getPetById: (state) => (id: string) => {
+    getPetById: (state) => (id: string): Pet | undefined => {
       return state.pets.find(pet => pet.id === id);
     },
   }

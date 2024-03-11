@@ -2,6 +2,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import router from "@/router/index";
 import { axiosInstance } from "@/services";
+import { UserState } from "@/types/user"
 
 const servicePath = "/auth";
 
@@ -10,7 +11,7 @@ const servicePath = "/auth";
  * @param key
  * @param value
  */
-const setLocalStorageItem = async (key: string, value: string) => {
+const setLocalStorageItem = async (key: string, value: string): Promise<void> => {
   localStorage.setItem(key, value);
 };
 
@@ -20,7 +21,7 @@ const setLocalStorageItem = async (key: string, value: string) => {
  * @param userName
  * @param id
  */
-const setAuthData = async (token: string, userName: string, id: string) => {
+const setAuthData = async (token: string, userName: string, id: string): Promise<void> => {
   const userStore = useUserStore(); // get the user store
   await setLocalStorageItem("token", token);
   await setLocalStorageItem("userName", userName);
@@ -37,19 +38,19 @@ const setAuthData = async (token: string, userName: string, id: string) => {
  */
 export const useUserStore = defineStore({
   id: "user",
-  state: () => ({
+  state: (): UserState => ({
     token: null,
     userName: null,
     id: null,
   }),
   actions: {
-    async logout() {
+    async logout(): Promise<void> {
       this.token = this.userName = this.id = null; // reset the store state
       localStorage.clear();
       router.push({ name: "login" });
       window.location.href = "/login";
     },
-    async login(userName: string, password: string) {
+    async login(userName: string, password: string): Promise<boolean> {
       const response = axiosInstance({
         method: "post",
         url: `${servicePath}/login`,
@@ -81,7 +82,7 @@ export const useUserStore = defineStore({
     /**
      * @description Initialize the store from the local storage
      */
-    async initializeFromLocalStorage() {
+    async initializeFromLocalStorage(): Promise<void> {
       this.token = localStorage.getItem("token") || null;
       this.userName = localStorage.getItem("userName") || null;
       this.id = localStorage.getItem("id") || null;
@@ -89,7 +90,7 @@ export const useUserStore = defineStore({
     /**
      * @description Check if the token is valid
      */
-    async checkAndValidateToken() {
+    async checkAndValidateToken(): Promise<boolean> {
       if (!this.token) {
         return false;
       }
@@ -122,7 +123,7 @@ export const useUserStore = defineStore({
      * @param state
      * @returns
      */
-    isLoggedIn: (state) => !!state.token
+    isLoggedIn: (state): boolean => !!state.token,
   },
 });
 
