@@ -22,3 +22,10 @@ ul {
 li {
   margin-bottom: 5px;
 }
+
+.content-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-top: 100px; /* Add padding to the top of the content wrapper to make room for the fixed header */
+}
