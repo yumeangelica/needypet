@@ -5,7 +5,7 @@
         <ion-button @click="navigateHome">Home</ion-button>
       </ion-buttons>
       <div slot="end" style="display: flex; align-items: center;">
-        <span>Welcome, {{ userName }}!</span>
+        <span><router-link :to="{name: 'profile'}">{{ userName }}</router-link></span>
         <ion-button fill="clear" color="medium" @click="logout">Logout</ion-button>
       </div>
     </ion-toolbar>
