@@ -4,12 +4,14 @@ type Token = string;
 interface User {
   id: string;
   userName: string;
+  email?: string;
+  timezone?: string;
 }
 
-interface UserState {
+interface UserStoreState {
   token: Token;
   userName: User["userName"];
   id: User["id"];
 }
 
-export { Token, User, UserState };
+export { Token, User, UserStoreState };

@@ -27,7 +27,7 @@ const ownPets = ref([]);
 const carerPets = ref([]);
 
 // Fetch the filtered pets from the store
-const updatePetLists = async  () => {
+const updatePetLists = async () => {
   if (petStore.pets.length === 0) {
     return;
   }
@@ -57,14 +57,6 @@ ion-buttons span {
 
 .pet-container h2 {
   margin-top: 0;
-}
-
-
-.content-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  padding-top: 60px; /* Lisätään ylimääräistä tilaa yläpalkin ja sisällön väliin */
 }
 
 .pet-container {
