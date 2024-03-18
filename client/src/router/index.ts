@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-// import TabsPage from '@/pages/TabsPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,26 +15,15 @@ const routes: Array<RouteRecordRaw> = [
     props: true
   },
   {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('@/pages/PageProfile.vue'),
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/pages/PageLogin.vue'),
   },
-  // Using as an example
-  // {
-  //   path: '/tabs/',
-  //   component: TabsPage,
-  //   children: [
-  //     {
-  //       path: '/',
-
-  //     },
-  //     {
-  //       path: 'tab1',
-  //       component: () => import('@/pages/Tab1Page.vue')
-  //     },
-  //   ]
-  // }
-
 ]
 
 const router = createRouter({
