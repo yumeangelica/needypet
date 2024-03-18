@@ -2,7 +2,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import router from "@/router/index";
 import { axiosInstance } from "@/services";
-import { UserState } from "@/types/user"
+import { UserStoreState, User } from "@/types/user"
 
 const servicePath = "/auth";
 
@@ -38,12 +38,36 @@ const setAuthData = async (token: string, userName: string, id: string): Promise
  */
 export const useUserStore = defineStore({
   id: "user",
-  state: (): UserState => ({
+  state: (): UserStoreState => ({
     token: null,
     userName: null,
     id: null,
   }),
   actions: {
+    async getUserById(id: string): Promise<User> {
+
+      const response = axiosInstance({
+        method: "get",
+        url: `${servicePath}/users/${id}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+        .then((response) => {
+
+          if (response.status === 200) {
+            return response.data;
+          }
+          return null;
+        })
+        .catch((error) => {
+          console.error("Error during get user by id:", error.response?.status);
+          return null;
+        });
+
+      return response;
+    },
     async logout(): Promise<void> {
       this.token = this.userName = this.id = null; // reset the store state
       localStorage.clear();
