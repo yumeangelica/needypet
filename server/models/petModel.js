@@ -97,7 +97,7 @@ const petSchema = new mongoose.Schema({
       },
       unit: {
         type: String,
-        emit: ['minute', 'minutes'],
+        emit: 'minutes',
       },
     },
     completed: { // Automatically changes when all tasks of this need are completed -- logic need to be implemented
@@ -133,7 +133,7 @@ const petSchema = new mongoose.Schema({
         },
         unit: {
           type: String,
-          emit: ['minute', 'minutes'],
+          emit: 'minutes',
         },
       },
     }],
