@@ -4,17 +4,17 @@ import { User } from './user';
 
 type UserID = User; // type alias for the User type
 
-type quantity = {
+type Quantity = {
   value: number;
   unit: 'ml' | 'g';
 };
 
-type duration = {
+type Duration = {
   value: number;
-  unit: 'minute' | 'minutes';
+  unit: 'minutes';
 };
 
-type frequency = {
+type Frequency = {
   times: number;
   periodicity: {
     unit: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom';
@@ -31,21 +31,22 @@ interface CareRecord {
   date: Date;
   careTaker: UserID;
   note?: string;
-  quantity?: quantity;
-  duration?: duration;
+  quantity?: Quantity;
+  duration?: Duration;
 }
 
 interface Need {
-  dateFor: Date;
+  id?: string;
+  dateFor: string;
   category: string;
-  description?: string;
-  quantity?: quantity;
-  duration?: duration;
-  completed: boolean;
+  description: string;
+  quantity?: Quantity;
+  duration?: Duration;
+  completed?: boolean;
   careRecords?: CareRecord[];
-  archived: boolean;
-  isActive: boolean;
-  frequency?: frequency;
+  archived?: boolean;
+  isActive?: boolean;
+  frequency?: Frequency;
 }
 
 interface Pet {
