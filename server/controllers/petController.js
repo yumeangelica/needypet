@@ -248,7 +248,7 @@ const addNewNeed = async (request, response, next) => {
     return response.status(400).json({ error: 'Duration time length cannot be over 1440 minutes' });
   }
 
-  if (request.body.need.duration && request.body.need.duration.unit !== 'minute' && request.body.need.duration.unit !== 'minutes') {
+  if (request.body.need.duration && request.body.need.duration.unit !== 'minutes') {
     return response.status(400).json({ error: 'Duration unit minute(s) required ' });
   }
 
