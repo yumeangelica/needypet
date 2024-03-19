@@ -29,3 +29,14 @@ li {
   padding: 20px;
   padding-top: 100px; /* Add padding to the top of the content wrapper to make room for the fixed header */
 }
+
+
+/* Over ride ionic primary button */
+.ion-color-primary {
+  --ion-color-base: var(--ion-color-pink) !important;
+  --ion-color-base-rgb: var(--ion-color-pink-rgb) !important;
+  --ion-color-contrast: var(--ion-color-pink-contrast) !important;
+  --ion-color-contrast-rgb: var(--ion-color-pink-contrast-rgb) !important;
+  --ion-color-shade: var(--ion-color-pink-shade) !important;
+  --ion-color-tint: var(--ion-color-pink-tint) !important;
+}

@@ -74,6 +74,14 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+
+  /** custom colors **/
+  --ion-color-pink: #f364f6;
+  --ion-color-pink-rgb: 243, 100, 246;
+  --ion-color-pink-contrast: #ffffff;
+  --ion-color-pink-contrast-rgb: 255, 255, 255;
+  --ion-color-pink-shade: #d44cd4;
+  --ion-color-pink-tint: #f778f7;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -236,7 +244,9 @@ http://ionicframework.com/docs/theming/ */
 }
 
 html {
-  /* For more information on dynamic font scaling, visit the documentation: 
+  /* For more information on dynamic font scaling, visit the documentation:
   https://ionicframework.com/docs/layout/dynamic-font-scaling */
   --ion-dynamic-font: var(--ion-default-dynamic-font);
 }
+
+
