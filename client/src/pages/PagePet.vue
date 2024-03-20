@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-content>
-      <div class="pet-container" v-if="pet">
+    <ion-content v-if="pet">
+      <div class="pet-container">
         <div class="pet-card">
           <h2 class="pet-name">{{ pet.name }}</h2>
           <div class="pet-info">
@@ -106,6 +106,11 @@
           </ul>
 
         </div>
+      </div>
+    </ion-content>
+    <ion-content v-else>
+      <div class="pet-container">
+        <p>Pet not found</p>
       </div>
     </ion-content>
   </ion-page>
