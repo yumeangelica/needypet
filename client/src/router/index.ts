@@ -24,11 +24,22 @@ const routes: Array<RouteRecordRaw> = [
     name: 'login',
     component: () => import('@/pages/PageLogin.vue'),
   },
+  {
+    path: '/:pathMatch(.*)*',
+    name: '404',
+    component: () => import('@/pages/PageNotFound.vue'),
+  }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes
 })
+
+// Save the current path to the session storage
+router.beforeEach((to, _, next) => {
+  sessionStorage.setItem('currentPath', to.fullPath);
+  next();
+});
 
 export default router

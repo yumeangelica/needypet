@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
 import router from '@/router/index';
 
 import { IonicVue } from '@ionic/vue';
@@ -31,25 +31,28 @@ import { useUserStore } from '@/store/user';
 import { usePetStore } from './store/pet';
 
 async function initApp() {
-
-  const app = createApp(App)
-  .use(IonicVue)
-  .use(router)
-  .use(createPinia());
+  const app = createApp(App).use(IonicVue).use(router).use(createPinia());
 
   const userStore = useUserStore();
   const petStore = usePetStore();
 
   await router.isReady();
 
-  if (!userStore.token) { // if the token is not in the store, try to get it from the local storage
+  // if the token is not in the store, try to get it from the local storage
+  if (!userStore.token) {
     await userStore.initializeFromLocalStorage();
   }
 
   const isValidToken = await userStore.checkAndValidateToken();
   if (isValidToken) {
     await petStore.getAllPets();
-    router.push({ name: 'home' });
+
+    const currentPath = sessionStorage.getItem('currentPath');
+    if (currentPath && currentPath !== '/') {
+      router.push(currentPath);
+    } else {
+      router.push({ name: 'home' });
+    }
   } else {
     router.push({ name: 'login' });
   }
