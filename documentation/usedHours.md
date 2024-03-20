@@ -117,4 +117,8 @@
 |           | Add 'Add Need' button and modal form for adding a new need. Implement functionality for adding new needs. Modify `getPetById` function to filter not archived needs. |             |
 |           | Add styling to various components. Manually test that everything works properly.                                                                                     | 7           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **125.75**  |
+| 20.03.24  | Implement navigation error handling features including a 404 page for undefined routes.                                                                              |             |
+|           | Add sessionStorage logic for persisting page state across refreshes, and conditional rendering for "Pet not found" scenarios.                                        |             |
+|           | Also add a beforeEach navigation guard for storing current fullPath in sessionStorage. Test with different browsers that everything works.                           | 2.25        |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **128**     |
