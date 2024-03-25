@@ -121,4 +121,7 @@
 |           | Add sessionStorage logic for persisting page state across refreshes, and conditional rendering for "Pet not found" scenarios.                                        |             |
 |           | Also add a beforeEach navigation guard for storing current fullPath in sessionStorage. Test with different browsers that everything works.                           | 2.25        |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **128**     |
+| 25.03.24  | Fix userController test cases and add new tests. Implement API tests for user creation and login. Correct status code in deleteUser function in userController.      |             |
+|           | Exclude cron and logger in test env with NODE_ENV. Add detectOpenHandles to test script. Test that everything works.                                                 | 5           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **133**     |
