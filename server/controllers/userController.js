@@ -187,7 +187,7 @@ const deleteUser = async (request, response, next) => {
       return response.status(404).json({ error: 'User not found' });
     }
 
-    response.status(200).json({ message: 'User deleted successfully' });
+    response.status(204).json({ message: 'User deleted successfully' });
   } catch (error) {
     console.error('Error deleting user:', error);
     next(error);
