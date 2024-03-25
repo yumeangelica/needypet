@@ -19,7 +19,9 @@ const { getAllUsers } = require('./controllers/userController');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
-app.use(requestLogger);
+if (process.env.NODE_ENV !== 'test') {
+  app.use(requestLogger); // Request logger
+}
 
 // Connect to database
 connectDatabase();
@@ -31,7 +33,9 @@ app.use(cors(corsOptions));
 app.use(corsHeaders);
 
 // Run every hour
-cron.schedule('0 * * * *', () => petNeedstoNextDays());
+if (process.env.NODE_ENV !== 'test') {
+  cron.schedule('0 * * * *', () => petNeedstoNextDays());
+}
 
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>');
