@@ -34,7 +34,7 @@ app.use(corsHeaders);
 
 // Run every hour
 if (process.env.NODE_ENV !== 'test') {
-  cron.schedule('0 * * * *', () => petNeedstoNextDays());
+  cron.schedule('0 * * * *', () => petNeedstoNextDays()); // Check if pet needs needs updated every hour, if midnight, update pet needs
 }
 
 app.get('/', (request, response) => {
@@ -42,8 +42,10 @@ app.get('/', (request, response) => {
 });
 
 // For dev purposes
-app.get('/dev/pets', getAllPets);
-app.get('/dev/users', getAllUsers);
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/dev/pets', getAllPets);
+  app.get('/dev/users', getAllUsers);
+}
 
 // Routes
 app.use('/auth', usersRoutes); // No authentication needed for this route - only for testing purposes
