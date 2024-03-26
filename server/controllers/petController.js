@@ -92,10 +92,11 @@ const getAllUserPets = async (request, response, next) => {
  */
 const addNewPet = async (request, response, next) => {
   const newPetObject = {
-    name: request.body.name,
-    breed: request.body.breed,
-    description: request.body.description,
-    birthday: request.body.birthday,
+    name: request.body.name || '',
+    breed: request.body.breed || '',
+    description: request.body.description || '',
+    species: request.body.species || '',
+    birthday: request.body.birthday || '',
     owner: '',
     careTakers: [],
   };
