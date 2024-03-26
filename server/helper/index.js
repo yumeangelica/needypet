@@ -76,7 +76,7 @@ const checkLocalDateByTimezone = timezone => {
  * @param {*} next
  * @returns
   */
-const petNeedstoNextDays = async (_request, _response, next) => {
+const petNeedstoNextDays = async () => {
   const User = require('../models/userModel');
   const moment = require('moment-timezone');
   try {
@@ -136,12 +136,14 @@ const petNeedstoNextDays = async (_request, _response, next) => {
     allPets.forEach(pet => {
       // Find all needs which are not archived by pet
       const notArchivedNeeds = pet.needs.filter(need => !need.archived && need.isActive); // Filter needs which are not archived and are active
+      let needsUpdated = false; // Flag for checking if needs are updated
 
       notArchivedNeeds.forEach(need => {
-        if (need.dateFor >= localDateObject) { // Check if dateFor is not past
+        if (moment(need.dateFor).isSameOrAfter(localDateObject, 'day')) {
           return;
         }
 
+        needsUpdated = true;
         need.archived = true;
         need.isActive = false;
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
@@ -165,14 +167,14 @@ const petNeedstoNextDays = async (_request, _response, next) => {
           pet.needs.push(newNeed);
         }
       });
-      pet.save();
-      console.log('needs updated');
+      if (needsUpdated) {
+        pet.save();
+        console.log('Pet\'s needs updated');
+      }
     });
   } catch (error) {
     console.error('Error in petNeedstoNextDays', error);
   }
-
-  next();
 };
 
 module.exports = {
