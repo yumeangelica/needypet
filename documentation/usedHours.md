@@ -124,4 +124,8 @@
 | 25.03.24  | Fix userController test cases and add new tests. Implement API tests for user creation and login. Correct status code in deleteUser function in userController.      |             |
 |           | Exclude cron and logger in test env with NODE_ENV. Add detectOpenHandles to test script. Test that everything works.                                                 | 5           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **133**     |
+| 26.3.24   | Backend: Enhance addNewPet by adding species field and initializing fields with empty strings for integrity.                                                         |             |
+|           | Disable dev routes in production for security. Add checks in dateFor and an update boolean. Make owner required in petModel. Manually test that everything works.    | 3           |
+|           |                                                                                                                                                                      |             |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **136**     |
