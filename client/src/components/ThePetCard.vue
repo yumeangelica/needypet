@@ -19,7 +19,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 
@@ -35,6 +35,7 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #fff;
 }
+
 .pet-card h2 {
   margin: 0;
 }

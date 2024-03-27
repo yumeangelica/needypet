@@ -6,13 +6,13 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: () => import('@/pages/PageHome.vue'),
-    alias: '/pets'
+    alias: '/pets',
   },
   {
     path: '/pets/:id',
     name: 'pet',
     component: () => import('@/pages/PagePet.vue'),
-    props: true
+    props: true,
   },
   {
     path: '/profile',
@@ -28,13 +28,13 @@ const routes: Array<RouteRecordRaw> = [
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('@/pages/PageNotFound.vue'),
-  }
-]
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
-})
+  routes,
+});
 
 // Save the current path to the session storage
 router.beforeEach((to, _, next) => {
@@ -42,4 +42,4 @@ router.beforeEach((to, _, next) => {
   next();
 });
 
-export default router
+export default router;
