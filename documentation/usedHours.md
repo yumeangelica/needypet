@@ -127,5 +127,6 @@
 | 26.3.24   | Backend: Enhance addNewPet by adding species field and initializing fields with empty strings for integrity.                                                         |             |
 |           | Disable dev routes in production for security. Add checks in dateFor and an update boolean. Make owner required in petModel. Manually test that everything works.    | 3           |
 |           |                                                                                                                                                                      |             |
+| 27.3.24   | Frontend: Add eslint typescript dependencies, run eslint and format code. Update all outdated dependencies. Add species for pet. Test that everything works.         | 1.25        |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **136**     |
+| **Total** |                                                                                                                                                                      | **137.25**  |
