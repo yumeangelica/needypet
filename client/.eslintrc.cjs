@@ -1,20 +1,54 @@
 module.exports = {
-  root: true,
-  env: {
-    node: true
+  'env': {
+    'browser': true,
+    'es2021': true,
+    'node': true
   },
   'extends': [
-    'plugin:vue/vue3-essential',
     'eslint:recommended',
-    '@vue/typescript/recommended'
+    'plugin:@typescript-eslint/recommended',
+    'plugin:vue/vue3-essential'
   ],
-  parserOptions: {
-    ecmaVersion: 2020
+  'overrides': [
+    {
+      'env': {
+        'node': true
+      },
+      'files': [
+        '.eslintrc.{js,cjs}'
+      ],
+      'parserOptions': {
+        'sourceType': 'script'
+      }
+    }
+  ],
+  'parser': 'vue-eslint-parser',
+  'parserOptions': {
+    'ecmaVersion': 'latest',
+    'parser': '@typescript-eslint/parser',
+    'sourceType': 'module'
   },
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'vue/no-deprecated-slot-attribute': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+  'plugins': [
+    '@typescript-eslint',
+    'vue'
+  ],
+  'rules': {
+    'indent': [
+      'error',
+      2
+    ],
+    'linebreak-style': [
+      'error',
+      'unix'
+    ],
+    'quotes': [
+      'error',
+      'single'
+    ],
+    'semi': [
+      'error',
+      'always'
+    ],
+    'vue/no-deprecated-slot-attribute': 'off'
   }
-}
+};
