@@ -6,6 +6,7 @@
           <h2 class="pet-name">{{ pet.name }}</h2>
           <div class="pet-info">
             <p><strong>Description:</strong> {{ pet.description }}</p>
+            <p><strong>Species:</strong> {{ pet.species }} </p>
             <p><strong>Breed:</strong> {{ pet.breed }}</p>
             <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
           </div>
@@ -22,6 +23,7 @@
             </ul>
           </div>
 
+          <!-- Need related container -->
           <div class="header-button-container">
             <h3>Needs:</h3>
             <ion-button class="custom-button" color="primary" @click="setOpen(true)" v-if="pet.owner.id === userStore.id">
@@ -30,6 +32,7 @@
             </ion-button>
           </div>
 
+          <!-- Modal which opens when 'add need' button is clicked -->
           <ion-modal :is-open="isOpen">
             <ion-header>
               <ion-toolbar>
@@ -95,7 +98,7 @@
                 </ion-item>
               </div>
 
-
+              <!-- Error message if details are not correct -->
               <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
             </ion-content>
           </ion-modal>
@@ -244,7 +247,7 @@ const confirm = async () => {
 
 watch(selection, (newValue) => {
   if (newValue === 'duration') {
-    unitOfSelection.value = "minutes";
+    unitOfSelection.value = 'minutes';
   }
 });
 

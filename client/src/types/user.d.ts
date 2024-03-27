@@ -10,8 +10,8 @@ interface User {
 
 interface UserStoreState {
   token: Token;
-  userName: User["userName"];
-  id: User["id"];
+  userName: User['userName'];
+  id: User['id'];
 }
 
 export { Token, User, UserStoreState };
