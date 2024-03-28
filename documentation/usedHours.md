@@ -129,4 +129,11 @@
 |           |                                                                                                                                                                      |             |
 | 27.3.24   | Frontend: Add eslint typescript dependencies, run eslint and format code. Update all outdated dependencies. Add species for pet. Test that everything works.         | 1.25        |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **137.25**  |
+| 28.3.24   | Frontend: Implement Need card component and addRecord function for updating specific needs. Introduce eslint rule for capitalized comments and run eslint.           |             |
+|           | Add `moment-timezone` dependency for timezones. Refactor need display to a calendar style. Add `addRecord` function for needs. Change onMounted to onBeforeMount.    |             |
+|           | Change type definitions from `CareRecord` to `DurationRecord` and `QuantityRecord`. Ensure user timezone support in UserStoreState. Test all changes thoroughly.     |             |
+|           | Backend: Update `newRecord`route and refactor need ID fetching from parameters. Implement timezone support in `loginUser` response.                                  |             |
+|           | Clean up commented-out code. Manually test that everything works.                                                                                                    | 3           |
+|           |                                                                                                                                                                      |             |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **140.25**  |
