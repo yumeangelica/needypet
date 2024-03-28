@@ -38,7 +38,7 @@ async function initApp() {
 
   await router.isReady();
 
-  // if the token is not in the store, try to get it from the local storage
+  // If the token is not in the store, try to get it from the local storage
   if (!userStore.token) {
     await userStore.initializeFromLocalStorage();
   }
