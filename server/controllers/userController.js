@@ -212,8 +212,8 @@ const loginUser = async (request, response, next) => {
     }
 
     const token = user.generateJWT(); // Generate token with method from userModel
-    // response.status(200).json({ token, userName: user.userName, id: user._id });
-    response.status(200).json({ token, user: { userName: user.userName, id: user._id } });
+
+    response.status(200).json({ token, user: { userName: user.userName, id: user._id, timezone: user.timezone } });
   } catch (error) {
     next(error);
   }
