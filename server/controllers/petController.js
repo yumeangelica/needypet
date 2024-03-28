@@ -291,7 +291,8 @@ const addNewNeed = async (request, response, next) => {
 const addNewRecord = async (request, response, next) => {
   const pet = request.pet; // Pet comes from request.pet, which is attached to the request object by getPetHandler middleware
 
-  const need = pet.needs.id(request.body.needId);
+  // const need = pet.needs.id(request.body.needId);
+  const need = pet.needs.id(request.params.needid);
 
   if (!need) {
     return response.status(404).json({ error: 'Need not found' });

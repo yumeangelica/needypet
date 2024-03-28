@@ -27,16 +27,19 @@ const setLocalStorageItem = async (
 const setAuthData = async (
   token: string,
   userName: string,
-  id: string
+  id: string,
+  timezone: string
 ): Promise<void> => {
-  const userStore = useUserStore(); // get the user store
+  const userStore = useUserStore(); // Get the user store
   await setLocalStorageItem('token', token);
   await setLocalStorageItem('userName', userName);
   await setLocalStorageItem('id', id);
+  await setLocalStorageItem('timezone', timezone);
   userStore.$patch((state) => {
     state.token = token;
     state.userName = userName;
     state.id = id;
+    state.timezone = timezone;
   });
 };
 
@@ -49,6 +52,7 @@ export const useUserStore = defineStore({
     token: null,
     userName: null,
     id: null,
+    timezone: null,
   }),
   actions: {
     async getUserById(id: string): Promise<User> {
@@ -74,7 +78,7 @@ export const useUserStore = defineStore({
       return response;
     },
     async logout(): Promise<void> {
-      this.token = this.userName = this.id = null; // reset the store state
+      this.token = this.userName = this.id = null; // Reset the store state
       localStorage.clear();
       router.push({ name: 'login' });
       window.location.href = '/login';
@@ -94,7 +98,7 @@ export const useUserStore = defineStore({
         .then((response) => {
           if (response.status === 200) {
             const { token, user } = response.data;
-            return setAuthData(token, user.userName, user.id).then(() => {
+            return setAuthData(token, user.userName, user.id, user.timezone).then(() => {
               return true;
             });
           }
@@ -114,6 +118,7 @@ export const useUserStore = defineStore({
       this.token = localStorage.getItem('token') || null;
       this.userName = localStorage.getItem('userName') || null;
       this.id = localStorage.getItem('id') || null;
+      this.timezone = localStorage.getItem('timezone') || null;
     },
     /**
      * @description Check if the token is valid

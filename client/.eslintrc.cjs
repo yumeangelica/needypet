@@ -49,6 +49,15 @@ module.exports = {
       'error',
       'always'
     ],
+    'capitalized-comments': [
+      'error',
+      'always',
+      {
+        ignorePattern: 'pragma|ignored',
+        ignoreInlineComments: true,
+        ignoreConsecutiveComments: true,
+      },
+    ],
     'vue/no-deprecated-slot-attribute': 'off'
   }
 };

@@ -48,7 +48,7 @@ const isMobile = computed(() => appStore.isMobile);
 
 const login = async () => {
 
-  // loginError is boolean, set to true if login fails
+  // LoginError is boolean, set to true if login fails
   loginError.value = !await userStore.login(userName.value, password.value);
 
   // If login was successful, redirect to home page

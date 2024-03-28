@@ -2,7 +2,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { axiosInstance } from '@/services';
 import { useUserStore } from './user';
-import { PetState, Pet } from '@/types/pet';
+import { PetState, Pet, CareRecord } from '@/types/pet';
 
 const servicePath = '/api';
 
@@ -26,7 +26,7 @@ export const usePetStore = defineStore({
       }
 
       const headers = {
-        // headers for the request
+        // Headers for the request
         'Content-Type': 'application/json',
         Authorization: `bearer ${token}`,
       };
@@ -38,13 +38,62 @@ export const usePetStore = defineStore({
       })
         .then((response) => {
           if (response.status === 200) {
-            this.pets = response.data; // set the pets in the store state
+            this.pets = response.data; // Set the pets in the store state
             return true;
           }
           return false;
         })
         .catch((error) => {
           console.error('Error during pets fetching:', error.response?.status);
+          return false;
+        });
+
+      return response;
+    },
+    /**
+     * @description Add a record for the need
+     * @param petId
+     * @param recordObject
+     * @returns
+      */
+    async addRecord(petId: string, needId: string, recordObject: CareRecord): Promise<boolean> {
+      const userStore = useUserStore();
+      const token = userStore.token;
+      
+      if (!token) {
+        console.log('Token not found');
+        return false;
+      }
+
+      const headers = {
+        // Headers for the request
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${token}`,
+      };
+
+      const response = axiosInstance({
+        method: 'post',
+        url: `${servicePath}/pets/${petId}/needs/${needId}/newrecord`,
+        headers,
+        data: recordObject
+      })
+        .then((response) => {
+          if (response.status === 201) {
+            this.$patch((state: PetState) => {
+              const pet = state.pets.find((pet) => pet.id === petId);
+              if (pet) {
+                const need = pet.needs.find((need) => need.id === needId);
+                if (need) {
+                  need.careRecords.push(recordObject);
+                }
+              }
+            });
+            return true;
+          }
+          return false;
+        })
+        .catch((error) => {
+          console.error('Error during adding record:', error.response?.status);
           return false;
         });
 
@@ -66,7 +115,7 @@ export const usePetStore = defineStore({
       }
 
       const headers = {
-        // headers for the request
+        // Headers for the request
         'Content-Type': 'application/json',
         Authorization: `bearer ${token}`,
       };

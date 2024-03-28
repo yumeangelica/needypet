@@ -12,6 +12,7 @@ interface UserStoreState {
   token: Token;
   userName: User['userName'];
   id: User['id'];
+  timezone: User['timezone'];
 }
 
 export { Token, User, UserStoreState };
