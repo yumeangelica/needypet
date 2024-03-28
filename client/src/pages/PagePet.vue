@@ -103,9 +103,23 @@
             </ion-content>
           </ion-modal>
 
-          <div class="pet-needs" v-if="pet.needs.length > 0"></div>
           <ul>
-            <li v-for="need in pet.needs" :key="need.id">{{ need.category }}: {{ need.description }}</li>
+            <div v-if="pet && needsByDate">
+            <!-- Date navigation buttons -->
+              <div class="date-navigation">
+                <button @click="changeDay(-1)">Previous day</button>
+                <h2>{{ currentDate }}</h2>
+                <button @click="changeDay(1)">Next Day</button>
+              </div>
+
+              <!-- Needs for the selected date -->
+              <ul v-if="needsByDate[currentDate]">
+                <li v-for="need in needsByDate[currentDate]" :key="need.id">
+                  <the-need-card :need="need" :petId="pet.id" />
+                </li>
+              </ul>
+              <p v-else style="text-align: center;">No needs for today</p>
+            </div>
           </ul>
 
         </div>
@@ -121,13 +135,15 @@
 
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch, Ref } from 'vue';
+import { onBeforeMount, ref, computed, watch, Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { IonPage, IonContent, IonButton, IonModal, IonDatetime, IonItem, IonTitle, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon } from '@ionic/vue';
 import { addCircleOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
+import TheNeedCard from '@/components/TheNeedCard.vue';
+import moment from 'moment-timezone';
 
 const route = useRoute();
 const petStore = usePetStore();
@@ -136,16 +152,33 @@ const userStore = useUserStore();
 const pet: Ref<Pet | null> = ref(null);
 const isOpen: Ref<boolean> = ref(false);
 
-
 const category: Ref<Need['category']> = ref('');
 const description: Ref<Need['description']> = ref('');
-const date: Ref<Need['dateFor']> = ref('');
+const dateFor: Ref<Need['dateFor']> = ref('');
 const errorMessage: Ref<string> = ref('');
 const isDatetimeModalOpen: Ref<boolean> = ref(false);
 
 const selection: Ref<string> = ref('');
 const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(0);
 const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
+
+const currentDate = ref(moment().format('YYYY-MM-DD')); // Initalized to today's date
+
+const changeDay = (delta: number) => {
+  let newDate = moment.tz(currentDate.value, userStore.timezone).add(delta, 'days');
+  currentDate.value = newDate.format('YYYY-MM-DD');
+};
+
+const needsByDate = computed(() => {
+  if (!pet.value || !pet.value.needs) return [];
+  return pet.value.needs.reduce((acc: Record<string, Need[]>, need) => {
+    if (!acc[need.dateFor]) {
+      acc[need.dateFor] = [];
+    }
+    acc[need.dateFor].push(need);
+    return acc;
+  }, {});
+});
 
 
 const units = {
@@ -162,7 +195,7 @@ const setOpen = (open: boolean) => {
 const clearFields = () => {
   category.value = '';
   description.value = '';
-  date.value = '';
+  dateFor.value = '';
   selection.value = '';
   valueOfSelection.value = 0;
   unitOfSelection.value = '';
@@ -181,9 +214,9 @@ const closeDatetimeModal = () => {
 
 // Computed property to format the date which is displayed in the input field
 const formattedDate = computed(() => {
-  if (!date.value) return '';
+  if (!dateFor.value) return '';
   const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-  return new Date(date.value).toLocaleDateString(undefined, options);
+  return new Date(dateFor.value).toLocaleDateString(undefined, options);
 
 });
 
@@ -194,7 +227,7 @@ const dateSelected = (selectedDateString: string) => {
   currentDateTime.setHours(0, 0, 0, 0);
 
   if (selectedDateTime >= currentDateTime) { // Check if the selected date is today or in the future
-    date.value = selectedDateString;
+    dateFor.value = selectedDateString;
     errorMessage.value = '';
   } else {
     errorMessage.value = 'Please select a current or future date.';
@@ -215,7 +248,7 @@ async function getPet(id: string) {
 // When the user clicks the confirm button on the modal this function is called
 const confirm = async () => {
 
-  if (!category.value || !description.value || !date.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value) {
+  if (!category.value || !description.value || !dateFor.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value) {
     errorMessage.value = 'Please fill in all fields.';
     return;
   }
@@ -223,7 +256,7 @@ const confirm = async () => {
   const needObject: Need = {
     category: category.value,
     description: description.value,
-    dateFor: date.value.toString().split('T')[0],
+    dateFor: dateFor.value.toString().split('T')[0],
     [selection.value]: {
       value: valueOfSelection.value,
       unit: unitOfSelection.value
@@ -251,7 +284,7 @@ watch(selection, (newValue) => {
   }
 });
 
-onMounted(() => {
+onBeforeMount(() => {
   const id = route.params.id as string;
   if (id) {
     getPet(id);
@@ -299,5 +332,12 @@ onMounted(() => {
 .custom-button {
   font-size: 10px;
   padding-top: 10px;
+}
+
+.date-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
 }
 </style>
