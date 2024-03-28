@@ -2,7 +2,7 @@
 import { User } from './user';
 // Definition of the Pet, Need and CareRecord interfaces
 
-type UserID = User; // type alias for the User type
+type UserID = User; // Type alias for the User type
 
 type Quantity = {
   value: number;
@@ -13,6 +13,22 @@ type Duration = {
   value: number;
   unit: 'minutes';
 };
+
+interface DurationRecord {
+  note: string;
+  duration: {
+    value: number;
+    unit: string;
+  };
+}
+
+interface QuantityRecord {
+  note: string;
+  quantity: {
+    value: number;
+    unit: string;
+  };
+}
 
 type Frequency = {
   times: number;
@@ -27,13 +43,6 @@ type Frequency = {
   };
 };
 
-interface CareRecord {
-  date: Date;
-  careTaker: UserID;
-  note?: string;
-  quantity?: Quantity;
-  duration?: Duration;
-}
 
 interface Need {
   id?: string;
@@ -43,7 +52,7 @@ interface Need {
   quantity?: Quantity;
   duration?: Duration;
   completed?: boolean;
-  careRecords?: CareRecord[];
+  careRecords?: DurationRecord[] | QuantityRecord[];
   archived?: boolean;
   isActive?: boolean;
   frequency?: Frequency;
@@ -65,4 +74,4 @@ interface PetState {
   pets: Pet[];
 }
 
-export { Pet, Need, CareRecord, PetState };
+export { Pet, Need, CareRecord, PetState, QuantityRecord, DurationRecord };
