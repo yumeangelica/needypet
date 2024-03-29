@@ -2,9 +2,9 @@
   <ion-card>
     <ion-item>
       <ion-label>
-        <h2>{{ need.category }}</h2>
-        <p>{{ need.description }}</p>
-        <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
+          <h2>{{ need.category }}</h2>
+          <p>{{ need.description }}</p>
+          <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
       <ion-button class="record-btn" v-if="!need.completed" @click="addRecord(petId as string, need as Need)">Add Record</ion-button>
       <ion-label class="done-label" v-else>Done</ion-label>
@@ -62,7 +62,11 @@ const addRecord = async (petId: string, need: Need) => {
 
 </script>
 
+
 <style scoped>
+ion-card {
+border-radius: 20px;
+}
 .done-label {
   color: rgb(70, 194, 225);
   font-weight: bold;
@@ -71,5 +75,4 @@ const addRecord = async (petId: string, need: Need) => {
 .record-btn {
   --background: var(--ion-color-pink);
 }
-
 </style>

@@ -327,7 +327,7 @@ ion-page {
 
 .pet-card {
   background-color: var(--card-bg-lilac);
-  border-radius: 8px;
+  border-radius: 50px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
   max-width: 600px;
