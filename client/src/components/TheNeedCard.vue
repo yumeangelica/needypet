@@ -74,5 +74,6 @@ border-radius: 20px;
 
 .record-btn {
   --background: var(--ion-color-pink);
+  --border-radius: 20px;
 }
 </style>
