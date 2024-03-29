@@ -76,6 +76,7 @@ ion-item {
   --background: var(--login-input-bg);
   --border-radius: 25px;
   margin-top: 10px;
+  color: var(--font-color-lilac);
 }
 
 ion-input {
