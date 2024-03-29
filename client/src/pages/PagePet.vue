@@ -4,7 +4,7 @@
       <div v-if="pet">
 
         <div class="pet-container">
-          <div class="pet-card">
+          <div class="full-pet-card">
             <h2 class="pet-name">{{ pet.name }}</h2>
             <div class="pet-info">
               <p><strong>Description:</strong> {{ pet.description }}</p>
@@ -101,7 +101,7 @@
                 </div>
 
                 <!-- Error message if details are not correct -->
-                <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+                <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
               </ion-content>
             </ion-modal>
             <!-- Modal ends -->
@@ -111,9 +111,9 @@
             <div v-if="pet && needsByDate">
               <!-- Date navigation buttons -->
               <div class="date-navigation">
-                <ion-button @click="changeDay(-1)">Previous day</ion-button>
+                <ion-button class="custom-button" @click="changeDay(-1)">Previous day</ion-button>
                 <h2>{{ currentDate }}</h2>
-                <ion-button @click="changeDay(1)">Next Day</ion-button>
+                <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
               </div>
 
               <!-- Needs for the selected date -->
@@ -304,11 +304,9 @@ onBeforeMount(() => {
 
 
 <style scoped>
-
 ion-content {
   overflow-y: auto;
 }
-
 
 ion-page {
   padding-top: 60px;
@@ -325,20 +323,27 @@ ion-page {
   margin-top: 60px;
 }
 
-.pet-card {
+.full-pet-card {
   background-color: var(--card-bg-lilac);
   border-radius: 50px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   max-width: 600px;
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 20px;
+  transition: transform 0.3s ease;
 }
+
+.full-pet-card:hover {
+  transform: translateY(-5px);
+}
+
 
 .custom-button {
   --background: var(--ion-color-pink);
   --color: #fff;
+  --border-radius: 20px;
 }
 
 .header-button-container {
@@ -369,8 +374,10 @@ ion-datetime {
 }
 
 ion-modal {
-  --width: 100%;
-  --height: 100%;
+  --border-radius: 20px;
+  --width: 80%;
+  --max-height: 90%;
+  --background: var(--card-bg-lilac);
 }
 
 ion-modal ion-button,
@@ -380,5 +387,11 @@ ion-modal ion-title {
 
 ion-button {
   --background: var(--ion-color-pink);
+}
+
+.error-message {
+  color: var(--error-message-color, #ff3b30);
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
