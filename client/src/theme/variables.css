@@ -88,10 +88,14 @@ http://ionicframework.com/docs/theming/ */
   --navbar-color-pink: #FBCDE6;
   --font-color-lilac: #9248AD;
   --card-bg-lilac: #F2DDFE;
+  --card-border-color: #DB9DFF;
 
   --login-container-bg: #FFEEF5;
+
   --login-input-bg: #FFE0F1;
-  --login-btn-bg: #FBCDE6;
+  --login-input-border-color: #FFBFE2;
+
+  --login-color: #FBCDE6;
 
 }
 
