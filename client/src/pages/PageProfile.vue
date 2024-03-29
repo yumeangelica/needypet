@@ -3,7 +3,7 @@
     <ion-content v-if="user">
       <div class="content-wrapper">
         <div class="profile-card">
-          <h2>{{ user.userName }}</h2>
+          <h3>{{ user.userName }}</h3>
           <div class="email">
             <p><strong>Email:</strong> {{ user.email }}</p>
           </div>
@@ -46,11 +46,11 @@ onBeforeMount(async () => {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   text-align: center;
-  background-color: var(--card-bg-lilac);
+  background-color: var(--color-card-background-lilac);
   border-radius: 50px;
-  border: solid 1px var(--card-border-color);
+  border: solid 1px var(--color-card-border);
 }
 
 h2 {
