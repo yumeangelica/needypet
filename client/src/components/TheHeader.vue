@@ -2,11 +2,11 @@
   <ion-header v-if="!isMobile && !isLoginPage">
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-button @click="navigateHome">Home</ion-button>
+        <ion-button fill="clear" @click="navigateHome">Home</ion-button>
       </ion-buttons>
       <div slot="end" style="display: flex; align-items: center;">
         <span><router-link :to="{ name: 'profile' }">{{ userName }}</router-link></span>
-        <ion-button fill="clear" color="medium" @click="logout">Logout</ion-button>
+        <ion-button fill="clear" @click="logout">Logout</ion-button>
       </div>
     </ion-toolbar>
   </ion-header>
@@ -42,5 +42,10 @@ const navigateHome = () => {
 ion-buttons span {
   margin-right: 1rem;
   color: #fff;
+}
+
+/* Override ion button style */
+ion-button {
+  --color: var(--font-color-lilac) !important;
 }
 </style>

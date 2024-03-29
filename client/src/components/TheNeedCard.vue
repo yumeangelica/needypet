@@ -6,7 +6,7 @@
         <p>{{ need.description }}</p>
         <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
-      <ion-button v-if="!need.completed" @click="addRecord(petId as string, need as Need)">Add Record</ion-button>
+      <ion-button class="record-btn" v-if="!need.completed" @click="addRecord(petId as string, need as Need)">Add Record</ion-button>
       <ion-label class="done-label" v-else>Done</ion-label>
     </ion-item>
   </ion-card>
@@ -64,6 +64,12 @@ const addRecord = async (petId: string, need: Need) => {
 
 <style scoped>
 .done-label {
-  color: green; /* Customize as needed */
+  color: rgb(70, 194, 225);
+  font-weight: bold;
 }
+
+.record-btn {
+  --background: var(--ion-color-pink);
+}
+
 </style>
