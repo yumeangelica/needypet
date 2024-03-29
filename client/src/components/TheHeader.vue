@@ -6,7 +6,7 @@
       </ion-buttons>
       <div slot="end" style="display: flex; align-items: center;">
         <span><router-link :to="{ name: 'profile' }">{{ userName }}</router-link></span>
-        <ion-button fill="clear" @click="logout">Logout</ion-button>
+        <ion-button class="logout-button" fill="clear" @click="logout">Logout</ion-button>
       </div>
     </ion-toolbar>
   </ion-header>
@@ -46,6 +46,22 @@ ion-buttons span {
 
 /* Override ion button style */
 ion-button {
-  --color: var(--font-color-lilac) !important;
+  --color: var(--color-text-lilac) !important;
+}
+
+.logout-button {
+  --color: var(--color-text-lilac) !important;
+  background-color: var(--color-card-background-lilac);
+  border: 1px solid var(--color-card-border);
+  font-weight: bold;
+  border-radius: 20px;
+  margin: 10px;
+  box-shadow: 1px 1px 2px var(--color-drop-shadow-dark-pink);
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: var(--color-card-background-lilac);
+  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-dark-pink);
 }
 </style>
