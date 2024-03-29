@@ -61,54 +61,65 @@ const login = async () => {
 
 
 <style scoped>
+.login-container,
+ion-item,
+.login-button {
+  box-shadow: 1px 1px 2px var(--color-drop-shadow-dark-pink);
+  border-radius: 25px;
+}
+
 .login-container {
   max-width: 400px;
   margin: 100px auto;
   padding: 20px;
   border-radius: 50px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: var(--login-container-bg);
-  border: solid 3px var(--login-color);
+  background-color: var(--color-login-background);
+  border: solid 3px var(--color-login-button-and-border);
 }
 
 ion-item {
   --padding-start: 20px;
   --inner-border-width: 0;
   --inner-padding-end: 20px;
-  --background: var(--login-input-bg);
+  --background: var(--color-login-input-background);
   --border-radius: 25px;
-  --border-color: var(--login-input-border-color);
-  --border-width: 2px;
+  --border-color: var(--color-login-input-border);
+  --border-width: 1px;
   --border-style: solid;
   margin-top: 10px;
 }
 
 
 ion-input {
-  --placeholder-color: var(--font-color-lilac);
+  --placeholder-color: var(--color-text-lilac);
   --placeholder-font-style: italic;
-  --color: var(--font-color-lilac);
+  --color: var(--color-text-lilac);
 }
 
 .login-button {
   --border-radius: 25px;
-  --background: var(--login-color);
-  --color: var(--font-color-lilac);
-  /* shadow */
-  --box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --background: var(--color-login-button-and-border);
+  --color: var(--color-text-lilac);
   margin-top: 30px;
   width: 100%;
   font-weight: bold;
-  text-transform: uppercase;
+  box-shadow: 1px 1px 2px var(--color-drop-shadow-dark-pink);
+}
+
+.login-button:hover,
+.login-button:focus,
+.login-button:active {
+  background: darken(var(--color-login-button-and-border), 5%);
+  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-dark-pink);
 }
 
 .error-message {
-  color: #ff3b30;
+  color: var(--color-error-message);
   text-align: center;
   margin-top: 20px;
 }
 
 ion-toolbar ion-title {
-  color: var(--font-color-lilac);
+  color: var(--color-text-lilac);
 }
 </style>
