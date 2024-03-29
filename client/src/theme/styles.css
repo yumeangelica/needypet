@@ -1,16 +1,43 @@
-body, h2, h3, p, li {
-  font-family: 'Arial', sans-serif;
-  color: #555555;
+body, h1, h2, h3, h4, h5, h6, p, li, a {
+  color: var(--font-color-lilac);
   line-height: 1.6;
+  font-family: 'Krona One', sans-serif;
+}
+
+/* Background picture */
+body {
+  background-image: url('/images/needypet_background.png');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Override ion-content and ion-page to make background visible */
+ion-content {
+  --ion-background-color: transparent;
+}
+
+ion-page {
+  background-color: transparent !important;
+}
+
+ion-toolbar {
+  --background: var(--navbar-color-pink);
+}
+
+ion-tab-bar {
+  --background: var(--navbar-color-pink);
+}
+
+/* Style links */
+a {
+  text-decoration: none;
 }
 
 h2 {
-  color: #333333;
   font-size: 28px;
 }
 
 h3 {
-  color: #333333;
   margin-bottom: 10px;
 }
 
