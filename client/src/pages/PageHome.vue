@@ -3,11 +3,11 @@
     <ion-content :fullscreen="true">
       <div class="content-wrapper">
         <div v-if="ownPets.length > 0">
-          <h2>Pets that you own:</h2>
+          <h2>Your pets:</h2>
           <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
         </div>
         <div v-if="carerPets.length > 0">
-          <h2>Pets that you take care of:</h2>
+          <h2>Pets to take care of:</h2>
           <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
         </div>
       </div>
