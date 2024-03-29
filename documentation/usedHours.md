@@ -135,5 +135,11 @@
 |           | Backend: Update `newRecord`route and refactor need ID fetching from parameters. Implement timezone support in `loginUser` response.                                  |             |
 |           | Clean up commented-out code. Manually test that everything works.                                                                                                    | 3           |
 |           |                                                                                                                                                                      |             |
+| 28.3.24   | Frontend visual updates and bug fixes: Add custom CSS color variables, update header texts in PageHome, and remove duplicate ion-content in PagePet.                 |             |
+|           | Implement 'currentDate' as a key for optimized rendering in PagePet.                                                                                                 |             |
+|           | Create a custom background picture with Procreate and initiate app design with Figma.                                                                                |             |
+|           | Update PagePet, PageLogin, PageProfile, TheNeedCard, and header styles to match my design vision.                                                                    |             |
+|           | Import Google font Krona for aesthetic enhancement. Fix a mobile view bug in app.vue for improved responsiveness.                                                    | 10.75       |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **140.25**  |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **151**     |

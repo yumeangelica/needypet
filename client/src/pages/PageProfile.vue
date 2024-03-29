@@ -49,13 +49,12 @@ onBeforeMount(async () => {
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  background-color: white;
+  background-color: var(--card-bg-lilac);
 }
 
 h2 {
   margin: 20px 0;
   font-size: 24px;
-  color: #333;
 }
 
 .email,

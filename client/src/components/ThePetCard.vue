@@ -33,7 +33,7 @@ export default {
   padding: 1rem;
   margin: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: var(--card-bg-lilac);
 }
 
 .pet-card h2 {

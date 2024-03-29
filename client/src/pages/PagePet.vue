@@ -1,115 +1,119 @@
 <template>
   <ion-page>
-    <ion-content v-if="pet">
-      <div class="pet-container">
-        <div class="pet-card">
-          <h2 class="pet-name">{{ pet.name }}</h2>
-          <div class="pet-info">
-            <p><strong>Description:</strong> {{ pet.description }}</p>
-            <p><strong>Species:</strong> {{ pet.species }} </p>
-            <p><strong>Breed:</strong> {{ pet.breed }}</p>
-            <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
-          </div>
+    <ion-content :key="currentDate">
+      <div v-if="pet">
 
-          <div class="pet-owner">
-            <h3>Owner</h3>
-            <p>{{ pet.owner.userName }}</p>
-          </div>
+        <div class="pet-container">
+          <div class="pet-card">
+            <h2 class="pet-name">{{ pet.name }}</h2>
+            <div class="pet-info">
+              <p><strong>Description:</strong> {{ pet.description }}</p>
+              <p><strong>Species:</strong> {{ pet.species }} </p>
+              <p><strong>Breed:</strong> {{ pet.breed }}</p>
+              <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
+            </div>
 
-          <div class="care-takers" v-if="pet.careTakers.length > 0">
-            <h3>Care takers</h3>
-            <ul>
-              <li v-for="careTaker in pet.careTakers" :key="careTaker.id">{{ careTaker.userName }}</li>
-            </ul>
-          </div>
+            <div class="pet-owner">
+              <h3>Owner</h3>
+              <p>{{ pet.owner.userName }}</p>
+            </div>
 
-          <!-- Need related container -->
-          <div class="header-button-container">
-            <h3>Needs:</h3>
-            <ion-button class="custom-button" color="primary" @click="setOpen(true)" v-if="pet.owner.id === userStore.id">
-              <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
-              Add need
-            </ion-button>
-          </div>
+            <div class="care-takers" v-if="pet.careTakers.length > 0">
+              <h3>Care takers</h3>
+              <ul>
+                <li v-for="careTaker in pet.careTakers" :key="careTaker.id">{{ careTaker.userName }}</li>
+              </ul>
+            </div>
 
-          <!-- Modal which opens when 'add need' button is clicked -->
-          <ion-modal :is-open="isOpen">
-            <ion-header>
-              <ion-toolbar>
-                <ion-title>New need</ion-title>
-                <ion-buttons slot="start">
-                  <ion-button @click="setOpen(false)">Close</ion-button>
-                </ion-buttons>
-                <ion-buttons slot="end">
-                  <ion-button :strong="true" @click="confirm()">Confirm</ion-button>
-                </ion-buttons>
-              </ion-toolbar>
-            </ion-header>
-            <ion-content class="ion-padding">
+            <!-- Need related container -->
+            <div class="header-button-container">
+              <h3>Needs:</h3>
+              <ion-button class="custom-button" color="primary" @click="setOpen(true)" v-if="pet.owner.id === userStore.id">
+                <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
+                Add need
+              </ion-button>
+            </div>
 
-              <ion-item>
-                <ion-input v-model="category" label="Category" placeholder="input need's category (e.g. walk or feed)"></ion-input>
-              </ion-item>
+            <!-- Modal which opens when 'add need' button is clicked -->
+            <ion-modal :is-open="isOpen">
+              <ion-header>
+                <ion-toolbar>
+                  <ion-title>New need</ion-title>
+                  <ion-buttons slot="start">
+                    <ion-button @click="setOpen(false)">Close</ion-button>
+                  </ion-buttons>
+                  <ion-buttons slot="end">
+                    <ion-button :strong="true" @click="confirm()">Confirm</ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+              <ion-content class="ion-padding">
 
-              <ion-item>
-                <ion-input v-model="description" label="Description" placeholder="input need's description"></ion-input>
-              </ion-item>
-
-              <ion-item @click="openDatetimeModal()">
-                <ion-input readonly :value="formattedDate || 'Select Date'" placeholder="Select Date"></ion-input>
-              </ion-item>
-              <ion-modal :is-open="isDatetimeModalOpen" @didDismiss="closeDatetimeModal()">
-                <ion-header>
-                  <ion-toolbar>
-                    <ion-title>Select Date</ion-title>
-                  </ion-toolbar>
-                </ion-header>
-                <ion-content>
-                  <ion-datetime display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY" presentation="date"
-                    @ionChange="dateSelected($event.detail.value as string)"></ion-datetime>
-                </ion-content>
-              </ion-modal>
-
-              <ion-item v-show="!selection">
-                <ion-label>Choose</ion-label>
-                <ion-radio-group v-model="selection">
-                  <ion-item>
-                    <ion-radio slot="start" value="duration">Duration</ion-radio>
-                  </ion-item>
-                  <ion-item>
-                    <ion-radio slot="start" value="quantity">Quantity</ion-radio>
-                  </ion-item>
-                </ion-radio-group>
-              </ion-item>
-
-              <div v-if="selection === 'quantity'">
-                <ion-item lines="none">
-                  <ion-input v-model="valueOfSelection" label="Enter value"></ion-input>
-                  <ion-select v-model="unitOfSelection" interface="popover">
-                    <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
-                  </ion-select>
+                <ion-item>
+                  <ion-input v-model="category" label="Category" placeholder="input need's category (e.g. walk or feed)"></ion-input>
                 </ion-item>
-              </div>
 
-              <div v-if="selection === 'duration'">
-                <ion-item lines="none">
-                  <ion-input v-model="valueOfSelection" label="Enter duration"></ion-input>
-                  <ion-label>minute(s)</ion-label>
+                <ion-item>
+                  <ion-input v-model="description" label="Description" placeholder="input need's description"></ion-input>
                 </ion-item>
-              </div>
 
-              <!-- Error message if details are not correct -->
-              <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
-            </ion-content>
-          </ion-modal>
+                <ion-item @click="openDatetimeModal()">
+                  <ion-input readonly :value="formattedDate || 'Select Date'" placeholder="Select Date"></ion-input>
+                </ion-item>
+                <ion-modal :is-open="isDatetimeModalOpen" @didDismiss="closeDatetimeModal()">
+                  <ion-header>
+                    <ion-toolbar>
+                      <ion-title>Select Date</ion-title>
+                    </ion-toolbar>
+                  </ion-header>
+                  <ion-content>
+                    <ion-datetime display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY" presentation="date"
+                      @ionChange="dateSelected($event.detail.value as string)"></ion-datetime>
+                  </ion-content>
+                </ion-modal>
 
-          <ul>
+                <ion-item v-show="!selection">
+                  <ion-label>Choose</ion-label>
+                  <ion-radio-group v-model="selection">
+                    <ion-item>
+                      <ion-radio slot="start" value="duration">Duration</ion-radio>
+                    </ion-item>
+                    <ion-item>
+                      <ion-radio slot="start" value="quantity">Quantity</ion-radio>
+                    </ion-item>
+                  </ion-radio-group>
+                </ion-item>
+
+                <div v-if="selection === 'quantity'">
+                  <ion-item lines="none">
+                    <ion-input v-model="valueOfSelection" label="Enter value"></ion-input>
+                    <ion-select v-model="unitOfSelection" interface="popover">
+                      <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </div>
+
+                <div v-if="selection === 'duration'">
+                  <ion-item lines="none">
+                    <ion-input v-model="valueOfSelection" label="Enter duration"></ion-input>
+                    <ion-label>minute(s)</ion-label>
+                  </ion-item>
+                </div>
+
+                <!-- Error message if details are not correct -->
+                <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+              </ion-content>
+            </ion-modal>
+            <!-- Modal ends -->
+
+
+
             <div v-if="pet && needsByDate">
-            <!-- Date navigation buttons -->
+              <!-- Date navigation buttons -->
               <div class="date-navigation">
-                <button @click="changeDay(-1)">Previous day</button>
+                <ion-button @click="changeDay(-1)">Previous day</ion-button>
                 <h2>{{ currentDate }}</h2>
-                <button @click="changeDay(1)">Next Day</button>
+                <ion-button @click="changeDay(1)">Next Day</ion-button>
               </div>
 
               <!-- Needs for the selected date -->
@@ -120,16 +124,20 @@
               </ul>
               <p v-else style="text-align: center;">No needs for today</p>
             </div>
-          </ul>
 
+
+          </div>
         </div>
+
       </div>
-    </ion-content>
-    <ion-content v-else>
-      <div class="pet-container">
+
+      <div v-else class="pet-container">
         <p>Pet not found</p>
       </div>
+
     </ion-content>
+
+
   </ion-page>
 </template>
 
@@ -296,48 +304,81 @@ onBeforeMount(() => {
 
 
 <style scoped>
+
+ion-content {
+  overflow-y: auto;
+}
+
+
+ion-page {
+  padding-top: 60px;
+}
+
 .pet-container {
   display: flex;
-  justify-content: center;
-  padding: 10px 20px;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
   margin-top: 60px;
 }
 
 .pet-card {
-  background-color: #ffffff;
-  border-radius: 8px;
+  background-color: var(--card-bg-lilac);
+  border-radius: 50px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  max-width: 800px;
+  max-width: 600px;
   width: 100%;
-}
-
-.pet-name {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.pet-info,
-.pet-owner,
-.care-takers,
-.pet-needs {
+  box-sizing: border-box;
   margin-bottom: 20px;
 }
 
-.header-button-container {
-  display: inline-flex;
-
+.custom-button {
+  --background: var(--ion-color-pink);
+  --color: #fff;
 }
 
-.custom-button {
-  font-size: 10px;
-  padding-top: 10px;
+.header-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .date-navigation {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+
+ion-button {
+  min-width: 100px;
+  max-width: 200px;
+}
+
+ion-datetime {
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 100%;
+}
+
+ion-modal {
+  --width: 100%;
+  --height: 100%;
+}
+
+ion-modal ion-button,
+ion-modal ion-title {
+  --color: var(--font-color-lilac) !important;
+}
+
+ion-button {
+  --background: var(--ion-color-pink);
 }
 </style>

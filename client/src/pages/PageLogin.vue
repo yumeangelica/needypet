@@ -17,7 +17,7 @@
             <ion-input type="password" v-model="password" placeholder="Enter your password" aria-label="Password"></ion-input>
           </ion-item>
 
-          <ion-button expand="full" type="submit" class="login-button">Login</ion-button>
+          <ion-button type="submit" class="login-button">Login</ion-button>
 
           <div v-if="loginError" class="error-message">
             Signing in failed. Please check your credentials and try again.
@@ -61,17 +61,46 @@ const login = async () => {
 
 <style scoped>
 .login-container {
-  max-width: 500px;
-  margin: 0 auto;
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--login-container-bg);
+}
+
+ion-item {
+  --padding-start: 20px;
+  --inner-border-width: 0;
+  --inner-padding-end: 20px;
+  --background: var(--login-input-bg);
+  --border-radius: 25px;
+  margin-top: 10px;
+  color: var(--font-color-lilac);
+}
+
+ion-input {
+  --placeholder-color: var(--font-color-lilac);
+  --placeholder-font-style: italic;
+}
+
+.login-button {
+  --border-radius: 25px;
+  --background: var(--login-btn-bg);
+  --background-activated: #5034bf;
+  --background-focused: #7044ff;
+  --color: var(--font-color-lilac);
+  margin-top: 30px;
+  width: 100%;
 }
 
 .error-message {
-  color: red;
+  color: #ff3b30;
   text-align: center;
   margin-top: 20px;
 }
 
-.login-button {
-  margin-top: 20px;
+ion-toolbar ion-title {
+  color: var(--font-color-lilac);
 }
 </style>

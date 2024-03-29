@@ -76,12 +76,23 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-tint: #f5f6f9;
 
   /** custom colors **/
-  --ion-color-pink: #f364f6;
+  --ion-color-pink: #fd8aff;
   --ion-color-pink-rgb: 243, 100, 246;
   --ion-color-pink-contrast: #ffffff;
   --ion-color-pink-contrast-rgb: 255, 255, 255;
   --ion-color-pink-shade: #d44cd4;
   --ion-color-pink-tint: #f778f7;
+
+
+  /* My custom colors */
+  --navbar-color-pink: #FBCDE6;
+  --font-color-lilac: #9248AD;
+  --card-bg-lilac: #F2DDFE;
+
+  --login-container-bg: #FFEEF5;
+  --login-input-bg: #FFE0F1;
+  --login-btn-bg: #FBCDE6;
+
 }
 
 @media (prefers-color-scheme: dark) {

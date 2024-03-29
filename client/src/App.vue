@@ -2,13 +2,15 @@
   <ion-app>
     <ion-page>
       <TheHeader v-if="!isMobile"/>
-      <ion-router-outlet />
+      <ion-router-outlet v-if="!isMobile"/>
 
-      <ion-tabs v-if="isMobile">
-        <ion-router-outlet />
+      <!-- Using ion-tabs for mobile navigation -->
+      <ion-tabs v-else>
+        <!-- Content -->
+        <ion-router-outlet></ion-router-outlet>
+        <!-- Mobile navigation -->
         <TheMobileHeader />
       </ion-tabs>
-
     </ion-page>
   </ion-app>
 </template>
@@ -17,29 +19,22 @@
 import { IonApp, IonPage, IonRouterOutlet, IonTabs } from '@ionic/vue';
 import { computed, onMounted, onUnmounted } from 'vue';
 import TheHeader from '@/components/TheHeader.vue';
-import { useAppStore } from '@/store/app';
 import TheMobileHeader from '@/components/TheMobileHeader.vue';
+import { useAppStore } from '@/store/app';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
-
-async function updateScreenSize() {
+function updateScreenSize() {
   appStore.updateScreenSize(window.innerWidth);
 }
 
-onMounted(async () => {
+onMounted(() => {
   updateScreenSize();
   window.addEventListener('resize', updateScreenSize);
 });
 
-
 onUnmounted(() => {
   window.removeEventListener('resize', updateScreenSize);
 });
-
 </script>
-
-<style scoped>
-
-</style>
