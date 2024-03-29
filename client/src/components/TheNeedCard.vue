@@ -68,12 +68,19 @@ ion-card {
 border-radius: 20px;
 }
 .done-label {
-  color: rgb(70, 194, 225);
+  color: var(--color-status-done);
   font-weight: bold;
+  text-align: right;
+  margin-right: 30px;
 }
 
 .record-btn {
-  --background: var(--ion-color-pink);
+  --background: var(--color-button-pet-page);
   --border-radius: 20px;
+  --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
+}
+
+.record-btn:hover {
+  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
 </style>
