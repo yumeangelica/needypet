@@ -46,10 +46,11 @@ onBeforeMount(async () => {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   background-color: var(--card-bg-lilac);
+  border-radius: 50px;
+  border: solid 1px var(--card-border-color);
 }
 
 h2 {
