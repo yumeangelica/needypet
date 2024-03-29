@@ -1,7 +1,23 @@
-body, h1, h2, h3, h4, h5, h6, p, li, a {
-  color: var(--font-color-lilac);
+body, h1, h2, h3, h4, h5, h6, a {
+  color: var(--color-text-lilac);
   line-height: 1.6;
   font-family: 'Krona One', sans-serif;
+}
+
+p, li {
+  color: var(--color-text-default);
+  line-height: 1.6;
+  font-family: 'Krona One', sans-serif;
+}
+
+/* Override ion-button styles */
+ion-button {
+  font-family: 'Krona One', sans-serif;
+  text-transform: none;
+}
+
+strong {
+  color: var(--color-text-lilac);
 }
 
 /* Background picture */
@@ -21,11 +37,11 @@ ion-page {
 }
 
 ion-toolbar {
-  --background: var(--navbar-color-pink);
+  --background: var(--color-primary-pink);
 }
 
 ion-tab-bar {
-  --background: var(--navbar-color-pink);
+  --background: var(--color-primary-pink);
 }
 
 /* Style links */
@@ -54,7 +70,8 @@ li {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  padding-top: 100px; /* Add padding to the top of the content wrapper to make room for the fixed header */
+  padding-top: 100px;
+  /* Add padding to the top of the content wrapper to make room for the fixed header */
 }
 
 
