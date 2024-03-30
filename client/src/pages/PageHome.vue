@@ -2,13 +2,19 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div class="content-wrapper">
-        <div v-if="ownPets.length > 0">
-          <h2>Your pets:</h2>
-          <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
-        </div>
-        <div v-if="carerPets.length > 0">
-          <h2>Pets to take care of:</h2>
-          <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
+        <div class="pets-container">
+          <div v-if="ownPets.length > 0">
+            <h2 class="section-title">Your pets:</h2>
+            <div class="cards-container">
+              <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
+            </div>
+          </div>
+          <div v-if="carerPets.length > 0">
+            <h2 class="section-title">Pets to take care of:</h2>
+            <div class="cards-container">
+              <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
+            </div>
+          </div>
         </div>
       </div>
     </ion-content>
@@ -22,11 +28,9 @@ import { usePetStore } from '@/store/pet';
 import ThePetCard from '@/components/ThePetCard.vue';
 
 const petStore = usePetStore();
-
 const ownPets = ref([]);
 const carerPets = ref([]);
 
-// Fetch the filtered pets from the store
 const updatePetLists = async () => {
   if (petStore.pets.length === 0) {
     return;
@@ -35,37 +39,35 @@ const updatePetLists = async () => {
   carerPets.value = await petStore.getCarerPets();
 };
 
-// Run the update function when the component is mounted
 onMounted(updatePetLists);
-
-// Run the update function when the pets in the store change
 watch(() => petStore.pets, updatePetLists);
 </script>
 
-
 <style scoped>
-ion-buttons span {
-  margin-right: 1rem;
-  color: #fff;
+.pets-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
-.pet-container {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
-.pet-container h2 {
-  margin-top: 0;
+.section-title {
+  width: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  margin-top: 40px;
 }
 
-.pet-container {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
-}
-
-.pet-container h2 {
+.section-title:first-of-type {
   margin-top: 0;
 }
 </style>

@@ -2,12 +2,12 @@
   <ion-card>
     <ion-item>
       <ion-label>
-          <h2>{{ need.category }}</h2>
-          <p>{{ need.description }}</p>
-          <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
+        <h2>{{ need.category }}</h2>
+        <p>{{ need.description }}</p>
+        <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
-      <ion-button class="record-btn" v-if="!need.completed" @click="addRecord(petId as string, need as Need)">Add Record</ion-button>
-      <ion-label class="done-label" v-else>Done</ion-label>
+      <ion-button class="complete-button" v-if="!need.completed" @click="addRecord(petId as string, need as Need)">Complete</ion-button>
+      <div class="done-label" v-else>Done!</div>
     </ion-item>
   </ion-card>
 </template>
@@ -65,14 +65,45 @@ const addRecord = async (petId: string, need: Need) => {
 
 <style scoped>
 ion-card {
-border-radius: 20px;
-}
-.done-label {
-  color: rgb(70, 194, 225);
-  font-weight: bold;
+  border-radius: 20px;
+  background: var(--color-pet-need-background);
 }
 
-.record-btn {
-  --background: var(--ion-color-pink);
+.done-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  white-space: normal;
+  margin-right: 10px;
+  padding: 10px 0px;
+  border: 1px solid var(--color-done-border);
+  border-radius: 20px;
+  color: #fff;
+  background-color: var(--color-status-done) !important;
+  font-weight: bold;
+  background: var(--color-done-background);
+  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+  width: 80px;
+  font-size: calc(0.70rem + 0.15vw);
+}
+
+.complete-button {
+  --background: var(--color-button-pet-page);
+  --border-radius: 20px;
+  --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
+  font-size: calc(0.55rem + 0.15vw);
+  width: 100px;
+  min-height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  white-space: normal;
+  padding: 5px;
+}
+
+.complete-button:hover {
+  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
 </style>

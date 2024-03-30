@@ -4,7 +4,7 @@
       <div v-if="pet">
 
         <div class="pet-container">
-          <div class="pet-card">
+          <div class="full-pet-card">
             <h2 class="pet-name">{{ pet.name }}</h2>
             <div class="pet-info">
               <p><strong>Description:</strong> {{ pet.description }}</p>
@@ -28,7 +28,7 @@
             <!-- Need related container -->
             <div class="header-button-container">
               <h3>Needs:</h3>
-              <ion-button class="custom-button" color="primary" @click="setOpen(true)" v-if="pet.owner.id === userStore.id">
+              <ion-button class="custom-button" @click="setOpen(true)" v-if="pet.owner.id === userStore.id">
                 <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
                 Add need
               </ion-button>
@@ -93,6 +93,7 @@
                   </ion-item>
                 </div>
 
+
                 <div v-if="selection === 'duration'">
                   <ion-item lines="none">
                     <ion-input v-model="valueOfSelection" label="Enter duration"></ion-input>
@@ -100,20 +101,23 @@
                   </ion-item>
                 </div>
 
+                <!-- Return button -->
+                <div>
+                  <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
+                </div>
+
                 <!-- Error message if details are not correct -->
-                <p v-if="errorMessage" style="color: red;">{{ errorMessage }}</p>
+                <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
               </ion-content>
             </ion-modal>
             <!-- Modal ends -->
 
-
-
             <div v-if="pet && needsByDate">
               <!-- Date navigation buttons -->
               <div class="date-navigation">
-                <ion-button @click="changeDay(-1)">Previous day</ion-button>
-                <h2>{{ currentDate }}</h2>
-                <ion-button @click="changeDay(1)">Next Day</ion-button>
+                <ion-button class="custom-button" @click="changeDay(-1)">Previous day</ion-button>
+                <h3>{{ currentDate }}</h3>
+                <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
               </div>
 
               <!-- Needs for the selected date -->
@@ -124,7 +128,6 @@
               </ul>
               <p v-else style="text-align: center;">No needs for today</p>
             </div>
-
 
           </div>
         </div>
@@ -304,11 +307,9 @@ onBeforeMount(() => {
 
 
 <style scoped>
-
 ion-content {
   overflow-y: auto;
 }
-
 
 ion-page {
   padding-top: 60px;
@@ -325,20 +326,33 @@ ion-page {
   margin-top: 60px;
 }
 
-.pet-card {
-  background-color: var(--card-bg-lilac);
+.full-pet-card {
+  background-color: var(--color-card-background-lilac);
   border-radius: 50px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--color-card-border);
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   padding: 20px;
   max-width: 600px;
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 20px;
+  transition: transform 0.3s ease;
 }
 
+.full-pet-card:hover {
+  transform: translateY(-5px);
+}
+
+
 .custom-button {
-  --background: var(--ion-color-pink);
+  --background: var(--color-button-pet-page);
   --color: #fff;
+  --border-radius: 20px;
+  --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
+}
+
+.custom-button:hover {
+  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
 
 .header-button-container {
@@ -369,16 +383,49 @@ ion-datetime {
 }
 
 ion-modal {
-  --width: 100%;
-  --height: 100%;
+  --border-radius: 20px;
+  --width: 80%;
+  --max-width: 700px;
+  --max-height: 500px;
+  --background: var(--color-card-background-lilac);
 }
 
 ion-modal ion-button,
 ion-modal ion-title {
-  --color: var(--font-color-lilac) !important;
+  --color: var(--color-text-lilac) !important;
 }
 
+/* Calendar styles */
+ion-datetime {
+  margin: 20px auto;
+  --background: var(--color-card-background-lilac);
+  --padding-top: 20px;
+  --padding-bottom: 20px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  border-radius: 20px;
+  max-width: 90%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+ion-item,
+ion-input {
+  color: var(--color-text-lilac);
+}
+
+ion-radio {
+  --color-checked: var(--ion-color-pink);
+}
+
+/* Buttons */
 ion-button {
   --background: var(--ion-color-pink);
+}
+
+/* Error message */
+.error-message {
+  color: var(--color-error-message);
+  text-align: center;
+  margin-top: 20px;
 }
 </style>

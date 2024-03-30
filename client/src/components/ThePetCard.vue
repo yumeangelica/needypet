@@ -1,5 +1,5 @@
 <template>
-  <div class="pet-card" @click="navigateToPetView">
+  <div class="small-pet-card" @click="navigateToPetView">
     <h2>{{ pet.name }}</h2>
   </div>
 </template>
@@ -24,19 +24,41 @@ export default {
 
 
 <style scoped>
-.pet-card {
+.small-pet-card {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-end;
   align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 1rem;
-  margin: 1rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: var(--card-bg-lilac);
+  border-radius: 50px;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
+  min-width: 150px;
+  height: 200px;
+  background-color: var(--color-card-background-lilac);
+  border: 2px solid var(--color-card-border);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  min-width: 200px;
 }
 
-.pet-card h2 {
-  margin: 0;
+.small-pet-card:hover {
+  transform: translateY(-5px);
+}
+
+.small-pet-card h2 {
+  font-size: 1rem;
+  width: 100%;
+  text-align: center;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+/* Responsiveness for mobile */
+@media (max-width: 768px) {
+  .small-pet-card {
+    min-width: 200px;
+    margin: 10px;
+  }
 }
 </style>
