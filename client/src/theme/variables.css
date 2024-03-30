@@ -95,7 +95,8 @@ http://ionicframework.com/docs/theming/ */
 
   /* My custom pet page colors */
   --color-button-pet-page: #FEADF6;
-  --color-status-done: #32729A;
+  --color-status-done: #BCE3FF;
+  --color-pet-need-background: #F6EDFF;
 
   /* My custom login page colors */
   --color-login-background: #FFEEF5;
@@ -108,7 +109,6 @@ http://ionicframework.com/docs/theming/ */
 
   /* My custom shadow color */
   --color-drop-shadow-pink: #E4BDD2;
-  --color-drop-shadow-dark-pink: #A9708F;
 }
 
 @media (prefers-color-scheme: dark) {
