@@ -64,7 +64,7 @@ const login = async () => {
 .login-container,
 ion-item,
 .login-button {
-  box-shadow: 1px 1px 2px var(--color-drop-shadow-dark-pink);
+  box-shadow: 1px 1px 4px var(--color-drop-shadow-pink);
   border-radius: 25px;
 }
 
@@ -74,7 +74,7 @@ ion-item,
   padding: 20px;
   border-radius: 50px;
   background-color: var(--color-login-background);
-  border: solid 3px var(--color-login-button-and-border);
+  border: solid 2px var(--color-login-button-and-border);
 }
 
 ion-item {
@@ -103,14 +103,12 @@ ion-input {
   margin-top: 30px;
   width: 100%;
   font-weight: bold;
-  box-shadow: 1px 1px 2px var(--color-drop-shadow-dark-pink);
 }
 
 .login-button:hover,
 .login-button:focus,
 .login-button:active {
-  background: darken(var(--color-login-button-and-border), 5%);
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-dark-pink);
+  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
 
 .error-message {
