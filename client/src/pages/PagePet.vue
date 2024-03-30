@@ -103,7 +103,7 @@
 
                 <!-- Return button -->
                 <div>
-                  <ion-button @click="selection = ''" v-if="selection">Return</ion-button>
+                  <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
                 </div>
 
                 <!-- Error message if details are not correct -->
@@ -329,8 +329,8 @@ ion-page {
 .full-pet-card {
   background-color: var(--color-card-background-lilac);
   border-radius: 50px;
-  border: 1px solid var(--color-card-border);
-  box-shadow: 2px 2px 4px var(--color-drop-shadow-dark-pink);
+  border: 2px solid var(--color-card-border);
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   padding: 20px;
   max-width: 600px;
   width: 100%;
