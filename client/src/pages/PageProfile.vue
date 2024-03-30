@@ -50,7 +50,7 @@ onBeforeMount(async () => {
   text-align: center;
   background-color: var(--color-card-background-lilac);
   border-radius: 50px;
-  border: solid 1px var(--color-card-border);
+  border: solid 2px var(--color-card-border);
 }
 
 h2 {
