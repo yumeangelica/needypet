@@ -1,12 +1,12 @@
 <template>
   <ion-tab-bar slot="bottom" v-if="!isLoginPage">
     <ion-tab-button tab="home" @click.prevent="navigateTo('/')">
-      <ion-icon aria-hidden="true" :icon="pawOutline" color="primary" />
-      <ion-label color="primary">Home</ion-label>
+      <ion-icon aria-hidden="true" :icon="pawOutline" />
+      <ion-label>Home</ion-label>
     </ion-tab-button>
     <ion-tab-button tab="profile" @click.prevent="navigateTo('/profile')">
-      <ion-icon aria-hidden="true" :icon="personCircleOutline" color="primary" />
-      <ion-label color="primary">Profile</ion-label>
+      <ion-icon aria-hidden="true" :icon="personCircleOutline" />
+      <ion-label>Profile</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </template>
@@ -29,4 +29,10 @@ const navigateTo = (path) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.ion-tab-button, ion-label, ion-icon {
+  color: var(--color-text-lilac);
+}
+
+</style>
