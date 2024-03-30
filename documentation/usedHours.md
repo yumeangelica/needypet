@@ -141,15 +141,15 @@
 |           | Update PagePet, PageLogin, PageProfile, TheNeedCard, and header styles to match my design vision.                                                                    |             |
 |           | Import Google font Krona for aesthetic enhancement. Fix a mobile view bug in app.vue for improved responsiveness.                                                    | 10.75       |
 |           |                                                                                                                                                                      |             |
-| 29.3.24   | Frontend styling and design updates: Implemented comprehensive style enhancements across the application following design improvements in Figma.                     |             |
-|           | Introduced new custom CSS color variables and updated CSS styles. Used WebAIM Contrast Checker for accessibility-conscious color choices.                            |             |
-|           | Ensured that all styling changes, especially color selections, meet accessibility standards by checking contrast ratios, enhancing the usability.                    |             |
-|           | Refined the styling of User Profile and Pet Cards, including borders, shadows, and overall layout.                                                                   |             |
-|           | Updated the Login Form, adding stylistic details like drop shadows and borders.                                                                                      |             |
-|           | Designed PageHome completely, updating styles to align with the new design.                                                                                          |             |
-|           | Updated the styling of Need Cards, including the Complete Button and Done label.                                                                                     |             |
-|           | Enhanced header elements by adding Paw and Person ion-icons for a more intuitive navigation experience. Now mobile header and desktop header have matching design.   |             |
-|           | Improved modal presentation in PagePet, introducing return button for better user navigation.                                                                        |             |
-|           | Conducted thorough testing across all pages to ensure that the new styles are applied correctly and work in mobile mode and in desktop mode.                         | 12          |
+| 29.3.24   | Frontend styling and design updates: Implement comprehensive style enhancements across the application following design improvements in Figma.                       |             |
+|           | Introduce new custom CSS color variables and updated CSS styles. Use WebAIM Contrast Checker for accessibility-conscious color choices.                              |             |
+|           | Ensure that all styling changes, especially color selections, meet accessibility standards by checking contrast ratios, enhancing the usability.                     |             |
+|           | Refine the styling of User Profile and Pet Cards, including borders, shadows, and overall layout.                                                                    |             |
+|           | Update the Login Form, adding stylistic details like drop shadows and borders.                                                                                       |             |
+|           | Design PageHome completely, updating styles to align with the new design.                                                                                            |             |
+|           | Update the styling of Need Cards, including the Complete Button and Done label.                                                                                      |             |
+|           | Enhance header elements by adding Paw and Person ion-icons for a more intuitive navigation experience. Now mobile header and desktop header have matching design.    |             |
+|           | Improve modal presentation in PagePet, introducing return button for better user navigation.                                                                         |             |
+|           | Conduct thorough testing across all pages to ensure that the new styles are applied correctly and work in mobile mode and in desktop mode.                           | 12          |
 |           |                                                                                                                                                                      |             |
 | **Total** |                                                                                                                                                                      | **163**     |
