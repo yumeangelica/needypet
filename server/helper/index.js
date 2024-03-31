@@ -50,11 +50,15 @@ const dailyTaskCompleter = need => {
  * @returns
  */
 const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsinki'
-  const momentTimezoneData = require('moment-timezone/data/meta/latest.json');
+  const moment = require('moment-timezone');
+  const timezones = moment.tz.names();
+  return timezones.includes(timezone);
 
-  const timezones = Object.keys(momentTimezoneData.zones);
-
-  return timezones.includes(timezone); // Check if list of timezones includes the given timezone, return true or false
+  // Outcommented alternative version of the checker
+  // const momentTimezoneData = require('moment-timezone/data/meta/latest.json');
+  // const momentTimezoneData = moment.tz;
+  // const timezones = Object.keys(momentTimezoneData.zones);
+  // return timezones.includes(timezone); // Check if list of timezones includes the given timezone, return true or false
 };
 
 /**
