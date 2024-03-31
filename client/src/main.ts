@@ -1,8 +1,8 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from '@/router/index';
-
 import { IonicVue } from '@ionic/vue';
+import { createPinia } from 'pinia';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -26,7 +26,7 @@ import './theme/variables.css';
 /* Custom styles */
 import './theme/styles.css';
 
-import { createPinia } from 'pinia';
+// Import the store
 import { useUserStore } from '@/store/user';
 import { usePetStore } from './store/pet';
 
@@ -38,23 +38,34 @@ async function initApp() {
 
   await router.isReady();
 
-  // If the token is not in the store, try to get it from the local storage
+  // Define public routes
+  const publicRoutes = ['login', 'register'];
+
+  // Initialize user's session from local storage if token exists
   if (!userStore.token) {
     await userStore.initializeFromLocalStorage();
   }
 
+  // Validate token and set user's session accordingly
   const isValidToken = await userStore.checkAndValidateToken();
-  if (isValidToken) {
-    await petStore.getAllPets();
 
-    const currentPath = sessionStorage.getItem('currentPath');
-    if (currentPath && currentPath !== '/') {
+  if (isValidToken) {
+    // If token is valid, fetch pets and navigate to the intended route
+    await petStore.getAllPets();
+    const currentPath = sessionStorage.getItem('currentPath') || '/';
+
+    // Navigate to saved path if it's not a public route or the home page by default
+    if (
+      !publicRoutes.includes(router.currentRoute.value.name as string) ||
+      currentPath !== '/'
+    ) {
       router.push(currentPath);
-    } else {
-      router.push({ name: 'home' });
     }
   } else {
-    router.push({ name: 'login' });
+    // If token is not valid, navigate to login page unless it's a public route
+    if (!publicRoutes.includes(router.currentRoute.value.name as string)) {
+      router.push({ name: 'login' });
+    }
   }
 
   app.mount('#app');
