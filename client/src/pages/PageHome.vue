@@ -3,12 +3,14 @@
     <ion-content :fullscreen="true">
       <div class="content-wrapper">
         <div class="pets-container">
+
           <div v-if="ownPets.length > 0">
             <h2 class="section-title">Your pets:</h2>
             <div class="cards-container">
               <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
             </div>
           </div>
+
           <div v-if="carerPets.length > 0">
             <h2 class="section-title">Pets to take care of:</h2>
             <div class="cards-container">
@@ -16,6 +18,11 @@
             </div>
           </div>
         </div>
+
+        <div v-if="ownPets.length === 0 && carerPets.length === 0">
+          <p class="text-center">You don't have any pets yet.</p>
+        </div>
+
       </div>
     </ion-content>
   </ion-page>

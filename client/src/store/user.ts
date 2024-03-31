@@ -77,6 +77,38 @@ export const useUserStore = defineStore({
 
       return response;
     },
+    async createAccount({
+      userName,
+      email,
+      newPassword,
+      timezone,
+    }): Promise<boolean> {
+      try {
+        const response = await axiosInstance.post(`${servicePath}/users`, {
+          userName,
+          email,
+          newPassword,
+          timezone,
+        });
+
+        if (response.status === 201) {
+          console.log('Account created successfully');
+          return true;
+        } else {
+          console.error(
+            'Account creation failed with status: ',
+            response.status
+          );
+          return false;
+        }
+      } catch (error) {
+        console.error(
+          'Error creating account:',
+          error.response?.data || error.message
+        );
+        return false;
+      }
+    },
     async logout(): Promise<void> {
       this.token = this.userName = this.id = null; // Reset the store state
       localStorage.clear();
@@ -98,7 +130,12 @@ export const useUserStore = defineStore({
         .then((response) => {
           if (response.status === 200) {
             const { token, user } = response.data;
-            return setAuthData(token, user.userName, user.id, user.timezone).then(() => {
+            return setAuthData(
+              token,
+              user.userName,
+              user.id,
+              user.timezone
+            ).then(() => {
               return true;
             });
           }

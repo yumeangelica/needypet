@@ -152,4 +152,11 @@
 |           | Improve modal presentation in PagePet, introducing return button for better user navigation.                                                                         |             |
 |           | Conduct thorough testing across all pages to ensure that the new styles are applied correctly and work in mobile mode and in desktop mode.                           | 12          |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **163**     |
+| 30.3.24   | Frontend: Create `PageRegister` for account creation with timezone selection using `moment-timezone`. Also style the entire page.                                    |             |
+|           | Implement `createAccount` action function in user store. Add route for account creation (register).                                                                  |             |
+|           | Refactor `main.ts` to enhance token validation and navigation logic based on user authentication.                                                                    |             |
+|           | Implement computed properties and conditions to hide headers on PageRegister and PageLogin.                                                                          |             |
+|           | Add global CSS class for centering texts. Implement a display message in `PageHome` for users without pets, enhancing user feedback.                                 |             |
+|           | Backend: Update timezone validator logic to validate timezones more effectively. Test that everything works properly.                                                | 7           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **170**     |
