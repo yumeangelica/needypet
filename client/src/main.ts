@@ -39,7 +39,7 @@ async function initApp() {
   await router.isReady();
 
   // Define public routes
-  const publicRoutes = ['login', 'register'];
+  const publicRoutes = ['login', 'register', 'landing'];
 
   // Initialize user's session from local storage if token exists
   if (!userStore.token) {
@@ -64,7 +64,7 @@ async function initApp() {
   } else {
     // If token is not valid, navigate to login page unless it's a public route
     if (!publicRoutes.includes(router.currentRoute.value.name as string)) {
-      router.push({ name: 'login' });
+      router.push({ name: 'landing' });
     }
   }
 
