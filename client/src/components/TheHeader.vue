@@ -1,11 +1,16 @@
 <template>
-  <ion-header v-if="!isMobile && !isLoginPage">
+  <ion-header v-if="!isMobile && !isLoginPage && !isRegisterPage">
     <ion-toolbar>
       <ion-buttons slot="start">
         <ion-button fill="clear" @click="navigateHome"><ion-icon :icon="pawOutline" aria-hidden="true"></ion-icon>Home</ion-button>
       </ion-buttons>
       <div slot="end" style="display: flex; align-items: center;">
-        <ion-button fill="clear"><ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon><router-link :to="{ name: 'profile' }">{{ userName }}</router-link></ion-button>
+
+        <ion-button fill="clear">
+          <ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon>
+          <router-link :to="{ name: 'profile' }">{{ userName }}</router-link>
+        </ion-button>
+
         <ion-button class="logout-button" fill="clear" @click="logout">Logout</ion-button>
       </div>
     </ion-toolbar>
@@ -27,6 +32,7 @@ const appStore = useAppStore();
 const userName = computed(() => userStore.userName);
 const isMobile = computed(() => appStore.isMobile);
 const isLoginPage = computed(() => route.name === 'login');
+const isRegisterPage = computed(() => route.name === 'register');
 
 const logout = async () => {
   await userStore.logout();
