@@ -112,8 +112,8 @@ export const useUserStore = defineStore({
     async logout(): Promise<void> {
       this.token = this.userName = this.id = null; // Reset the store state
       localStorage.clear();
-      router.push({ name: 'login' });
-      window.location.href = '/login';
+      router.push({ name: 'landing' });
+      window.location.href = '/landing';
     },
     async login(userName: string, password: string): Promise<boolean> {
       const response = axiosInstance({

@@ -1,5 +1,5 @@
 <template>
-  <ion-tab-bar slot="bottom" v-if="!isLoginPage && !isRegisterPage">
+  <ion-tab-bar slot="bottom" v-if="!isLoginPage && !isRegisterPage && !isLandingPage">
     <ion-tab-button tab="home" @click.prevent="navigateTo('/')">
       <ion-icon aria-hidden="true" :icon="pawOutline" />
       <ion-label>Home</ion-label>
@@ -21,6 +21,7 @@ import router from '@/router';
 const route = useRoute();
 const isLoginPage = computed(() => route.name === 'login');
 const isRegisterPage = computed(() => route.name === 'register');
+const isLandingPage = computed(() => route.name === 'landing');
 
 const navigateTo = (path) => {
   if (route.path !== path) {

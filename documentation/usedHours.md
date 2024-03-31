@@ -159,4 +159,10 @@
 |           | Add global CSS class for centering texts. Implement a display message in `PageHome` for users without pets, enhancing user feedback.                                 |             |
 |           | Backend: Update timezone validator logic to validate timezones more effectively. Test that everything works properly.                                                | 7           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **170**     |
+| 31.3.24   | Create landing page for improved initial user navigation with options to log in or create an account, and style it to align with the app's design.                   |             |
+|           | Add `PageLanding` route as public in `main.ts` and redirect unauthenticated users, enhancing security and flow.                                                      |             |
+|           | Modify the logout function in the user store to redirect to `PageLanding`.                                                                                           |             |
+|           | Implement computed properties and conditions to hide headers on `PageLanding`.                                                                                       |             |
+|           | Add a custom CSS color variable for the "Create Account" button, enhancing app styling.                                                                              | 2           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **172**     |
