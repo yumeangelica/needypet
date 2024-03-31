@@ -4,6 +4,11 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
+    name: 'landing',
+    component: () => import('@/pages/PageLanding.vue'),
+  },
+  {
+    path: '/home',
     name: 'home',
     component: () => import('@/pages/PageHome.vue'),
     alias: '/pets',
