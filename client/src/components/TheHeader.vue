@@ -1,5 +1,5 @@
 <template>
-  <ion-header v-if="!isMobile && !isLoginPage && !isRegisterPage">
+  <ion-header v-if="!isMobile && !isLoginPage && !isRegisterPage && !isLandingPage">
     <ion-toolbar>
       <ion-buttons slot="start">
         <ion-button fill="clear" @click="navigateHome"><ion-icon :icon="pawOutline" aria-hidden="true"></ion-icon>Home</ion-button>
@@ -33,10 +33,11 @@ const userName = computed(() => userStore.userName);
 const isMobile = computed(() => appStore.isMobile);
 const isLoginPage = computed(() => route.name === 'login');
 const isRegisterPage = computed(() => route.name === 'register');
+const isLandingPage = computed(() => route.name === 'landing');
 
 const logout = async () => {
   await userStore.logout();
-  router.push({ name: 'login' });
+  router.push({ name: 'landing' });
 };
 
 const navigateHome = () => {
