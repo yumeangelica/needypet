@@ -1,13 +1,16 @@
 <template>
   <ion-tab-bar slot="bottom" v-if="!isLoginPage && !isRegisterPage && !isLandingPage">
-    <ion-tab-button tab="home" @click.prevent="navigateTo('/')">
+
+    <ion-tab-button tab="home" @click.prevent="navigateTo('home')">
       <ion-icon aria-hidden="true" :icon="pawOutline" />
       <ion-label>Home</ion-label>
     </ion-tab-button>
-    <ion-tab-button tab="profile" @click.prevent="navigateTo('/profile')">
+
+    <ion-tab-button tab="profile" @click.prevent="navigateTo('profile')">
       <ion-icon aria-hidden="true" :icon="personCircleOutline" />
       <ion-label>Profile</ion-label>
     </ion-tab-button>
+
   </ion-tab-bar>
 </template>
 
@@ -23,11 +26,13 @@ const isLoginPage = computed(() => route.name === 'login');
 const isRegisterPage = computed(() => route.name === 'register');
 const isLandingPage = computed(() => route.name === 'landing');
 
-const navigateTo = (path) => {
-  if (route.path !== path) {
-    router.push(path);
+const navigateTo = (name) => {
+  if (route.name !== name) {
+    router.push({ name });
   }
 };
+
+
 
 </script>
 
