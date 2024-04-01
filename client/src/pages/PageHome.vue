@@ -20,19 +20,27 @@
         </div>
 
         <div v-if="ownPets.length === 0 && carerPets.length === 0">
-          <p class="text-center">You don't have any pets yet.</p>
+          <p class="ion-text-center">You don't have any pets yet.</p>
         </div>
 
       </div>
+
+      <div class="add-pet-button-container">
+        <ion-button @click="goToAddPet" class="add-pet-button">Add Pet</ion-button>
+      </div>
+
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent } from '@ionic/vue';
-import { ref, watch, onMounted } from 'vue';
+import { IonPage, IonContent, IonButton } from '@ionic/vue';
+import { ref, watch, onBeforeMount } from 'vue';
 import { usePetStore } from '@/store/pet';
 import ThePetCard from '@/components/ThePetCard.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const petStore = usePetStore();
 const ownPets = ref([]);
@@ -44,10 +52,18 @@ const updatePetLists = async () => {
   }
   ownPets.value = await petStore.getOwnerPets();
   carerPets.value = await petStore.getCarerPets();
+  console.log('ownPets', ownPets.value);
+  console.log('carerPets', carerPets.value);
 };
 
-onMounted(updatePetLists);
-watch(() => petStore.pets, updatePetLists);
+onBeforeMount(updatePetLists);
+
+watch(() => petStore.pets, updatePetLists, { deep: true });
+
+const goToAddPet = () => {
+  router.push({ name: 'add-pet' });
+};
+
 </script>
 
 <style scoped>
@@ -76,5 +92,25 @@ watch(() => petStore.pets, updatePetLists);
 
 .section-title:first-of-type {
   margin-top: 0;
+}
+
+/* Add new pet button */
+ion-button {
+  border-radius: 25px;
+}
+
+.add-pet-button-container {
+  display: flex;
+  justify-content: right;
+}
+
+.add-pet-button {
+  --background: var(--color-card-background-lilac);
+  --color: var(--color-text-lilac);
+  --border-radius: 25px;
+  font-weight: bold;
+  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+  margin-right: 40px;
+  margin-bottom: 20px;
 }
 </style>
