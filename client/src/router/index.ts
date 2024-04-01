@@ -20,6 +20,11 @@ const routes: Array<RouteRecordRaw> = [
     props: true,
   },
   {
+    path: '/add-pet',
+    name: 'add-pet',
+    component: () => import('@/pages/PageAddPet.vue'),
+  },
+  {
     path: '/profile',
     name: 'profile',
     component: () => import('@/pages/PageProfile.vue'),
