@@ -165,4 +165,11 @@
 |           | Implement computed properties and conditions to hide headers on `PageLanding`.                                                                                       |             |
 |           | Add a custom CSS color variable for the "Create Account" button, enhancing app styling.                                                                              | 2           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **172**     |
+| 1.4.24    | Frontend: Create new pet creation page and implement logic for submitting pet details. Add addNewPet action function to pet store.                                   |             |
+|           | Add button for adding new pets and redirect logic to PageAddPet in PageHome. Add add-pet route for PageAddPet.                                                       |             |
+|           | Modify UserId type to User type; modify Pet interface so id, owner, careTakers, and needs are optional.                                                              |             |
+|           | Fix bugs in headers buttons and logic.                                                                                                                               |             |
+|           | Backend: update validation in addNewPet function. Change minlength to 0 in species and breed in petModel.                                                            |             |
+|           | Test that everything works properly.                                                                                                                                 | 6           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **178**     |

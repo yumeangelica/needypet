@@ -107,7 +107,7 @@ const addNewPet = async (request, response, next) => {
 
   let careTaker;
 
-  if (request.body.careTaker !== owner) {
+  if (request.body.careTaker && request.body.careTaker !== owner) {
     careTaker = await User.findById(request.body.careTaker); // Find care taker by id
 
     if (!careTaker) {

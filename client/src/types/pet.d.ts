@@ -1,8 +1,7 @@
-
 import { User } from './user';
 // Definition of the Pet, Need and CareRecord interfaces
 
-type UserID = User; // Type alias for the User type
+type User = User;
 
 type Quantity = {
   value: number;
@@ -43,7 +42,6 @@ type Frequency = {
   };
 };
 
-
 interface Need {
   id?: string;
   dateFor: string;
@@ -59,15 +57,15 @@ interface Need {
 }
 
 interface Pet {
-  id: string;
+  id?: string;
   name: string;
   species?: string;
   breed?: string;
   description?: string;
   birthday?: Date;
-  owner: UserID;
-  careTakers: UserID[];
-  needs: Need[];
+  owner?: User;
+  careTakers?: User[];
+  needs?: Need[];
 }
 
 interface PetState {

@@ -1,18 +1,17 @@
 <template>
   <ion-header v-if="!isMobile && !isLoginPage && !isRegisterPage && !isLandingPage">
     <ion-toolbar>
+
       <ion-buttons slot="start">
-        <ion-button fill="clear" @click="navigateHome"><ion-icon :icon="pawOutline" aria-hidden="true"></ion-icon>Home</ion-button>
+        <ion-button fill="clear" @click="navigateTo('home')"><ion-icon :icon="pawOutline" aria-hidden="true"></ion-icon>Home</ion-button>
       </ion-buttons>
-      <div slot="end" style="display: flex; align-items: center;">
 
-        <ion-button fill="clear">
-          <ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon>
-          <router-link :to="{ name: 'profile' }">{{ userName }}</router-link>
-        </ion-button>
-
+      <ion-buttons slot="end" style="display: flex; align-items: center;">
+        <ion-button fill="clear" @click="navigateTo('profile')"><ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon>{{ userName
+          }}</ion-button>
         <ion-button class="logout-button" fill="clear" @click="logout">Logout</ion-button>
-      </div>
+      </ion-buttons>
+
     </ion-toolbar>
   </ion-header>
 </template>
@@ -40,8 +39,10 @@ const logout = async () => {
   router.push({ name: 'landing' });
 };
 
-const navigateHome = () => {
-  router.push({ name: 'home' });
+const navigateTo = (name) => {
+  if (route.name !== name) {
+    router.push({ name });
+  }
 };
 </script>
 
@@ -58,7 +59,7 @@ ion-button {
 }
 
 ion-icon {
-  padding: 5px;
+  padding: 0px 5px;
 }
 
 .logout-button {
