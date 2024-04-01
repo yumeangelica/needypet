@@ -169,6 +169,7 @@
 |           | Add button for adding new pets and redirect logic to PageAddPet in PageHome. Add add-pet route for PageAddPet.                                                       |             |
 |           | Modify UserId type to User type; modify Pet interface so id, owner, careTakers, and needs are optional.                                                              |             |
 |           | Fix bugs in headers buttons and logic.                                                                                                                               |             |
-|           | Backend: update validation in addNewPet function. Change minlength to 0 in species and breed in petModel.                                                            | 6           |
+|           | Backend: update validation in addNewPet function. Change minlength to 0 in species and breed in petModel.                                                            |             |
+|           | Test that everything works properly.                                                                                                                                 | 6           |
 |           |                                                                                                                                                                      |             |
 | **Total** |                                                                                                                                                                      | **178**     |
