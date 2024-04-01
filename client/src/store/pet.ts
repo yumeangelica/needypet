@@ -25,8 +25,8 @@ export const usePetStore = defineStore({
         return false;
       }
 
+      // Headers for the request
       const headers = {
-        // Headers for the request
         'Content-Type': 'application/json',
         Authorization: `bearer ${token}`,
       };
@@ -50,16 +50,43 @@ export const usePetStore = defineStore({
 
       return response;
     },
+    async addNewPet(newPetObject) {
+      const userStore = useUserStore();
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userStore.token}`,
+      };
+
+      try {
+        const response = await axiosInstance.post(
+          `${servicePath}/pets`,
+          newPetObject,
+          { headers }
+        );
+        if (response.status === 201) {
+          await this.getAllPets(); // Fetch all pets again to update the state
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during adding new pet:', error.response?.status);
+        return false;
+      }
+    },
     /**
      * @description Add a record for the need
      * @param petId
      * @param recordObject
      * @returns
-      */
-    async addRecord(petId: string, needId: string, recordObject: CareRecord): Promise<boolean> {
+     */
+    async addRecord(
+      petId: string,
+      needId: string,
+      recordObject: CareRecord
+    ): Promise<boolean> {
       const userStore = useUserStore();
       const token = userStore.token;
-      
+
       if (!token) {
         console.log('Token not found');
         return false;
@@ -75,7 +102,7 @@ export const usePetStore = defineStore({
         method: 'post',
         url: `${servicePath}/pets/${petId}/needs/${needId}/newrecord`,
         headers,
-        data: recordObject
+        data: recordObject,
       })
         .then((response) => {
           if (response.status === 201) {
@@ -159,9 +186,10 @@ export const usePetStore = defineStore({
       return state.pets.filter((pet) => pet.owner.id !== userStore.id);
     },
     getPetById:
-      (state) => async (id: string): Promise<Pet | undefined> => {
-        return state.pets.find((pet) => pet.id === id);
-      },
+      (state) =>
+        async (id: string): Promise<Pet | undefined> => {
+          return state.pets.find((pet) => pet.id === id);
+        },
   },
 });
 
