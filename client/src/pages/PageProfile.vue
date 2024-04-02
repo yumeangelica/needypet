@@ -10,7 +10,16 @@
           <div class="timezone">
             <p><strong>Timezone:</strong> {{ user.timezone }}</p>
           </div>
-          <ion-button class="logout-button" fill="clear" @click="logout">Logout</ion-button>
+
+          <div>
+            <ion-button class="setting-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
+
+            <ion-button class="setting-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
+
+            <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="confirmAccount"><ion-icon :icon="trashOutline"></ion-icon>Delete Account</ion-button>
+
+          </div>
+
         </div>
       </div>
     </ion-content>
@@ -22,15 +31,22 @@
 </template>
 
 <script setup>
-import { IonPage, IonContent, IonButton } from '@ionic/vue';
+import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
 import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
 
 const router = useRouter();
 
 const userStore = useUserStore();
 const user = ref(null);
+const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
+
+const toggleSettings = () => {
+  showSettings.value = !showSettings.value; // Toggle the value of showSettings
+};
 
 const fetchUser = async () => {
   const userData = await userStore.getUserById(userStore.Id);
@@ -42,12 +58,34 @@ onBeforeMount(async () => {
   await fetchUser();
 });
 
+const confirmLogout = () => {
+  if (window.confirm('Are you sure you want to logout?')) {
+    logout();
+  }
+};
 
 const logout = async () => {
   await userStore.logout();
   router.push({ name: 'landing' });
 };
 
+const confirmAccount = () => {
+  if (window.confirm('Are you sure you want to delete your account?')) {
+    deleteAccount();
+  }
+};
+
+const deleteAccount = async () => {
+  const response = await userStore.deleteAccount(); // Returns true or false
+
+  if (response) {
+    await userStore.logout();
+    console.log('Account deleted');
+    router.push({ name: 'landing' });
+  } else {
+    console.log('Account could not be deleted');
+  }
+};
 </script>
 
 
@@ -76,23 +114,18 @@ h2 {
 }
 
 
-
-/* Logout */
-ion-buttons span {
-  margin-right: 1rem;
-  color: #fff;
-}
-
 /* Override ion button style */
-ion-button {
-  --color: var(--color-text-lilac) !important;
-}
 
 ion-icon {
-  padding: 0px 5px;
+  margin-right: 5px;
 }
 
-.logout-button {
+ion-button {
+  --color: var(--color-text-lilac) !important;
+  --border-radius: 20px;
+}
+
+.setting-button {
   --color: var(--color-text-lilac) !important;
   background-color: var(--color-card-background-lilac);
   border: 1px solid var(--color-card-border);
@@ -103,7 +136,7 @@ ion-icon {
   transition: background-color 0.3s ease;
 }
 
-.logout-button:hover {
+.setting-button:hover {
   background-color: var(--color-card-background-lilac);
   box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
