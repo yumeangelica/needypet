@@ -172,4 +172,14 @@
 |           | Backend: update validation in addNewPet function. Change minlength to 0 in species and breed in petModel.                                                            |             |
 |           | Test that everything works properly.                                                                                                                                 | 6           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **178**     |
+| 2.4.24    | Frontend updates:                                                                                                                                                    |             |
+|           | Implement and style `PageEditProfile` with complete logic for updating user details, including username, email, timezone selection, and password verification.       |             |
+|           | Add notification for password field validation and customize styles for cohesive user interface.                                                                     |             |
+|           | Add settings toggle for account deletion, add icons for actions, and confirmation prompts in `PageProfile` to enhance user experience and app functionality.         |             |
+|           | Integrate `deleteAccount` action function and `updateUserProfile` action to user store, enabling account management functionalities.                                 |             |
+|           | Add "Edit Profile" button with navigation logic in `PageProfile`, and establish `edit-profile` route for user navigation to `PageEditProfile`.                       |             |
+|           | Move logout button and associated logic from header to `PageProfile` for a more intuitive user interface.                                                            |             |
+|           | Update ion-icon colors in header and customize UI elements with Google font Krona to unify and enhance the application's visual design.                              |             |
+|           | Test that new features work properly.                                                                                                                                | 6           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **184**     |

@@ -30,6 +30,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/PageProfile.vue'),
   },
   {
+    path: '/edit-profile',
+    name: 'edit-profile',
+    component: () => import('@/pages/PageEditProfile.vue'),
+  },
+  {
     path: '/register',
     name: 'register',
     component: () => import('@/pages/PageRegister.vue'),
