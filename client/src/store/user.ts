@@ -109,6 +109,35 @@ export const useUserStore = defineStore({
         return false;
       }
     },
+    async deleteAccount(): Promise<boolean> {
+      try {
+        const response = await axiosInstance.delete(
+          `${servicePath}/users/${this.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+
+        if (response.status === 204) {
+          console.log('Account deleted successfully');
+          return true;
+        } else {
+          console.error(
+            'Account deletion failed with status: ',
+            response.status
+          );
+          return false;
+        }
+      } catch (error) {
+        console.error(
+          'Error deleting account:',
+          error.response?.data || error.message
+        );
+        return false;
+      }
+    },
     async logout(): Promise<void> {
       this.token = this.userName = this.id = null; // Reset the store state
       localStorage.clear();
