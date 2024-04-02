@@ -54,5 +54,6 @@ ion-button {
 
 ion-icon {
   padding: 0px 5px;
+  color: var(--color-text-lilac);
 }
 </style>
