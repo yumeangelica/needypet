@@ -172,7 +172,8 @@
 |           | Backend: update validation in addNewPet function. Change minlength to 0 in species and breed in petModel.                                                            |             |
 |           | Test that everything works properly.                                                                                                                                 | 6           |
 |           |                                                                                                                                                                      |             |
-| 2.4       | Implement and style `PageEditProfile` with complete logic for updating user details, including username, email, timezone selection, and password verification.       |             |
+| 2.4.24    | Frontend updates:                                                                                                                                                    |             |
+|           | Implement and style `PageEditProfile` with complete logic for updating user details, including username, email, timezone selection, and password verification.       |             |
 |           | Add notification for password field validation and customize styles for cohesive user interface.                                                                     |             |
 |           | Add settings toggle for account deletion, add icons for actions, and confirmation prompts in `PageProfile` to enhance user experience and app functionality.         |             |
 |           | Integrate `deleteAccount` action function and `updateUserProfile` action to user store, enabling account management functionalities.                                 |             |
