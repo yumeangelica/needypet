@@ -109,6 +109,44 @@ export const useUserStore = defineStore({
         return false;
       }
     },
+    async updateUserProfile({
+      userName,
+      email,
+      timezone,
+      currentPassword,
+    }): Promise<boolean> {
+      try {
+        const response = await axiosInstance.put(
+          `${servicePath}/users/${this.id}`,
+          { userName, email, timezone, currentPassword },
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          // Update the store state
+          this.$patch({
+            userName: response.data.userName,
+            email: response.data.email,
+            timezone: response.data.timezone,
+          });
+          console.log('User updated successfully');
+          return true;
+        } else {
+          console.error('User update failed with status:', response.status);
+          return false;
+        }
+      } catch (error) {
+        console.error(
+          'Error updating user profile:',
+          error.response?.data || error.message
+        );
+        return false;
+      }
+    },
     async deleteAccount(): Promise<boolean> {
       try {
         const response = await axiosInstance.delete(
