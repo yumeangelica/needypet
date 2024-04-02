@@ -16,6 +16,8 @@
 
             <ion-button class="setting-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
 
+            <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="navigateToEditProfile">Edit Profile</ion-button>
+
             <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="confirmAccount"><ion-icon :icon="trashOutline"></ion-icon>Delete Account</ion-button>
 
           </div>
@@ -34,7 +36,7 @@
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
 import { onBeforeMount, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
 
@@ -86,6 +88,15 @@ const deleteAccount = async () => {
     console.log('Account could not be deleted');
   }
 };
+
+const navigateToEditProfile = () => {
+  router.push({ name: 'edit-profile' });
+};
+
+onBeforeRouteLeave(() => {
+  showSettings.value = false; // Reset the value of showSettings when leaving the page
+});
+
 </script>
 
 
@@ -121,8 +132,11 @@ ion-icon {
 }
 
 ion-button {
-  --color: var(--color-text-lilac) !important;
+  --background: var(--color-button-pet-page);
+  --color: #fff;
   --border-radius: 20px;
+  margin-top: 20px;
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
 }
 
 .setting-button {
@@ -132,7 +146,6 @@ ion-button {
   font-weight: bold;
   border-radius: 20px;
   margin: 10px;
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   transition: background-color 0.3s ease;
 }
 
