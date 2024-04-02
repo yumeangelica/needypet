@@ -9,7 +9,6 @@
       <ion-buttons slot="end" style="display: flex; align-items: center;">
         <ion-button fill="clear" @click="navigateTo('profile')"><ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon>{{ userName
           }}</ion-button>
-        <ion-button class="logout-button" fill="clear" @click="logout">Logout</ion-button>
       </ion-buttons>
 
     </ion-toolbar>
@@ -34,11 +33,6 @@ const isLoginPage = computed(() => route.name === 'login');
 const isRegisterPage = computed(() => route.name === 'register');
 const isLandingPage = computed(() => route.name === 'landing');
 
-const logout = async () => {
-  await userStore.logout();
-  router.push({ name: 'landing' });
-};
-
 const navigateTo = (name) => {
   if (route.name !== name) {
     router.push({ name });
@@ -60,21 +54,5 @@ ion-button {
 
 ion-icon {
   padding: 0px 5px;
-}
-
-.logout-button {
-  --color: var(--color-text-lilac) !important;
-  background-color: var(--color-card-background-lilac);
-  border: 1px solid var(--color-card-border);
-  font-weight: bold;
-  border-radius: 20px;
-  margin: 10px;
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-  background-color: var(--color-card-background-lilac);
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
 </style>
