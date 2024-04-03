@@ -1,41 +1,34 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Edit Profile</ion-title>
-      </ion-toolbar>
-    </ion-header>
     <ion-content :fullscreen="true">
-      <div class="form-container">
-        <h3>Edit Profile:</h3>
-        <ion-item>
-          <ion-input v-model="editData.userName" type="text" required placeholder="Username"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-input v-model="editData.email" type="email" required placeholder="Email"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-select v-model="editData.timezone" placeholder="Select Timezone">
-            <ion-select-option v-for="zone in timezones" :value="zone" :key="zone">{{ zone }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-input v-model="editData.currentPassword" type="password" required placeholder="Current Password"></ion-input>
-        </ion-item>
-        <span class="error-message" v-if="showPasswordNotification">Please enter your current password</span>
-        <ion-button @click="submitForm" expand="block">Save Changes</ion-button>
-
-        <ion-button @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
-
+      <div class="content-wrapper">
+        <div class="form-container">
+          <h3>Edit Profile:</h3>
+          <ion-item>
+            <ion-input v-model="editData.userName" type="text" required placeholder="Username"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input v-model="editData.email" type="email" required placeholder="Email"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-select v-model="editData.timezone" placeholder="Select Timezone">
+              <ion-select-option v-for="zone in timezones" :value="zone" :key="zone">{{ zone }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-input v-model="editData.currentPassword" type="password" required placeholder="Current Password"></ion-input>
+          </ion-item>
+          <span class="error-message" v-if="showPasswordNotification">Please enter your current password</span>
+          <ion-button @click="submitForm" expand="block">Save Changes</ion-button>
+          <ion-button @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
+        </div>
       </div>
-
-
     </ion-content>
   </ion-page>
 </template>
 
 <script setup>
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonInput, IonSelect, IonButton, IonSelectOption } from '@ionic/vue';
+import { IonPage, IonContent, IonItem, IonInput, IonSelect, IonButton, IonSelectOption } from '@ionic/vue';
 import { ref, onMounted } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
@@ -111,54 +104,54 @@ const submitForm = async () => {
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   background-color: var(--color-card-background-lilac);
   border-radius: 50px;
-  border: 2px solid var(--color-card-border);
+  border: 1px solid var(--color-card-border);
 }
 
 ion-item {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   --background: var(--color-input-background);
   --border-radius: 10px;
   --padding-start: 10px;
   --padding-end: 10px;
   --highlight-color-focused: var(--color-drop-shadow-pink);
-  --highlight-background-focused: var(--color-drop-shadow-pink);
   --color: var(--color-text-default);
+  font-size: 0.85rem;
 }
 
 ion-select {
-  --padding-start: 10px;
-  --padding-end: 10px;
-  --placeholder-color: var(--color-text-lilac);
-  --placeholder-opacity: 1;
+  --placeholder-color: var(--color-text-default);
+  font-size: 0.85rem;
 }
 
 ion-button {
   --background: var(--color-button-pet-page);
-  --color: #fff;
   --border-radius: 20px;
-  margin-top: 20px;
-}
-
-ion-icon {
-  margin-right: 5px;
+  margin-top: 15px;
+  font-size: 0.85rem;
 }
 
 .error-message {
   color: var(--color-error-message);
   text-align: center;
-  margin-top: 20px;
+  margin-top: 15px;
+  font-size: 0.8rem;
 }
 
-@media (max-width: 768px) {
+
+/* Mobile styles */
+@media (max-width: 568px) {
   .form-container {
-    max-width: 95%;
-    margin: 20px auto;
-    padding: 20px;
+    padding: 15px;
   }
-  ion-item, ion-button {
-    --border-radius: 10px;
+
+  ion-item {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    font-size: 0.8rem;
+  }
+
+  ion-button {
+    font-size: 0.8rem;
   }
 }
-
-
 </style>
