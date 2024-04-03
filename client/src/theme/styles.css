@@ -79,12 +79,6 @@ li {
   /* Add padding to the top of the content wrapper to make room for the fixed header */
 }
 
-/* global class for centering texts */
-.text-center {
-  text-align: center;
-}
-
-
 /* Over ride ionic primary button */
 .ion-color-primary {
   --ion-color-base: var(--ion-color-pink) !important;
