@@ -1,6 +1,6 @@
 <template>
   <ion-app>
-    <ion-page>
+
       <TheHeader v-if="!isMobile"/>
       <ion-router-outlet v-if="!isMobile"/>
 
@@ -11,12 +11,12 @@
         <!-- Mobile navigation -->
         <TheMobileHeader />
       </ion-tabs>
-    </ion-page>
+
   </ion-app>
 </template>
 
 <script setup>
-import { IonApp, IonPage, IonRouterOutlet, IonTabs } from '@ionic/vue';
+import { IonApp, IonRouterOutlet, IonTabs } from '@ionic/vue';
 import { computed, onMounted, onUnmounted } from 'vue';
 import TheHeader from '@/components/TheHeader.vue';
 import TheMobileHeader from '@/components/TheMobileHeader.vue';
