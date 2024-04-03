@@ -1,37 +1,34 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Add New Pet</ion-title>
-      </ion-toolbar>
-    </ion-header>
     <ion-content class="ion-padding">
-      <div class="add-pet-container">
-        <form @submit.prevent="submitPet" class="add-pet-form">
-          <ion-item class="custom-input">
-            <ion-input aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name"></ion-input>
-          </ion-item>
+      <div class="content-wrapper">
+        <div class="add-pet-container">
+          <form @submit.prevent="submitPet" class="add-pet-form">
+            <ion-item class="custom-input">
+              <ion-input aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name"></ion-input>
+            </ion-item>
 
-          <ion-item class="custom-input">
-            <ion-input aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed"></ion-input>
-          </ion-item>
+            <ion-item class="custom-input">
+              <ion-input aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed"></ion-input>
+            </ion-item>
 
-          <ion-item class="custom-input">
-            <ion-input aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species"></ion-input>
-          </ion-item>
+            <ion-item class="custom-input">
+              <ion-input aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species"></ion-input>
+            </ion-item>
 
-          <ion-item class="custom-input">
-            <ion-textarea aria-label="Description" v-model="newPetObject.description" placeholder="About the pet"></ion-textarea>
-          </ion-item>
+            <ion-item class="custom-input">
+              <ion-textarea aria-label="Description" v-model="newPetObject.description" placeholder="About the pet"></ion-textarea>
+            </ion-item>
 
-          <ion-item class="custom-input" @click="showDatePicker = true">
-            <ion-input readonly :value="formattedDate || 'Select Date'" color="medium"></ion-input>
-          </ion-item>
-          <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
-            @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
+            <ion-item class="custom-input" @click="showDatePicker = true">
+              <ion-input readonly :value="formattedDate || 'Select Date'" color="medium"></ion-input>
+            </ion-item>
+            <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
+              @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
 
-          <ion-button type="submit" expand="block" class="submit-button">Add Pet</ion-button>
-        </form>
+            <ion-button type="submit" class="submit-button">Add Pet</ion-button>
+          </form>
+        </div>
       </div>
     </ion-content>
   </ion-page>
@@ -42,9 +39,6 @@
 import { computed, ref } from 'vue';
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonItem,
   IonInput,
@@ -67,7 +61,7 @@ const newPetObject = ref({
   breed: '',
   species: '',
   description: '',
-  birthday: new Date()
+  birthday: null,
 });
 const showDatePicker = ref(false);
 
@@ -122,43 +116,49 @@ const submitPet = async () => {
 
 </script>
 
+
 <style scoped>
 .add-pet-container {
   max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
+  margin: 0 auto;
+  padding: 15px;
   background-color: var(--color-card-background-lilac);
-  border-radius: 20px;
-  box-shadow: 1px 1px 4px var(--color-drop-shadow-pink);
+  border-radius: 50px;
+  border: solid 1px var(--color-card-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .add-pet-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
 }
 
 .custom-input,
 .ion-datetime {
-  background-color: var(--color-login-input-background);
-  border-radius: 20px;
-  --padding-start: 10px;
-  --color: var(--color-text-lilac);
-}
-
-.custom-input ion-label {
-  color: var(--color-text-lilac);
+  --border-radius: 20px;
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --color: var(--color-text-default);
+  margin-top: 10px;
 }
 
 .submit-button {
-  --background: var(--color-login-button-and-border);
-  --color: white;
-  font-weight: bold;
+  --background: var(--color-button-pet-page);
+  --border-radius: 25px;
   margin-top: 20px;
-  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.submit-button:hover {
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+@media (max-width: 768px) {
+
+  .custom-input ion-input,
+  .custom-input ion-textarea,
+  .ion-datetime {
+    font-size: 14px;
+  }
+
+  .submit-button {
+    font-size: 16px;
+  }
 }
 </style>
