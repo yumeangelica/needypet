@@ -88,40 +88,38 @@ const navigateToPageLanding = () => {
 
 
 <style scoped>
-/* PageRegister scoped styles */
 .account-container {
   max-width: 400px;
   margin: auto;
   padding: 20px;
   border-radius: 50px;
-  border: solid 2px var(--color-login-button-and-border);
   background-color: var(--color-login-background);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-login-button-and-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 ion-item {
-  --padding-start: 20px;
+  --padding-start: 15px;
   --inner-border-width: 0;
-  --inner-padding-end: 20px;
+  --inner-padding-end: 15px;
   --background: var(--color-login-input-background);
-  --border-radius: 25px;
+  --border-radius: 20px;
   --border-color: transparent;
-  margin-top: 15px;
+  margin: 12px 0;
 }
 
-ion-input {
+ion-input,
+ion-select {
   --placeholder-color: var(--color-text-default);
   --color: var(--color-text-default);
-}
-
-ion-select {
-  color: var(--color-text-default);
+  font-size: 0.85rem;
 }
 
 .account-button {
-  margin-top: 30px;
+  margin-top: 25px;
   --background: var(--color-login-button-and-border);
   --color: var(--color-text-lilac);
+  font-size: 0.85rem;
 }
 
 /* Override ion-button style for a consistent look */
@@ -133,7 +131,27 @@ ion-button {
 /* Error message styling */
 .error-message {
   color: var(--color-error-message);
-  margin-top: 15px;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.8rem;
 }
 
+
+/* Mobile styles */
+@media (max-width: 568px) {
+  .account-container {
+    padding: 15px;
+  }
+
+  ion-item {
+    --padding-start: 10px;
+    --inner-padding-end: 10px;
+  }
+
+  .account-button,
+  ion-input,
+  ion-select {
+    font-size: 0.8rem;
+  }
+}
 </style>
