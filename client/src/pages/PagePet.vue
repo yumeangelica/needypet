@@ -1,49 +1,36 @@
 <template>
   <ion-page>
     <ion-content :key="currentDate">
-      <div v-if="pet">
-
-        <div class="pet-container">
+      <div class="content-wrapper">
+        <div v-if="pet" class="pet-container">
           <div class="full-pet-card">
-            <h2 class="pet-name">{{ pet.name }}</h2>
+            <h3 class="pet-name">{{ pet.name }}</h3>
             <div class="pet-info">
               <p><strong>Description:</strong> {{ pet.description }}</p>
               <p><strong>Species:</strong> {{ pet.species }} </p>
               <p><strong>Breed:</strong> {{ pet.breed }}</p>
               <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
-            </div>
-
-            <div class="pet-owner">
-              <h3>Owner</h3>
-              <p>{{ pet.owner.userName }}</p>
-            </div>
-
-            <div class="care-takers" v-if="pet.careTakers.length > 0">
-              <h3>Care takers</h3>
-              <ul>
-                <li v-for="careTaker in pet.careTakers" :key="careTaker.id">{{ careTaker.userName }}</li>
-              </ul>
+              <p><strong>Owner:</strong> {{ pet.owner.userName }}</p>
+              <p v-if="pet.careTakers.length > 0"><strong>Care takers:</strong> <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">{{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}</span></p>
             </div>
 
             <!-- Need related container -->
             <div class="header-button-container">
-              <h3>Needs:</h3>
+
+              <h3 class="ion-text-center">Needs:</h3>
               <ion-button class="custom-button" @click="setOpen(true)" v-if="pet.owner.id === userStore.id">
                 <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
                 Add need
               </ion-button>
+
             </div>
 
             <!-- Modal which opens when 'add need' button is clicked -->
             <ion-modal :is-open="isOpen">
               <ion-header>
                 <ion-toolbar>
-                  <ion-title>New need</ion-title>
-                  <ion-buttons slot="start">
-                    <ion-button @click="setOpen(false)">Close</ion-button>
-                  </ion-buttons>
                   <ion-buttons slot="end">
-                    <ion-button :strong="true" @click="confirm()">Confirm</ion-button>
+                    <ion-button @click="setOpen(false)">Close form</ion-button>
                   </ion-buttons>
                 </ion-toolbar>
               </ion-header>
@@ -101,8 +88,8 @@
                   </ion-item>
                 </div>
 
-                <!-- Return button -->
-                <div>
+                <div class="confirm-button-container">
+                  <ion-button class="custom-button" @click="confirm()">Confirm</ion-button>
                   <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
                 </div>
 
@@ -123,7 +110,9 @@
               <!-- Needs for the selected date -->
               <ul v-if="needsByDate[currentDate]">
                 <li v-for="need in needsByDate[currentDate]" :key="need.id">
-                  <the-need-card :need="need" :petId="pet.id" />
+                  <div class="cards-container">
+                    <the-need-card :need="need" :petId="pet.id" />
+                  </div>
                 </li>
               </ul>
               <p v-else style="text-align: center;">No needs for today</p>
@@ -132,14 +121,13 @@
           </div>
         </div>
 
-      </div>
+        <div v-else class="pet-container">
+          <p>Pet not found</p>
+        </div>
 
-      <div v-else class="pet-container">
-        <p>Pet not found</p>
       </div>
 
     </ion-content>
-
 
   </ion-page>
 </template>
@@ -304,15 +292,9 @@ onBeforeMount(() => {
 
 </script>
 
-
-
 <style scoped>
 ion-content {
   overflow-y: auto;
-}
-
-ion-page {
-  padding-top: 60px;
 }
 
 .pet-container {
@@ -323,7 +305,6 @@ ion-page {
   gap: 20px;
   max-width: 100%;
   box-sizing: border-box;
-  margin-top: 60px;
 }
 
 .full-pet-card {
@@ -331,11 +312,10 @@ ion-page {
   border-radius: 50px;
   border: 2px solid var(--color-card-border);
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  padding: 20px;
-  max-width: 600px;
+  padding: 10px;
   width: 100%;
+  max-width: 600px;
   box-sizing: border-box;
-  margin-bottom: 20px;
   transition: transform 0.3s ease;
 }
 
@@ -343,32 +323,39 @@ ion-page {
   transform: translateY(-5px);
 }
 
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
 
 .custom-button {
   --background: var(--color-button-pet-page);
   --color: #fff;
   --border-radius: 20px;
   --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
+  font-size: 0.8rem;
 }
 
 .custom-button:hover {
   --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
 
+.date-navigation,
 .header-button-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  width: 100%;
 }
 
-.date-navigation {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  width: 100%;
+@media (min-width: 768px) {
+  .date-navigation {
+    flex-direction: row;
+    justify-content: space-around;
+  }
 }
 
 ion-button {
@@ -382,50 +369,86 @@ ion-datetime {
   width: 100%;
 }
 
+/* Modal specific styles */
 ion-modal {
   --border-radius: 20px;
-  --width: 80%;
-  --max-width: 700px;
-  --max-height: 500px;
+  --width: 95%;
+  --max-width: 800px;
+  --max-height: 600px;
   --background: var(--color-card-background-lilac);
 }
 
-ion-modal ion-button,
-ion-modal ion-title {
-  --color: var(--color-text-lilac) !important;
-}
-
-/* Calendar styles */
-ion-datetime {
-  margin: 20px auto;
+ion-modal ion-header,
+ion-modal ion-toolbar,
+ion-modal ion-title,
+ion-modal ion-content,
+ion-modal ion-datetime,
+ion-modal ion-item {
   --background: var(--color-card-background-lilac);
-  --padding-top: 20px;
-  --padding-bottom: 20px;
-  --padding-start: 20px;
-  --padding-end: 20px;
-  border-radius: 20px;
-  max-width: 90%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-ion-item,
-ion-input {
   color: var(--color-text-lilac);
 }
 
-ion-radio {
-  --color-checked: var(--ion-color-pink);
+ion-modal ion-datetime {
+  max-width: 90%;
+  margin: 0 auto;
 }
 
-/* Buttons */
-ion-button {
-  --background: var(--ion-color-pink);
+ion-modal ion-item {
+  margin: 10px 0;
 }
 
-/* Error message */
 .error-message {
   color: var(--color-error-message);
   text-align: center;
   margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pet-container h3,
+  .pet-container p,
+  .error-message,
+  ion-modal ion-title,
+  ion-modal ion-content,
+  ion-modal ion-label,
+  ion-modal ion-button,
+  ion-modal ion-item,
+  ion-modal .error-message {
+    font-size: 14px;
+  }
+
+  .pet-name,
+  ion-modal ion-title {
+    font-size: 16px;
+  }
+
+  ion-modal .error-message {
+    font-size: 12px;
+  }
+}
+
+/* Responsive adjustments specifically for the modal */
+@media (max-width: 768px) {
+  ion-modal ion-content,
+  ion-modal ion-label,
+  ion-modal ion-button,
+  ion-modal ion-item,
+  ion-modal .error-message {
+    font-size: 12px; /* Reduces font size for content within the modal to improve readability */
+  }
+
+  /* Further adjustment if needed for specific items like error messages */
+  ion-modal .error-message {
+    font-size: 11px; /* Optionally, make error messages even smaller for compact display */
+  }
+
+  li {
+    font-size: 14px;
+  }
+
+  .custom-button {
+    font-size: 12px;
+  }
+
 }
 </style>
