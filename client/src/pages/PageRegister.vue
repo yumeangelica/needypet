@@ -1,49 +1,56 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ion-header v-if="!isMobile">
       <ion-toolbar>
-        <ion-title>Create Account</ion-title>
+        <ion-button @click="navigateToPageLanding" fill="clear">NeedyPet</ion-button>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <div class="account-container">
-
-        <h3 class="ion-text-center">Create Account</h3>
-
-        <form @submit.prevent="createAccount">
-          <ion-item>
-            <ion-input v-model="username" type="text" placeholder="Username" required aria-label="Username"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input v-model="email" placeholder="Email" type="email" required aria-label="Email"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input v-model="password" placeholder="Password" type="password" required aria-label="Password"></ion-input>
-          </ion-item>
-
-
-          <ion-item>
-            <ion-select v-model="selectedTimezone">
-              <ion-select-option aria-label="timezone" v-for="timezone in timezones" :key="timezone" :value="timezone">{{ timezone
-                }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-
-          <ion-button type="submit" class="account-button" expand="block">Create Account</ion-button>
-
-        </form>
+      <div class="content-wrapper">
+        <div class="account-container">
+          <h3 class="ion-text-center">Create Account</h3>
+          <form @submit.prevent="createAccount">
+            <!-- Username input field -->
+            <ion-item>
+              <ion-input v-model="username" type="text" placeholder="Username" required aria-label="Username"></ion-input>
+            </ion-item>
+            <!-- Email input field -->
+            <ion-item>
+              <ion-input v-model="email" placeholder="Email" type="email" required aria-label="Email"></ion-input>
+            </ion-item>
+            <!-- Password input field -->
+            <ion-item>
+              <ion-input v-model="password" placeholder="Password" type="password" required aria-label="Password"></ion-input>
+            </ion-item>
+            <!-- Timezone select field -->
+            <ion-item>
+              <ion-select v-model="selectedTimezone">
+                <ion-select-option aria-label="timezone" v-for="timezone in timezones" :key="timezone" :value="timezone">{{ timezone
+                  }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <!-- Send button -->
+            <ion-button type="submit" class="account-button" expand="block">Create Account</ion-button>
+          </form>
+        </div>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 
+
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import moment from 'moment-timezone';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
+import { useAppStore } from '@/store/app';
+
+const appStore = useAppStore();
+
+const isMobile = computed(() => appStore.isMobile);
 
 const username = ref('');
 const email = ref('');
@@ -71,32 +78,25 @@ const createAccount = async () => {
     console.error('Failed to create account, please try again.');
   }
 };
+
+
+const navigateToPageLanding = () => {
+  router.push({ name: 'landing' });
+};
+
 </script>
 
 
 <style scoped>
-ion-title {
-  color: var(--color-text-lilac);
-}
-
-ion-select {
-  color: var(--color-text-lilac);
-}
-
-.account-container,
-ion-item,
-.account-button {
-  box-shadow: 1px 1px 4px var(--color-drop-shadow-pink);
-  border-radius: 25px;
-}
-
+/* PageRegister scoped styles */
 .account-container {
   max-width: 400px;
-  margin: 100px auto;
+  margin: auto;
   padding: 20px;
   border-radius: 50px;
-  background-color: var(--color-login-background);
   border: solid 2px var(--color-login-button-and-border);
+  background-color: var(--color-login-background);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 ion-item {
@@ -105,30 +105,35 @@ ion-item {
   --inner-padding-end: 20px;
   --background: var(--color-login-input-background);
   --border-radius: 25px;
-  --border-color: var(--color-login-input-border);
-  --border-width: 1px;
-  --border-style: solid;
-  margin-top: 10px;
+  --border-color: transparent;
+  margin-top: 15px;
 }
 
 ion-input {
-  --placeholder-color: var(--color-text-lilac);
-  --placeholder-font-style: italic;
-  --color: var(--color-text-lilac);
+  --placeholder-color: var(--color-text-default);
+  --color: var(--color-text-default);
+}
+
+ion-select {
+  color: var(--color-text-default);
 }
 
 .account-button {
-  --border-radius: 25px;
+  margin-top: 30px;
   --background: var(--color-login-button-and-border);
   --color: var(--color-text-lilac);
-  margin-top: 30px;
-  width: 100%;
-  font-weight: bold;
 }
 
-.account-button:hover,
-.account-button:focus,
-.account-button:active {
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+/* Override ion-button style for a consistent look */
+ion-button {
+  --border-radius: 25px;
+  --color: var(--color-text-lilac);
 }
+
+/* Error message styling */
+.error-message {
+  color: var(--color-error-message);
+  margin-top: 15px;
+}
+
 </style>
