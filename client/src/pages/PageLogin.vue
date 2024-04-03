@@ -7,7 +7,7 @@
     </ion-header>
     <ion-content class="ion-padding">
       <div class="login-container">
-        <h3 class="text-center">Login</h3>
+        <h3 class="ion-text-center">Login</h3>
 
         <form @submit.prevent="login">
           <ion-item>

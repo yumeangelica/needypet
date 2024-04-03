@@ -8,7 +8,7 @@
     <ion-content class="ion-padding">
       <div class="account-container">
 
-        <h3 class="text-center">Create Account</h3>
+        <h3 class="ion-text-center">Create Account</h3>
 
         <form @submit.prevent="createAccount">
           <ion-item>
