@@ -293,16 +293,19 @@ onBeforeMount(() => {
 </script>
 
 <style scoped>
+
 ion-content {
   overflow-y: auto;
 }
 
-.pet-container {
+.pet-container,
+.header-button-container,
+.date-navigation {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  gap: 20px;
+  gap: 10px;
+  width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -335,27 +338,10 @@ ion-content {
   --color: #fff;
   --border-radius: 20px;
   --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
-  font-size: 0.8rem;
 }
 
 .custom-button:hover {
   --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-}
-
-.date-navigation,
-.header-button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .date-navigation {
-    flex-direction: row;
-    justify-content: space-around;
-  }
 }
 
 ion-button {
@@ -367,9 +353,12 @@ ion-datetime {
   --padding-start: 0;
   --padding-end: 0;
   width: 100%;
+  --background: var(--color-card-background-lilac);
+  color: var(--color-text-lilac);
+  max-width: 90%;
+  margin: 0 auto;
 }
 
-/* Modal specific styles */
 ion-modal {
   --border-radius: 20px;
   --width: 95%;
@@ -378,22 +367,7 @@ ion-modal {
   --background: var(--color-card-background-lilac);
 }
 
-ion-modal ion-header,
-ion-modal ion-toolbar,
-ion-modal ion-title,
-ion-modal ion-content,
-ion-modal ion-datetime,
-ion-modal ion-item {
-  --background: var(--color-card-background-lilac);
-  color: var(--color-text-lilac);
-}
-
-ion-modal ion-datetime {
-  max-width: 90%;
-  margin: 0 auto;
-}
-
-ion-modal ion-item {
+ion-item {
   margin: 10px 0;
 }
 
@@ -403,7 +377,15 @@ ion-modal ion-item {
   margin-top: 20px;
 }
 
-/* Responsive adjustments */
+
+/* Mobile styles */
+@media (min-width: 768px) {
+  .date-navigation {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+}
+
 @media (max-width: 768px) {
   .pet-container h3,
   .pet-container p,
@@ -413,7 +395,9 @@ ion-modal ion-item {
   ion-modal ion-label,
   ion-modal ion-button,
   ion-modal ion-item,
-  ion-modal .error-message {
+  ion-modal .error-message,
+  li,
+  .custom-button {
     font-size: 14px;
   }
 
@@ -422,33 +406,10 @@ ion-modal ion-item {
     font-size: 16px;
   }
 
-  ion-modal .error-message {
-    font-size: 12px;
-  }
-}
-
-/* Responsive adjustments specifically for the modal */
-@media (max-width: 768px) {
-  ion-modal ion-content,
-  ion-modal ion-label,
-  ion-modal ion-button,
-  ion-modal ion-item,
-  ion-modal .error-message {
-    font-size: 12px; /* Reduces font size for content within the modal to improve readability */
-  }
-
-  /* Further adjustment if needed for specific items like error messages */
-  ion-modal .error-message {
-    font-size: 11px; /* Optionally, make error messages even smaller for compact display */
-  }
-
-  li {
-    font-size: 14px;
-  }
-
+  ion-modal .error-message,
   .custom-button {
     font-size: 12px;
   }
-
 }
+
 </style>
