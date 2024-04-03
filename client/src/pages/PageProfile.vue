@@ -1,9 +1,9 @@
 <template>
   <ion-page>
-    <ion-content v-if="user">
+    <ion-content>
       <div class="content-wrapper">
-        <div class="profile-card">
-          <h3>{{ user.userName }}</h3>
+        <div v-if="user" class="profile-card">
+          <h3 class="ion-text-center">{{ user.userName }}</h3>
           <div class="email">
             <p><strong>Email:</strong> {{ user.email }}</p>
           </div>
@@ -18,17 +18,18 @@
 
             <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="navigateToEditProfile">Edit Profile</ion-button>
 
-            <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="confirmAccount"><ion-icon :icon="trashOutline"></ion-icon>Delete Account</ion-button>
+            <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="confirmAccount"><ion-icon
+                :icon="trashOutline"></ion-icon>Delete Account</ion-button>
 
           </div>
+        </div>
 
+        <div v-else>
+          <p class="ion-text-center">Loading...</p>
         </div>
       </div>
     </ion-content>
 
-    <ion-content v-else>
-      <p>Loading...</p>
-    </ion-content>
   </ion-page>
 </template>
 
@@ -100,33 +101,28 @@ onBeforeRouteLeave(() => {
 </script>
 
 
-
 <style scoped>
 .profile-card {
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 20px;
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  text-align: center;
   background-color: var(--color-card-background-lilac);
   border-radius: 50px;
   border: solid 2px var(--color-card-border);
 }
 
-h2 {
-  margin: 20px 0;
-  font-size: 24px;
+h3 {
+  font-size: 1.2rem;
 }
 
 .email,
 .timezone {
-  color: #666;
+  color: var(--color-text-default);
   font-size: 16px;
 }
 
-
 /* Override ion button style */
-
 ion-icon {
   margin-right: 5px;
 }
@@ -143,7 +139,6 @@ ion-button {
   --color: var(--color-text-lilac) !important;
   background-color: var(--color-card-background-lilac);
   border: 1px solid var(--color-card-border);
-  font-weight: bold;
   border-radius: 20px;
   margin: 10px;
   transition: background-color 0.3s ease;
@@ -152,5 +147,30 @@ ion-button {
 .setting-button:hover {
   background-color: var(--color-card-background-lilac);
   box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+}
+
+/* Mobile styles */
+@media (max-width: 568px) {
+  .profile-card {
+    padding: 15px;
+    /* Less padding on very small screens */
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    /* Slightly smaller heading on very small screens */
+  }
+
+  .email,
+  .timezone {
+    font-size: 0.8rem;
+    /* Even smaller text on very small screens */
+  }
+
+  ion-button,
+  .setting-button {
+    font-size: 0.7rem;
+    /* Adjust button font size for very small screens */
+  }
 }
 </style>
