@@ -1,27 +1,11 @@
 * {
-  font-family: 'Krona One', sans-serif !important;
-}
-
-body, h1, h2, h3, h4, h5, h6, a {
-  color: var(--color-text-lilac);
-  line-height: 1.6;
-  font-family: 'Krona One', sans-serif;
-}
-
-
-p, li {
-  color: var(--color-text-default);
-  line-height: 1.6;
-  font-family: 'Krona One', sans-serif;
-}
-
-/* Override ion-button styles */
-ion-button {
   font-family: 'Krona One', sans-serif;
   text-transform: none;
+  color: var(--color-text-default);
+  line-height: 1.6;
 }
 
-strong {
+h1, h2, h3, h4, h5, h6, a {
   color: var(--color-text-lilac);
 }
 
@@ -32,24 +16,23 @@ body {
   background-position: center;
 }
 
-/* Override ion-content and ion-page to make background visible */
-ion-content {
+strong {
+  color: var(--color-text-lilac);
+}
+
+ion-content, ion-page {
   --ion-background-color: transparent;
 }
 
-ion-page {
-  background-color: transparent !important;
-}
-
-ion-toolbar {
+ion-toolbar, ion-tab-bar {
   --background: var(--color-primary-pink);
 }
 
-ion-tab-bar {
-  --background: var(--color-primary-pink);
+ion-button {
+  border-radius: 25px;
+  color: var(--color-text-lilac);
 }
 
-/* Style links */
 a {
   text-decoration: none;
 }
@@ -76,14 +59,7 @@ li {
   margin: 0 auto;
   padding: 20px;
   padding-top: 100px;
-  /* Add padding to the top of the content wrapper to make room for the fixed header */
 }
-
-/* global class for centering texts */
-.text-center {
-  text-align: center;
-}
-
 
 /* Over ride ionic primary button */
 .ion-color-primary {

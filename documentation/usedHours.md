@@ -182,4 +182,14 @@
 |           | Update ion-icon colors in header and customize UI elements with Google font Krona to unify and enhance the application's visual design.                              |             |
 |           | Test that new features work properly.                                                                                                                                | 6           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **184**     |
+| 3.4.24    | Frontend updates: Refactor and enhance global and specific page CSS for clarity and maintainability.                                                                 |             |
+|           | Implement and improve responsiveness across multiple pages (`PageLogin`, `PageRegister`, `PageEditProfile`, `PageLanding`, `PagePet`, `PageAddPet`, `TheNeedCard`).  |             |
+|           | Adjust UI elements and styling to enhance user interface consistency and aesthetics.                                                                                 |             |
+|           | Update class naming conventions for better alignment with Ionic framework standards (e.g., replace custom `text-center` with `ion-text-center`).                     |             |
+|           | Clean up unnecessary elements and organize CSS to simplify and ensure maintainability.                                                                               |             |
+|           | Add new header for the app in `PageLanding` and center elements in `PageNotFound`.                                                                                   |             |
+|           | Move the add pet button in `PageHome` to improve navigation and user experience.                                                                                     |             |
+|           | Focus on enhancing page and component responsiveness to ensure a better user experience across various device sizes.                                                 |             |
+|           | Test with different screen sizes that everything works.                                                                                                              | 8           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **192**     |

@@ -1,22 +1,22 @@
 <template>
   <ion-app>
-    <ion-page>
-      <TheHeader v-if="!isMobile"/>
-      <ion-router-outlet v-if="!isMobile"/>
 
-      <!-- Using ion-tabs for mobile navigation -->
-      <ion-tabs v-else>
-        <!-- Content -->
-        <ion-router-outlet></ion-router-outlet>
-        <!-- Mobile navigation -->
-        <TheMobileHeader />
-      </ion-tabs>
-    </ion-page>
+    <TheHeader v-if="!isMobile" />
+    <ion-router-outlet v-if="!isMobile" />
+
+    <!-- Using ion-tabs for mobile navigation -->
+    <ion-tabs v-else>
+      <!-- Content -->
+      <ion-router-outlet></ion-router-outlet>
+      <!-- Mobile navigation -->
+      <TheMobileHeader />
+    </ion-tabs>
+
   </ion-app>
 </template>
 
 <script setup>
-import { IonApp, IonPage, IonRouterOutlet, IonTabs } from '@ionic/vue';
+import { IonApp, IonRouterOutlet, IonTabs } from '@ionic/vue';
 import { computed, onMounted, onUnmounted } from 'vue';
 import TheHeader from '@/components/TheHeader.vue';
 import TheMobileHeader from '@/components/TheMobileHeader.vue';

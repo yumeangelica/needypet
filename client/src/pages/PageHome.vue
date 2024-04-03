@@ -101,16 +101,16 @@ ion-button {
 
 .add-pet-button-container {
   display: flex;
-  justify-content: right;
+  justify-content: end; /* Align the button to the start (left) */
+  margin-bottom: 40px;
+  margin-right: 20px;
 }
 
 .add-pet-button {
-  --background: var(--color-card-background-lilac);
-  --color: var(--color-text-lilac);
+  --background: var(--color-button-pet-page);
   --border-radius: 25px;
-  font-weight: bold;
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-  margin-right: 40px;
-  margin-bottom: 20px;
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
 }
+
+
 </style>

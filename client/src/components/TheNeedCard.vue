@@ -6,7 +6,7 @@
         <p>{{ need.description }}</p>
         <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
-      <ion-button class="complete-button" v-if="!need.completed" @click="addRecord(petId as string, need as Need)">Complete</ion-button>
+      <ion-button class="complete-button" v-if="!need.completed" @click="addRecord(petId, need)">Complete</ion-button>
       <div class="done-label" v-else>Done!</div>
     </ion-item>
   </ion-card>
@@ -67,43 +67,58 @@ const addRecord = async (petId: string, need: Need) => {
 ion-card {
   border-radius: 20px;
   background: var(--color-pet-need-background);
+  width: 100%;
+  margin: 4px 0;
+  padding-left: 10px;
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  --border-color: transparent;
+  --inner-border-color: transparent;
+  --background: transparent;
+}
+
+ion-label h2,
+ion-label p {
+  margin: 0;
+}
+
+.complete-button,
+.done-label {
+  --background: var(--color-button-pet-page);
+  --border-radius: 15px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
 }
 
 .done-label {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: var(--color-status-done);
+  color: var(--color-text-default);
+  border-radius: 15px;
   text-align: center;
-  white-space: normal;
-  margin-right: 10px;
-  padding: 10px 0px;
-  border: 1px solid var(--color-done-border);
-  border-radius: 20px;
-  color: #fff;
-  background-color: var(--color-status-done) !important;
-  font-weight: bold;
-  background: var(--color-done-background);
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-  width: 80px;
-  font-size: calc(0.70rem + 0.15vw);
+  min-width: 60px;
+  margin-right: 20px;
 }
 
-.complete-button {
-  --background: var(--color-button-pet-page);
-  --border-radius: 20px;
-  --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
-  font-size: calc(0.55rem + 0.15vw);
-  width: 100px;
-  min-height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  white-space: normal;
-  padding: 5px;
+/* Mobile styles */
+@media (max-width: 768px) {
+  ion-label h2,
+  ion-label p
+  {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+  }
+
+  .complete-button,
+  .done-label {
+    padding: 2px 8px;
+    font-size: 0.55rem;
+  }
 }
 
-.complete-button:hover {
-  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-}
 </style>
