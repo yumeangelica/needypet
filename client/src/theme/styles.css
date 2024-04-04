@@ -62,7 +62,7 @@ li {
   padding-top: 100px;
 }
 
-/* Buttons for PageLanding, PageRegister, PageLogin*/
+/* Global buttons for PageLanding, PageRegister, PageLogin*/
 .action-button {
   margin-top: 10px;
   width: 100%;
@@ -72,6 +72,14 @@ li {
   --background: var(--color-login-button-and-border);
   --border: 2px solid var(--color-login-button-and-border);
   --color: var(--color-text-lilac);
+}
+
+/* Global error message */
+.error-message {
+  color: var(--color-error-message);
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.8rem;
 }
 
 .primary-action-button {
