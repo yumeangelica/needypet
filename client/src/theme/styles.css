@@ -54,11 +54,32 @@ li {
   margin-bottom: 5px;
 }
 
+/* Custom content-wrapper class to push content down */
 .content-wrapper {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   padding-top: 100px;
+}
+
+/* Buttons for PageLanding, PageRegister, PageLogin*/
+.action-button {
+  margin-top: 10px;
+  width: 100%;
+  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+  margin: 20px 0px 0px 0px;
+  --border-radius: 25px !important;
+  --background: var(--color-login-button-and-border);
+  --border: 2px solid var(--color-login-button-and-border);
+  --color: var(--color-text-lilac);
+}
+
+.primary-action-button {
+  --background: var(--color-login-button-and-border) !important;
+}
+
+.secondary-action-button {
+  --background: var(--color-create-account-button) !important;
 }
 
 /* Over ride ionic primary button */
