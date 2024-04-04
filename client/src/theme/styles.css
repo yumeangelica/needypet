@@ -96,7 +96,7 @@ li {
 }
 
 
-/* Global button stlying for PagePet, PageAddPet, PageProfile, PageEditProfile, PageHome */
+/* Global button styling for PagePet, PageAddPet, PageProfile, PageEditProfile, PageHome */
 .custom-button {
   --background: var(--color-button-pet-page);
   --border-radius: 20px;
