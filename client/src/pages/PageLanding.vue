@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-content class="ion-padding">
-      <div class="content-wrapper">
+    <ion-content>
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="landing-container">
           <h4 class="ion-text-center">Loving care for your Needy Pet!</h4>
           <!-- Global button styling for action buttons -->
@@ -16,6 +16,11 @@
 <script setup>
 import { IonPage, IonContent, IonButton } from '@ionic/vue';
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const router = useRouter();
 
@@ -31,14 +36,21 @@ const goToLogin = () => {
 <style scoped>
 .landing-container {
   max-width: 500px;
-  margin: 100px auto;
+  margin: 5vh auto;
   padding: 20px;
   border-radius: 50px;
-  border: solid 2px var(--color-login-button-and-border);
   background-color: var(--color-login-background);
-  box-shadow: 1px 1px 4px var(--color-drop-shadow-pink);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  border: 1px solid var(--color-login-button-and-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile styles */
+@media (max-width: 568px) {
+  .landing-container {
+    padding: 15px;
+  }
+  .action-button {
+    font-size: 0.85rem;
+  }
 }
 </style>

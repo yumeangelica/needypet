@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :key="currentDate">
-      <div class="content-wrapper">
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div v-if="pet" class="pet-container">
           <div class="full-pet-card">
             <h3 class="pet-name">{{ pet.name }}</h3>
@@ -144,6 +144,10 @@ import { addCircleOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
 import TheNeedCard from '@/components/TheNeedCard.vue';
 import moment from 'moment-timezone';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const route = useRoute();
 const petStore = usePetStore();
@@ -315,7 +319,7 @@ ion-content {
   border-radius: 50px;
   border: 2px solid var(--color-card-border);
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  padding: 10px;
+  padding: 20px;
   width: 100%;
   max-width: 600px;
   box-sizing: border-box;
@@ -333,17 +337,6 @@ ion-content {
   gap: 20px;
 }
 
-.custom-button {
-  --background: var(--color-button-pet-page);
-  --color: #fff;
-  --border-radius: 20px;
-  --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
-}
-
-.custom-button:hover {
-  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-}
-
 /* Modal styles */
 ion-modal {
   --border-radius: 20px;
@@ -351,6 +344,7 @@ ion-modal {
   --max-width: 800px;
   --max-height: 600px;
   --background: var(--color-card-background-lilac);
+  --border-radius: 50px;
 }
 
 /* Calendar */
@@ -396,8 +390,7 @@ ion-item {
   ion-modal ion-button,
   ion-modal ion-item,
   ion-modal .error-message,
-  li,
-  .custom-button {
+  li {
     font-size: 14px;
   }
 
@@ -406,8 +399,7 @@ ion-item {
     font-size: 16px;
   }
 
-  ion-modal .error-message,
-  .custom-button {
+  ion-modal .error-message {
     font-size: 12px;
   }
 }

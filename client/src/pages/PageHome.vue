@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-      <div class="content-wrapper">
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="pets-container">
 
           <div v-if="ownPets.length > 0">
@@ -26,7 +26,7 @@
       </div>
 
       <div class="add-pet-button-container">
-        <ion-button @click="goToAddPet" class="add-pet-button">Add Pet</ion-button>
+        <ion-button @click="goToAddPet" class="custom-button">Add Pet</ion-button>
       </div>
 
     </ion-content>
@@ -35,10 +35,14 @@
 
 <script setup lang="ts">
 import { IonPage, IonContent, IonButton } from '@ionic/vue';
-import { ref, watch, onBeforeMount } from 'vue';
+import { ref, watch, onBeforeMount, computed } from 'vue';
 import { usePetStore } from '@/store/pet';
 import { useRouter } from 'vue-router';
 import ThePetCard from '@/components/ThePetCard.vue';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const router = useRouter();
 const petStore = usePetStore();
@@ -93,21 +97,10 @@ const goToAddPet = () => {
   margin-top: 0;
 }
 
-/* Add new pet button */
-ion-button {
-  border-radius: 25px;
-}
-
 .add-pet-button-container {
   display: flex;
   justify-content: end;
   margin-bottom: 40px;
   margin-right: 20px;
-}
-
-.add-pet-button {
-  --background: var(--color-button-pet-page);
-  --border-radius: 25px;
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
 }
 </style>

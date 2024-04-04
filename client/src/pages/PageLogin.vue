@@ -1,17 +1,20 @@
 <template>
   <ion-page>
-    <ion-content class="ion-padding">
-      <div class="content-wrapper">
-        <div class="login-container">
+    <ion-content>
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+        <!-- Global styling for container element -->
+        <div class="login-register-container">
           <h3 class="ion-text-center">Login</h3>
 
           <form @submit.prevent="login">
-            <ion-item>
-              <ion-input type="text" v-model="userName" placeholder="Enter your username" aria-label="Username"></ion-input>
+            <ion-item class="login-register-field-item">
+              <ion-input class="login-register-field-input" type="text" v-model="userName" placeholder="Enter your username"
+                aria-label="Username"></ion-input>
             </ion-item>
 
-            <ion-item>
-              <ion-input type="password" v-model="password" placeholder="Enter your password" aria-label="Password"></ion-input>
+            <ion-item class="login-register-field-item">
+              <ion-input class="login-register-field-input" type="password" v-model="password" placeholder="Enter your password"
+                aria-label="Password"></ion-input>
             </ion-item>
 
             <ion-buttons>
@@ -32,11 +35,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { IonPage, IonContent, IonItem, IonInput, IonButton, IonButtons } from '@ionic/vue';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 
 const userName = ref('');
@@ -65,47 +72,20 @@ const navigateToPageLanding = () => {
 
 
 <style scoped>
-.login-container {
-  max-width: 400px;
-  margin: 5vh auto;
-  padding: 20px;
-  border-radius: 50px;
-  background-color: var(--color-login-background);
-  border: 1px solid var(--color-login-button-and-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-ion-item {
-  --padding-start: 20px;
-  --inner-border-width: 0;
-  --inner-padding-end: 20px;
-  --background: var(--color-login-input-background);
-  --border-radius: 20px;
-  margin-bottom: 15px;
-}
-
-ion-input {
-  --placeholder-color: var(--color-text-default);
-  --placeholder-font-style: italic;
-  --color: var(--color-text-lilac);
-  font-size: 0.85rem;
-}
-
 /* Mobile styles */
 @media (max-width: 568px) {
-  .login-container {
-    margin: 10px auto;
+  .login-register-container {
     padding: 15px;
   }
 
-  ion-item {
+  .login-register-field-item {
     --padding-start: 15px;
     --inner-padding-end: 15px;
     margin-bottom: 12px;
   }
 
-  .login-button,
-  ion-input {
+  .action-button,
+  .login-register-field-input {
     font-size: 0.8rem;
   }
 }

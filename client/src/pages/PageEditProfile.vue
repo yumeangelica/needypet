@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true">
-      <div class="content-wrapper">
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="form-container">
           <h3>Edit Profile:</h3>
           <ion-item>
@@ -19,8 +19,8 @@
             <ion-input v-model="editData.currentPassword" type="password" required placeholder="Current Password"></ion-input>
           </ion-item>
           <span class="error-message" v-if="showPasswordNotification">Please enter your current password</span>
-          <ion-button @click="submitForm" expand="block">Save Changes</ion-button>
-          <ion-button @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
+          <ion-button class="custom-button" @click="submitForm" expand="block">Save Changes</ion-button>
+          <ion-button class="custom-button" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
         </div>
       </div>
     </ion-content>
@@ -29,10 +29,14 @@
 
 <script setup>
 import { IonPage, IonContent, IonItem, IonInput, IonSelect, IonButton, IonSelectOption } from '@ionic/vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
 import moment from 'moment-timezone';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -98,8 +102,8 @@ const submitForm = async () => {
 .form-container {
   display: flex;
   flex-direction: column;
-  max-width: 400px;
-  margin: 20px auto;
+  max-width: 500px;
+  margin: auto;
   padding: 20px;
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   background-color: var(--color-card-background-lilac);
@@ -123,13 +127,6 @@ ion-select {
   font-size: 0.85rem;
 }
 
-ion-button {
-  --background: var(--color-button-pet-page);
-  --border-radius: 20px;
-  margin-top: 15px;
-  font-size: 0.85rem;
-}
-
 .error-message {
   color: var(--color-error-message);
   text-align: center;
@@ -150,8 +147,5 @@ ion-button {
     font-size: 0.8rem;
   }
 
-  ion-button {
-    font-size: 0.8rem;
-  }
 }
 </style>

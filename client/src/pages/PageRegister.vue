@@ -1,24 +1,27 @@
 <template>
   <ion-page>
-    <ion-content class="ion-padding">
-      <div class="content-wrapper">
-        <div class="account-container">
+    <ion-content>
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+        <!-- Global styling for container element -->
+        <div class="login-register-container">
           <h3 class="ion-text-center">Create Account</h3>
           <form @submit.prevent="createAccount">
             <!-- Username input field -->
-            <ion-item>
-              <ion-input v-model="username" type="text" placeholder="Username" required aria-label="Username"></ion-input>
+            <ion-item class="login-register-field-item">
+              <ion-input class="login-register-field-input" v-model="username" type="text" placeholder="Username" required
+                aria-label="Username"></ion-input>
             </ion-item>
             <!-- Email input field -->
-            <ion-item>
-              <ion-input v-model="email" placeholder="Email" type="email" required aria-label="Email"></ion-input>
+            <ion-item class="login-register-field-item">
+              <ion-input class="login-register-field-input" v-model="email" placeholder="Email" type="email" required aria-label="Email"></ion-input>
             </ion-item>
             <!-- Password input field -->
-            <ion-item>
-              <ion-input v-model="password" placeholder="Password" type="password" required aria-label="Password"></ion-input>
+            <ion-item class="login-register-field-item">
+              <ion-input class="login-register-field-input" v-model="password" placeholder="Password" type="password" required
+                aria-label="Password"></ion-input>
             </ion-item>
             <!-- Timezone select field -->
-            <ion-item>
+            <ion-item class="login-register-field-item">
               <ion-select v-model="selectedTimezone">
                 <ion-select-option aria-label="timezone" v-for="timezone in timezones" :key="timezone" :value="timezone">{{ timezone
                   }}</ion-select-option>
@@ -42,11 +45,15 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import moment from 'moment-timezone';
 import { IonPage, IonContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption, IonButtons } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const username = ref('');
 const email = ref('');
@@ -84,55 +91,29 @@ const navigateToPageLanding = () => {
 
 
 <style scoped>
-.account-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 50px;
-  background-color: var(--color-login-background);
-  border: 1px solid var(--color-login-button-and-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-ion-item {
-  --padding-start: 15px;
-  --inner-border-width: 0;
-  --inner-padding-end: 15px;
-  --background: var(--color-login-input-background);
-  --border-radius: 20px;
-  --border-color: transparent;
-  margin: 12px 0;
-}
-
-ion-input,
 ion-select {
   --placeholder-color: var(--color-text-default);
   --color: var(--color-text-default);
   font-size: 0.85rem;
 }
 
-/* Error message styling */
-.error-message {
-  color: var(--color-error-message);
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.8rem;
-}
-
 
 /* Mobile styles */
 @media (max-width: 568px) {
-  .account-container {
+  .login-register-container {
     padding: 15px;
   }
 
-  ion-item {
+  .login-register-field-item {
     --padding-start: 10px;
     --inner-padding-end: 10px;
   }
 
-  .account-button,
-  ion-input,
+  .action-button,
+  .login-register-field-input {
+    font-size: 0.8rem;
+  }
+
   ion-select {
     font-size: 0.8rem;
   }
