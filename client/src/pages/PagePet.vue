@@ -11,7 +11,8 @@
               <p><strong>Breed:</strong> {{ pet.breed }}</p>
               <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
               <p><strong>Owner:</strong> {{ pet.owner.userName }}</p>
-              <p v-if="pet.careTakers.length > 0"><strong>Care takers:</strong> <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">{{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}</span></p>
+              <p v-if="pet.careTakers.length > 0"><strong>Care takers:</strong> <span v-for="(careTaker, index) in pet.careTakers"
+                  :key="careTaker.id">{{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}</span></p>
             </div>
 
             <!-- Need related container -->
@@ -53,10 +54,10 @@
                       <ion-title>Select Date</ion-title>
                     </ion-toolbar>
                   </ion-header>
-                  <ion-content>
+                  <div class="datetime-wrapper">
                     <ion-datetime display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY" presentation="date"
                       @ionChange="dateSelected($event.detail.value as string)"></ion-datetime>
-                  </ion-content>
+                  </div>
                 </ion-modal>
 
                 <ion-item v-show="!selection">
@@ -293,7 +294,6 @@ onBeforeMount(() => {
 </script>
 
 <style scoped>
-
 ion-content {
   overflow-y: auto;
 }
@@ -349,6 +349,25 @@ ion-button {
   max-width: 200px;
 }
 
+/* Modal styles */
+ion-modal {
+  --border-radius: 20px;
+  --width: 95%;
+  --max-width: 800px;
+  --max-height: 600px;
+  --background: var(--color-card-background-lilac);
+}
+
+/* Calendar */
+.datetime-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+}
+
 ion-datetime {
   --padding-start: 0;
   --padding-end: 0;
@@ -357,14 +376,6 @@ ion-datetime {
   color: var(--color-text-lilac);
   max-width: 90%;
   margin: 0 auto;
-}
-
-ion-modal {
-  --border-radius: 20px;
-  --width: 95%;
-  --max-width: 800px;
-  --max-height: 600px;
-  --background: var(--color-card-background-lilac);
 }
 
 ion-item {
@@ -387,6 +398,7 @@ ion-item {
 }
 
 @media (max-width: 768px) {
+
   .pet-container h3,
   .pet-container p,
   .error-message,
@@ -411,5 +423,4 @@ ion-item {
     font-size: 12px;
   }
 }
-
 </style>
