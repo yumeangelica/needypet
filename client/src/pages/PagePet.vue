@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content :key="currentDate">
-      <div class="content-wrapper">
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div v-if="pet" class="pet-container">
           <div class="full-pet-card">
             <h3 class="pet-name">{{ pet.name }}</h3>
@@ -11,7 +11,8 @@
               <p><strong>Breed:</strong> {{ pet.breed }}</p>
               <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
               <p><strong>Owner:</strong> {{ pet.owner.userName }}</p>
-              <p v-if="pet.careTakers.length > 0"><strong>Care takers:</strong> <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">{{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}</span></p>
+              <p v-if="pet.careTakers.length > 0"><strong>Care takers:</strong> <span v-for="(careTaker, index) in pet.careTakers"
+                  :key="careTaker.id">{{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}</span></p>
             </div>
 
             <!-- Need related container -->
@@ -53,10 +54,10 @@
                       <ion-title>Select Date</ion-title>
                     </ion-toolbar>
                   </ion-header>
-                  <ion-content>
+                  <div class="datetime-wrapper">
                     <ion-datetime display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY" presentation="date"
                       @ionChange="dateSelected($event.detail.value as string)"></ion-datetime>
-                  </ion-content>
+                  </div>
                 </ion-modal>
 
                 <ion-item v-show="!selection">
@@ -93,7 +94,7 @@
                   <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
                 </div>
 
-                <!-- Error message if details are not correct -->
+                <!-- Show error message if fields are not filled. Global error message styling. -->
                 <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
               </ion-content>
             </ion-modal>
@@ -143,6 +144,10 @@ import { addCircleOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
 import TheNeedCard from '@/components/TheNeedCard.vue';
 import moment from 'moment-timezone';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const route = useRoute();
 const petStore = usePetStore();
@@ -293,7 +298,6 @@ onBeforeMount(() => {
 </script>
 
 <style scoped>
-
 ion-content {
   overflow-y: auto;
 }
@@ -315,7 +319,7 @@ ion-content {
   border-radius: 50px;
   border: 2px solid var(--color-card-border);
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  padding: 10px;
+  padding: 20px;
   width: 100%;
   max-width: 600px;
   box-sizing: border-box;
@@ -333,20 +337,24 @@ ion-content {
   gap: 20px;
 }
 
-.custom-button {
-  --background: var(--color-button-pet-page);
-  --color: #fff;
+/* Modal styles */
+ion-modal {
   --border-radius: 20px;
-  --box-shadow: 1px 1px 2px var(--color-drop-shadow-pink);
+  --width: 95%;
+  --max-width: 800px;
+  --max-height: 600px;
+  --background: var(--color-card-background-lilac);
+  --border-radius: 50px;
 }
 
-.custom-button:hover {
-  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-}
-
-ion-button {
-  min-width: 100px;
-  max-width: 200px;
+/* Calendar */
+.datetime-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
 }
 
 ion-datetime {
@@ -359,24 +367,9 @@ ion-datetime {
   margin: 0 auto;
 }
 
-ion-modal {
-  --border-radius: 20px;
-  --width: 95%;
-  --max-width: 800px;
-  --max-height: 600px;
-  --background: var(--color-card-background-lilac);
-}
-
 ion-item {
   margin: 10px 0;
 }
-
-.error-message {
-  color: var(--color-error-message);
-  text-align: center;
-  margin-top: 20px;
-}
-
 
 /* Mobile styles */
 @media (min-width: 768px) {
@@ -387,6 +380,7 @@ ion-item {
 }
 
 @media (max-width: 768px) {
+
   .pet-container h3,
   .pet-container p,
   .error-message,
@@ -396,8 +390,7 @@ ion-item {
   ion-modal ion-button,
   ion-modal ion-item,
   ion-modal .error-message,
-  li,
-  .custom-button {
+  li {
     font-size: 14px;
   }
 
@@ -406,10 +399,8 @@ ion-item {
     font-size: 16px;
   }
 
-  ion-modal .error-message,
-  .custom-button {
+  ion-modal .error-message {
     font-size: 12px;
   }
 }
-
 </style>

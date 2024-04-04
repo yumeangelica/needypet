@@ -1,14 +1,12 @@
 <template>
   <ion-page>
-    <ion-header v-if="!isMobile">
-      <ion-toolbar />
-    </ion-header>
-    <ion-content class="ion-padding">
-      <div class="content-wrapper">
+    <ion-content>
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="landing-container">
-          <h4>Loving care for your Needy Pet!</h4>
-          <ion-button @click="goToLogin" expand="block" class="action-button">Login</ion-button>
-          <ion-button @click="goToRegister" expand="block" class="action-button create-account-button">Create Account</ion-button>
+          <h4 class="ion-text-center">Loving care for your Needy Pet!</h4>
+          <!-- Global button styling for action buttons -->
+          <ion-button @click="goToLogin" expand="block" class="action-button primary-action-button">Login</ion-button>
+          <ion-button @click="goToRegister" expand="block" class="action-button secondary-action-button">Create Account</ion-button>
         </div>
       </div>
     </ion-content>
@@ -16,14 +14,15 @@
 </template>
 
 <script setup>
-import { IonPage, IonHeader, IonToolbar, IonContent, IonButton } from '@ionic/vue';
-import { computed } from 'vue';
+import { IonPage, IonContent, IonButton } from '@ionic/vue';
 import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
+import { computed } from 'vue';
 
-const router = useRouter();
+import { useAppStore } from '@/store/app';
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
+
+const router = useRouter();
 
 const goToRegister = () => {
   router.push({ name: 'register' });
@@ -37,29 +36,21 @@ const goToLogin = () => {
 <style scoped>
 .landing-container {
   max-width: 500px;
-  margin: 100px auto;
+  margin: 5vh auto;
   padding: 20px;
   border-radius: 50px;
-  border: solid 2px var(--color-login-button-and-border);
   background-color: var(--color-login-background);
-  box-shadow: 1px 1px 4px var(--color-drop-shadow-pink);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  border: 1px solid var(--color-login-button-and-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.action-button {
-  --border-radius: 25px;
-  margin-top: 10px;
-  width: 100%;
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-  --background: var(--color-login-button-and-border);
-  --color: var(--color-text-lilac);
-}
-
-/* Special style for create account button */
-.create-account-button {
-  --background: var(--color-create-account-button);
-  --border: 2px solid var(--color-login-button-and-border);
+/* Mobile styles */
+@media (max-width: 568px) {
+  .landing-container {
+    padding: 15px;
+  }
+  .action-button {
+    font-size: 0.85rem;
+  }
 }
 </style>

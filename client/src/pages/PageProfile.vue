@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content>
-      <div class="content-wrapper">
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div v-if="user" class="profile-card">
           <h3 class="ion-text-center">{{ user.userName }}</h3>
           <div class="email">
@@ -12,13 +12,13 @@
           </div>
 
           <div>
-            <ion-button class="setting-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
+            <ion-button class="custom-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
 
-            <ion-button class="setting-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
+            <ion-button class="custom-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
 
-            <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="navigateToEditProfile">Edit Profile</ion-button>
+            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="navigateToEditProfile">Edit Profile</ion-button>
 
-            <ion-button v-show="showSettings" class="setting-button" fill="clear" @click="confirmAccount"><ion-icon
+            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccount"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
 
           </div>
@@ -36,10 +36,13 @@
 <script setup>
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, computed } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
-
 import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const router = useRouter();
 
@@ -127,27 +130,6 @@ ion-icon {
   margin-right: 5px;
 }
 
-ion-button {
-  --background: var(--color-button-pet-page);
-  --color: #fff;
-  --border-radius: 20px;
-  margin-top: 20px;
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-}
-
-.setting-button {
-  --color: var(--color-text-lilac) !important;
-  background-color: var(--color-card-background-lilac);
-  border: 1px solid var(--color-card-border);
-  border-radius: 20px;
-  margin: 10px;
-  transition: background-color 0.3s ease;
-}
-
-.setting-button:hover {
-  background-color: var(--color-card-background-lilac);
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-}
 
 /* Mobile styles */
 @media (max-width: 568px) {
@@ -167,10 +149,6 @@ ion-button {
     /* Even smaller text on very small screens */
   }
 
-  ion-button,
-  .setting-button {
-    font-size: 0.7rem;
-    /* Adjust button font size for very small screens */
-  }
+
 }
 </style>

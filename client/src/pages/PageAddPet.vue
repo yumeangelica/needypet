@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-content class="ion-padding">
-      <div class="content-wrapper">
+    <ion-content>
+      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="add-pet-container">
           <form @submit.prevent="submitPet" class="add-pet-form">
             <ion-item class="custom-input">
@@ -26,7 +26,7 @@
             <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
               @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
 
-            <ion-button type="submit" class="submit-button">Add Pet</ion-button>
+            <ion-button type="submit" class="custom-button">Add Pet</ion-button>
           </form>
         </div>
       </div>
@@ -49,6 +49,10 @@ import {
 import { useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
+
+import { useAppStore } from '@/store/app';
+const appStore = useAppStore();
+const isMobile = computed(() => appStore.isMobile);
 
 const router = useRouter();
 const petStore = usePetStore();
@@ -119,13 +123,15 @@ const submitPet = async () => {
 
 <style scoped>
 .add-pet-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
   background-color: var(--color-card-background-lilac);
   border-radius: 50px;
-  border: solid 1px var(--color-card-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-card-border);
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
 }
 
 .add-pet-form {
@@ -136,29 +142,25 @@ const submitPet = async () => {
 .custom-input,
 .ion-datetime {
   --border-radius: 20px;
-  --padding-start: 15px;
-  --padding-end: 15px;
-  --color: var(--color-text-default);
-  margin-top: 10px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --background: var(--color-input-background);
+  --highlight-color-focused: var(--color-drop-shadow-pink);
+  margin-bottom: 15px;
 }
 
-.submit-button {
-  --background: var(--color-button-pet-page);
-  --border-radius: 25px;
-  margin-top: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
+/* Mobile styles */
 @media (max-width: 768px) {
+
+  .add-pet-container {
+    padding: 15px;
+  }
 
   .custom-input ion-input,
   .custom-input ion-textarea,
   .ion-datetime {
-    font-size: 14px;
+    font-size: 0.8rem;
   }
 
-  .submit-button {
-    font-size: 16px;
-  }
 }
 </style>
