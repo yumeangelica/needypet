@@ -1,14 +1,14 @@
 <template>
   <ion-app>
 
+    <!-- Desktop header and content-->
     <TheHeader v-if="!isMobile" />
-    <ion-router-outlet v-if="!isMobile" />
+    <ion-router-outlet :animated="false" v-if="!isMobile" />
 
     <!-- Using ion-tabs for mobile navigation -->
     <ion-tabs v-else>
-      <!-- Content -->
-      <ion-router-outlet></ion-router-outlet>
-      <!-- Mobile navigation -->
+      <!-- Mobile content and header in different order -->
+      <ion-router-outlet :animated="false"></ion-router-outlet>
       <TheMobileHeader />
     </ion-tabs>
 
