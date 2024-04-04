@@ -94,7 +94,7 @@
                   <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
                 </div>
 
-                <!-- Error message if details are not correct -->
+                <!-- Show error message if fields are not filled. Global error message styling. -->
                 <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
               </ion-content>
             </ion-modal>
@@ -344,11 +344,6 @@ ion-content {
   --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
 
-ion-button {
-  min-width: 100px;
-  max-width: 200px;
-}
-
 /* Modal styles */
 ion-modal {
   --border-radius: 20px;
@@ -381,13 +376,6 @@ ion-datetime {
 ion-item {
   margin: 10px 0;
 }
-
-.error-message {
-  color: var(--color-error-message);
-  text-align: center;
-  margin-top: 20px;
-}
-
 
 /* Mobile styles */
 @media (min-width: 768px) {
