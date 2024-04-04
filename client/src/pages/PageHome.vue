@@ -37,11 +37,10 @@
 import { IonPage, IonContent, IonButton } from '@ionic/vue';
 import { ref, watch, onBeforeMount } from 'vue';
 import { usePetStore } from '@/store/pet';
-import ThePetCard from '@/components/ThePetCard.vue';
 import { useRouter } from 'vue-router';
+import ThePetCard from '@/components/ThePetCard.vue';
 
 const router = useRouter();
-
 const petStore = usePetStore();
 const ownPets = ref([]);
 const carerPets = ref([]);
@@ -101,7 +100,7 @@ ion-button {
 
 .add-pet-button-container {
   display: flex;
-  justify-content: end; /* Align the button to the start (left) */
+  justify-content: end;
   margin-bottom: 40px;
   margin-right: 20px;
 }
@@ -111,6 +110,4 @@ ion-button {
   --border-radius: 25px;
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
 }
-
-
 </style>
