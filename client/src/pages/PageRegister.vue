@@ -1,10 +1,5 @@
 <template>
   <ion-page>
-    <ion-header v-if="!isMobile">
-      <ion-toolbar>
-        <ion-button @click="navigateToPageLanding" fill="clear">NeedyPet</ion-button>
-      </ion-toolbar>
-    </ion-header>
     <ion-content class="ion-padding">
       <div class="content-wrapper">
         <div class="account-container">
@@ -29,8 +24,14 @@
                   }}</ion-select-option>
               </ion-select>
             </ion-item>
-            <!-- Send button -->
-            <ion-button type="submit" class="account-button" expand="block">Create Account</ion-button>
+
+
+            <ion-buttons>
+              <!-- Global button styling for action buttons -->
+              <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
+              <ion-button @click="navigateToPageLanding" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+            </ion-buttons>
+
           </form>
         </div>
       </div>
@@ -41,16 +42,11 @@
 
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import moment from 'moment-timezone';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption } from '@ionic/vue';
+import { IonPage, IonContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption, IonButtons } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
-
-const appStore = useAppStore();
-
-const isMobile = computed(() => appStore.isMobile);
 
 const username = ref('');
 const email = ref('');
@@ -113,19 +109,6 @@ ion-select {
   --placeholder-color: var(--color-text-default);
   --color: var(--color-text-default);
   font-size: 0.85rem;
-}
-
-.account-button {
-  margin-top: 25px;
-  --background: var(--color-login-button-and-border);
-  --color: var(--color-text-lilac);
-  font-size: 0.85rem;
-}
-
-/* Override ion-button style for a consistent look */
-ion-button {
-  --border-radius: 25px;
-  --color: var(--color-text-lilac);
 }
 
 /* Error message styling */
