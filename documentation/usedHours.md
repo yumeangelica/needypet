@@ -192,4 +192,14 @@
 |           | Focus on enhancing page and component responsiveness to ensure a better user experience across various device sizes.                                                 |             |
 |           | Test with different screen sizes that everything works.                                                                                                              | 8           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **192**     |
+| 4.4.24    | Frontend updates:                                                                                                                                                    |             |
+|           | Set `ion-router-outlet` animated to false for smoother transitions.                                                                                                  |             |
+|           | Add global styles for buttons in `PageLanding`, `PageRegister`, and `PageLogin` to enhance UI consistency.                                                           |             |
+|           | Remove headers and add go back buttons in `PageRegister` and `PageLogin` for improved navigation and user experience.                                                |             |
+|           | Change duplicate `ion-content` to `div` with `datetime-wrapper` in `PagePet`.                                                                                        |             |
+|           | Add global error message class to standardize error feedback across the app.                                                                                         |             |
+|           | Refactor global CSS for DRY principles, adding universal classes to reduce redundancy and improve maintainability.                                                   |             |
+|           | Implement responsive design and refactor duplicate local CSS classes to global CSS for DRY compliance across multiple files.                                         |             |
+|           | Testing of new features and responsiveness across different screen sizes to ensure functionality and user experience.                                                | 8           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **200**     |
