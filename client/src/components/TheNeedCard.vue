@@ -6,17 +6,18 @@
         <p>{{ need.description }}</p>
         <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
-      <ion-button class="complete-button" v-if="!need.completed" @click="addRecord(petId, need)">Complete</ion-button>
-      <div class="done-label" v-else>Done!</div>
+      <ion-button class="complete-button" v-if="!need.completed && isTodayOrFuture" @click="addRecord(petId, need)">Complete</ion-button>
+      <div class="done-label" v-if="need.completed">Done!</div>
     </ion-item>
   </ion-card>
 </template>
 
 <script setup lang="ts">
 import { IonCard, IonItem, IonLabel, IonButton } from '@ionic/vue';
-import { defineProps, ref } from 'vue';
+import { defineProps, ref, computed } from 'vue';
 import { usePetStore } from '@/store/pet';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
+import moment from 'moment-timezone';
 const petStore = usePetStore();
 
 const { need, petId } = defineProps<{
@@ -25,6 +26,12 @@ const { need, petId } = defineProps<{
 }>();
 
 const reactiveNeed = ref(need);
+
+const isTodayOrFuture = computed(() => {
+  const today = moment().startOf('day');
+  const needDate = moment(need.dateFor).startOf('day');
+  return needDate.isSame(today) || needDate.isAfter(today);
+});
 
 // Add Record (need done) -button click event handler
 const addRecord = async (petId: string, need: Need) => {
@@ -107,9 +114,9 @@ ion-label p {
 
 /* Mobile styles */
 @media (max-width: 768px) {
+
   ion-label h2,
-  ion-label p
-  {
+  ion-label p {
     font-size: 0.65rem;
     padding: 2px 8px;
   }
@@ -120,5 +127,4 @@ ion-label p {
     font-size: 0.55rem;
   }
 }
-
 </style>
