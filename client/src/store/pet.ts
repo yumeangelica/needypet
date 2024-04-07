@@ -73,6 +73,50 @@ export const usePetStore = defineStore({
         return false;
       }
     },
+    async deletePet(petId: string) {
+      const userStore = useUserStore();
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userStore.token}`,
+      };
+
+      try {
+        const response = await axiosInstance.delete(
+          `${servicePath}/pets/${petId}`,
+          { headers }
+        );
+        if (response.status === 204) {
+          await this.getAllPets(); // Fetch all pets again to update the state
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during deleting pet:', error.response?.status);
+        return false;
+      }
+    },
+    async updatePet(petId, petData) {
+      const userStore = useUserStore();
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userStore.token}`,
+      };
+
+      try {
+        const response = await axiosInstance.put(
+          `${servicePath}/pets/${petId}`,
+          petData,
+          { headers }
+        );
+        if (response.status === 200) {
+          await this.getAllPets(); // Fetch all pets again to update the state
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during updating pet:', error.response?.status);
+        return false;
+      }
+    },
     /**
      * @description Add a record for the need
      * @param petId
@@ -120,8 +164,9 @@ export const usePetStore = defineStore({
           return false;
         })
         .catch((error) => {
-          console.error('Error during adding record:', error.response?.status);
-          return false;
+          if (error) {
+            return false;
+          }
         });
 
       return response;
@@ -157,9 +202,11 @@ export const usePetStore = defineStore({
       })
         .then((response) => {
           this.$patch((state) => {
-            const pet = state.pets.find((pet) => pet.id === petId);
+            const pet = state.pets.find((pet: Pet) => pet.id === petId);
             if (pet) {
-              pet.needs.push(needObject);
+              const newNeed =
+                response.data.needs[response.data.needs.length - 1];
+              pet.needs.push(newNeed);
             }
           });
           return response.status === 201;

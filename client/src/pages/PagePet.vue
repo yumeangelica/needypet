@@ -1,10 +1,26 @@
 <template>
   <ion-page>
     <ion-content :key="currentDate">
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div v-if="$route.matched.length === 1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div v-if="pet" class="pet-container">
           <div class="full-pet-card">
-            <h3 class="pet-name">{{ pet.name }}</h3>
+
+            <div class="inline-container">
+              <h3 class="pet-name">{{ pet.name }}</h3>
+              <ion-buttons slot="end" v-if="pet.owner.id === userStore.id">
+
+                <ion-button class="settings-button" @click="navigateToEditPet()"><ion-icon
+                  :icon="settingsOutline" slot="start"></ion-icon>
+                </ion-button>
+
+                <ion-button class="settings-button" @click="confirmDeletePet()">
+                  <ion-icon :icon="trashOutline" slot="start"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+
+            </div>
+
+
             <div class="pet-info">
               <p><strong>Description:</strong> {{ pet.description }}</p>
               <p><strong>Species:</strong> {{ pet.species }} </p>
@@ -17,19 +33,21 @@
 
             <!-- Need related container -->
             <div class="header-button-container">
-
               <h3 class="ion-text-center">Needs:</h3>
-              <ion-button class="custom-button" @click="setOpen(true)" v-if="pet.owner.id === userStore.id">
+              <ion-button class="custom-button" @click="setOpen(true)"
+                v-if="pet.owner.id === userStore.id && currentDate >= moment().format('YYYY-MM-DD')">
                 <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
                 Add need
               </ion-button>
-
+              <ion-button class="custom-button" @click="currentDate = moment().format('YYYY-MM-DD')"
+                v-if="currentDate !== moment().format('YYYY-MM-DD')">Today</ion-button>
             </div>
 
             <!-- Modal which opens when 'add need' button is clicked -->
             <ion-modal :is-open="isOpen">
               <ion-header>
                 <ion-toolbar>
+                    <ion-title>New need</ion-title>
                   <ion-buttons slot="end">
                     <ion-button @click="setOpen(false)">Close form</ion-button>
                   </ion-buttons>
@@ -45,20 +63,10 @@
                   <ion-input v-model="description" label="Description" placeholder="input need's description"></ion-input>
                 </ion-item>
 
-                <ion-item @click="openDatetimeModal()">
-                  <ion-input readonly :value="formattedDate || 'Select Date'" placeholder="Select Date"></ion-input>
+                <!-- display dateFor as currentDate -->
+                <ion-item>
+                  <ion-input readonly :value="currentDate" label="Date"></ion-input>
                 </ion-item>
-                <ion-modal :is-open="isDatetimeModalOpen" @didDismiss="closeDatetimeModal()">
-                  <ion-header>
-                    <ion-toolbar>
-                      <ion-title>Select Date</ion-title>
-                    </ion-toolbar>
-                  </ion-header>
-                  <div class="datetime-wrapper">
-                    <ion-datetime display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY" presentation="date"
-                      @ionChange="dateSelected($event.detail.value as string)"></ion-datetime>
-                  </div>
-                </ion-modal>
 
                 <ion-item v-show="!selection">
                   <ion-label>Choose</ion-label>
@@ -74,7 +82,7 @@
 
                 <div v-if="selection === 'quantity'">
                   <ion-item lines="none">
-                    <ion-input v-model="valueOfSelection" label="Enter value"></ion-input>
+                    <ion-input v-model="valueOfSelection" label="Enter value" :autofocus="true" @input="cleanInput($event)"></ion-input>
                     <ion-select v-model="unitOfSelection" interface="popover">
                       <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
                     </ion-select>
@@ -84,7 +92,7 @@
 
                 <div v-if="selection === 'duration'">
                   <ion-item lines="none">
-                    <ion-input v-model="valueOfSelection" label="Enter duration"></ion-input>
+                    <ion-input v-model="valueOfSelection" label="Enter duration" :autofocus="true" @input="cleanInput($event)"></ion-input>
                     <ion-label>minute(s)</ion-label>
                   </ion-item>
                 </div>
@@ -127,7 +135,9 @@
         </div>
 
       </div>
-
+      <div v-else>
+        <router-view />
+      </div>
     </ion-content>
 
   </ion-page>
@@ -139,11 +149,14 @@ import { onBeforeMount, ref, computed, watch, Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { IonPage, IonContent, IonButton, IonModal, IonDatetime, IonItem, IonTitle, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon } from '@ionic/vue';
-import { addCircleOutline } from 'ionicons/icons';
+import { IonPage, IonContent, IonButton, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon, IonTitle } from '@ionic/vue';
+import { addCircleOutline, settingsOutline, trashOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
 import TheNeedCard from '@/components/TheNeedCard.vue';
 import moment from 'moment-timezone';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 import { useAppStore } from '@/store/app';
 const appStore = useAppStore();
@@ -153,23 +166,25 @@ const route = useRoute();
 const petStore = usePetStore();
 const userStore = useUserStore();
 
+const currentDate = ref(moment().format('YYYY-MM-DD')); // Initalized to today's date
+
 const pet: Ref<Pet | null> = ref(null);
 const isOpen: Ref<boolean> = ref(false);
 
 const category: Ref<Need['category']> = ref('');
 const description: Ref<Need['description']> = ref('');
-const dateFor: Ref<Need['dateFor']> = ref('');
+
 const errorMessage: Ref<string> = ref('');
-const isDatetimeModalOpen: Ref<boolean> = ref(false);
 
 const selection: Ref<string> = ref('');
-const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(0);
+const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
 const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
 
-const currentDate = ref(moment().format('YYYY-MM-DD')); // Initalized to today's date
+
 
 const changeDay = (delta: number) => {
-  let newDate = moment.tz(currentDate.value, userStore.timezone).add(delta, 'days');
+
+  const newDate = moment.tz(currentDate.value, userStore.timezone).add(delta, 'days');
   currentDate.value = newDate.format('YYYY-MM-DD');
 };
 
@@ -199,60 +214,37 @@ const setOpen = (open: boolean) => {
 const clearFields = () => {
   category.value = '';
   description.value = '';
-  dateFor.value = '';
   selection.value = '';
-  valueOfSelection.value = 0;
+  valueOfSelection.value = null;
   unitOfSelection.value = '';
   errorMessage.value = '';
 };
 
-const openDatetimeModal = () => {
-  isDatetimeModalOpen.value = true;
-};
+const cleanInput = (event) => {
+  // Remove all alphabets and special characters from the input value
+  event.target.value = event.target.value.replace(/[^0-9]/g, '');
 
+  // Remove leading zeros from the input value
+  let value = event.target.value;
+  value = value.replace(/^0+/, '');
 
-const closeDatetimeModal = () => {
-  isDatetimeModalOpen.value = false;
-};
-
-
-// Computed property to format the date which is displayed in the input field
-const formattedDate = computed(() => {
-  if (!dateFor.value) return '';
-  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-  return new Date(dateFor.value).toLocaleDateString(undefined, options);
-
-});
-
-// When the user selects a date from the datetime picker modal this function is called
-const dateSelected = (selectedDateString: string) => {
-  const selectedDateTime = new Date(selectedDateString);
-  const currentDateTime = new Date();
-  currentDateTime.setHours(0, 0, 0, 0);
-
-  if (selectedDateTime >= currentDateTime) { // Check if the selected date is today or in the future
-    dateFor.value = selectedDateString;
-    errorMessage.value = '';
-  } else {
-    errorMessage.value = 'Please select a current or future date.';
-  }
-  closeDatetimeModal();
-
+  // Update the valueOfSelection reactive property
+  valueOfSelection.value = value;
 };
 
 // Fetch the pet from the store
 async function getPet(id: string) {
   const fetchedPet = await petStore.getPetById(id);
   if (fetchedPet) {
-    fetchedPet.needs = fetchedPet.needs.filter((need) => !need.archived);
     pet.value = fetchedPet;
   }
 }
 
 // When the user clicks the confirm button on the modal this function is called
 const confirm = async () => {
+  const today = moment().format('YYYY-MM-DD');
 
-  if (!category.value || !description.value || !dateFor.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value) {
+  if (!category.value || !description.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value || !(currentDate.value >= today)) {
     errorMessage.value = 'Please fill in all fields.';
     return;
   }
@@ -260,7 +252,7 @@ const confirm = async () => {
   const needObject: Need = {
     category: category.value,
     description: description.value,
-    dateFor: dateFor.value.toString().split('T')[0],
+    dateFor: currentDate.value,
     [selection.value]: {
       value: valueOfSelection.value,
       unit: unitOfSelection.value
@@ -271,7 +263,7 @@ const confirm = async () => {
     const response = await petStore.addNewNeed(pet.value.id, needObject);
     if (response) {
       setOpen(false);
-      getPet(pet.value.id);
+      await getPet(pet.value.id);
     } else {
       errorMessage.value = 'Failed to add need';
     }
@@ -280,6 +272,13 @@ const confirm = async () => {
     errorMessage.value = 'Failed to add need';
   }
 };
+
+watch(route, async () => {
+  const id = route.params.id as string;
+  if (id) {
+    await getPet(id);
+  }
+});
 
 
 watch(selection, (newValue) => {
@@ -295,12 +294,68 @@ onBeforeMount(() => {
   }
 });
 
+
+const navigateToEditPet = () => {
+  router.push({ name: 'edit-pet' });
+};
+
+const confirmDeletePet = () => {
+  if (window.confirm('Are you sure you want to delete this pet?')) {
+    deletePet();
+  }
+};
+
+const deletePet = async () => {
+  // Check if the pet ID exists
+  if (pet.value && pet.value.id) {
+    const success = await petStore.deletePet(pet.value.id);
+    if (success) {
+      router.push({ name: 'home' });
+    } else {
+      console.error('Failed to delete pet');
+    }
+  }
+};
+
 </script>
 
 <style scoped>
 ion-content {
   overflow-y: auto;
 }
+
+/* Wrapping name and setting button */
+.inline-container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0px;
+}
+
+.settings-button,
+.settings-button:active,
+.settings-button:focus,
+.settings-button:hover {
+  --background: transparent !important;
+  --background-activated: transparent !important;
+  --background-focused: transparent !important;
+  --border: none !important;
+  --box-shadow: none !important;
+  --ripple-color: transparent !important;
+  --outline: none !important;
+  padding: 0;
+  margin: 0;
+  height: auto;
+  width: auto;
+}
+
+.settings-button ion-icon {
+  font-size: 28px;
+  color: var(--color-card-border);
+  margin: 0;
+  padding: 0;
+}
+
 
 .pet-container,
 .header-button-container,
@@ -324,10 +379,6 @@ ion-content {
   max-width: 600px;
   box-sizing: border-box;
   transition: transform 0.3s ease;
-}
-
-.full-pet-card:hover {
-  transform: translateY(-5px);
 }
 
 .cards-container {
@@ -402,5 +453,11 @@ ion-item {
   ion-modal .error-message {
     font-size: 12px;
   }
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>

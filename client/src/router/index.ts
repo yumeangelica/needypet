@@ -18,6 +18,14 @@ const routes: Array<RouteRecordRaw> = [
     name: 'pet',
     component: () => import('@/pages/PagePet.vue'),
     props: true,
+    children: [
+      {
+        path: 'edit',
+        name: 'edit-pet',
+        component: () => import('@/pages/PageEditPet.vue'),
+        props: true,
+      },
+    ],
   },
   {
     path: '/add-pet',

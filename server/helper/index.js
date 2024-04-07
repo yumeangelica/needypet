@@ -6,22 +6,21 @@ const Pet = require('../models/petModel');
  * @returns
  */
 const dailyTaskCompleter = need => {
-  if (!need.careRecords) {
+  if (!need.careRecords) { // If there are no care records, return false
     return false;
   }
 
-  if (need.completed) {
+  if (need.completed) { // If the need is already completed, return
     return;
   }
 
-  const taskType = Object.hasOwn(need, 'quantity') ? 'quantity' : 'duration'; // Check if need object has quantity or duration
+  const taskType = need.quantity.value ? 'quantity' : need.duration.value ? 'duration' : null; // Check if the need is quantity or duration
 
   switch (taskType) {
   case 'quantity':
   {
-    const totalQuantity = need.careRecords.reduce((total, record) => total + record.quantity.value, 0);
-    if (totalQuantity >= need.quantity.value) {
-      console.log('totalQuantity', totalQuantity);
+    const totalQuantity = need.careRecords.reduce((total, record) => total + record.quantity.value, 0); // Calculate the total quantity
+    if (totalQuantity >= need.quantity.value) { // If the total quantity is greater than or equal to the need quantity, set the need as completed
       need.completed = true;
     }
 
@@ -30,9 +29,8 @@ const dailyTaskCompleter = need => {
 
   case 'duration':
   {
-    const totalDuration = need.careRecords.reduce((total, record) => total + record.duration.value, 0);
-    if (totalDuration >= need.duration.value) {
-      console.log('totalDuration', totalDuration);
+    const totalDuration = need.careRecords.reduce((total, record) => total + record.duration.value, 0); // Calculate the total duration
+    if (totalDuration >= need.duration.value) { // If the total duration is greater than or equal to the need duration, set the
       need.completed = true;
     }
 

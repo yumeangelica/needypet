@@ -6,25 +6,39 @@
         <p>{{ need.description }}</p>
         <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
-      <ion-button class="complete-button" v-if="!need.completed" @click="addRecord(petId, need)">Complete</ion-button>
-      <div class="done-label" v-else>Done!</div>
+      <ion-button class="complete-button" v-if="!need.completed && isTodayOrFuture" @click="addRecord(petId, need)">Complete</ion-button>
+      <div class="done-label" v-if="need.completed">Done!</div>
+    </ion-item>
+    <ion-item v-if="errorMessage">
+      <ion-label class="custom-error-message">{{ errorMessage }}</ion-label>
+    </ion-item>
+    <ion-item v-if="validMessage">
+      <ion-label class="custom-valid-message">{{ validMessage }}</ion-label>
     </ion-item>
   </ion-card>
 </template>
 
 <script setup lang="ts">
 import { IonCard, IonItem, IonLabel, IonButton } from '@ionic/vue';
-import { defineProps, ref } from 'vue';
+import { defineProps, ref, computed } from 'vue';
 import { usePetStore } from '@/store/pet';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
+import moment from 'moment-timezone';
 const petStore = usePetStore();
 
 const { need, petId } = defineProps<{
   need: Need,
   petId: string
 }>();
-
+const errorMessage = ref('');
+const validMessage = ref('');
 const reactiveNeed = ref(need);
+
+const isTodayOrFuture = computed(() => {
+  const today = moment().startOf('day');
+  const needDate = moment(need.dateFor).startOf('day');
+  return needDate.isSame(today) || needDate.isAfter(today);
+});
 
 // Add Record (need done) -button click event handler
 const addRecord = async (petId: string, need: Need) => {
@@ -39,16 +53,16 @@ const addRecord = async (petId: string, need: Need) => {
     recordObject = {
       ...recordObject,
       duration: {
-        value: need.duration!.value,
-        unit: need.duration!.unit
+        value: need.duration?.value,
+        unit: need.duration?.unit
       }
     };
   } else {
     recordObject = {
       ...recordObject,
       quantity: {
-        value: need.quantity!.value,
-        unit: need.quantity!.unit
+        value: need.quantity?.value,
+        unit: need.quantity?.unit
       }
     };
   }
@@ -57,7 +71,17 @@ const addRecord = async (petId: string, need: Need) => {
   const updateSuccessful = await petStore.addRecord(petId, needId, recordObject);
   if (updateSuccessful) {
     reactiveNeed.value.completed = true;
+    validMessage.value = 'Record added successfully';
+    setTimeout(() => {
+      validMessage.value = '';
+    }, 5000);
+  } else {
+    errorMessage.value = 'Failed to add record';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
   }
+
 };
 
 </script>
@@ -107,9 +131,9 @@ ion-label p {
 
 /* Mobile styles */
 @media (max-width: 768px) {
+
   ion-label h2,
-  ion-label p
-  {
+  ion-label p {
     font-size: 0.65rem;
     padding: 2px 8px;
   }
@@ -121,4 +145,14 @@ ion-label p {
   }
 }
 
+.custom-error-message {
+  color: var(--color-error-message);
+  font-size: 0.8rem;
+  text-align: center;
+}
+.custom-valid-message {
+  color: var(--color-valid-message);
+  font-size: 0.8rem;
+  text-align: center;
+}
 </style>
