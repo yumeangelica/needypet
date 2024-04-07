@@ -4,22 +4,24 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: ['pet'],
-  methods: {
-    /**
-     * @description Navigate to the pet view by id
-     */
-    navigateToPetView() {
-      if (this.pet && this.pet.id) {
-        this.$router.push({ name: 'pet', params: { id: this.pet.id } });
-      } else {
-        console.error('Pet ID is missing');
-      }
-    }
+<script setup lang="ts">
+import { defineProps } from 'vue';
+import { useRouter } from 'vue-router';
+import { Pet } from '@/types/pet';
+
+const { pet } = defineProps<{
+  pet: Pet;
+}>();
+
+const router = useRouter();
+
+function navigateToPetView() {
+  if (pet && pet.id) {
+    router.push({ name: 'pet', params: { id: pet.id } });
+  } else {
+    console.error('Pet ID is missing');
   }
-};
+}
 </script>
 
 
