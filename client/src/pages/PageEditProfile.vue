@@ -10,14 +10,20 @@
           <ion-item>
             <ion-input v-model="editData.email" type="email" required placeholder="Email"></ion-input>
           </ion-item>
-          <ion-item>
-            <ion-select v-model="editData.timezone" placeholder="Select Timezone">
-              <ion-select-option v-for="zone in timezones" :value="zone" :key="zone">{{ zone }}</ion-select-option>
-            </ion-select>
+          <ion-item @click="showModal = true">
+            <ion-label class="custom-timezone-label">{{ editData.timezone || 'Select Timezone' }}</ion-label>
           </ion-item>
+          <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
+            @timezoneSelected="timezone => editData.timezone = timezone" />
           <ion-item>
             <ion-input v-model="editData.currentPassword" type="password" required placeholder="Current Password"></ion-input>
           </ion-item>
+
+          <!-- Global error message styling -->
+          <div v-if="editError" class="error-message">
+            {{ editError }}
+          </div>
+
           <span class="error-message" v-if="showPasswordNotification">Please enter your current password</span>
           <ion-button class="custom-button" @click="submitForm" expand="block">Save Changes</ion-button>
           <ion-button class="custom-button" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
@@ -27,12 +33,13 @@
   </ion-page>
 </template>
 
-<script setup>
-import { IonPage, IonContent, IonItem, IonInput, IonSelect, IonButton, IonSelectOption } from '@ionic/vue';
-import { ref, onMounted, computed } from 'vue';
+<script setup lang="ts">
+import { IonPage, IonContent, IonItem, IonInput, IonButton, IonLabel } from '@ionic/vue';
+import { ref, onBeforeMount, computed } from 'vue';
 import { useUserStore } from '@/store/user';
-import { useRouter } from 'vue-router';
-import moment from 'moment-timezone';
+import { useRouter, onBeforeRouteLeave } from 'vue-router';
+import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
+
 
 import { useAppStore } from '@/store/app';
 const appStore = useAppStore();
@@ -43,6 +50,11 @@ const router = useRouter();
 
 const showPasswordNotification = ref(false);
 
+const editError = ref('');
+
+const showModal = ref(false);
+
+const originalData = ref({});
 // Placeholder for user details
 const editData = ref({
   userName: '',
@@ -51,31 +63,36 @@ const editData = ref({
   currentPassword: '',
 });
 
-
 const user = ref(null);
 
 const fetchUser = async () => {
-  const userData = await userStore.getUserById(userStore.Id);
+  const userData = await userStore.getUserById(userStore.id);
   user.value = userData;
+  originalData.value = { ...userData };
 };
 
 
 // Ensure the store is initialized from local storage or fetch latest user data if needed
-onMounted(async () => {
+onBeforeMount(async () => {
 
   await fetchUser();
 
-  // Assuming the user details are already loaded into the store
   editData.value = {
     userName: user.value.userName,
     email: user.value.email,
     timezone: user.value.timezone,
     currentPassword: '',
   };
+
 });
 
-// Timezones list
-const timezones = moment.tz.names();
+onBeforeRouteLeave((to, from, next) => {
+  if (JSON.stringify(editData.value) !== JSON.stringify(originalData.value)) { // Check if the form data has changed
+    editData.value = { ...originalData.value } as { userName: string; email: string; timezone: string; currentPassword: string };
+  }
+  next();
+});
+
 
 const submitForm = async () => {
 
@@ -90,9 +107,14 @@ const submitForm = async () => {
   const isSuccess = await userStore.updateUserProfile(editData.value);
   if (isSuccess) {
     console.log('Profile updated successfully');
+    editData.value.currentPassword = ''; // Clear the password field
+    originalData.value = { ...editData.value };
     router.push({ name: 'profile' }); // Ensure this route name matches your router configuration
   } else {
-    console.error('Failed to update profile');
+    editError.value = 'Please check your credentials and try again.';
+    setTimeout(() => {
+      editError.value = '';
+    }, 3000);
   }
 };
 </script>
@@ -122,9 +144,8 @@ ion-item {
   font-size: 0.85rem;
 }
 
-ion-select {
-  --placeholder-color: var(--color-text-default);
-  font-size: 0.85rem;
+.custom-timezone-label {
+  --color: var(--color-text-default);
 }
 
 .error-message {
