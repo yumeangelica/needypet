@@ -14,7 +14,7 @@
   </ion-tab-bar>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/vue';
 import { pawOutline, personCircleOutline } from 'ionicons/icons';
 import { useRoute } from 'vue-router';

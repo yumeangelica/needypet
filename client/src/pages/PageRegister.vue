@@ -21,18 +21,16 @@
                 aria-label="Password"></ion-input>
             </ion-item>
             <!-- Timezone select field -->
-            <ion-item class="login-register-field-item">
-              <ion-select v-model="selectedTimezone">
-                <ion-select-option aria-label="timezone" v-for="timezone in timezones" :key="timezone" :value="timezone">{{ timezone
-                  }}</ion-select-option>
-              </ion-select>
+            <ion-item class="login-register-field-item" @click="showModal = true">
+              <ion-label class="custom-timezone-label">{{ selectedTimezone || 'Select Timezone' }}</ion-label>
             </ion-item>
-
+            <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
+              @timezoneSelected="timezone => selectedTimezone = timezone" />
 
             <ion-buttons>
               <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
-              <ion-button @click="navigateToPageLanding" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+              <ion-button @click="router.push({ name: 'landing' })" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
             </ion-buttons>
 
           </form>
@@ -44,27 +42,25 @@
 
 
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
-import moment from 'moment-timezone';
-import { IonPage, IonContent, IonItem, IonInput, IonButton, IonSelect, IonSelectOption, IonButtons } from '@ionic/vue';
+import { IonPage, IonContent, IonItem, IonInput, IonButton, IonButtons, IonLabel } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
+import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
 
 import { useAppStore } from '@/store/app';
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
-
+const showModal = ref(false);
 const username = ref('');
 const email = ref('');
 const password = ref('');
 
-const timezones = ref(moment.tz.names());
-const selectedTimezone = ref('Europe/Helsinki');
+const selectedTimezone = ref('');
 
 const router = useRouter();
 const userStore = useUserStore();
-
 
 const createAccount = async () => {
   const success = await userStore.createAccount({
@@ -83,10 +79,6 @@ const createAccount = async () => {
 };
 
 
-const navigateToPageLanding = () => {
-  router.push({ name: 'landing' });
-};
-
 </script>
 
 
@@ -96,6 +88,10 @@ ion-select {
   --color: var(--color-text-default);
   font-size: 0.85rem;
 }
+
+.custom-timezone-label {
+    font-size: 0.85rem;
+  }
 
 
 /* Mobile styles */
@@ -115,6 +111,10 @@ ion-select {
   }
 
   ion-select {
+    font-size: 0.8rem;
+  }
+
+  .custom-timezone-label {
     font-size: 0.8rem;
   }
 }

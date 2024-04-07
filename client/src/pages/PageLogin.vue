@@ -20,7 +20,7 @@
             <ion-buttons>
               <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
-              <ion-button @click="navigateToPageLanding" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+              <ion-button @click="router.push({ name: 'landing' })" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
             </ion-buttons>
 
             <!-- Global error message styling -->
@@ -34,7 +34,7 @@
   </ion-page>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
@@ -65,9 +65,6 @@ const login = async () => {
   }
 };
 
-const navigateToPageLanding = () => {
-  router.push({ name: 'landing' });
-};
 </script>
 
 

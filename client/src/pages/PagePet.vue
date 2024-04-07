@@ -9,7 +9,7 @@
               <h3 class="pet-name">{{ pet.name }}</h3>
               <ion-buttons slot="end" v-if="pet.owner.id === userStore.id">
 
-                <ion-button class="settings-button" @click="navigateToEditPet()"><ion-icon
+                <ion-button class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon
                   :icon="settingsOutline" slot="start"></ion-icon>
                 </ion-button>
 
@@ -293,11 +293,6 @@ onBeforeMount(() => {
     getPet(id);
   }
 });
-
-
-const navigateToEditPet = () => {
-  router.push({ name: 'edit-pet' });
-};
 
 const confirmDeletePet = () => {
   if (window.confirm('Are you sure you want to delete this pet?')) {

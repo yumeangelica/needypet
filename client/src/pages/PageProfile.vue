@@ -16,7 +16,7 @@
 
             <ion-button class="custom-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
 
-            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="navigateToEditProfile">Edit Profile</ion-button>
+            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit Profile</ion-button>
 
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccount"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
@@ -33,11 +33,11 @@
   </ion-page>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { useUserStore } from '@/store/user';
-import { onBeforeMount, ref, computed } from 'vue';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { onBeforeMount, ref, computed, watch } from 'vue';
+import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
 import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
 
 import { useAppStore } from '@/store/app';
@@ -45,6 +45,7 @@ const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
 const router = useRouter();
+const route = useRoute();
 
 const userStore = useUserStore();
 const user = ref(null);
@@ -55,7 +56,7 @@ const toggleSettings = () => {
 };
 
 const fetchUser = async () => {
-  const userData = await userStore.getUserById(userStore.Id);
+  const userData = await userStore.getUserById(userStore.id);
   user.value = userData;
 };
 
@@ -93,9 +94,9 @@ const deleteAccount = async () => {
   }
 };
 
-const navigateToEditProfile = () => {
-  router.push({ name: 'edit-profile' });
-};
+watch(route, async () => {
+  await fetchUser();
+});
 
 onBeforeRouteLeave(() => {
   showSettings.value = false; // Reset the value of showSettings when leaving the page
@@ -135,20 +136,15 @@ ion-icon {
 @media (max-width: 568px) {
   .profile-card {
     padding: 15px;
-    /* Less padding on very small screens */
   }
 
   h3 {
     font-size: 1.1rem;
-    /* Slightly smaller heading on very small screens */
   }
 
   .email,
   .timezone {
     font-size: 0.8rem;
-    /* Even smaller text on very small screens */
   }
-
-
 }
 </style>

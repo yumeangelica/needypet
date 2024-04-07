@@ -1,5 +1,5 @@
 * {
-  font-family: 'Krona One', sans-serif;
+  font-family: 'Krona One', sans-serif !important;
   text-transform: none;
   color: var(--color-text-default);
   line-height: 1.6;
