@@ -8,7 +8,7 @@
 
             <div class="title-and-button-container">
               <h2 class="section-title">Your pets:</h2>
-              <ion-button @click="goToAddPet" class="custom-button">
+              <ion-button @click="router.push({ name: 'add-pet' })" class="custom-button">
                 <ion-icon :icon="addCircleOutline"></ion-icon>
                 Add Pet</ion-button>
             </div>
@@ -59,17 +59,12 @@ const updatePetLists = async () => {
   }
   ownPets.value = await petStore.getOwnerPets();
   carerPets.value = await petStore.getCarerPets();
-  console.log('ownPets', ownPets.value);
-  console.log('carerPets', carerPets.value);
 };
 
 onBeforeMount(updatePetLists);
 
 watch(() => petStore.pets, updatePetLists, { deep: true });
 
-const goToAddPet = () => {
-  router.push({ name: 'add-pet' });
-};
 
 </script>
 
@@ -79,7 +74,7 @@ const goToAddPet = () => {
 
 ion-icon {
   margin-right: 5px;
-  
+
 }
 
 .title-and-button-container {
