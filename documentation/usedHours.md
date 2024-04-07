@@ -202,4 +202,23 @@
 |           | Implement responsive design and refactor duplicate local CSS classes to global CSS for DRY compliance across multiple files.                                         |             |
 |           | Testing of new features and responsiveness across different screen sizes to ensure functionality and user experience.                                                | 8           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **200**     |
+| 6.4.24    | Frontend updates:                                                                                                                                                    |             |
+|           | Create `PageEditPet` with comprehensive editing features, including dynamic form fields, date selection, and user input validation.                                  |             |
+|           | Add nested 'edit-pet' route for `PageEditPet` page, ensuring seamless navigation within the app's pet management features.                                           |             |
+|           | Improve `PageHome` UI: Move 'Add Pet' button and add an icon for better visibility and interaction, making pet addition more intuitive and accessible.               |             |
+|           | Enhance pet management in `PagePet`: Restrict edit/delete buttons to owner and sanitize inputs.                                                                      |             |
+|           | Add `updatePet` and `deletePet` action functions, integrating backend support for critical pet management functionalities.                                           |             |
+|           | Implement `isTodayOrFuture` logic in `TheNeedCard` component to enable conditional display of the complete button.                                                   |             |
+|           | Enhance need completion with validation and feedback messages in `TheNeedCard`.                                                                                      |             |
+|           | Modify edit pet button to include an icon, add delete pet button and functionality, and implement conditional rendering for router-views.                            |             |
+|           | Add a button which sets the current date for needs and modify the modal date selection to a read-only input.                                                         |             |
+|           | Add check for `dateFor` value to validate only today and future dates.                                                                                               |             |
+|           | Add route watcher in `PagePet` to fetch pet details dynamically, enhancing data accuracy and user experience.                                                        |             |
+|           | Add cancel button to `PageAddPet` for improved navigation back to `PageHome`.                                                                                        |             |
+|           | Modify `addNewNeed` function to filter the newest need from `response.data.needs` and update the pet's need list.                                                    |             |
+|           | Add global CSS for valid message color.                                                                                                                              |             |
+|           | Backend updates:                                                                                                                                                     |             |
+|           | Enhance `addNewRecord` in `petController` with validation for completed, archived needs, and date matching, ensuring data integrity and user action relevance.       |             |
+|           | Improve `dailyTaskCompleter` helper validation to check if quantity or duration exists, refining task completion logic for accuracy and reliability.                 | 11          |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **211**     |
