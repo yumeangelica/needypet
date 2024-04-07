@@ -15,7 +15,7 @@
   </ion-header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { IonHeader, IonToolbar, IonButton, IonButtons, IonIcon } from '@ionic/vue';
 import { pawOutline, personCircleOutline } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
