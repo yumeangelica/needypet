@@ -164,8 +164,9 @@ export const usePetStore = defineStore({
           return false;
         })
         .catch((error) => {
-          console.error('Error during adding record:', error.response?.status);
-          return false;
+          if (error) {
+            return false;
+          }
         });
 
       return response;
@@ -201,9 +202,11 @@ export const usePetStore = defineStore({
       })
         .then((response) => {
           this.$patch((state) => {
-            const pet = state.pets.find((pet) => pet.id === petId);
+            const pet = state.pets.find((pet: Pet) => pet.id === petId);
             if (pet) {
-              pet.needs.push(needObject);
+              const newNeed =
+                response.data.needs[response.data.needs.length - 1];
+              pet.needs.push(newNeed);
             }
           });
           return response.status === 201;
