@@ -223,12 +223,12 @@
 |           |                                                                                                                                                                      |             |
 | 7.4.24    | Frontend updates:                                                                                                                                                    |             |
 |           | Create TimezoneSelector modal component with search functionality.                                                                                                   |             |
-|           | Refactor PageEditProfile to TypeScript, introduce TimezoneSelector component, ensure inputs reset to original data if unsaved.                                       |             |
-|           | Add getTimezones action function to app store for dynamically fetching timezone data.                                                                                |             |
-|           | Update PageRegister with TypeScript, inline navigation; modularize timezone selector and its functionality.                                                          |             |
-|           | Update PageProfile with TypeScript and inline navigation; implement route watch for user data fetch.                                                                 |             |
-|           | Refactor ThePetCard to use script setup for more concise component definition.                                                                                       |             |
-|           | Update PagePet, PageLogin, PageLanding, and PageHome with TypeScript and inline navigation; remove unnecessary console logs.                                         |             |
+|           | Refactor `PageEditProfile` to TypeScript, introduce TimezoneSelector component, ensure inputs reset to original data if unsaved.                                     |             |
+|           | Add `getTimezones` action function to app store for dynamically fetching timezone data.                                                                              |             |
+|           | Update `PageRegister` with TypeScript, inline navigation; modularize timezone selector and its functionality.                                                        |             |
+|           | Update `PageProfile` with TypeScript and inline navigation; implement route watch for user data fetch.                                                               |             |
+|           | Refactor `ThePetCard` to use script setup for more concise component definition.                                                                                     |             |
+|           | Update `PagePet`, `PageLogin`, `PageLanding`, and `PageHome` with TypeScript and inline navigation; remove unnecessary console logs.                                 |             |
 |           | Enable TypeScript in header components for type safety enhancements.                                                                                                 |             |
 |           | Set 'Krona One' as the global font across the application, update default text styles for consistency.                                                               | 5           |
 |           |                                                                                                                                                                      |             |
