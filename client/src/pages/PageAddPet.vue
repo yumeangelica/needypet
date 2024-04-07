@@ -27,6 +27,7 @@
               @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
 
             <ion-button type="submit" class="custom-button">Add Pet</ion-button>
+            <ion-button @click="router.push({ name: 'home' })" class="custom-button">Cancel</ion-button>
           </form>
         </div>
       </div>
