@@ -9,6 +9,12 @@
       <ion-button class="complete-button" v-if="!need.completed && isTodayOrFuture" @click="addRecord(petId, need)">Complete</ion-button>
       <div class="done-label" v-if="need.completed">Done!</div>
     </ion-item>
+    <ion-item v-if="errorMessage">
+      <ion-label class="custom-error-message">{{ errorMessage }}</ion-label>
+    </ion-item>
+    <ion-item v-if="validMessage">
+      <ion-label class="custom-valid-message">{{ validMessage }}</ion-label>
+    </ion-item>
   </ion-card>
 </template>
 
@@ -24,7 +30,8 @@ const { need, petId } = defineProps<{
   need: Need,
   petId: string
 }>();
-
+const errorMessage = ref('');
+const validMessage = ref('');
 const reactiveNeed = ref(need);
 
 const isTodayOrFuture = computed(() => {
@@ -46,16 +53,16 @@ const addRecord = async (petId: string, need: Need) => {
     recordObject = {
       ...recordObject,
       duration: {
-        value: need.duration!.value,
-        unit: need.duration!.unit
+        value: need.duration?.value,
+        unit: need.duration?.unit
       }
     };
   } else {
     recordObject = {
       ...recordObject,
       quantity: {
-        value: need.quantity!.value,
-        unit: need.quantity!.unit
+        value: need.quantity?.value,
+        unit: need.quantity?.unit
       }
     };
   }
@@ -64,7 +71,17 @@ const addRecord = async (petId: string, need: Need) => {
   const updateSuccessful = await petStore.addRecord(petId, needId, recordObject);
   if (updateSuccessful) {
     reactiveNeed.value.completed = true;
+    validMessage.value = 'Record added successfully';
+    setTimeout(() => {
+      validMessage.value = '';
+    }, 5000);
+  } else {
+    errorMessage.value = 'Failed to add record';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
   }
+
 };
 
 </script>
@@ -126,5 +143,16 @@ ion-label p {
     padding: 2px 8px;
     font-size: 0.55rem;
   }
+}
+
+.custom-error-message {
+  color: var(--color-error-message);
+  font-size: 0.8rem;
+  text-align: center;
+}
+.custom-valid-message {
+  color: var(--color-valid-message);
+  font-size: 0.8rem;
+  text-align: center;
 }
 </style>
