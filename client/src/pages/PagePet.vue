@@ -6,12 +6,17 @@
           <div class="full-pet-card">
 
             <div class="inline-container">
-              <h3 class="pet-name">{{ pet.name }}</h3><ion-button class="settings-button" @click="navigateToEditPet()"><ion-icon
-                  :icon="settingsOutline" slot="start"></ion-icon></ion-button>
+              <h3 class="pet-name">{{ pet.name }}</h3>
+              <ion-buttons slot="end" v-if="pet.owner.id === userStore.id">
 
-              <ion-button class="settings-button" @click="confirmDeletePet()">
-                <ion-icon :icon="trashOutline" slot="start"></ion-icon>
-              </ion-button>
+                <ion-button class="settings-button" @click="navigateToEditPet()"><ion-icon
+                  :icon="settingsOutline" slot="start"></ion-icon>
+                </ion-button>
+
+                <ion-button class="settings-button" @click="confirmDeletePet()">
+                  <ion-icon :icon="trashOutline" slot="start"></ion-icon>
+                </ion-button>
+              </ion-buttons>
 
             </div>
 
@@ -42,6 +47,7 @@
             <ion-modal :is-open="isOpen">
               <ion-header>
                 <ion-toolbar>
+                    <ion-title>New need</ion-title>
                   <ion-buttons slot="end">
                     <ion-button @click="setOpen(false)">Close form</ion-button>
                   </ion-buttons>
@@ -76,7 +82,7 @@
 
                 <div v-if="selection === 'quantity'">
                   <ion-item lines="none">
-                    <ion-input v-model="valueOfSelection" label="Enter value"></ion-input>
+                    <ion-input v-model="valueOfSelection" label="Enter value" :autofocus="true" @input="cleanInput($event)"></ion-input>
                     <ion-select v-model="unitOfSelection" interface="popover">
                       <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
                     </ion-select>
@@ -86,7 +92,7 @@
 
                 <div v-if="selection === 'duration'">
                   <ion-item lines="none">
-                    <ion-input v-model="valueOfSelection" label="Enter duration"></ion-input>
+                    <ion-input v-model="valueOfSelection" label="Enter duration" :autofocus="true" @input="cleanInput($event)"></ion-input>
                     <ion-label>minute(s)</ion-label>
                   </ion-item>
                 </div>
@@ -143,7 +149,7 @@ import { onBeforeMount, ref, computed, watch, Ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { IonPage, IonContent, IonButton, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon } from '@ionic/vue';
+import { IonPage, IonContent, IonButton, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon, IonTitle } from '@ionic/vue';
 import { addCircleOutline, settingsOutline, trashOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
 import TheNeedCard from '@/components/TheNeedCard.vue';
@@ -171,7 +177,7 @@ const description: Ref<Need['description']> = ref('');
 const errorMessage: Ref<string> = ref('');
 
 const selection: Ref<string> = ref('');
-const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(0);
+const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
 const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
 
 
@@ -209,9 +215,21 @@ const clearFields = () => {
   category.value = '';
   description.value = '';
   selection.value = '';
-  valueOfSelection.value = 0;
+  valueOfSelection.value = null;
   unitOfSelection.value = '';
   errorMessage.value = '';
+};
+
+const cleanInput = (event) => {
+  // Remove all alphabets and special characters from the input value
+  event.target.value = event.target.value.replace(/[^0-9]/g, '');
+
+  // Remove leading zeros from the input value
+  let value = event.target.value;
+  value = value.replace(/^0+/, '');
+
+  // Update the valueOfSelection reactive property
+  valueOfSelection.value = value;
 };
 
 // Fetch the pet from the store
@@ -245,7 +263,7 @@ const confirm = async () => {
     const response = await petStore.addNewNeed(pet.value.id, needObject);
     if (response) {
       setOpen(false);
-      getPet(pet.value.id);
+      await getPet(pet.value.id);
     } else {
       errorMessage.value = 'Failed to add need';
     }
@@ -255,10 +273,10 @@ const confirm = async () => {
   }
 };
 
-watch(route, () => {
+watch(route, async () => {
   const id = route.params.id as string;
   if (id) {
-    getPet(id);
+    await getPet(id);
   }
 });
 
@@ -363,10 +381,6 @@ ion-content {
   transition: transform 0.3s ease;
 }
 
-.full-pet-card:hover {
-  transform: translateY(-5px);
-}
-
 .cards-container {
   display: flex;
   flex-wrap: wrap;
@@ -439,5 +453,11 @@ ion-item {
   ion-modal .error-message {
     font-size: 12px;
   }
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
