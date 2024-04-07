@@ -5,7 +5,14 @@
         <div class="pets-container">
 
           <div v-if="ownPets.length > 0">
-            <h2 class="section-title">Your pets:</h2>
+
+            <div class="title-and-button-container">
+              <h2 class="section-title">Your pets:</h2>
+              <ion-button @click="goToAddPet" class="custom-button">
+                <ion-icon :icon="addCircleOutline"></ion-icon>
+                Add Pet</ion-button>
+            </div>
+
             <div class="cards-container">
               <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
             </div>
@@ -25,22 +32,19 @@
 
       </div>
 
-      <div class="add-pet-button-container">
-        <ion-button @click="goToAddPet" class="custom-button">Add Pet</ion-button>
-      </div>
-
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent, IonButton } from '@ionic/vue';
+import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { ref, watch, onBeforeMount, computed } from 'vue';
 import { usePetStore } from '@/store/pet';
 import { useRouter } from 'vue-router';
 import ThePetCard from '@/components/ThePetCard.vue';
-
 import { useAppStore } from '@/store/app';
+import { addCircleOutline } from 'ionicons/icons';
+
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
@@ -69,7 +73,23 @@ const goToAddPet = () => {
 
 </script>
 
+
+
 <style scoped>
+
+ion-icon {
+  margin-right: 5px;
+  
+}
+
+.title-and-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .pets-container {
   display: flex;
   flex-direction: column;
@@ -85,22 +105,8 @@ const goToAddPet = () => {
 }
 
 .section-title {
-  width: 100%;
-  text-align: center;
+  margin: 0;
   font-size: 1.5rem;
   padding: 10px 0;
-  margin-bottom: 20px;
-  margin-top: 40px;
-}
-
-.section-title:first-of-type {
-  margin-top: 0;
-}
-
-.add-pet-button-container {
-  display: flex;
-  justify-content: end;
-  margin-bottom: 40px;
-  margin-right: 20px;
 }
 </style>
