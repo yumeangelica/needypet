@@ -291,11 +291,23 @@ const addNewNeed = async (request, response, next) => {
 const addNewRecord = async (request, response, next) => {
   const pet = request.pet; // Pet comes from request.pet, which is attached to the request object by getPetHandler middleware
 
-  // const need = pet.needs.id(request.body.needId);
   const need = pet.needs.id(request.params.needid);
 
   if (!need) {
     return response.status(404).json({ error: 'Need not found' });
+  }
+
+  if (need.completed) {
+    return response.status(400).json({ error: 'Need is already completed' });
+  }
+
+  if (need.archived) {
+    return response.status(400).json({ error: 'Need is archived' });
+  }
+
+  const currentDate = checkLocalDateByTimezone(request.user.timezone);
+  if (need.dateFor.toISOString().split('T')[0] !== currentDate) {
+    return response.status(400).json({ error: 'Need date is not the same as the current date' });
   }
 
   if (request.body.quantity && !request.body.quantity.value) { // If pet need has quantity and request body doesn't
