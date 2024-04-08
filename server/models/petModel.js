@@ -49,6 +49,7 @@ const petSchema = new mongoose.Schema({
       type: String,
       maxlength: 1000,
     },
+    // Frequency will be used in next version; will be used to generate notifications
     frequency: { // Number of times per day, week, month, year
       times: {
         type: Number,

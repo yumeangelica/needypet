@@ -12,6 +12,7 @@ const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 const { updatePetNeedstoNextDays } = require('./helper');
 const { corsHeaders, corsOptions } = require('./utils/corsConfig');
+const helmet = require('helmet');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
@@ -27,6 +28,12 @@ app.use(cors(corsOptions));
 
 // Cors headers
 app.use(corsHeaders);
+
+// Helmet
+app.use(helmet({
+  referrerPolicy: { policy: 'no-referrer' },
+  noSniff: true,
+}));
 
 // Run every hour
 if (process.env.NODE_ENV !== 'test') {

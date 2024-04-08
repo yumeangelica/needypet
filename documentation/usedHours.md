@@ -251,4 +251,9 @@
 |           | Refactor `tzIdentifierChecker` helper to leverage updated `moment-timezone` library latest json for improved timezone validation.                                    |             |
 |           | Clean up `petModel` by removing unused methods, further simplifying the model's structure.                                                                           | 1.5         |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **228.5**   |
+| 8.4.24    | Backend optimizations & cyber security updates:                                                                                                                      | 1           |
+|           | Implement Helmet in app.js with no-referrer and noSniff policies for improved security.                                                                              |             |
+|           | Refine logging format and clarify variable naming in request logger.                                                                                                 |             |
+|           | Add comment for future frequency field usage in Pet model, preparing for upcoming features.                                                                          |             |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **229.5**   |

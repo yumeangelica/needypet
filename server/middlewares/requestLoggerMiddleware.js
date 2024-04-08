@@ -1,7 +1,7 @@
 const { isDevelopment } = require('../utils/config');
 
 /**
- * @description Logs request method, url, status and duration
+ * @description Logs request method, url, status, and duration. Includes query and body in development mode.
  * @param {*} request
  * @param {*} response
  * @param {*} next
@@ -11,7 +11,7 @@ const requestLogger = (request, response, next) => {
 
   response.on('finish', () => {
     const duration = new Date() - start;
-    const logMessage = [
+    const logParts = [
       new Date().toISOString(),
       request.method,
       request.originalUrl,
@@ -20,12 +20,12 @@ const requestLogger = (request, response, next) => {
       `Duration: ${duration}ms`,
     ];
 
-    if (isDevelopment) { // Log request body only in development mode
-      logMessage.push('Query:', JSON.stringify(request.query));
-      logMessage.push('Body:', JSON.stringify(request.body));
+    // Log query and body in development mode
+    if (isDevelopment) {
+      logParts.push(`Query: ${JSON.stringify(request.query)}`, `Body: ${JSON.stringify(request.body)}`);
     }
 
-    console.log(logMessage.join(' '));
+    console.log(logParts.join(' '));
   });
 
   next();
