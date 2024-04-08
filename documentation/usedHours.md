@@ -232,4 +232,9 @@
 |           | Enable TypeScript in header components for type safety enhancements.                                                                                                 |             |
 |           | Set 'Krona One' as the global font across the application, update default text styles for consistency.                                                               | 5           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **216**     |
+| 8.4.24    | Frontend updates & bugfix:                                                                                                                                           |             |
+|           | Refine pet update logic in `PetStore` to refresh state post-update, ensuring accurate representation of pets data without needing manual refresh.                    |             |
+|           | Fix visibility issue with the "Add Pet" button on `PageHome`, ensuring it remains visible when a user has no pets, enhancing user experience.                        |             |
+|           | Implement route leave guard in `PageAddPet` to clear form fields upon navigation away from the page and after successful pet submission.                             | 2           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **218**     |
