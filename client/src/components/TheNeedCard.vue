@@ -2,7 +2,7 @@
   <ion-card>
     <ion-item>
       <ion-label>
-        <h2>{{ need.category }}</h2>
+        <h5>{{ need.category }}</h5>
         <p>{{ need.description }}</p>
         <p>{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
@@ -89,25 +89,22 @@ const addRecord = async (petId: string, need: Need) => {
 
 <style scoped>
 ion-card {
-  border-radius: 20px;
+  border-radius: 35px;
   background: var(--color-pet-need-background);
   width: 100%;
   margin: 4px 0;
   padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
 }
 
+/* Remove bottom border */
 ion-item {
-  --padding-start: 0;
-  --inner-padding-end: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   --border-color: transparent;
   --inner-border-color: transparent;
-  --background: transparent;
 }
 
-ion-label h2,
+ion-label h5,
 ion-label p {
   margin: 0;
 }
@@ -126,33 +123,18 @@ ion-label p {
   border-radius: 15px;
   text-align: center;
   min-width: 60px;
-  margin-right: 20px;
+  margin-right: 28px;
 }
 
 /* Mobile styles */
-@media (max-width: 768px) {
-
-  ion-label h2,
-  ion-label p {
-    font-size: 0.65rem;
-    padding: 2px 8px;
-  }
-
+@media (max-width: 568px) {
   .complete-button,
   .done-label {
-    padding: 2px 8px;
-    font-size: 0.55rem;
+    font-size: 0.60rem;
   }
-}
 
-.custom-error-message {
-  color: var(--color-error-message);
-  font-size: 0.8rem;
-  text-align: center;
-}
-.custom-valid-message {
-  color: var(--color-valid-message);
-  font-size: 0.8rem;
-  text-align: center;
+  .done-label {
+    margin-right: 20px;
+  }
 }
 </style>

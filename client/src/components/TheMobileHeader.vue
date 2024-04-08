@@ -35,11 +35,3 @@ const navigateTo = (name) => {
 
 
 </script>
-
-<style scoped>
-.ion-tab-button,
-ion-label,
-ion-icon {
-  color: var(--color-text-lilac);
-}
-</style>

@@ -4,27 +4,30 @@
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="add-pet-container">
           <form @submit.prevent="submitPet" class="add-pet-form">
-            <ion-item class="custom-input">
+            <ion-item>
               <ion-input aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name"></ion-input>
             </ion-item>
 
-            <ion-item class="custom-input">
+            <ion-item>
               <ion-input aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed"></ion-input>
             </ion-item>
 
-            <ion-item class="custom-input">
+            <ion-item>
               <ion-input aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species"></ion-input>
             </ion-item>
 
-            <ion-item class="custom-input">
+            <ion-item>
               <ion-textarea aria-label="Description" v-model="newPetObject.description" placeholder="About the pet"></ion-textarea>
             </ion-item>
 
-            <ion-item class="custom-input" @click="showDatePicker = true">
+            <ion-item @click="showDatePicker = true">
               <ion-input readonly :value="formattedDate || 'Select Date'" color="medium"></ion-input>
             </ion-item>
-            <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
-              @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
+
+            <div class="datetime-wrapper">
+              <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
+                @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
+            </div>
 
             <ion-button type="submit" class="custom-button">Add Pet</ion-button>
             <ion-button @click="router.push({ name: 'home' })" class="custom-button">Cancel</ion-button>
@@ -120,8 +123,6 @@ const submitPet = async () => {
     return;
   }
 
-  console.log('Submitting pet:', newPetObject.value);
-
   const response = await petStore.addNewPet(newPetObject.value);
   if (response) {
     newPetObject.value = {
@@ -157,30 +158,5 @@ const submitPet = async () => {
 .add-pet-form {
   display: flex;
   flex-direction: column;
-}
-
-.custom-input,
-.ion-datetime {
-  --border-radius: 20px;
-  --padding-start: 10px;
-  --padding-end: 10px;
-  --background: var(--color-input-background);
-  --highlight-color-focused: var(--color-drop-shadow-pink);
-  margin-bottom: 15px;
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-
-  .add-pet-container {
-    padding: 15px;
-  }
-
-  .custom-input ion-input,
-  .custom-input ion-textarea,
-  .ion-datetime {
-    font-size: 0.8rem;
-  }
-
 }
 </style>

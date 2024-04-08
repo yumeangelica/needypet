@@ -39,21 +39,3 @@ const navigateTo = (name) => {
   }
 };
 </script>
-
-
-<style scoped>
-ion-buttons span {
-  margin-right: 1rem;
-  color: #fff;
-}
-
-/* Override ion button style */
-ion-button {
-  --color: var(--color-text-lilac) !important;
-}
-
-ion-icon {
-  padding: 0px 5px;
-  color: var(--color-text-lilac);
-}
-</style>

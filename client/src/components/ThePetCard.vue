@@ -1,6 +1,6 @@
 <template>
   <div class="small-pet-card" @click="navigateToPetView">
-    <h2>{{ pet.name }}</h2>
+    <h5>{{ pet.name }}</h5>
   </div>
 </template>
 
@@ -48,19 +48,11 @@ function navigateToPetView() {
   transform: translateY(-5px);
 }
 
-.small-pet-card h2 {
+.small-pet-card h5 {
   font-size: 1rem;
   width: 100%;
   text-align: center;
   margin-top: auto;
   padding-top: 20px;
-}
-
-/* Responsiveness for mobile */
-@media (max-width: 768px) {
-  .small-pet-card {
-    min-width: 200px;
-    margin: 10px;
-  }
 }
 </style>
