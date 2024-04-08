@@ -2,20 +2,6 @@ const User = require('../models/userModel');
 const { passwordStrengthValidator } = require('../middlewares/passwordStrengthValidator');
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../utils/config');
-/**
- * @description Gets all users (only for dev, later will be removed)
- * @param {*} request
- * @param {*} response
- */
-const getAllUsers = async (request, response) => { // Only for dev, later will be removed
-  try {
-    const users = await User.find({}).populate('pets', 'name');
-    response.json(users);
-  } catch (error) {
-    console.log('error getting users');
-    console.log(error);
-  }
-};
 
 /**
  * @description Gets the user by id
@@ -32,8 +18,9 @@ const getUserById = async (request, response, next) => {
   }
 };
 
+// This will be in use in the future version, not yet implemented
 /**
- * @description Gets the user by username and returns id and username
+ * @description Gets the user by username and returns id and username - Will be used for pet owner and pet care taker
  * @param {*} request
  * @param {*} response
  * @param {*} next
@@ -245,7 +232,6 @@ const validateUserToken = async (request, response, next) => {
 };
 
 module.exports = {
-  getAllUsers,
   getUserById,
   getUserByName,
   createNewUser,
