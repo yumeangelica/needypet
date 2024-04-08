@@ -10,7 +10,7 @@ const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
-const { petNeedstoNextDays } = require('./helper');
+const { updatePetNeedstoNextDays } = require('./helper');
 const { corsHeaders, corsOptions } = require('./utils/corsConfig');
 
 // Middleware
@@ -30,7 +30,7 @@ app.use(corsHeaders);
 
 // Run every hour
 if (process.env.NODE_ENV !== 'test') {
-  cron.schedule('0 * * * *', () => petNeedstoNextDays()); // Check if pet needs needs updated every hour, if midnight, update pet needs
+  cron.schedule('0 * * * *', () => updatePetNeedstoNextDays()); // Check if pet needs needs updated every hour, if midnight, update pet needs
 }
 
 app.get('/', (request, response) => {

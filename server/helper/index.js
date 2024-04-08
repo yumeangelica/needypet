@@ -72,7 +72,7 @@ const checkLocalDateByTimezone = timezone => {
  * @param {*} next
  * @returns
   */
-const petNeedstoNextDays = async () => {
+const updatePetNeedstoNextDays = async () => {
   const User = require('../models/userModel');
   const moment = require('moment-timezone');
   try {
@@ -169,13 +169,13 @@ const petNeedstoNextDays = async () => {
       }
     });
   } catch (error) {
-    console.error('Error in petNeedstoNextDays', error);
+    console.error('Error in updatePetNeedstoNextDays', error);
   }
 };
 
 module.exports = {
   dailyTaskCompleter,
   tzIdentifierChecker,
-  petNeedstoNextDays,
+  updatePetNeedstoNextDays,
   checkLocalDateByTimezone,
 };
