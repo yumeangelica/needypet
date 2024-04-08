@@ -109,6 +109,9 @@ export const usePetStore = defineStore({
           { headers }
         );
         if (response.status === 200) {
+          this.$patch((state) => {
+            state.pets = state.pets.filter((pet) => pet.id !== petId);
+          });
           await this.getAllPets(); // Fetch all pets again to update the state
           return true;
         }
