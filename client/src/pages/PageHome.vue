@@ -27,6 +27,13 @@
         </div>
 
         <div v-if="ownPets.length === 0 && carerPets.length === 0">
+
+          <div class="title-and-button-container">
+            <h2 class="section-title">Your pets:</h2>
+            <ion-button @click="router.push({ name: 'add-pet' })" class="custom-button">
+              <ion-icon :icon="addCircleOutline"></ion-icon>
+              Add Pet</ion-button>
+          </div>
           <p class="ion-text-center">You don't have any pets yet.</p>
         </div>
 
@@ -40,7 +47,7 @@
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { ref, watch, onBeforeMount, computed } from 'vue';
 import { usePetStore } from '@/store/pet';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import ThePetCard from '@/components/ThePetCard.vue';
 import { useAppStore } from '@/store/app';
 import { addCircleOutline } from 'ionicons/icons';
@@ -49,6 +56,7 @@ const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
 const router = useRouter();
+const route = useRoute();
 const petStore = usePetStore();
 const ownPets = ref([]);
 const carerPets = ref([]);
@@ -65,13 +73,16 @@ onBeforeMount(updatePetLists);
 
 watch(() => petStore.pets, updatePetLists, { deep: true });
 
+watch(() => route.params && petStore.pets, async () => {
+  ownPets.value = await petStore.getOwnerPets();
+  carerPets.value = await petStore.getCarerPets();
+});
 
 </script>
 
 
 
 <style scoped>
-
 ion-icon {
   margin-right: 5px;
 
