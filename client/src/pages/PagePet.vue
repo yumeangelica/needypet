@@ -6,11 +6,11 @@
           <div class="full-pet-card">
 
             <div class="inline-container">
-              <h3 class="pet-name">{{ pet.name }}</h3>
+              <h3>{{ pet.name }}</h3>
               <ion-buttons slot="end" v-if="pet.owner.id === userStore.id">
 
-                <ion-button class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon
-                  :icon="settingsOutline" slot="start"></ion-icon>
+                <ion-button class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon :icon="settingsOutline"
+                    slot="start"></ion-icon>
                 </ion-button>
 
                 <ion-button class="settings-button" @click="confirmDeletePet()">
@@ -47,7 +47,7 @@
             <ion-modal :is-open="isOpen">
               <ion-header>
                 <ion-toolbar>
-                    <ion-title>New need</ion-title>
+                  <ion-title>New need</ion-title>
                   <ion-buttons slot="end">
                     <ion-button @click="setOpen(false)">Close form</ion-button>
                   </ion-buttons>
@@ -119,7 +119,7 @@
               <!-- Needs for the selected date -->
               <ul v-if="needsByDate[currentDate]">
                 <li v-for="need in needsByDate[currentDate]" :key="need.id">
-                  <div class="cards-container">
+                  <div class="need-cards-container">
                     <the-need-card :need="need" :petId="pet.id" />
                   </div>
                 </li>
@@ -315,10 +315,6 @@ const deletePet = async () => {
 </script>
 
 <style scoped>
-ion-content {
-  overflow-y: auto;
-}
-
 /* Wrapping name and setting button */
 .inline-container {
   display: flex;
@@ -327,6 +323,7 @@ ion-content {
   gap: 0px;
 }
 
+/* Settings button */
 .settings-button,
 .settings-button:active,
 .settings-button:focus,
@@ -351,7 +348,6 @@ ion-content {
   padding: 0;
 }
 
-
 .pet-container,
 .header-button-container,
 .date-navigation {
@@ -361,7 +357,6 @@ ion-content {
   gap: 10px;
   width: 100%;
   max-width: 100%;
-  box-sizing: border-box;
 }
 
 .full-pet-card {
@@ -371,12 +366,10 @@ ion-content {
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   padding: 20px;
   width: 100%;
-  max-width: 600px;
-  box-sizing: border-box;
-  transition: transform 0.3s ease;
+  max-width: 700px;
 }
 
-.cards-container {
+.need-cards-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -393,63 +386,16 @@ ion-modal {
   --border-radius: 50px;
 }
 
-/* Calendar */
-.datetime-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-ion-datetime {
-  --padding-start: 0;
-  --padding-end: 0;
-  width: 100%;
-  --background: var(--color-card-background-lilac);
-  color: var(--color-text-lilac);
-  max-width: 90%;
-  margin: 0 auto;
-}
-
-ion-item {
-  margin: 10px 0;
-}
-
-/* Mobile styles */
-@media (min-width: 768px) {
+/* Desktop specific styles */
+@media (min-width: 568px) {
   .date-navigation {
     flex-direction: row;
     justify-content: space-around;
   }
 }
 
-@media (max-width: 768px) {
 
-  .pet-container h3,
-  .pet-container p,
-  .error-message,
-  ion-modal ion-title,
-  ion-modal ion-content,
-  ion-modal ion-label,
-  ion-modal ion-button,
-  ion-modal ion-item,
-  ion-modal .error-message,
-  li {
-    font-size: 14px;
-  }
-
-  .pet-name,
-  ion-modal ion-title {
-    font-size: 16px;
-  }
-
-  ion-modal .error-message {
-    font-size: 12px;
-  }
-}
-
+/* Remove default input spinner */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;

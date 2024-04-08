@@ -2,11 +2,13 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="landing-container">
+        <div class="login-register-container">
+          <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
           <h4 class="ion-text-center">Loving care for your Needy Pet!</h4>
           <!-- Global button styling for action buttons -->
           <ion-button @click="router.push({ name: 'login' });" expand="block" class="action-button primary-action-button">Login</ion-button>
-          <ion-button @click="router.push({ name: 'register' })" expand="block" class="action-button secondary-action-button">Create Account</ion-button>
+          <ion-button @click="router.push({ name: 'register' })" expand="block" class="action-button secondary-action-button">Create
+            Account</ion-button>
         </div>
       </div>
     </ion-content>
@@ -25,25 +27,3 @@ const isMobile = computed(() => appStore.isMobile);
 const router = useRouter();
 
 </script>
-
-<style scoped>
-.landing-container {
-  max-width: 500px;
-  margin: 5vh auto;
-  padding: 20px;
-  border-radius: 50px;
-  background-color: var(--color-login-background);
-  border: 1px solid var(--color-login-button-and-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Mobile styles */
-@media (max-width: 568px) {
-  .landing-container {
-    padding: 15px;
-  }
-  .action-button {
-    font-size: 0.85rem;
-  }
-}
-</style>

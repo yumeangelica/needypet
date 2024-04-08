@@ -4,7 +4,8 @@
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <!-- Global styling for container element -->
         <div class="login-register-container">
-          <h3 class="ion-text-center">Login</h3>
+          <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
+          <h4 class="ion-text-center">Login</h4>
 
           <form @submit.prevent="login">
             <ion-item class="login-register-field-item">
@@ -67,23 +68,3 @@ const login = async () => {
 
 </script>
 
-
-<style scoped>
-/* Mobile styles */
-@media (max-width: 568px) {
-  .login-register-container {
-    padding: 15px;
-  }
-
-  .login-register-field-item {
-    --padding-start: 15px;
-    --inner-padding-end: 15px;
-    margin-bottom: 12px;
-  }
-
-  .action-button,
-  .login-register-field-input {
-    font-size: 0.8rem;
-  }
-}
-</style>

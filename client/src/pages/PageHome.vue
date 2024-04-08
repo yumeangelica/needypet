@@ -71,7 +71,8 @@ const updatePetLists = async () => {
 
 onBeforeMount(updatePetLists);
 
-watch(() => petStore.pets, updatePetLists, { deep: true });
+// Outcomment, delete later
+// watch(() => petStore.pets, updatePetLists, { deep: true }); delete this
 
 watch(() => route.params && petStore.pets, async () => {
   ownPets.value = await petStore.getOwnerPets();
@@ -83,11 +84,6 @@ watch(() => route.params && petStore.pets, async () => {
 
 
 <style scoped>
-ion-icon {
-  margin-right: 5px;
-
-}
-
 .title-and-button-container {
   display: flex;
   justify-content: center;

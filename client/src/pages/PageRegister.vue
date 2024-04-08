@@ -4,7 +4,8 @@
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <!-- Global styling for container element -->
         <div class="login-register-container">
-          <h3 class="ion-text-center">Create Account</h3>
+          <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
+          <h4 class="ion-text-center">Create Account</h4>
           <form @submit.prevent="createAccount">
             <!-- Username input field -->
             <ion-item class="login-register-field-item">
@@ -80,42 +81,3 @@ const createAccount = async () => {
 
 
 </script>
-
-
-<style scoped>
-ion-select {
-  --placeholder-color: var(--color-text-default);
-  --color: var(--color-text-default);
-  font-size: 0.85rem;
-}
-
-.custom-timezone-label {
-    font-size: 0.85rem;
-  }
-
-
-/* Mobile styles */
-@media (max-width: 568px) {
-  .login-register-container {
-    padding: 15px;
-  }
-
-  .login-register-field-item {
-    --padding-start: 10px;
-    --inner-padding-end: 10px;
-  }
-
-  .action-button,
-  .login-register-field-input {
-    font-size: 0.8rem;
-  }
-
-  ion-select {
-    font-size: 0.8rem;
-  }
-
-  .custom-timezone-label {
-    font-size: 0.8rem;
-  }
-}
-</style>

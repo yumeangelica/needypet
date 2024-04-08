@@ -1,8 +1,8 @@
 * {
-  font-family: 'Krona One', sans-serif !important;
+  font-family: 'Krona One', 'Arial', sans-serif !important;
   text-transform: none;
   color: var(--color-text-default);
-  line-height: 1.6;
+  line-height: 1.6 !important;
 }
 
 h1, h2, h3, h4, h5, h6, a {
@@ -33,16 +33,12 @@ ion-button {
   color: var(--color-text-lilac);
 }
 
+p {
+  font-size: 0.95rem !important;
+}
+
 a {
   text-decoration: none;
-}
-
-h2 {
-  font-size: 28px;
-}
-
-h3 {
-  margin-bottom: 10px;
 }
 
 ul {
@@ -52,6 +48,15 @@ ul {
 
 li {
   margin-bottom: 5px;
+}
+
+ion-icon {
+  padding: 0px 5px;
+  color: var(--color-text-lilac);
+}
+
+ion-label {
+  color: var(--color-text-lilac);
 }
 
 /* Custom content-wrapper class to push content down */
@@ -67,12 +72,100 @@ li {
   padding: 20px;
 }
 
+/* Centers the calendar */
+.datetime-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Calendar */
+ion-datetime {
+  --background: var(--color-input-background);
+}
+
+ion-item {
+  margin-bottom: 15px;
+  --background: var(--color-input-background);
+  --border-radius: 10px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --highlight-color-focused: var(--color-drop-shadow-pink);
+  --color: var(--color-text-default);
+  font-size: 0.95rem;
+}
+
 /* Global error message */
 .error-message {
   color: var(--color-error-message);
   text-align: center;
   margin-top: 20px;
   font-size: 0.8rem;
+}
+
+/* Global button styling for PagePet, PageAddPet, PageProfile, PageEditProfile, PageHome */
+.custom-button {
+  --background: var(--color-button-pet-page);
+  --border-radius: 20px;
+  margin: 10px 8px;
+  font-size: 0.85rem;
+}
+
+.custom-button:hover {
+  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+}
+
+
+/* Profile & edit profile pages styling */
+/* ------------------------------ */
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
+  background-color: var(--color-card-background-lilac);
+  border-radius: 50px;
+  border: 1px solid var(--color-card-border);
+}
+
+/* Login, Register, Landing pages styling */
+/* -------------------------------------- */
+
+/* Global container element for PageLogin, PageRegister, and PageLanding */
+.login-register-container {
+  max-width: 500px;
+  margin: 5vh auto;
+  padding: 20px;
+  border-radius: 50px;
+  background-color: var(--color-login-background);
+  border: 1px solid var(--color-login-button-and-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Input field in PageRegister and PageLogin */
+.login-register-field-item {
+  --padding-start: 20px;
+  --inner-border-width: 0;
+  --inner-padding-end: 20px;
+  --background: var(--color-login-input-background);
+  --border-radius: 20px;
+  margin-bottom: 15px;
+}
+
+.login-register-field-input {
+  --placeholder-color: var(--color-text-default);
+  --placeholder-font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* Global timezone label in selector */
+.custom-timezone-label {
+  font-size: 0.80rem !important;
 }
 
 /* Global buttons for PageLanding, PageRegister, PageLogin*/
@@ -95,64 +188,40 @@ li {
   --background: var(--color-create-account-button) !important;
 }
 
-
-/* Global button styling for PagePet, PageAddPet, PageProfile, PageEditProfile, PageHome */
-.custom-button {
-  --background: var(--color-button-pet-page);
-  --border-radius: 20px;
-  margin: 10px 8px;
-  font-size: 0.85rem;
+/* Error & valid messages */
+.custom-error-message, .custom-valid-message {
+  font-size: 0.8rem;
+  text-align: center;
 }
 
-.custom-button:hover {
-  --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+.custom-error-message {
+  color: var(--color-error-message) !important;
 }
 
-/* Input field in PageRegister and PageLogin */
-.login-register-field-item {
-  --padding-start: 20px;
-  --inner-border-width: 0;
-  --inner-padding-end: 20px;
-  --background: var(--color-login-input-background);
-  --border-radius: 20px;
-  margin-bottom: 15px;
+.custom-valid-message {
+  color: var(--color-valid-message) !important;
 }
-
-.login-register-field-input {
-  --placeholder-color: var(--color-text-default);
-  --placeholder-font-style: italic;
-  font-size: 0.85rem;
-}
-
-/* Global container element for PageLogin and PageRegister */
-.login-register-container {
-  max-width: 500px;
-  margin: 5vh auto;
-  padding: 20px;
-  border-radius: 50px;
-  background-color: var(--color-login-background);
-  border: 1px solid var(--color-login-button-and-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-
-/* Over ride ionic primary button */
-.ion-color-primary {
-  --ion-color-base: var(--ion-color-pink) !important;
-  --ion-color-base-rgb: var(--ion-color-pink-rgb) !important;
-  --ion-color-contrast: var(--ion-color-pink-contrast) !important;
-  --ion-color-contrast-rgb: var(--ion-color-pink-contrast-rgb) !important;
-  --ion-color-shade: var(--ion-color-pink-shade) !important;
-  --ion-color-tint: var(--ion-color-pink-tint) !important;
-}
-
 
 /* Mobile styles */
-@media (max-width: 568px) {
+/* ------------- */
 
-  /* Button styling for PagePet, PageAddPet, PageProfile, PageEditProfile, PageHome */
-  .custom-button {
-    font-size: 0.75rem;
+/* Media query for mobile styles */
+@media (max-width: 568px) {
+  .custom-button, .action-button, .login-register-field-item, .login-register-field-input, ion-select, ion-input, ion-label, ion-textarea, .custom-timezone-label, .custom-error-message, .custom-valid-message, ion-radio, p, a, li {
+    font-size: 0.75rem !important;
   }
 
+  ion-item {
+    font-size: 0.75rem;
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+
+  h2 {
+    font-size: 1.4rem !important;
+  }
+
+  h3 {
+    font-size: 1.1rem !important;
+  }
 }

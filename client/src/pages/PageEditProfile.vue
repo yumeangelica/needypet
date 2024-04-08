@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="form-container">
+        <div class="profile-container">
           <h3>Edit Profile:</h3>
           <ion-item>
             <ion-input v-model="editData.userName" type="text" required placeholder="Username"></ion-input>
@@ -118,55 +118,3 @@ const submitForm = async () => {
   }
 };
 </script>
-
-
-<style scoped>
-.form-container {
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  margin: auto;
-  padding: 20px;
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  background-color: var(--color-card-background-lilac);
-  border-radius: 50px;
-  border: 1px solid var(--color-card-border);
-}
-
-ion-item {
-  margin-bottom: 15px;
-  --background: var(--color-input-background);
-  --border-radius: 10px;
-  --padding-start: 10px;
-  --padding-end: 10px;
-  --highlight-color-focused: var(--color-drop-shadow-pink);
-  --color: var(--color-text-default);
-  font-size: 0.85rem;
-}
-
-.custom-timezone-label {
-  --color: var(--color-text-default);
-}
-
-.error-message {
-  color: var(--color-error-message);
-  text-align: center;
-  margin-top: 15px;
-  font-size: 0.8rem;
-}
-
-
-/* Mobile styles */
-@media (max-width: 568px) {
-  .form-container {
-    padding: 15px;
-  }
-
-  ion-item {
-    --padding-start: 8px;
-    --padding-end: 8px;
-    font-size: 0.8rem;
-  }
-
-}
-</style>

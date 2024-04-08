@@ -5,7 +5,7 @@
         <div class="edit-pet-container">
           <form @submit.prevent="confirmUpdatePet" class="edit-pet-form">
             <div>
-              <ion-label class="custom-label">Name:</ion-label>
+              <ion-label>Name:</ion-label>
               <ion-item class="custom-input">
                 <ion-input aria-label="Name" v-model="existingPetObject.name" required placeholder="Enter pet's name"></ion-input>
               </ion-item>
@@ -178,38 +178,7 @@ const cancelEdit = () => {
   gap: 10px;
 }
 
-.custom-label {
-  display: block;
-  color: var(--color-text);
-  font-size: 1rem;
-  margin-bottom: 4px;
-}
-
-.custom-input ion-item {
-  --border-radius: 20px;
-  --padding-start: 10px;
-  --padding-end: 10px;
-  --background: var(--color-input-background);
-  --highlight-color-focused: var(--color-card-border);
-  --inner-padding-end: 10px;
-  --inner-padding-start: 10px;
-}
-
-.datetime-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-ion-datetime {
-  --background: var(--color-input-background);
-  --border-radius: 20px;
-  --padding-start: 10px;
-  --padding-end: 10px;
-}
-
+/* Button container for update pet and cancel buttons */
 .button-container {
   display: flex;
   gap: 10px;
@@ -217,28 +186,12 @@ ion-datetime {
   margin-top: 20px;
 }
 
+/* Update pet and cancel buttons */
 .edit-pet-button {
   --background: var(--ion-color-primary);
   --padding-start: 15px;
   --padding-end: 15px;
   --background: var(--color-button-pet-page);
   --border-radius: 20px !important;
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-  .edit-pet-container {
-    padding: 15px;
-  }
-
-  .custom-input ion-input,
-  .custom-input ion-textarea,
-  .ion-datetime {
-    font-size: 0.8rem;
-  }
-
-  .custom-label {
-    font-size: 0.9rem;
-  }
 }
 </style>
