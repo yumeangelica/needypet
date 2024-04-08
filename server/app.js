@@ -13,10 +13,6 @@ const usersRoutes = require('./routes/userRoutes');
 const { petNeedstoNextDays } = require('./helper');
 const { corsHeaders, corsOptions } = require('./utils/corsConfig');
 
-// For dev purposes
-const { getAllPets } = require('./controllers/petController');
-const { getAllUsers } = require('./controllers/userController');
-
 // Middleware
 app.use(express.json()); // Json parser for post requests
 if (process.env.NODE_ENV !== 'test') {
@@ -41,15 +37,9 @@ app.get('/', (request, response) => {
   response.send('<h1>Welcome to NeedyPet backend!</h1>');
 });
 
-// For dev purposes
-if (process.env.NODE_ENV !== 'production') {
-  app.get('/dev/pets', getAllPets);
-  app.get('/dev/users', getAllUsers);
-}
-
 // Routes
-app.use('/auth', usersRoutes); // No authentication needed for this route - only for testing purposes
-app.use('/api', authenticateToken, getUserHandler, petsRoutes); // No authentication needed for this route - only for testing purposes
+app.use('/auth', usersRoutes);
+app.use('/api', authenticateToken, getUserHandler, petsRoutes);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
