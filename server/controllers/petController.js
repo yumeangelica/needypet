@@ -1,55 +1,7 @@
 const Pet = require('../models/petModel');
 const User = require('../models/userModel');
 const { dailyTaskCompleter, checkLocalDateByTimezone } = require('../helper');
-
-/**
- * @description Gets all pets (only for dev, later will be removed)
- * @param {*} request
- * @param {*} response
- */
-const getAllPets = async (request, response) => {
-  try {
-    const pets = await Pet.find({})
-      .populate('owner', 'userName')
-      .populate('careTakers', 'userName')
-      .populate({
-        path: 'needs',
-        match: { archived: false },
-      });
-
-    response.json(pets);
-  } catch (error) {
-    console.log('error getting pets');
-    console.log(error);
-  }
-};
-
-/**
- * @description Gets the pet by id, returns pet with past and upcoming needs
- * @param {*} request
- * @param {*} response
- * @param {*} next
- */
-const getPetById = async (request, response, next) => {
-  const moment = require('moment-timezone');
-  try {
-    const pet = request.pet;
-    const currentDate = checkLocalDateByTimezone(request.user.timezone);
-    const pastNeeds = pet.needs.filter(need => moment(need.dateFor).isBefore(currentDate));
-    const futureNeeds = pet.needs.filter(need => moment(need.dateFor).isSameOrAfter(currentDate));
-
-    const returnPet = {
-      ...pet.toJSON(),
-      pastNeeds,
-      needs: futureNeeds,
-    };
-
-    response.json(returnPet);
-  } catch (error) {
-    error.name = 'NotFound';
-    next(error);
-  }
-};
+const moment = require('moment-timezone');
 
 /**
  * @description Gets all pets for the user.
@@ -344,7 +296,7 @@ const addNewRecord = async (request, response, next) => {
 
   const newRecordObject = {
     careTaker: request.user.id,
-    date: new Date(),
+    date: moment().tz(request.user.timezone).format(), // Current date in user's timezone
     note: request.body.note,
   };
 
@@ -389,8 +341,6 @@ const deleteNeed = async (request, response, next) => {
 };
 
 module.exports = {
-  getAllPets,
-  getPetById,
   addNewPet,
   updatePet,
   deletePet,
