@@ -45,24 +45,18 @@ const dailyTaskCompleter = need => {
 /**
  * @description Checks if the given timezone is valid
  * @param {*} timezone
- * @returns
+ * @returns true or false
  */
 const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsinki'
-  const moment = require('moment-timezone');
-  const timezones = moment.tz.names();
-  return timezones.includes(timezone);
-
-  // Outcommented alternative version of the checker
-  // const momentTimezoneData = require('moment-timezone/data/meta/latest.json');
-  // const momentTimezoneData = moment.tz;
-  // const timezones = Object.keys(momentTimezoneData.zones);
-  // return timezones.includes(timezone); // Check if list of timezones includes the given timezone, return true or false
+  const momentTimezoneData = require('moment-timezone/data/meta/latest.json');
+  const timezones = Object.keys(momentTimezoneData.zones).map(key => momentTimezoneData.zones[key].name);
+  return timezones.includes(timezone); // Check if the timezone is valid
 };
 
 /**
  * @description Checks the local date by timezone, returns the formatted date
  * @param {*} timezone
- * @returns
+ * @returns formatted date in 'YYYY-MM-DD' format
   */
 const checkLocalDateByTimezone = timezone => {
   const moment = require('moment-timezone');
