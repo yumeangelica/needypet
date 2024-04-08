@@ -237,4 +237,11 @@
 |           | Fix visibility issue with the "Add Pet" button on `PageHome`, ensuring it remains visible when a user has no pets, enhancing user experience.                        |             |
 |           | Implement route leave guard in `PageAddPet` to clear form fields upon navigation away from the page and after successful pet submission.                             | 2           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **218**     |
+| 8.4.24    | Frontend visual updates & enhancements:                                                                                                                              |             |
+|           | Design and create a logo for the NeedyPet app using Procreate and integrate it into the landing, login, and register pages to enhance branding.                      |             |
+|           | Add a title for the app in index.html. Create and implement a favicon for the app to enhance brand visibility in browser tabs.                                       |             |
+|           | Refactor CSS to adhere to DRY principles, moving specific styles to global.css for consistency and easier maintenance.                                               |             |
+|           | Enhance mobile responsiveness across pages, ensuring a consistent and optimal user experience on various devices.                                                    |             |
+|           | Add 'Arial' as a fallback font in global CSS for better cross-platform compatibility.                                                                                | 9           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **227**     |
