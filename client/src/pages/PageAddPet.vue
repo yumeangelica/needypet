@@ -47,7 +47,7 @@ import {
   IonDatetime,
   IonButton
 } from '@ionic/vue';
-import { useRouter } from 'vue-router';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 
@@ -96,6 +96,18 @@ const formattedDate = computed(() => {
   return new Date(newPetObject.value.birthday).toLocaleDateString(undefined, options);
 });
 
+onBeforeRouteLeave((to, from, next) => {
+  newPetObject.value = {
+    name: '',
+    breed: '',
+    species: '',
+    description: '',
+    birthday: null,
+  };
+  next();
+
+});
+
 
 const submitPet = async () => {
   if (!newPetObject.value.name) {
@@ -112,6 +124,13 @@ const submitPet = async () => {
 
   const response = await petStore.addNewPet(newPetObject.value);
   if (response) {
+    newPetObject.value = {
+      name: '',
+      breed: '',
+      species: '',
+      description: '',
+      birthday: null,
+    };
     router.push({ name: 'home' }); // Navigate user after success
   } else {
     console.log('Failed to add pet');
