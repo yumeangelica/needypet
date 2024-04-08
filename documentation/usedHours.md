@@ -244,4 +244,11 @@
 |           | Enhance mobile responsiveness across pages, ensuring a consistent and optimal user experience on various devices.                                                    |             |
 |           | Add 'Arial' as a fallback font in global CSS for better cross-platform compatibility.                                                                                | 9           |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **227**     |
+| 8.4.24    | Backend optimizations and updates:                                                                                                                                   |             |
+|           | Update application dependencies. Remove development routes in `app.js` to tighten security.                                                                          |             |
+|           | Remove `getAllPets` and `getPetById` methods from `petController`. Also remove `getPetById` route.                                                                   |             |
+|           | Remove `getAllUsers` function from `userController` and comment `getUserByName` for potential future use.                                                            |             |
+|           | Refactor `tzIdentifierChecker` helper to leverage updated `moment-timezone` library latest json for improved timezone validation.                                    |             |
+|           | Clean up `petModel` by removing unused methods, further simplifying the model's structure.                                                                           | 1.5         |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **228.5**   |

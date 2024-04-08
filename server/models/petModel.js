@@ -196,31 +196,4 @@ petSchema.set('toJSON', {
 
 const Pet = mongoose.model('Pet', petSchema);
 
-// Custom functions, not included in the model
-
-// Add new pet
-Pet.addNewPet = async function (pet) {
-  const newPet = new Pet(pet);
-  try {
-    return newPet;
-  } catch (error) {
-    return error;
-  }
-};
-
-// Add new need
-Pet.addNewNeed = async function (need) {
-  const pet = await Pet.findById(this._id);
-  if (!pet) {
-    return 'no pet';
-  }
-
-  pet.needs.push(need);
-  try {
-    await pet.save();
-  } catch (error) {
-    return error;
-  }
-};
-
 module.exports = Pet;
