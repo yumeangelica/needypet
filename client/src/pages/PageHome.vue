@@ -71,9 +71,6 @@ const updatePetLists = async () => {
 
 onBeforeMount(updatePetLists);
 
-// Outcomment, delete later
-// watch(() => petStore.pets, updatePetLists, { deep: true }); delete this
-
 watch(() => route.params && petStore.pets, async () => {
   ownPets.value = await petStore.getOwnerPets();
   carerPets.value = await petStore.getCarerPets();
