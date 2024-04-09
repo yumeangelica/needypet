@@ -1,5 +1,5 @@
 <template>
-  <ion-card :class="{ 'is-expanded': showOptions }">
+  <ion-card :class="{ 'is-expanded': showOptions, 'card-active': need.isActive, 'card-inactive': !need.isActive }">
     <ion-item>
       <ion-label>
         <h5>{{ need.category }}</h5>
@@ -19,16 +19,25 @@
 
 
     </ion-item>
+
+    <!-- Toggleable buttons -->
     <div v-if="isOwner" class="options-container" :class="{ 'visible': showOptions }">
-      <ion-button @click="editNeed(need.id)" fill="clear" class="option-button">
+      <!-- Edit need button -->
+      <ion-button v-if="isTodayOrFuture" @click="editNeed(need.id)" fill="clear" class="option-button">
         <ion-icon :icon="pencil" slot="icon-only"></ion-icon>
       </ion-button>
-      <ion-toggle v-if="!need.isActive" @ionChange="toggleNeed(need.id)"></ion-toggle>
-      <ion-toggle v-else @ionChange="toggleNeed(need.id)" checked></ion-toggle>
+      <!-- isActive toggle button -->
+      <div v-if="isTodayOrFuture">
+        <ion-toggle v-if="!need.isActive" @ionChange="toggleNeedActive(need.id)"></ion-toggle>
+        <ion-toggle v-else @ionChange="toggleNeedActive(need.id)" checked></ion-toggle>
+      </div>
+      <!-- delete need button -->
       <ion-button @click="confirmDeleteNeed(need.id)" fill="clear" class="option-button">
         <ion-icon :icon="trashOutline" slot="icon-only"></ion-icon>
       </ion-button>
+
     </div>
+
     <ion-item v-if="errorMessage">
       <ion-label class="custom-error-message">{{ errorMessage }}</ion-label>
     </ion-item>
@@ -42,15 +51,18 @@
 import { IonCard, IonItem, IonLabel, IonButton, IonIcon, IonToggle } from '@ionic/vue';
 import { defineProps, ref, computed, inject } from 'vue';
 import { usePetStore } from '@/store/pet';
+import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
 import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil } from 'ionicons/icons';
 import moment from 'moment-timezone';
 const petStore = usePetStore();
+const userStore = useUserStore();
 
 const { need, petId } = defineProps<{
   need: Need,
   petId: string
 }>();
+
 
 const isOwner = ref(false);
 
@@ -65,10 +77,11 @@ const reactiveNeed = ref(need);
 const handleNeedDeletion = inject<HandleNeedDeletionFunction>('handleNeedDeletion'); // This function sends a signal to the parent component that a need has been deleted
 isOwner.value = inject('isOwner'); // This value comes from the parent component
 
+// Check if the need is for today or in the future
 const isTodayOrFuture = computed(() => {
-  const today = moment().startOf('day');
-  const needDate = moment(need.dateFor).startOf('day');
-  return needDate.isSame(today) || needDate.isAfter(today);
+  const needDate = moment(need.dateFor).tz(userStore.timezone);
+  const today = moment().tz(userStore.timezone);
+  return needDate.isSameOrAfter(today, 'day');
 });
 
 // Add Record (need done) -button click event handler
@@ -129,10 +142,26 @@ const editNeed = (needId) => {
 };
 
 // Initialize toggling of a need
-const toggleNeed = (needId) => {
+const toggleNeedActive = async (needId) => {
   if (!needId || !isOwner.value) {
     return;
   }
+
+  const response = await petStore.toggleNeedisActive(petId, needId);
+  if (response) {
+    validMessage.value = 'Need active status toggled successfully';
+    setTimeout(() => {
+      validMessage.value = '';
+    }, 5000);
+  } else {
+    errorMessage.value = 'Failed to toggle need active status';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
+  }
+
+
+
 };
 
 // Confirm deletion of a need
@@ -172,6 +201,31 @@ ion-card {
   padding-right: 10px;
   padding-top: 10px;
 }
+
+.card-active {
+  background: var(--color-pet-need-background);
+}
+
+.card-active {
+  background: var(--color-pet-need-background);
+}
+
+.card-inactive {
+  background: #ded7e0; /* Lighter grey for a less stark contrast */
+  color: #a0a0a0; /* Dim the text color for inactive state */
+  border: 1px solid #d0d0d0; /* Optional: add a subtle border for a more defined edge */
+  opacity: 0.8; /* Slightly reduce opacity to suggest inactivity */
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out; /* Smooth transition for state changes */
+}
+
+/* Additional styling for child elements in the inactive card to enhance the inactive look */
+.card-inactive ion-label,
+.card-inactive .complete-button,
+.card-inactive .done-label,
+.card-inactive .option-button {
+  color: #afa8a8; /* Dim text/icons within the card */
+}
+
 
 /* Remove bottom border */
 ion-item {
