@@ -120,6 +120,42 @@ export const usePetStore = defineStore({
         return false;
       }
     },
+    async deleteNeed(petId: string, needId: string) {
+      const userStore = useUserStore();
+
+      const token = userStore.token;
+
+      if (!token) {
+        console.log('Token not found');
+        return false;
+      }
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+
+      try {
+        const response = await axiosInstance({
+          method: 'delete',
+          url: `${servicePath}/pets/${petId}/needs/${needId}`,
+          headers,
+        });
+
+        if (response.status === 204) {
+          this.$patch((state) => {
+            const pet = state.pets.find((pet) => pet.id === petId);
+            if (pet) {
+              pet.needs = pet.needs.filter((need) => need.id !== needId);
+            }
+          });
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during deleting need:', error.response?.status);
+        return false;
+      }
+    },
     /**
      * @description Add a record for the need
      * @param petId
@@ -236,9 +272,16 @@ export const usePetStore = defineStore({
       return state.pets.filter((pet) => pet.owner.id !== userStore.id);
     },
     getPetById:
+        (state) =>
+          async (id: string): Promise<Pet | undefined> => {
+            return state.pets.find((pet) => pet.id === id);
+          },
+    isOwner:
       (state) =>
-        async (id: string): Promise<Pet | undefined> => {
-          return state.pets.find((pet) => pet.id === id);
+        async (petId: string): Promise<boolean> => {
+          const userStore = useUserStore();
+          const pet = state.pets.find((pet) => pet.id === petId);
+          return pet?.owner?.id === userStore.id;
         },
   },
 });
