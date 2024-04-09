@@ -50,7 +50,7 @@ export const usePetStore = defineStore({
 
       return response;
     },
-    async addNewPet(newPetObject) {
+    async addNewPet(newPetObject): Promise<boolean> {
       const userStore = useUserStore();
 
       const headers = {
@@ -73,7 +73,7 @@ export const usePetStore = defineStore({
         return false;
       }
     },
-    async deletePet(petId: string) {
+    async deletePet(petId: string): Promise<boolean> {
       const userStore = useUserStore();
 
       const headers = {
@@ -120,7 +120,48 @@ export const usePetStore = defineStore({
         return false;
       }
     },
-    async deleteNeed(petId: string, needId: string) {
+    async toggleNeedisActive(petId: string, needId: string): Promise<boolean> {
+      const userStore = useUserStore();
+      const token = userStore.token;
+
+      if (!token) {
+        console.log('Token not found');
+        return false;
+      }
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+
+      try {
+        const response = await axiosInstance({
+          method: 'patch',
+          url: `${servicePath}/pets/${petId}/needs/${needId}/togglestatus`,
+          headers,
+        });
+
+        if (response.status === 200) {
+          this.$patch((state) => {
+            const pet = state.pets.find((pet) => pet.id === petId);
+            if (pet) {
+              const need = pet.needs.find((need) => need.id === needId);
+              if (need) {
+                need.isActive = !need.isActive;
+              }
+            }
+          });
+          return true;
+        }
+      } catch (error) {
+        console.error(
+          'Error during toggling need status:',
+          error.response?.status
+        );
+        return false;
+      }
+    },
+    async deleteNeed(petId: string, needId: string): Promise<boolean> {
       const userStore = useUserStore();
 
       const token = userStore.token;
@@ -272,10 +313,10 @@ export const usePetStore = defineStore({
       return state.pets.filter((pet) => pet.owner.id !== userStore.id);
     },
     getPetById:
-        (state) =>
-          async (id: string): Promise<Pet | undefined> => {
-            return state.pets.find((pet) => pet.id === id);
-          },
+      (state) =>
+        async (id: string): Promise<Pet | undefined> => {
+          return state.pets.find((pet) => pet.id === id);
+        },
     isOwner:
       (state) =>
         async (petId: string): Promise<boolean> => {
