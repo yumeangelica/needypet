@@ -13,6 +13,7 @@ const usersRoutes = require('./routes/userRoutes');
 const { updatePetNeedstoNextDays } = require('./helper');
 const { corsHeaders, corsOptions } = require('./utils/corsConfig');
 const helmet = require('helmet');
+const { isTesting } = require('./utils/config');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
@@ -35,18 +36,18 @@ app.use(helmet({
   noSniff: true,
 }));
 
-// Run every hour
-if (process.env.NODE_ENV !== 'test') {
+if (!isTesting) {
+  // Run every hour
   cron.schedule('0 * * * *', () => updatePetNeedstoNextDays()); // Check if pet needs needs updated every hour, if midnight, update pet needs
 }
-
-app.get('/', (request, response) => {
-  response.send('<h1>Welcome to NeedyPet backend!</h1>');
-});
 
 // Routes
 app.use('/auth', usersRoutes);
 app.use('/api', authenticateToken, getUserHandler, petsRoutes);
+
+app.get('/', (request, response) => {
+  response.send('<h1>Welcome to NeedyPet backend!</h1>');
+});
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

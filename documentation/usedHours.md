@@ -270,4 +270,14 @@
 |           | Add toggleNeedisActive and updateNeed functions to petController for managing needs. Implement routes for toggleNeedisActive and updateNeed functions.               |             |
 |           | Fix bug in the need updating algorithm that generates new needs for the next day, ensuring correct data handling. Test that everything works.                        | 2.5         |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **243**     |
+| 10.4.24   | Docker setup and app configuration updates:                                                                                                                          |             |
+|           | Add Dockerfiles for building and serving the frontend with Nginx, and setting up the backend service.                                                                |             |
+|           | Implement Nginx configuration to handle proper routing and client-side navigation.                                                                                   |             |
+|           | Modify frontend build script to clean previous builds, ensuring fresh deployments.                                                                                   |             |
+|           | Add docker-compose file for orchestrating container deployment and dockerignore file for both services.                                                              |             |
+|           | Replace bcrypt with bcryptjs in backend to fix Docker compatibility issues.                                                                                          |             |
+|           | Introduce 'isTesting' environment variable to conditionally disable cron jobs during tests.                                                                          |             |
+|           | Modify need updating algorithm to switch all not archived and not active needs to archived.                                                                          |             |
+|           | Conduct comprehensive tests to verify Docker configurations and app functionalities.                                                                                 | 10          |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **253**     |
