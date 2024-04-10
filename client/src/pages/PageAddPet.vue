@@ -2,6 +2,7 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+        <h2 class="ion-text-center">Add new pet:</h2>
         <div class="add-pet-container">
           <form @submit.prevent="submitPet" class="add-pet-form">
             <ion-item>
@@ -29,8 +30,15 @@
                 @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
             </div>
 
-            <ion-button type="submit" class="custom-button">Add Pet</ion-button>
-            <ion-button @click="router.push({ name: 'home' })" class="custom-button">Cancel</ion-button>
+            <div class="center-button-group">
+              <ion-button type="submit" class="custom-button">Add Pet</ion-button>
+              <ion-button @click="router.push({ name: 'home' })" class="custom-button">Cancel</ion-button>
+            </div>
+
+            <ion-item v-if="errorMessage" color="danger">
+              <ion-label>{{ errorMessage }}</ion-label>
+            </ion-item>
+
           </form>
         </div>
       </div>
@@ -48,7 +56,8 @@ import {
   IonInput,
   IonTextarea,
   IonDatetime,
-  IonButton
+  IonButton,
+  IonLabel
 } from '@ionic/vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
@@ -63,6 +72,8 @@ const petStore = usePetStore();
 const userStore = useUserStore();
 
 const userId = ref(userStore.id);
+
+const errorMessage = ref('');
 
 const newPetObject = ref({
   name: '',
@@ -114,12 +125,10 @@ onBeforeRouteLeave((to, from, next) => {
 
 const submitPet = async () => {
   if (!newPetObject.value.name) {
-    console.log('Please fill the name field');
     return;
   }
 
   if (!userId.value) {
-    console.log('User ID not found');
     return;
   }
 
@@ -134,7 +143,10 @@ const submitPet = async () => {
     };
     router.push({ name: 'home' }); // Navigate user after success
   } else {
-    console.log('Failed to add pet');
+    errorMessage.value = 'Failed to add pet';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 3000);
   }
 
 };
@@ -143,6 +155,13 @@ const submitPet = async () => {
 
 
 <style scoped>
+
+.center-button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .add-pet-container {
   display: flex;
   flex-direction: column;
