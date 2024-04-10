@@ -268,6 +268,6 @@
 |           |                                                                                                                                                                      |             |
 | 9.4.24    | Backend enhancements for dynamic need management:                                                                                                                    |             |
 |           | Add toggleNeedisActive and updateNeed functions to petController for managing needs. Implement routes for toggleNeedisActive and updateNeed functions.               |             |
-|           | Fix bug in the need updating algorithm that generates new needs for the next day, ensuring correct data handling                                                     | 2.5         |
+|           | Fix bug in the need updating algorithm that generates new needs for the next day, ensuring correct data handling. Test that everything works.                        | 2.5         |
 |           |                                                                                                                                                                      |             |
 | **Total** |                                                                                                                                                                      | **243**     |
