@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile-frontend
+    ports:
+      - "5173:80"  # Running on port 5173, port 80 works as well because of the nginx configuration
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile-backend
+    ports:
+      - "5002:5002"  # Backend port
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
