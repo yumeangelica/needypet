@@ -189,8 +189,8 @@ const cancelEdit = () => {
 /* Update pet and cancel buttons */
 .edit-pet-button {
   --background: var(--ion-color-primary);
-  --padding-start: 15px;
-  --padding-end: 15px;
+  --padding-start: 10px;
+  --padding-end: 10px;
   --background: var(--color-button-pet-page);
   --border-radius: 20px !important;
 }

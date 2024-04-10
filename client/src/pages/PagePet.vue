@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="confirm-button-container">
-                  <ion-button class="custom-button" @click="confirm()">Confirm</ion-button>
+                  <ion-button class="custom-button" @click="addNewNeed()">Confirm</ion-button>
                   <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
                 </div>
 
@@ -116,11 +116,16 @@
                 <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
               </div>
 
+              <!--  Valid message for need deletion -->
+              <ion-item v-if="validMessage">
+                <ion-label class="custom-valid-message custom-delete-message">{{ validMessage }}</ion-label>
+              </ion-item>
+
               <!-- Needs for the selected date -->
               <ul v-if="needsByDate[currentDate]">
                 <li v-for="need in needsByDate[currentDate]" :key="need.id">
                   <div class="need-cards-container">
-                    <the-need-card :need="need" :petId="pet.id" />
+                    <the-need-card :need="need" :petId="pet.id" @needDeleted="handleNeedDeleted" />
                   </div>
                 </li>
               </ul>
@@ -145,7 +150,7 @@
 
 
 <script setup lang="ts">
-import { onBeforeMount, ref, computed, watch, Ref } from 'vue';
+import { onBeforeMount, ref, computed, watch, Ref, provide } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -180,6 +185,9 @@ const selection: Ref<string> = ref('');
 const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
 const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
 
+const validMessage: Ref<string> = ref('');
+
+const isOwner = ref(false);
 
 
 const changeDay = (delta: number) => {
@@ -238,10 +246,12 @@ async function getPet(id: string) {
   if (fetchedPet) {
     pet.value = fetchedPet;
   }
+  isOwner.value = await petStore.isOwner(id);
 }
 
-// When the user clicks the confirm button on the modal this function is called
-const confirm = async () => {
+// When the user clicks the addNewNeed button on the modal this function is called
+const addNewNeed = async () => {
+
   const today = moment().format('YYYY-MM-DD');
 
   if (!category.value || !description.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value || !(currentDate.value >= today)) {
@@ -280,6 +290,11 @@ watch(route, async () => {
   }
 });
 
+// Watch the window width and update the store, will be used to close the modal on mobile
+watch(() => window.innerWidth, (newWidth) => {
+  appStore.updateScreenSize(newWidth);
+});
+
 
 watch(selection, (newValue) => {
   if (newValue === 'duration') {
@@ -287,10 +302,10 @@ watch(selection, (newValue) => {
   }
 });
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   const id = route.params.id as string;
   if (id) {
-    getPet(id);
+    await getPet(id);
   }
 });
 
@@ -311,6 +326,17 @@ const deletePet = async () => {
     }
   }
 };
+// Function to handle the need deletion
+const handleNeedDeleted = (deleted: boolean) => {
+  if (deleted) {
+    validMessage.value = 'Need deleted successfully';
+    setTimeout(() => {
+      validMessage.value = '';
+    }, 5000);
+  }
+};
+provide('isOwner', isOwner);
+provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the child component
 
 </script>
 
@@ -366,7 +392,7 @@ const deletePet = async () => {
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   padding: 20px;
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
 }
 
 .need-cards-container {

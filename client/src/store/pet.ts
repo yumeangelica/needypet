@@ -38,7 +38,10 @@ export const usePetStore = defineStore({
       })
         .then((response) => {
           if (response.status === 200) {
-            this.pets = response.data; // Set the pets in the store state
+            this.$patch((state) => {
+              state.pets = response.data;
+            });
+            console.log('Pets fetched:', response.data);
             return true;
           }
           return false;
@@ -50,7 +53,7 @@ export const usePetStore = defineStore({
 
       return response;
     },
-    async addNewPet(newPetObject) {
+    async addNewPet(newPetObject): Promise<boolean> {
       const userStore = useUserStore();
 
       const headers = {
@@ -73,7 +76,7 @@ export const usePetStore = defineStore({
         return false;
       }
     },
-    async deletePet(petId: string) {
+    async deletePet(petId: string): Promise<boolean> {
       const userStore = useUserStore();
 
       const headers = {
@@ -121,6 +124,150 @@ export const usePetStore = defineStore({
       }
     },
     /**
+     * @description Toggle the status isActive of the need
+     * @param petId
+     * @param needId
+     * @returns
+     */
+    async toggleNeedisActive(petId: string, needId: string): Promise<boolean> {
+      const userStore = useUserStore();
+      const token = userStore.token;
+
+      if (!token) {
+        console.log('Token not found');
+        return false;
+      }
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+
+      try {
+        const response = await axiosInstance({
+          method: 'patch',
+          url: `${servicePath}/pets/${petId}/needs/${needId}/togglestatus`,
+          headers,
+        });
+
+        if (response.status === 200) {
+          this.$patch((state) => {
+            const pet = state.pets.find((pet) => pet.id === petId);
+            if (pet) {
+              const need = pet.needs.find((need) => need.id === needId);
+              if (need) {
+                need.isActive = !need.isActive;
+              }
+            }
+          });
+          return true;
+        }
+      } catch (error) {
+        console.error(
+          'Error during toggling need status:',
+          error.response?.status
+        );
+        return false;
+      }
+    },
+    /**
+     * @description Update the pet's need by Id
+     * @param petId
+     * @param needId
+     * @param updatedNeed
+     * @returns
+     */
+    async updateNeed(petId: string, needId: string, updatedNeed: object) {
+      const userStore = useUserStore();
+      const token = userStore.token;
+
+      if (!token) {
+        console.log('Token not found');
+        return false;
+      }
+
+      console.log('Updated need:', updatedNeed);
+      console.log('Need ID:', needId);
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+
+      try {
+        const response = await axiosInstance({
+          method: 'put',
+          url: `${servicePath}/pets/${petId}/needs/${needId}`,
+          headers,
+          data: updatedNeed,
+        });
+
+        if (response.status === 200) {
+          this.$patch((state) => {
+            const stateNeed = state.pets
+              .find((pet) => pet.id === petId)
+              ?.needs.find((need) => need.id === needId);
+            if (stateNeed) {
+              const responseNeed = response.data.needs.find(
+                (need) => need.id === needId
+              );
+              if (responseNeed) {
+                Object.assign(stateNeed, responseNeed);
+              }
+            }
+          });
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during updating need:', error.response?.status);
+        return false;
+      }
+
+      return false;
+    },
+    /**
+     * @description Delete a need from the pet by Id
+     * @param petId
+     * @param needId
+     * @returns
+     */
+    async deleteNeed(petId: string, needId: string): Promise<boolean> {
+      const userStore = useUserStore();
+
+      const token = userStore.token;
+
+      if (!token) {
+        console.log('Token not found');
+        return false;
+      }
+
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+
+      try {
+        const response = await axiosInstance({
+          method: 'delete',
+          url: `${servicePath}/pets/${petId}/needs/${needId}`,
+          headers,
+        });
+
+        if (response.status === 204) {
+          this.$patch((state) => {
+            const pet = state.pets.find((pet) => pet.id === petId);
+            if (pet) {
+              pet.needs = pet.needs.filter((need) => need.id !== needId);
+            }
+          });
+          return true;
+        }
+      } catch (error) {
+        console.error('Error during deleting need:', error.response?.status);
+        return false;
+      }
+    },
+    /**
      * @description Add a record for the need
      * @param petId
      * @param recordObject
@@ -140,7 +287,6 @@ export const usePetStore = defineStore({
       }
 
       const headers = {
-        // Headers for the request
         'Content-Type': 'application/json',
         Authorization: `bearer ${token}`,
       };
@@ -239,6 +385,13 @@ export const usePetStore = defineStore({
       (state) =>
         async (id: string): Promise<Pet | undefined> => {
           return state.pets.find((pet) => pet.id === id);
+        },
+    isOwner:
+      (state) =>
+        async (petId: string): Promise<boolean> => {
+          const userStore = useUserStore();
+          const pet = state.pets.find((pet) => pet.id === petId);
+          return pet?.owner?.id === userStore.id;
         },
   },
 });
