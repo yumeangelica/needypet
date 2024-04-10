@@ -266,4 +266,8 @@
 |           | Enhance PagePet with async onBeforeMount, handleNeedDeleted & isOwner providers, and user feedback messages to improve frontend interactivity.                       |             |
 |           | Remove outcommented code and console logs to clean up frontend codebase. Test that everything works properly.                                                        | 11          |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **240.5**   |
+| 9.4.24    | Backend enhancements for dynamic need management:                                                                                                                    |             |
+|           | Add toggleNeedisActive and updateNeed functions to petController for managing needs. Implement routes for toggleNeedisActive and updateNeed functions.               |             |
+|           | Fix bug in the need updating algorithm that generates new needs for the next day, ensuring correct data handling                                                     | 2.5         |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **243**     |
