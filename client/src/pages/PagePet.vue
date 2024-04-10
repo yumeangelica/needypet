@@ -290,6 +290,11 @@ watch(route, async () => {
   }
 });
 
+// Watch the window width and update the store, will be used to close the modal on mobile
+watch(() => window.innerWidth, (newWidth) => {
+  appStore.updateScreenSize(newWidth);
+});
+
 
 watch(selection, (newValue) => {
   if (newValue === 'duration') {
@@ -387,7 +392,7 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
   box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   padding: 20px;
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
 }
 
 .need-cards-container {
