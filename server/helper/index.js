@@ -131,7 +131,15 @@ const updatePetNeedstoNextDays = async () => {
 
     allPets.forEach(pet => {
       // Find all needs which are not archived by pet
-      const notArchivedNeeds = pet.needs.filter(need => !need.archived && need.isActive); // Filter needs which are not archived and are active
+
+      // find all needs which are not archived and are active, put the to the notArchivedNeeds array, put the not active needs to the willBeArchived array
+      const notArchivedNeeds = pet.needs.filter(need => !need.archived && need.isActive);
+      pet.needs.forEach(need => {
+        if (!need.isActive) {
+          need.archived = true;
+        }
+      });
+
       let needsUpdated = false; // Flag for checking if needs are updated
 
       notArchivedNeeds.forEach(need => {
@@ -142,6 +150,7 @@ const updatePetNeedstoNextDays = async () => {
         needsUpdated = true;
         need.archived = true;
         need.isActive = false;
+        console.log('old need:', need);
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
         const howManyDaysDifference = moment(localDateObject).diff(moment(newNeedCopy.dateFor), 'days'); // Check how many days are between the last need date and today
         for (let i = 1; i <= howManyDaysDifference; i++) { // Loop through between the last need date and today
@@ -160,6 +169,7 @@ const updatePetNeedstoNextDays = async () => {
             newNeed = { ...newNeed, quantity: newNeedCopy.quantity };
           }
 
+          console.log('new need:', newNeed);
           pet.needs.push(newNeed);
         }
       });

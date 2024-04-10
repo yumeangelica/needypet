@@ -322,6 +322,80 @@ const addNewRecord = async (request, response, next) => {
   }
 };
 
+/**
+ * @description Toggles the need active status
+ * @param {*} request
+ * @param {*} response
+ * @param {*} next
+ * @returns
+ */
+const toggleNeedisActive = async (request, response, next) => {
+  const pet = request.pet;
+
+  const need = pet.needs.id(request.params.needid);
+
+  if (!need) {
+    return response.status(404).json({ error: 'Need not found' });
+  }
+
+  need.isActive = !need.isActive;
+
+  try {
+    await pet.save();
+    response.json(pet);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateNeed = async (request, response, next) => {
+  const pet = request.pet;
+
+  const need = pet.needs.id(request.params.needid);
+
+  if (!need) {
+    return response.status(404).json({ error: 'Need not found' });
+  }
+
+  const updateDataObject = {
+    category: request.body.category ? request.body.category : need.category,
+    description: request.body.description ? request.body.description : need.description,
+    dateFor: need.dateFor,
+    isActive: need.isActive,
+    archived: need.archived,
+    completed: need.completed,
+    careRecords: need.careRecords,
+  };
+
+  if (request.body.quantity) {
+    updateDataObject.quantity = {
+      value: request.body.quantity.value,
+      unit: request.body.quantity.unit,
+    };
+  } else if (request.body.duration) {
+    updateDataObject.duration = {
+      value: request.body.duration.value,
+      unit: request.body.duration.unit,
+    };
+  }
+
+  try {
+    const updatedPet = await Pet.findOneAndUpdate(
+      { _id: request.pet.id, owner: request.user.id, 'needs._id': need.id },
+      { $set: { 'needs.$': { ...updateDataObject, _id: need.id } } },
+      { runValidators: true, new: true },
+    );
+
+    if (!updatedPet) {
+      return response.status(404).json({ error: 'Pet\'s need not found' });
+    }
+
+    response.status(200).json(updatedPet);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deleteNeed = async (request, response, next) => {
   const pet = request.pet;
 
@@ -346,6 +420,8 @@ module.exports = {
   deletePet,
   addNewNeed,
   addNewRecord,
+  updateNeed,
   deleteNeed,
   getAllUserPets,
+  toggleNeedisActive,
 };
