@@ -1,0 +1,36 @@
+# Node modules and logs
+node_modules/
+npm-debug.log*
+logs/
+
+# Version control
+.git/
+.gitignore
+
+# System files
+.DS_Store
+**/.DS_Store
+
+# Environment files
+server/.env
+client/.env
+.env.development
+.env.test
+.env
+
+# Build files
+client/dist/
+server/dist/
+
+# Rest client requests
+server/requests/
+
+# Documentation
+*.md
+coverage/
+
+# Other files
+*.log
+*.csv
+*.dat
+*.tmp
