@@ -256,4 +256,14 @@
 |           | Refine logging format and clarify variable naming in request logger.                                                                                                 |             |
 |           | Add comment for future frequency field usage in Pet model, preparing for upcoming features.                                                                          |             |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **229.5**   |
+| 9.4.24    | Frontend updates:                                                                                                                                                    |             |
+|           | Enhance TheNeedCard with UI interactions, ownership checks, dynamic options menu, icons for actions, and handling for need deletion feedback.                        |             |
+|           | Add updateNeed function and enhance state handling in getAllPets function for improved frontend data flow.                                                           |             |
+|           | Add deleteNeed action function and isOwner getter function to pet store for better state management in the frontend.                                                 |             |
+|           | Add return types and toggleNeedIsActive action function to enhance frontend state updates.                                                                           |             |
+|           | Improve responsiveness in PagePet by adding screenSize watcher. Redesign card styles and add fully functional edit need modal in TheNeedCard component.              |             |
+|           | Add errorMessage and center page header in PageAddPet. Update button styling in PageEditPet and global styles for headers.                                           |             |
+|           | Enhance PagePet with async onBeforeMount, handleNeedDeleted & isOwner providers, and user feedback messages to improve frontend interactivity.                       |             |
+|           | Remove outcommented code and console logs to clean up frontend codebase. Test that everything works properly.                                                        | 11          |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **240.5**   |
