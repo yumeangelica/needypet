@@ -75,8 +75,9 @@ const checkLocalDateByTimezone = timezone => {
 const updatePetNeedstoNextDays = async () => {
   const User = require('../models/userModel');
   const moment = require('moment-timezone');
+
   try {
-    // Check which timezones are midnight, make list of them
+  //   // Check which timezones are midnight, make list of them
     const timezones = moment.tz.names(); // Get all timezones from moment-timezone
     const midnightTimezones = timezones.filter(timezone => { // Filter timezones which are midnight
       const newDate = moment.tz(timezone);
@@ -108,7 +109,7 @@ const updatePetNeedstoNextDays = async () => {
       return;
     }
 
-    const newDate = moment.tz(timezoneUsers[0].timezone); // Get the date object of the timezone
+    const newDate = moment.tz(timezoneUsers[0].timezone); // Get the new date object from the first timezone user
 
     const timezoneOffsetInMilliseconds = newDate.utcOffset() * 60 * 1000; // Get the timezone offset in milliseconds
 
@@ -131,14 +132,15 @@ const updatePetNeedstoNextDays = async () => {
 
     allPets.forEach(pet => {
       // Find all needs which are not archived by pet
-
-      // find all needs which are not archived and are active, put the to the notArchivedNeeds array, put the not active needs to the willBeArchived array
-      const notArchivedNeeds = pet.needs.filter(need => !need.archived && need.isActive);
-      pet.needs.forEach(need => {
-        if (!need.isActive) {
+      const notArchivedNeeds = pet.needs.reduce((acc, need) => {
+        if (!need.archived && !need.isActive) { // If the need is not archived and not active, set it as archived and not active
           need.archived = true;
+        } else if (!need.archived && need.isActive) {
+          acc.push(need);
         }
-      });
+
+        return acc;
+      }, []);
 
       let needsUpdated = false; // Flag for checking if needs are updated
 
@@ -150,7 +152,7 @@ const updatePetNeedstoNextDays = async () => {
         needsUpdated = true;
         need.archived = true;
         need.isActive = false;
-        console.log('old need:', need);
+
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
         const howManyDaysDifference = moment(localDateObject).diff(moment(newNeedCopy.dateFor), 'days'); // Check how many days are between the last need date and today
         for (let i = 1; i <= howManyDaysDifference; i++) { // Loop through between the last need date and today
@@ -175,7 +177,7 @@ const updatePetNeedstoNextDays = async () => {
       });
       if (needsUpdated) {
         pet.save();
-        console.log('Pet\'s needs updated');
+        console.log(`Pet ${pet.name} needs updated`);
       }
     });
   } catch (error) {
