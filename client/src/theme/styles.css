@@ -9,6 +9,14 @@ h1, h2, h3, h4, h5, h6, a {
   color: var(--color-text-lilac);
 }
 
+h3 {
+  font-size: 1.4rem !important;
+}
+
+h4 {
+  font-size: 1.2rem !important;
+}
+
 /* Background picture */
 body {
   background-image: url('/images/needypet_background.png');
@@ -207,7 +215,7 @@ ion-item {
 
 /* Media query for mobile styles */
 @media (max-width: 568px) {
-  .custom-button, .action-button, .login-register-field-item, .login-register-field-input, ion-select, ion-input, ion-label, ion-textarea, .custom-timezone-label, .custom-error-message, .custom-valid-message, ion-radio, p, a, li {
+  .custom-button, .action-button, .login-register-field-item, .login-register-field-input, ion-select, ion-input, ion-title, ion-label, ion-textarea, .custom-timezone-label, .custom-error-message, .custom-valid-message, ion-radio, p, a, li {
     font-size: 0.75rem !important;
   }
 
@@ -222,6 +230,10 @@ ion-item {
   }
 
   h3 {
+    font-size: 1.3rem !important;
+  }
+
+  h4 {
     font-size: 1.1rem !important;
   }
 }
