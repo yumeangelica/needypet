@@ -159,7 +159,6 @@ export const useUserStore = defineStore({
         );
 
         if (response.status === 204) {
-          console.log('Account deleted successfully');
           return true;
         } else {
           console.error(
