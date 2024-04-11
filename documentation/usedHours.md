@@ -280,4 +280,11 @@
 |           | Modify need updating algorithm to switch all not archived and not active needs to archived.                                                                          |             |
 |           | Conduct comprehensive tests to verify Docker configurations and app functionalities.                                                                                 | 10          |
 |           |                                                                                                                                                                      |             |
-| **Total** |                                                                                                                                                                      | **253**     |
+| 11.4.24   | Documentation and design updates:                                                                                                                                    |             |
+|           | Update README with detailed features, user instructions, and upcoming enhancements.                                                                                  |             |
+|           | Update Requirement Specification document to reflect current project scope and functionalities.                                                                      |             |
+|           | Add Figma design files to documents/design directory for UI/UX references.                                                                                           |             |
+|           | Create and add database model designs to documents/database_models directory to outline data structure.                                                              |             |
+|           | Conduct reviews to ensure all documents are accurate and comprehensive.                                                                                              | 6           |
+|           |                                                                                                                                                                      |             |
+| **Total** |                                                                                                                                                                      | **259**     |
