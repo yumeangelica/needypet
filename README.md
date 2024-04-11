@@ -2,19 +2,93 @@
 
 ## Introduction
 
-NeedyPet simplifies pet care coordination within households and pet care facilities. This application empowers family members and pet caretakers to manage pet health and activities collaboratively. It ensures everyone is informed about the pets' daily needs and care activities, preventing common issues like overfeeding or missed medication.
+NeedyPet simplifies pet care coordination within households and pet care facilities. This user-friendly application empowers family members and pet caretakers to collaboratively manage pet health and activities. It ensures everyone is informed about the pets' daily needs and care activities, preventing common issues like overfeeding or missed medication, thus enhancing pet care through technology.
 
 ## Features
 
-- User profiles for pet owner and carer(s).
-- Management of pet profiles including details like name, age, and care requirements.
-- Task tracking for daily, weekly, and monthly pet care activities.
-- Real-time notifications for upcoming or overdue tasks.
-- Comprehensive reports on pet care activities for owner.
+- **User Registration and Authentication**:
+  - **Registration**: New users create an account by providing a username, password, email, and selecting their timezone.
+  - **Login**: Users log in to access their profiles and manage pet details. Passwords are securely hashed and stored.
 
-## Technologies
+- **User Profiles**:
+  - **Profile Management**: Users can update their profile information including name, email, password, and can delete their profiles.
+  - **Roles and Permissions**:
+    - **Pet Owners**: Can add, update, delete pets and manage detailed pet profiles including care needs.
+    - **Carers** (Backend Only): Can complete needs but cannot modify pet ownership details or toggle need statuses. Frontend support for carer roles is planned.
 
-Back-end: MongoDB, Express.js, Node.js
+- **Pet Management**:
+  - Owner users can manage pet details such as name, birthday, species, breed, and specific care needs.
+
+- **Care Activities (Needs)**:
+  - Needs are specific care activities required by pets, such as feeding, walking, or medication.
+  - **Need Details**:
+    - **Category**: Type of care activity (e.g., Feeding, Walking).
+    - **Description**: Detailed information about the need.
+    - **Duration or Quantity**: Needs can specify a duration in minutes or a quantity in milliliters or grams.
+  - **Need Management**:
+    - Needs can be added, viewed, updated, deleted, or toggled by owners; only active needs are carried over to the next day.
+    - Carers can view and complete needs.
+
+- **Activity History**:
+  - Logs of all care activities (completed, missed, or pending) provide comprehensive monitoring of pet care.
+
+- **Responsive Design**:
+  - The application is optimized for various devices, ensuring a consistent user experience across desktops, tablets, and smartphones.
+
+- **Security and Data Integrity**:
+  - Robust error handling and authentication mechanisms ensure data integrity and privacy.
+
+## How to Use the Application
+
+1. **Initial Setup**:
+   - **New Users**: Register via the landing page by entering required details.
+   - **Returning Users**: Log in to access your account.
+
+2. **Pet Management**:
+   - View your pets on the homepage after logging in.
+   - Add new pets by clicking **Add Pet**, filling in details, and clicking **Save**.
+
+3. **Viewing and Editing Pet Details**:
+   - Access pet details by clicking on a pet card.
+   - Edit pet details or delete pets as needed.
+   - Add needs by clicking **Add Need** and filling out the relevant information.
+
+4. **Managing Needs**:
+   - Enter need details in the **Add Need** modal and save.
+   - Needs can be managed on the need card on the pet’s page; add, edit, delete, toggle inactive/active, and complete as necessary.
+
+5. **User Profile and Security**:
+   - Update personal details or log out via the **Profile** button.
+   - Deleting your profile will remove all associated data and log you out permanently.
+
+## Upcoming Features in the Next Versions
+
+The following features are planned for the next version update of NeedyPet, enhancing functionality and user experience:
+
+1. **Caretaker Support Throughout the Application**:
+   - Extending caretaker functionalities to the frontend, allowing seamless management of caretaker permissions and responsibilities.
+
+2. **Email Integration with Nodemailer**:
+   - **Account Verification**: Enhance security by requiring email verification during registration.
+   - **Password Recovery**: Implement password recovery features, allowing users to reset passwords via email.
+   - **Caretaker Invitations**: Simplify adding caretakers with email invitations, managing roles and permissions efficiently.
+
+3. **Activity Reminders and Notifications**:
+   - Introduce a notification system to alert users of upcoming care activities, ensuring pets receive consistent care.
+
+4. **Native Mobile Applications**:
+   - Develop native applications for iOS and Android to provide a seamless mobile experience.
+
+#### Note
+
+  - Functions not yet implemented in the frontend are operational in the backend and marked for future integration. These include full carer capabilities, detailed in source code comments.
+
+## Technical Setup
+
+- **Backend Technologies**: MongoDB, Express.js, Node.js, JavaScript, ESLint
+- **Frontend Technologies**: Vue.js, Ionic, TypeScript, ESLint, Jest
+- **DevOps Tools**: Docker, Nginx
+
 
 ## Hours spent
 
