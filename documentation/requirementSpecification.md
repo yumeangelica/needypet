@@ -2,51 +2,49 @@
 
 ## Purpose of the Application
 
-Developed to manage pet care activities, NeedyPet serves households and pet care facilities by providing a unified platform where multiple carers, such as family members, can collaboratively manage the well-being of their pets. It centralizes the creation of pet profiles, the registration of pets, and the delineation of each pet's daily care needs, ensuring efficient communication and task tracking. This system is particularly beneficial in preventing miscommunications that could lead to overfeeding, underfeeding, or missed medication doses by providing real-time updates on completed care tasks, making it transparent whether the cat has been fed, the dog has been walked, or any pet has received their necessary care.
+NeedyPet is designed to streamline pet care management within households and pet care facilities. It provides a unified platform that allows multiple caretakers to collaboratively manage the health and daily activities of pets. This centralizes communication and task tracking, preventing common issues such as overfeeding or missed medication, and incorporates user-specific timezone settings for accurate activity scheduling.
 
 ## Application User Roles
 
-- **Pet Owner**: Primary user responsible for adding pets and managing their profiles and care schedules.
-- **Pet Carer**: Users who are assigned to carry out specific pet care tasks and record their completion.
+- **Pet Owner**: Primary user responsible for creating and managing pet profiles, setting up care schedules, and assigning caretakers. Pet owners have full control over their pets' profiles and care activities.
+- **Pet Carer**: Secondary users who can view assigned pets and are responsible for completing care activities as per the owner's setup. Carers can mark activities as complete but cannot modify the details or statuses beyond that.
 
 ## Functional Requirements
 
 1. **User Management**:
-
-   - Users can register and create a profile with their details.
-   - Authentication system that allows users to log in and log out securely.
+   - **Registration**: Users create an account by providing a username, password, email, and selecting their timezone. Usernames must be unique.
+   - **Login/Logout**: Secure login mechanism to access the application. Logout securely ends the session.
+   - **Profile Management**: Users can update their profile information including email and password, and can delete their account, which removes all associated data.
 
 2. **Pet Profile Management**:
+   - **Adding/Editing Pets**: Owners can add new pets, edit pet information, or delete pet profiles.
+   - **Pet Details**: Profiles include the pet’s name, species, breed, birthday, and a detailed description.
+   - **Assign Carers**: Owners assign carers to pets. Carers can complete activities but cannot modify pet details or toggle activity statuses.
 
-   - Pet Owners can add, edit, and remove pets from their profile.
-   - Pet Owners can assign carers to each pet via invitation.
-   - Each pet profile includes details such as the pet's name, description, owner, birth date, and a list of carers etc.
+3. **Care Activities (Needs/Tasks)**:
+   - **Activity Details**:
+     - **Category**: Type of care activity (e.g., Feeding, Walking).
+     - **Description**: Detailed information about what the activity entails.
+     - **Duration or Quantity**: Specifies either a duration in minutes or a quantity in milliliters or grams.
+   - **Managing Activities**:
+     - Owners can add, view, update, or delete activities.
+     - Activities can be toggled as active or inactive by owners; only active activities are carried over to the next day.
+     - Carers can only mark activities as completed.
 
-3. **Pet Needs Management**:
+4. **Notifications and Reminders**:
+   - **Reminders**: Automated reminders for upcoming or overdue activities to ensure all pet needs are met timely.
+   - **Alerts**: Notifications for significant activities within the account, such as impending activity deadlines or system updates.
 
-   - Pet profiles will include a section for 'Pet Needs' which lists the daily requirements such as feeding, walking, medication etc.
-   - Each need should specify the frequency and quantity or duration.
-
-4. **Task Recording**:
-
-   - Pet Carers can log when a task is completed with a timestamp and notes if necessary.
-   - The system will keep a historical record of all care tasks performed for each pet.
-
-5. **Notifications and Reminders**:
-
-   - The system will notify carers of upcoming tasks for the pets they are responsible for.
-   - Reminder notifications for tasks that are overdue.
-
-6. **Reporting**:
-   - Pet Owners can view reports on the care provided to their pets over a specified period.
-   - Reports will include details of all completed tasks and any notes made by the carers.
+5. **Activity History and Reporting**:
+   - **History Access**: Users can access a full history of all activities related to pet care, filtered by pet or date.
 
 ## Technical Requirements
 
-- Back-end will be built using the MongoDB, Express.js, and Node.js.
-- Front-end will be built using Vue.js
-- The system should support cross-platform functionality, being accessible on web and mobile devices.
+- **Back-end**: Utilizes MongoDB for data storage, Express.js, and Node.js for server-side logic. Secure password hashing with bcryptjs is used for data protection.
+- **Front-end**: Developed with Vue.js and styled using Ionic for responsive design, ensuring compatibility across different devices and platforms.
+- **Email Services** (Planned Feature): Nodemailer will be used for account email verification, password resets, and sending activity reminders and alerts.
+- **Security**: Implements industry-standard security measures including encrypted sessions and GDPR-compliant data handling practices.
 
 ## Compliance and Standards
 
-- The application will comply with the General Data Protection Regulation (GDPR) for the protection of user data.
+- The application adheres to the General Data Protection Regulation (GDPR) for the protection and privacy of user data across the European Union and beyond.
