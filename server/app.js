@@ -13,7 +13,8 @@ const usersRoutes = require('./routes/userRoutes');
 const { updatePetNeedstoNextDays } = require('./helper');
 const { corsHeaders, corsOptions } = require('./utils/corsConfig');
 const helmet = require('helmet');
-const { isTesting } = require('./utils/config');
+const { isTesting, isProduction, allowedOrigins } = require('./utils/config');
+const path = require('path');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
@@ -34,6 +35,18 @@ app.use(corsHeaders);
 app.use(helmet({
   referrerPolicy: { policy: 'no-referrer' },
   noSniff: true,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ['\'self\''],
+      scriptSrc: ['\'self\'', '\'unsafe-inline\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com'],
+      fontSrc: ['\'self\'', 'fonts.gstatic.com'],
+      imgSrc: ['\'self\'', 'data:'],
+      connectSrc: ['\'self\'', allowedOrigins],
+      objectSrc: ['\'none\''],
+      upgradeInsecureRequests: [],
+    },
+  },
 }));
 
 if (!isTesting) {
@@ -45,9 +58,12 @@ if (!isTesting) {
 app.use('/auth', usersRoutes);
 app.use('/api', authenticateToken, getUserHandler, petsRoutes);
 
-app.get('/', (request, response) => {
-  response.send('<h1>Welcome to NeedyPet backend!</h1>');
-});
+if (isProduction) {
+  app.use(express.static(path.join(__dirname, 'dist')));
+  app.get('*', (request, response) => {
+    response.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
