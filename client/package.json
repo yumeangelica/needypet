@@ -48,5 +48,9 @@
   "description": "An Ionic project",
   "config": {
     "ionic_webpack": "./webpack.config.js"
+  },
+  "vitest": {
+    "globals": true,
+    "enviroment": "jsdom"
   }
 }
