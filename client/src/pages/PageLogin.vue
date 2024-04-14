@@ -36,13 +36,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, defineAsyncComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
-import { IonPage, IonContent, IonItem, IonInput, IonButton, IonButtons } from '@ionic/vue';
-
 import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
+const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
@@ -61,8 +67,10 @@ const login = async () => {
 
   // If login was successful, redirect to home page
   if (!loginError.value) {
-    await petStore.getAllPets();
     router.push({ name: 'home' });
+    userName.value = '';
+    password.value = '';
+    await petStore.getAllPets();
   }
 };
 
