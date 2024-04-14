@@ -6,6 +6,7 @@ const { allowedOrigins } = require('./config');
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,
+  optionsSuccessStatus: 200,
 };
 
 const corsHeaders = (request, response, next) => {
