@@ -89,13 +89,29 @@
 </template>
 
 <script setup lang="ts">
-import { IonCard, IonItem, IonLabel, IonButtons, IonButton, IonIcon, IonToggle, IonSelect, IonInput, IonSelectOption, IonModal, IonHeader, IonContent, IonTitle, IonToolbar } from '@ionic/vue';
-import { defineProps, ref, computed, inject, onBeforeMount } from 'vue';
+import { defineProps, ref, computed, inject, onBeforeMount, defineAsyncComponent } from 'vue';
+import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil } from 'ionicons/icons';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
-import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil } from 'ionicons/icons';
 import moment from 'moment-timezone';
+// Lazy load the components for better performance
+const IonCard = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonCard));
+const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
+const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
+const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+const IonToggle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToggle));
+const IonSelect = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelect));
+const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
+const IonSelectOption = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelectOption));
+const IonModal = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonModal));
+const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonTitle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTitle));
+const IonToolbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToolbar));
+
 const petStore = usePetStore();
 const userStore = useUserStore();
 
@@ -151,13 +167,13 @@ const isOwner = inject('isOwner'); // This value comes from the parent component
 const isTodayOrFuture = computed(() => {
   const needDate = moment(need.dateFor).tz(userStore.timezone);
   const today = moment().tz(userStore.timezone);
-  return needDate.isSameOrAfter(today, 'day');
+  return needDate?.isSameOrAfter(today, 'day');
 });
 
 // Add Record (need done) -button click event handler
 const addRecord = async (petId: string, need: Need) => {
   const needId = need.id;
-  const isDuration = !!need.duration;
+  const isDuration = need.duration ? true : false;
 
   let recordObject = {
     note: '',
@@ -296,169 +312,169 @@ const deleteNeed = async (needId: string) => {
 
 
 <style scoped>
-.need-card-field {
-  margin-top: 10px;
-}
+  .need-card-field {
+    margin-top: 10px;
+  }
 
-.centering-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-}
+  .centering-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
 
-ion-card {
-  border-radius: 35px;
-  background: var(--color-pet-need-background);
-  width: 100%;
-  max-width: 350px;
-  margin: 4px 0;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 10px;
-}
+  ion-card {
+    border-radius: 35px;
+    background: var(--color-pet-need-background);
+    width: 100%;
+    max-width: 350px;
+    margin: 4px 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+  }
 
-.card-active {
-  background: var(--color-pet-need-background);
-}
+  .card-active {
+    background: var(--color-pet-need-background);
+  }
 
-.card-active {
-  background: var(--color-pet-need-background);
-}
+  .card-active {
+    background: var(--color-pet-need-background);
+  }
 
-.card-inactive {
-  background: #ded7e0;
-  color: #a0a0a0;
-  border: 1px solid #d0d0d0;
-  opacity: 0.8;
-  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-}
+  .card-inactive {
+    background: #ded7e0;
+    color: #a0a0a0;
+    border: 1px solid #d0d0d0;
+    opacity: 0.8;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
 
-/* Additional styling for child elements in the inactive card to enhance the inactive look */
-.card-inactive ion-label,
-.card-inactive .complete-button,
-.card-inactive .done-label,
-.card-inactive .option-button {
-  color: #afa8a8;
-  /* Dim text/icons within the card */
-}
-
-
-/* Remove bottom border */
-ion-item.custom-ion-item {
-  --border-color: transparent;
-  --inner-border-color: transparent;
-}
-
-.custom-model-input {
-  --inner-border-color: none !important;
-}
-
-ion-label h5,
-ion-label p {
-  margin: 0;
-}
-
-.complete-button,
-.done-label {
-  --background: var(--color-button-pet-page);
-  --border-radius: 15px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
-}
-
-.done-label {
-  background-color: var(--color-status-done);
-  color: var(--color-text-default);
-  border-radius: 15px;
-  text-align: center;
-  min-width: 60px;
-  margin-right: 28px;
-}
-
-.options-container {
-  gap: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  height: 0;
-  opacity: 0;
-  transition: height 0.3s ease, opacity 0.3s ease;
-}
-
-.is-expanded .options-container {
-  height: 50px;
-  opacity: 1;
-}
+  /* Additional styling for child elements in the inactive card to enhance the inactive look */
+  .card-inactive ion-label,
+  .card-inactive .complete-button,
+  .card-inactive .done-label,
+  .card-inactive .option-button {
+    color: #afa8a8;
+    /* Dim text/icons within the card */
+  }
 
 
+  /* Remove bottom border */
+  ion-item.custom-ion-item {
+    --border-color: transparent;
+    --inner-border-color: transparent;
+  }
 
-/* Modal styles */
-ion-modal {
-  --width: 95%;
-  --max-height: 500px;
-  --max-width: 500px;
-  --background: var(--color-card-background-lilac);
-  --border-radius: 50px;
-}
+  .custom-model-input {
+    --inner-border-color: none !important;
+  }
 
-ion-modal ion-header {
-  --background: var(--color-primary-pink);
-}
-
-ion-modal ion-content {
-  --background: var(--color-modal-content-background);
-}
-
-ion-modal ion-item {
-  --padding-start: 0;
-  --padding-end: 0;
-  margin-bottom: 10px;
-}
-
-ion-modal ion-input,
-ion-modal ion-select {
-  --padding-start: 10px;
-  --padding-end: 10px;
-  --background: var(--color-input-background);
-  --border-radius: 15px;
-  --placeholder-color: var(--color-text-placeholder);
-}
-
-ion-modal ion-select-option {
-  --color: var(--color-option-text);
-  --background: var(--color-option-background);
-  --ion-item-background: var(--color-option-background);
-}
-
-
-ion-modal ion-title {
-  color: var(--color-text-lilac);
-}
-
-
-/* Mobile styles */
-@media (max-width: 568px) {
+  ion-label h5,
+  ion-label p {
+    margin: 0;
+  }
 
   .complete-button,
   .done-label {
-    font-size: 0.70rem;
+    --background: var(--color-button-pet-page);
+    --border-radius: 15px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
   }
 
   .done-label {
-    margin-right: 20px;
+    background-color: var(--color-status-done);
+    color: var(--color-text-default);
+    border-radius: 15px;
+    text-align: center;
+    min-width: 60px;
+    margin-right: 28px;
   }
 
-  .custom-label {
-    font-size: 1rem !important;
+  .options-container {
+    gap: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    height: 0;
+    opacity: 0;
+    transition: height 0.3s ease, opacity 0.3s ease;
+  }
+
+  .is-expanded .options-container {
+    height: 50px;
+    opacity: 1;
+  }
+
+
+
+  /* Modal styles */
+  ion-modal {
+    --width: 95%;
+    --max-height: 500px;
+    --max-width: 500px;
+    --background: var(--color-card-background-lilac);
+    --border-radius: 50px;
+  }
+
+  ion-modal ion-header {
+    --background: var(--color-primary-pink);
+  }
+
+  ion-modal ion-content {
+    --background: var(--color-modal-content-background);
+  }
+
+  ion-modal ion-item {
+    --padding-start: 0;
+    --padding-end: 0;
+    margin-bottom: 10px;
+  }
+
+  ion-modal ion-input,
+  ion-modal ion-select {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --background: var(--color-input-background);
+    --border-radius: 15px;
+    --placeholder-color: var(--color-text-placeholder);
+  }
+
+  ion-modal ion-select-option {
+    --color: var(--color-option-text);
+    --background: var(--color-option-background);
+    --ion-item-background: var(--color-option-background);
+  }
+
+
+  ion-modal ion-title {
     color: var(--color-text-lilac);
   }
 
-  .custom-button {
-    font-size: 0.6rem !important;
+
+  /* Mobile styles */
+  @media (max-width: 568px) {
+
+    .complete-button,
+    .done-label {
+      font-size: 0.70rem;
+    }
+
+    .done-label {
+      margin-right: 20px;
+    }
+
+    .custom-label {
+      font-size: 1rem !important;
+      color: var(--color-text-lilac);
+    }
+
+    .custom-button {
+      font-size: 0.6rem !important;
+    }
+
+
   }
-
-
-}
 </style>

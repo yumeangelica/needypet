@@ -35,13 +35,18 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
-import { useUserStore } from '@/store/user';
-import { onBeforeMount, ref, computed, watch } from 'vue';
+
+import { ref, computed, watchEffect, defineAsyncComponent } from 'vue';
 import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
 import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
-
+import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
@@ -61,9 +66,10 @@ const fetchUser = async () => {
   user.value = userData;
 };
 
-// Fetch the user before the component is mounted
-onBeforeMount(async () => {
-  await fetchUser();
+watchEffect(async () => {
+  if (route.name === 'profile') {  // Ensure this is the correct route name for the profile page
+    await fetchUser();
+  }
 });
 
 const confirmLogout = () => {
@@ -73,7 +79,7 @@ const confirmLogout = () => {
 };
 
 const logout = async () => {
-  await userStore.logout();
+  userStore.logout();
   router.push({ name: 'landing' });
 };
 
@@ -87,17 +93,13 @@ const deleteAccount = async () => {
   const response = await userStore.deleteAccount(); // Returns true or false
 
   if (response) {
-    await userStore.logout();
+    userStore.logout();
     console.log('Account deleted');
     router.push({ name: 'landing' });
   } else {
     console.log('Account could not be deleted');
   }
 };
-
-watch(route, async () => {
-  await fetchUser();
-});
 
 onBeforeRouteLeave(() => {
   showSettings.value = false; // Reset the value of showSettings when leaving the page

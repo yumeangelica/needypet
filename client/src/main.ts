@@ -13,12 +13,7 @@ import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
 
 /* Optional CSS utils that can be commented out */
-import '@ionic/vue/css/padding.css';
-import '@ionic/vue/css/float-elements.css';
 import '@ionic/vue/css/text-alignment.css';
-import '@ionic/vue/css/text-transformation.css';
-import '@ionic/vue/css/flex-utils.css';
-import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
@@ -28,15 +23,13 @@ import './theme/styles.css';
 
 // Import the store
 import { useUserStore } from '@/store/user';
-import { usePetStore } from './store/pet';
+import { usePetStore } from '@/store/pet';
 
 async function initApp() {
   const app = createApp(App).use(IonicVue).use(router).use(createPinia());
 
   const userStore = useUserStore();
   const petStore = usePetStore();
-
-  await router.isReady();
 
   // Define public routes
   const publicRoutes = ['login', 'register', 'landing'];
@@ -68,7 +61,9 @@ async function initApp() {
     }
   }
 
-  app.mount('#app');
+  router.isReady().then(() => {
+    app.mount('#app');
+  });
 }
 
 initApp();

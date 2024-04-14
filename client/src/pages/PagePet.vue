@@ -150,20 +150,36 @@
 
 
 <script setup lang="ts">
-import { onBeforeMount, ref, computed, watch, Ref, provide } from 'vue';
+import { onBeforeMount, ref, computed, watch, Ref, provide, defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { IonPage, IonContent, IonButton, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon, IonTitle } from '@ionic/vue';
 import { addCircleOutline, settingsOutline, trashOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
-import TheNeedCard from '@/components/TheNeedCard.vue';
 import moment from 'moment-timezone';
 import { useRouter } from 'vue-router';
+import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonModal = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonModal));
+const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
+const IonToolbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToolbar));
+const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
+const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
+const IonRadio = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonRadio));
+const IonSelect = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelect));
+const IonSelectOption = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelectOption));
+const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
+const IonRadioGroup = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonRadioGroup));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+const IonTitle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTitle));
+const TheNeedCard = defineAsyncComponent(() => import('@/components/TheNeedCard.vue'));
+
 
 const router = useRouter();
-
-import { useAppStore } from '@/store/app';
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
@@ -341,90 +357,90 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
 </script>
 
 <style scoped>
-/* Wrapping name and setting button */
-.inline-container {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  gap: 0px;
-}
-
-/* Settings button */
-.settings-button,
-.settings-button:active,
-.settings-button:focus,
-.settings-button:hover {
-  --background: transparent !important;
-  --background-activated: transparent !important;
-  --background-focused: transparent !important;
-  --border: none !important;
-  --box-shadow: none !important;
-  --ripple-color: transparent !important;
-  --outline: none !important;
-  padding: 0;
-  margin: 0;
-  height: auto;
-  width: auto;
-}
-
-.settings-button ion-icon {
-  font-size: 28px;
-  color: var(--color-card-border);
-  margin: 0;
-  padding: 0;
-}
-
-.pet-container,
-.header-button-container,
-.date-navigation {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 100%;
-}
-
-.full-pet-card {
-  background-color: var(--color-card-background-lilac);
-  border-radius: 50px;
-  border: 2px solid var(--color-card-border);
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  padding: 20px;
-  width: 100%;
-  max-width: 600px;
-}
-
-.need-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-/* Modal styles */
-ion-modal {
-  --border-radius: 20px;
-  --width: 95%;
-  --max-width: 800px;
-  --max-height: 600px;
-  --background: var(--color-card-background-lilac);
-  --border-radius: 50px;
-}
-
-/* Desktop specific styles */
-@media (min-width: 568px) {
-  .date-navigation {
-    flex-direction: row;
-    justify-content: space-around;
+  /* Wrapping name and setting button */
+  .inline-container {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 0px;
   }
-}
+
+  /* Settings button */
+  .settings-button,
+  .settings-button:active,
+  .settings-button:focus,
+  .settings-button:hover {
+    --background: transparent !important;
+    --background-activated: transparent !important;
+    --background-focused: transparent !important;
+    --border: none !important;
+    --box-shadow: none !important;
+    --ripple-color: transparent !important;
+    --outline: none !important;
+    padding: 0;
+    margin: 0;
+    height: auto;
+    width: auto;
+  }
+
+  .settings-button ion-icon {
+    font-size: 28px;
+    color: var(--color-card-border);
+    margin: 0;
+    padding: 0;
+  }
+
+  .pet-container,
+  .header-button-container,
+  .date-navigation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .full-pet-card {
+    background-color: var(--color-card-background-lilac);
+    border-radius: 50px;
+    border: 2px solid var(--color-card-border);
+    box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .need-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  /* Modal styles */
+  ion-modal {
+    --border-radius: 20px;
+    --width: 95%;
+    --max-width: 800px;
+    --max-height: 600px;
+    --background: var(--color-card-background-lilac);
+    --border-radius: 50px;
+  }
+
+  /* Desktop specific styles */
+  @media (min-width: 568px) {
+    .date-navigation {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
 
 
-/* Remove default input spinner */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+  /* Remove default input spinner */
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 </style>

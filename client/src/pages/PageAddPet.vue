@@ -48,22 +48,21 @@
 
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import {
-  IonPage,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonTextarea,
-  IonDatetime,
-  IonButton,
-  IonLabel
-} from '@ionic/vue';
+import { computed, ref, defineAsyncComponent } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-
 import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
+const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
+const IonTextarea = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTextarea));
+const IonDatetime = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonDatetime));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
+
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
@@ -155,27 +154,26 @@ const submitPet = async () => {
 
 
 <style scoped>
+  .center-button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
 
-.center-button-group {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
+  .add-pet-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    background-color: var(--color-card-background-lilac);
+    border-radius: 50px;
+    border: 1px solid var(--color-card-border);
+    box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
+  }
 
-.add-pet-container {
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  margin: auto;
-  padding: 20px;
-  background-color: var(--color-card-background-lilac);
-  border-radius: 50px;
-  border: 1px solid var(--color-card-border);
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-}
-
-.add-pet-form {
-  display: flex;
-  flex-direction: column;
-}
+  .add-pet-form {
+    display: flex;
+    flex-direction: column;
+  }
 </style>

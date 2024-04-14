@@ -61,12 +61,21 @@
 
 
 <script setup lang="ts">
-import { computed, ref, onBeforeMount, Ref } from 'vue';
-import { IonPage, IonContent, IonItem, IonInput, IonTextarea, IonDatetime, IonButton, IonButtons, IonLabel } from '@ionic/vue';
+import { computed, ref, onBeforeMount, Ref, defineAsyncComponent } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { Pet } from '@/types/pet';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
+const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
+const IonTextarea = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTextarea));
+const IonDatetime = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonDatetime));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -160,38 +169,38 @@ const cancelEdit = () => {
 
 
 <style scoped>
-.edit-pet-container {
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  margin: auto;
-  padding: 20px;
-  background-color: var(--color-card-background-lilac);
-  border-radius: 50px;
-  border: 2px solid var(--color-card-border);
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-}
+  .edit-pet-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    background-color: var(--color-card-background-lilac);
+    border-radius: 50px;
+    border: 2px solid var(--color-card-border);
+    box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
+  }
 
-.edit-pet-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+  .edit-pet-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-/* Button container for update pet and cancel buttons */
-.button-container {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}
+  /* Button container for update pet and cancel buttons */
+  .button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
 
-/* Update pet and cancel buttons */
-.edit-pet-button {
-  --background: var(--ion-color-primary);
-  --padding-start: 10px;
-  --padding-end: 10px;
-  --background: var(--color-button-pet-page);
-  --border-radius: 20px !important;
-}
+  /* Update pet and cancel buttons */
+  .edit-pet-button {
+    --background: var(--ion-color-primary);
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --background: var(--color-button-pet-page);
+    --border-radius: 20px !important;
+  }
 </style>

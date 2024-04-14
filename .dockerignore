@@ -12,11 +12,9 @@ logs/
 **/.DS_Store
 
 # Environment files
-server/.env
-client/.env
-.env.development
-.env.test
-.env
+*.env
+*.env.development
+*.env.production
 
 # Build files
 client/dist/

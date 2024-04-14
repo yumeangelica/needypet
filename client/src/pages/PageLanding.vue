@@ -16,11 +16,14 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent, IonButton } from '@ionic/vue';
+import { computed, defineAsyncComponent } from 'vue';
 import { useRouter } from 'vue-router';
-import { computed } from 'vue';
-
 import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 

@@ -41,7 +41,6 @@ export const usePetStore = defineStore({
             this.$patch((state) => {
               state.pets = response.data;
             });
-            console.log('Pets fetched:', response.data);
             return true;
           }
           return false;

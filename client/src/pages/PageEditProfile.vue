@@ -34,14 +34,19 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent, IonItem, IonInput, IonButton, IonLabel } from '@ionic/vue';
-import { ref, onBeforeMount, computed } from 'vue';
+import { ref, onBeforeMount, computed, defineAsyncComponent } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
-import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
-
-
 import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
+const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
+const TheTimezoneSelectorModal = defineAsyncComponent(() => import('@/components/TheTimezoneSelectorModal.vue'));
+
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 

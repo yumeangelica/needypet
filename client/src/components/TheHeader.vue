@@ -1,14 +1,14 @@
 <template>
-  <ion-header v-if="!isMobile && !isLoginPage && !isRegisterPage && !isLandingPage">
+  <ion-header>
     <ion-toolbar>
 
       <ion-buttons slot="start">
-        <ion-button fill="clear" @click="navigateTo('home')"><ion-icon :icon="pawOutline" aria-hidden="true"></ion-icon>Home</ion-button>
+        <ion-button fill="clear" @click.prevent="navigateTo('home')"><ion-icon :icon="pawOutline" aria-hidden="true"></ion-icon>Home</ion-button>
       </ion-buttons>
 
       <ion-buttons slot="end" style="display: flex; align-items: center;">
-        <ion-button fill="clear" @click="navigateTo('profile')"><ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon>{{ userName
-          }}</ion-button>
+        <ion-button fill="clear" @click.prevent="navigateTo('profile')"><ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon>{{ userName
+        }}</ion-button>
       </ion-buttons>
 
     </ion-toolbar>
@@ -16,22 +16,24 @@
 </template>
 
 <script setup lang="ts">
-import { IonHeader, IonToolbar, IonButton, IonButtons, IonIcon } from '@ionic/vue';
+import { defineAsyncComponent, computed } from 'vue';
 import { pawOutline, personCircleOutline } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
 import { useRouter, useRoute } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import { computed } from 'vue';
+
+// Lazy load the components for better performance
+const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
+const IonToolbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToolbar));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+
 
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
-const appStore = useAppStore();
+
 const userName = computed(() => userStore.userName);
-const isMobile = computed(() => appStore.isMobile);
-const isLoginPage = computed(() => route.name === 'login');
-const isRegisterPage = computed(() => route.name === 'register');
-const isLandingPage = computed(() => route.name === 'landing');
 
 const navigateTo = (name) => {
   if (route.name !== name) {

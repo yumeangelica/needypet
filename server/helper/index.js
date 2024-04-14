@@ -171,13 +171,12 @@ const updatePetNeedstoNextDays = async () => {
             newNeed = { ...newNeed, quantity: newNeedCopy.quantity };
           }
 
-          console.log('new need:', newNeed);
           pet.needs.push(newNeed);
         }
       });
       if (needsUpdated) {
         pet.save();
-        console.log(`Pet ${pet.name} needs updated`);
+        console.log(`${pet.name}'s needs updated`);
       }
     });
   } catch (error) {
