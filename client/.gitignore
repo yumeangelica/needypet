@@ -34,4 +34,8 @@ npm-debug.log*
 /plugins
 /www
 
+.env.development
+.env.production
+.env
+
 tests/
