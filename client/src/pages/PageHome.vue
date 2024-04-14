@@ -44,13 +44,17 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
-import { ref, watch, onBeforeMount, computed } from 'vue';
-import { usePetStore } from '@/store/pet';
+import { ref, watch, onBeforeMount, computed, defineAsyncComponent } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import ThePetCard from '@/components/ThePetCard.vue';
+import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { addCircleOutline } from 'ionicons/icons';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+const ThePetCard = defineAsyncComponent(() => import('@/components/ThePetCard.vue'));
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -81,31 +85,31 @@ watch(() => route.params && petStore.pets, async () => {
 
 
 <style scoped>
-.title-and-button-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+  .title-and-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-.pets-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
+  .pets-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
 
-.cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
+  .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
 
-.section-title {
-  margin: 0;
-  font-size: 1.5rem;
-  padding: 10px 0;
-}
+  .section-title {
+    margin: 0;
+    font-size: 1.5rem;
+    padding: 10px 0;
+  }
 </style>

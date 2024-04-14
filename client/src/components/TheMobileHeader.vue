@@ -1,5 +1,5 @@
 <template>
-  <ion-tab-bar slot="bottom" v-if="!isLoginPage && !isRegisterPage && !isLandingPage">
+  <ion-tab-bar slot="bottom">
 
     <ion-tab-button tab="home" @click.prevent="navigateTo('home')">
       <ion-icon aria-hidden="true" :icon="pawOutline" />
@@ -15,16 +15,18 @@
 </template>
 
 <script setup lang="ts">
-import { IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/vue';
+import { defineAsyncComponent } from 'vue';
 import { pawOutline, personCircleOutline } from 'ionicons/icons';
+import { IonTabBar, IonTabButton } from '@ionic/vue';
 import { useRoute } from 'vue-router';
-import { computed } from 'vue';
 import router from '@/router';
 
+// Lazy load the components for better performance
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
+
+
 const route = useRoute();
-const isLoginPage = computed(() => route.name === 'login');
-const isRegisterPage = computed(() => route.name === 'register');
-const isLandingPage = computed(() => route.name === 'landing');
 
 const navigateTo = (name) => {
   if (route.name !== name) {

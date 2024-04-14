@@ -10,9 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonContent } from '@ionic/vue';
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 </script>
