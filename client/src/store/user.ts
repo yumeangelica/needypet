@@ -1,6 +1,5 @@
 // @ts-check
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import router from '@/router/index';
 import { axiosInstance } from '@/services';
 import { UserStoreState, User } from '@/types/user';
 
@@ -56,6 +55,14 @@ export const useUserStore = defineStore({
   }),
   actions: {
     async getUserById(id: string): Promise<User> {
+      if (!id) {
+        return null;
+      }
+
+      if (!this.token) {
+        return null;
+      }
+
       const response = axiosInstance({
         method: 'get',
         url: `${servicePath}/users/${id}`,
@@ -175,11 +182,10 @@ export const useUserStore = defineStore({
         return false;
       }
     },
-    async logout(): Promise<void> {
-      this.token = this.userName = this.id = null; // Reset the store state
+    logout(): Promise<void> {
+      this.$reset();
       localStorage.clear();
-      router.push({ name: 'landing' });
-      window.location.href = '/landing';
+      return Promise.resolve();
     },
     async login(userName: string, password: string): Promise<boolean> {
       const response = axiosInstance({
