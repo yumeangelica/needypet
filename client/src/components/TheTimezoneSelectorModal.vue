@@ -11,11 +11,7 @@
     </ion-header>
     <ion-content class="ion-padding">
       <ion-list>
-        <ion-item
-          v-for="(zone, index) in filteredTimezones"
-          :key="index"
-          @click="selectTimezone(zone)"
-          >
+        <ion-item v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
           {{ zone }}
         </ion-item>
       </ion-list>
@@ -24,9 +20,19 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, computed, onBeforeMount } from 'vue';
-import { IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonSearchbar, IonContent, IonList, IonItem } from '@ionic/vue';
+import { ref, computed, onBeforeMount, defineAsyncComponent } from 'vue';
 import { useAppStore } from '@/store/app';
+// Lazy load the components for better performance
+const IonModal = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonModal));
+const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
+const IonToolbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToolbar));
+const IonTitle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTitle));
+const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
+const IonSearchbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSearchbar));
+const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+const IonList = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonList));
+const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
 
 const appStore = useAppStore();
 
