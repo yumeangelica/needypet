@@ -5,7 +5,13 @@
         <!-- Global styling for container element -->
         <div class="login-register-container">
           <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
-          <h4 class="ion-text-center">Create Account</h4>
+
+          <div class="paw-container">
+            <ion-icon :icon="pawOutline"></ion-icon>
+            <h4>Create account</h4>
+            <ion-icon :icon="pawOutline"></ion-icon>
+          </div>
+
           <form @submit.prevent="createAccount">
             <!-- Username input field -->
             <ion-item class="login-register-field-item">
@@ -60,6 +66,9 @@ const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.Io
 const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
 const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
 const TheTimezoneSelectorModal = defineAsyncComponent(() => import('@/components/TheTimezoneSelectorModal.vue'));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+
+import { pawOutline } from 'ionicons/icons';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
