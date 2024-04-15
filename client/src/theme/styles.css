@@ -198,8 +198,9 @@ ion-item {
 
 /* Error & valid messages */
 .custom-error-message, .custom-valid-message {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-align: center;
+  margin: 1rem;
 }
 
 .custom-error-message {
@@ -209,6 +210,60 @@ ion-item {
 .custom-valid-message {
   color: var(--color-valid-message) !important;
 }
+
+/* Global ion-modal styles */
+ion-modal {
+  --border-radius: 20px;
+  --width: 95%;
+  --max-width: 800px;
+  --max-height: 600px;
+  --background: var(--color-card-background-lilac);
+  --border-radius: 50px;
+}
+
+ion-modal ion-searchbar {
+  --background: var(--color-input-background) !important;
+  --border-radius: 10px !important;
+}
+
+ion-modal ion-header {
+  --background: var(--color-primary-pink);
+}
+
+ion-modal ion-content {
+  --background: var(--color-modal-content-background);
+}
+
+ion-modal ion-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  margin-bottom: 10px;
+}
+
+ion-modal ion-input,
+ion-modal ion-select {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --background: var(--color-input-background);
+  --border-radius: 15px;
+  --placeholder-color: var(--color-text-placeholder);
+}
+
+ion-modal ion-title {
+  color: var(--color-text-lilac);
+  font-size: 1.2rem;
+}
+
+
+
+/* Remove default input spinner */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
 
 /* Mobile styles */
 /* ------------- */
