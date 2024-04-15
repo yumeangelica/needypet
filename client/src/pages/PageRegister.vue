@@ -6,7 +6,7 @@
         <div class="login-register-container">
           <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
 
-          <div class="paw-container">
+          <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
             <h4>Create account</h4>
             <ion-icon :icon="pawOutline"></ion-icon>

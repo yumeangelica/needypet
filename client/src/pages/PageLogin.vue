@@ -7,7 +7,7 @@
           <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
           <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
 
-          <div class="paw-container">
+          <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
             <h4>Login</h4>
             <ion-icon :icon="pawOutline"></ion-icon>
