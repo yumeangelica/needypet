@@ -27,7 +27,7 @@
             <ion-buttons>
               <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
-              <ion-button @click="router.push({ name: 'landing' })" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
             </ion-buttons>
 
             <!-- Global error message styling -->
@@ -94,5 +94,11 @@ onBeforeMount(() => {
     }, 5000);
   }
 });
+
+const goBack = () => {
+  router.push({ name: 'landing' });
+  userName.value = '';
+  password.value = '';
+};
 
 </script>
