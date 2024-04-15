@@ -6,7 +6,12 @@
         <div class="login-register-container">
           <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
           <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
-          <h4 class="ion-text-center">Login</h4>
+
+          <div class="paw-container">
+            <ion-icon :icon="pawOutline"></ion-icon>
+            <h4>Login</h4>
+            <ion-icon :icon="pawOutline"></ion-icon>
+          </div>
 
           <form @submit.prevent="login">
             <ion-item class="login-register-field-item">
@@ -49,10 +54,12 @@ const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonI
 const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
 const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
 const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+
+import { pawOutline } from 'ionicons/icons';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
-
 
 const userName = ref('');
 const password = ref('');
@@ -89,4 +96,3 @@ onBeforeMount(() => {
 });
 
 </script>
-
