@@ -11,7 +11,7 @@
     </ion-header>
     <ion-content class="ion-padding">
       <ion-list>
-        <ion-item v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
+        <ion-item class="timezone-selector-field" v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
           {{ zone }}
         </ion-item>
       </ion-list>
