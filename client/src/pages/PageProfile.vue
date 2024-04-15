@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div v-if="user" class="profile-container">
+        <div v-if="user" class="edit-pet-profile-container">
           <h3>{{ user.userName }}</h3>
           <div class="email">
             <p><strong>Email:</strong> {{ user.email }}</p>
