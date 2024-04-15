@@ -2,31 +2,40 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="profile-container">
-          <h3>Edit Profile:</h3>
-          <ion-item>
-            <ion-input v-model="editData.userName" type="text" required placeholder="Username"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input v-model="editData.email" type="email" required placeholder="Email"></ion-input>
-          </ion-item>
-          <ion-item @click="showModal = true">
-            <ion-label class="custom-timezone-label">{{ editData.timezone || 'Select Timezone' }}</ion-label>
-          </ion-item>
-          <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
-            @timezoneSelected="timezone => editData.timezone = timezone" />
-          <ion-item>
-            <ion-input v-model="editData.currentPassword" type="password" required placeholder="Current Password"></ion-input>
-          </ion-item>
+        <div class="edit-pet-profile-container">
 
-          <!-- Global error message styling -->
-          <div v-if="editError" class="error-message">
-            {{ editError }}
-          </div>
+          <form @submit.prevent="submitForm" class="edit-pet-profile-form">
 
-          <span class="error-message" v-if="showPasswordNotification">Please enter your current password</span>
-          <ion-button class="custom-button" @click="submitForm" expand="block">Save Changes</ion-button>
-          <ion-button class="custom-button" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
+            <h3>Edit Profile:</h3>
+            <ion-item>
+              <ion-input v-model="editData.userName" type="text" required placeholder="Username"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input v-model="editData.email" type="email" required placeholder="Email"></ion-input>
+            </ion-item>
+            <ion-item @click="showModal = true">
+              <ion-label class="custom-timezone-label">{{ editData.timezone || 'Select Timezone' }}</ion-label>
+            </ion-item>
+            <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
+              @timezoneSelected="timezone => editData.timezone = timezone" />
+            <ion-item>
+              <ion-input v-model="editData.currentPassword" type="password" required placeholder="Current Password"></ion-input>
+            </ion-item>
+
+            <span class="custom-error-message" v-if="showPasswordNotification">Please enter your current password</span>
+
+            <ion-buttons class="button-container">
+            <ion-button class="edit-pet-profile-button" type="submit" expand="block">Save Changes</ion-button>
+              <ion-button class="edit-pet-profile-button" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
+            </ion-buttons>
+
+            <!-- Global error message styling -->
+            <div v-if="editError" class="custom-error-message">
+              {{ editError }}
+            </div>
+
+          </form>
+
         </div>
       </div>
     </ion-content>
@@ -46,6 +55,7 @@ const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.Ion
 const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
 const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
 const TheTimezoneSelectorModal = defineAsyncComponent(() => import('@/components/TheTimezoneSelectorModal.vue'));
+const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -94,13 +104,13 @@ onBeforeMount(async () => {
 onBeforeRouteLeave((to, from, next) => {
   if (JSON.stringify(editData.value) !== JSON.stringify(originalData.value)) { // Check if the form data has changed
     editData.value = { ...originalData.value } as { userName: string; email: string; timezone: string; currentPassword: string };
+
   }
   next();
 });
 
 
 const submitForm = async () => {
-
   if (!editData.value.currentPassword) {
     showPasswordNotification.value = true;
     setTimeout(() => {
@@ -111,7 +121,6 @@ const submitForm = async () => {
 
   const isSuccess = await userStore.updateUserProfile(editData.value);
   if (isSuccess) {
-    console.log('Profile updated successfully');
     editData.value.currentPassword = ''; // Clear the password field
     originalData.value = { ...editData.value };
     router.push({ name: 'profile' }); // Ensure this route name matches your router configuration
@@ -122,4 +131,5 @@ const submitForm = async () => {
     }, 3000);
   }
 };
+
 </script>
