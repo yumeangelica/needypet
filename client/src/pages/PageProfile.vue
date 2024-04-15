@@ -3,7 +3,12 @@
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div v-if="user" class="edit-pet-profile-container">
-          <h3>{{ user.userName }}</h3>
+
+          <div class="inline-container">
+            <h3>{{ user.userName }}</h3>
+            <ion-button class="settings-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
+          </div>
+
           <div class="email">
             <p><strong>Email:</strong> {{ user.email }}</p>
           </div>
@@ -13,7 +18,6 @@
 
           <div>
             <ion-button class="custom-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
-            <ion-button class="custom-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit
               Profile</ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccount"><ion-icon
