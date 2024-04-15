@@ -13,19 +13,15 @@
 
           <div>
             <ion-button class="custom-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
-
             <ion-button class="custom-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
-
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit
               Profile</ion-button>
-
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccount"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
-
           </div>
         </div>
 
-        <div v-else>
+        <div v-if="!user">
           <p class="ion-text-center">Loading...</p>
         </div>
       </div>
@@ -54,6 +50,7 @@ const router = useRouter();
 const route = useRoute();
 
 const userStore = useUserStore();
+
 const user = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
 
