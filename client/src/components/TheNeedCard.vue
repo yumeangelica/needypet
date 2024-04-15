@@ -40,7 +40,7 @@
       </ion-button>
     </div>
 
-    <!-- Edit Need Modal -->
+
     <ion-modal :is-open="isEditModalOpen">
       <ion-header translucent>
         <ion-toolbar>
@@ -51,33 +51,42 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <ion-item>
-          <ion-label class="custom-label" position="stacked">Category</ion-label>
-          <ion-input v-model="editForm.category" placeholder="Enter need category" aria-label="Category"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label class="custom-label" position="stacked">Description</ion-label>
-          <ion-input v-model="editForm.description" placeholder="Enter need description" aria-label="Description"></ion-input>
-        </ion-item>
-        <ion-item v-if="editForm.type === 'quantity'">
-          <ion-label class="custom-label" position="stacked">Quantity</ion-label>
-          <ion-input v-model="editForm.value" placeholder="Enter quantity" aria-label="Quantity"></ion-input>
-          <ion-select v-model="editForm.unit" placeholder="Select unit" aria-label="Unit">
-            <ion-select-option value="ml">ml</ion-select-option>
-            <ion-select-option value="g">g</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item v-else>
-          <ion-label class="custom-label" position="stacked">Duration</ion-label>
-          <div style="display: inline-flex;">
-            <ion-input v-model="editForm.value" placeholder="Enter duration" aria-label="Duration"></ion-input>
-            <ion-input style="text-align: end; width: fit-content;" v-model="editForm.unit" placeholder="Unit" readonly value="minutes"
-              aria-label="Minutes"></ion-input>
+        <form @submit.prevent="updateNeed">
+          <ion-item>
+            <ion-label position="stacked" class="custom-label" aria-label="Category">Category</ion-label>
+            <ion-input v-model="editForm.category" required type="text" placeholder="Enter need category" aria-label="Need category"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked" class="custom-label" aria-label="Description">Description</ion-label>
+            <ion-input v-model="editForm.description" required type="text" placeholder="Enter need description"
+              aria-label="Need description"></ion-input>
+          </ion-item>
+
+          <ion-item v-if="editForm.type === 'quantity'">
+            <ion-label position="stacked" class="custom-label" aria-label="Quantity">Quantity</ion-label>
+            <ion-input v-model="editForm.value" type="number" placeholder="Enter quantity" required aria-label="Quantity"></ion-input>
+
+            <ion-label position="stacked" class="custom-label" aria-label="Unit selection">Select unit</ion-label>
+            <ion-select v-model="editForm.unit" placeholder="Select unit" required aria-label="Unit">
+              <ion-select-option value="ml">ml</ion-select-option>
+              <ion-select-option value="g">g</ion-select-option>
+            </ion-select>
+
+          </ion-item>
+
+          <ion-item v-else>
+            <div style="display: flex; align-items: center;">
+              <ion-input v-model="editForm.value" type="number" placeholder="Enter duration" required aria-label="Duration"></ion-input>
+              <ion-label>minute(s)</ion-label>
+            </div>
+          </ion-item>
+          <div class="confirm-button-container">
+            <ion-button type="submit" class="custom-button">Update Need</ion-button>
           </div>
-        </ion-item>
-        <ion-button class="custom-button" @click="updateNeed">Update Need</ion-button>
+        </form>
       </ion-content>
     </ion-modal>
+
 
     <ion-item class="custom-ion-item" v-if="errorMessage">
       <ion-label class="custom-error-message">{{ errorMessage }}</ion-label>
@@ -95,7 +104,6 @@ import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
 import moment from 'moment-timezone';
-// Lazy load the components for better performance
 const IonCard = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonCard));
 const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
 const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
@@ -130,7 +138,7 @@ const editForm = ref({
   type: '' as 'quantity' | 'duration',
 });
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   if (need.quantity) {
     editForm.value = {
       category: need.category,
@@ -154,13 +162,13 @@ onBeforeMount(() => {
 
 const showOptions = ref(false);
 
-type HandleNeedDeletionFunction = (needDelete: boolean) => void;
+type HandleNeedDeletionType = (needDelete: boolean) => void;
 
 const errorMessage = ref('');
 const validMessage = ref('');
 const reactiveNeed = ref(need);
 
-const handleNeedDeletion = inject<HandleNeedDeletionFunction>('handleNeedDeletion'); // This function sends a signal to the parent component that a need has been deleted
+const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion'); // This function sends a signal to the parent component that a need has been deleted
 const isOwner = inject('isOwner'); // This value comes from the parent component
 
 // Check if the need is for today or in the future
@@ -169,6 +177,7 @@ const isTodayOrFuture = computed(() => {
   const today = moment().tz(userStore.timezone);
   return needDate?.isSameOrAfter(today, 'day');
 });
+
 
 // Add Record (need done) -button click event handler
 const addRecord = async (petId: string, need: Need) => {
@@ -406,51 +415,6 @@ const deleteNeed = async (needId: string) => {
   .is-expanded .options-container {
     height: 50px;
     opacity: 1;
-  }
-
-
-
-  /* Modal styles */
-  ion-modal {
-    --width: 95%;
-    --max-height: 500px;
-    --max-width: 500px;
-    --background: var(--color-card-background-lilac);
-    --border-radius: 50px;
-  }
-
-  ion-modal ion-header {
-    --background: var(--color-primary-pink);
-  }
-
-  ion-modal ion-content {
-    --background: var(--color-modal-content-background);
-  }
-
-  ion-modal ion-item {
-    --padding-start: 0;
-    --padding-end: 0;
-    margin-bottom: 10px;
-  }
-
-  ion-modal ion-input,
-  ion-modal ion-select {
-    --padding-start: 10px;
-    --padding-end: 10px;
-    --background: var(--color-input-background);
-    --border-radius: 15px;
-    --placeholder-color: var(--color-text-placeholder);
-  }
-
-  ion-modal ion-select-option {
-    --color: var(--color-option-text);
-    --background: var(--color-option-background);
-    --ion-item-background: var(--color-option-background);
-  }
-
-
-  ion-modal ion-title {
-    color: var(--color-text-lilac);
   }
 
 
