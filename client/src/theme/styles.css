@@ -5,6 +5,17 @@
   line-height: 1.9 !important;
 }
 
+
+/* Elements styling */
+/* ---------------- */
+
+/* Background picture */
+body {
+  background-image: url('/images/needypet_background.png');
+  background-size: cover;
+  background-position: center;
+}
+
 h1, h2, h3, h4, h5, h6, a {
   color: var(--color-text-lilac);
 }
@@ -17,27 +28,7 @@ h4 {
   font-size: 1.2rem !important;
 }
 
-/* Background picture */
-body {
-  background-image: url('/images/needypet_background.png');
-  background-size: cover;
-  background-position: center;
-}
-
 strong {
-  color: var(--color-text-lilac);
-}
-
-ion-content, ion-page {
-  --ion-background-color: transparent;
-}
-
-ion-toolbar, ion-tab-bar {
-  --background: var(--color-primary-pink);
-}
-
-ion-button {
-  border-radius: 25px;
   color: var(--color-text-lilac);
 }
 
@@ -58,6 +49,23 @@ li {
   margin-bottom: 5px;
 }
 
+
+/* Ionic elements styling */
+/* --------------------- */
+
+ion-content, ion-page {
+  --ion-background-color: transparent;
+}
+
+ion-toolbar, ion-tab-bar {
+  --background: var(--color-primary-pink);
+}
+
+ion-button {
+  border-radius: 25px;
+  color: var(--color-text-lilac);
+}
+
 ion-icon {
   padding: 0px 5px;
   color: var(--color-text-lilac);
@@ -67,7 +75,21 @@ ion-label {
   color: var(--color-text-lilac);
 }
 
-/* Custom content-wrapper class to push content down */
+ion-item {
+  margin-bottom: 15px;
+  --background: var(--color-input-background);
+  --border-radius: 10px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --highlight-color-focused: var(--color-drop-shadow-pink);
+  --color: var(--color-text-default);
+  font-size: 0.95rem;
+}
+
+
+/* Custom content-wrapper classes to push content down */
+/* --------------------------------------------------- */
+
 .content-wrapper {
   max-width: 800px;
   margin: auto;
@@ -79,6 +101,9 @@ ion-label {
   margin-top: 30px;
   padding: 20px;
 }
+
+/* Calendar styling */
+/* ---------------- */
 
 /* Centers the calendar */
 .datetime-wrapper {
@@ -94,16 +119,6 @@ ion-datetime {
   --background: var(--color-input-background);
 }
 
-ion-item {
-  margin-bottom: 15px;
-  --background: var(--color-input-background);
-  --border-radius: 10px;
-  --padding-start: 10px;
-  --padding-end: 10px;
-  --highlight-color-focused: var(--color-drop-shadow-pink);
-  --color: var(--color-text-default);
-  font-size: 0.95rem;
-}
 
 /* Global error message */
 .error-message {
@@ -148,6 +163,59 @@ ion-item {
   gap: 10px;
 }
 
+/* Wrapping name and settings button */
+.inline-container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0px;
+}
+
+/* Settings button for editing pet's and user's profile */
+.settings-button,
+.settings-button:active,
+.settings-button:focus,
+.settings-button:hover {
+  --background: transparent !important;
+  --background-activated: transparent !important;
+  --background-focused: transparent !important;
+  --border: none !important;
+  --box-shadow: none !important;
+  --ripple-color: transparent !important;
+  --outline: none !important;
+  padding: 0;
+  margin: 0;
+  height: auto;
+  width: auto;
+}
+
+.settings-button ion-icon {
+  font-size: 28px;
+  color: var(--color-card-border);
+  margin: 0;
+  padding: 0;
+}
+
+/* Buttons for edit profile and edit pet */
+.button-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.edit-pet-profile-button {
+  --background: var(--ion-color-primary) !important;
+  --padding-start: 15px !important;
+  --padding-end: 15px !important;
+  --background: var(--color-button-pet-page) !important;
+  --border-radius: 20px !important;
+  max-width: 260px;
+  margin-bottom: 10px;
+}
 
 /* Login, Register, Landing pages styling */
 /* -------------------------------------- */
@@ -204,7 +272,28 @@ ion-item {
   --background: var(--color-create-account-button) !important;
 }
 
+.paw-header-container {
+  display: flex;
+  justify-content: center;
+  /* Centers the items horizontally within the container */
+  align-items: center;
+  /* Centers the items vertically (optional, depending on your design) */
+  text-align: center;
+  /* Ensures the text inside h4 is centered in case of any responsive adjustments */
+  width: 100%;
+  /* Takes full width of its parent to allow horizontal centering */
+  margin: 0 auto;
+  /* Additional centering for the container itself */
+}
+
+.paw-header-container ion-icon {
+  margin: 0 10px;
+  /* Adds horizontal spacing between the icons and the text */
+}
+
+
 /* Error & valid messages */
+/* ---------------------- */
 .custom-error-message, .custom-valid-message {
   font-size: 0.75rem;
   text-align: center;
@@ -219,7 +308,9 @@ ion-item {
   color: var(--color-valid-message) !important;
 }
 
+
 /* Global ion-modal styles */
+/* ----------------------- */
 ion-modal {
   --border-radius: 20px;
   --width: 95%;
@@ -264,35 +355,12 @@ ion-modal ion-title {
 
 
 
-/* Remove default input spinner */
+/* Remove default input spinner in type number inputs */
+/* --------------------------- */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-
-
-/* Buttons for edit profile and edit pet */
-
-.button-container {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  padding: 10px 0;
-}
-
-.edit-pet-profile-button {
-  --background: var(--ion-color-primary) !important;
-  --padding-start: 15px !important;
-  --padding-end: 15px !important;
-  --background: var(--color-button-pet-page) !important;
-  --border-radius: 20px !important;
-  max-width: 260px;
-  margin-bottom: 10px;
 }
 
 
