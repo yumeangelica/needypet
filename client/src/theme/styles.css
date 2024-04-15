@@ -129,17 +129,25 @@ ion-item {
 /* Profile & edit profile pages styling */
 /* ------------------------------ */
 
-.profile-container {
+/* edit pet & edit profile containers */
+.edit-pet-profile-container {
   display: flex;
   flex-direction: column;
   max-width: 500px;
   margin: auto;
   padding: 20px;
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
   background-color: var(--color-card-background-lilac);
   border-radius: 50px;
-  border: 1px solid var(--color-card-border);
+  border: 2px solid var(--color-card-border);
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
 }
+
+.edit-pet-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 
 /* Login, Register, Landing pages styling */
 /* -------------------------------------- */
@@ -265,6 +273,29 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
+/* Buttons for edit profile and edit pet */
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.edit-pet-profile-button {
+  --background: var(--ion-color-primary) !important;
+  --padding-start: 15px !important;
+  --padding-end: 15px !important;
+  --background: var(--color-button-pet-page) !important;
+  --border-radius: 20px !important;
+  max-width: 260px;
+  margin-bottom: 10px;
+}
+
+
 /* Mobile styles */
 /* ------------- */
 
@@ -272,6 +303,10 @@ input[type=number]::-webkit-outer-spin-button {
 @media (max-width: 568px) {
   .custom-button, .action-button, .login-register-field-item, .login-register-field-input, ion-select, ion-input, ion-title, ion-label, ion-textarea, .custom-timezone-label, .custom-error-message, .custom-valid-message, ion-radio, p, a, li {
     font-size: 0.75rem !important;
+  }
+
+  .edit-pet-profile-button {
+    flex: 1 1 100%; /* Forces buttons to take full width on mobile screens */
   }
 
   ion-item {
