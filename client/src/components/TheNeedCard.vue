@@ -26,11 +26,11 @@
     <!-- Toggleable buttons -->
     <div v-if="isOwner" class="options-container" :class="{ 'visible': showOptions }">
       <!-- Edit need button -->
-      <ion-button v-if="isToday && isFuture" @click="editNeed" fill="clear" class="option-button">
+      <ion-button v-if="isToday || isFuture" @click="editNeed" fill="clear" class="option-button">
         <ion-icon :icon="pencil" slot="icon-only"></ion-icon>
       </ion-button>
       <!-- isActive toggle button -->
-      <div v-if="isToday && isFuture">
+      <div v-if="isToday || isFuture">
         <ion-toggle v-if="!need.isActive" @ionChange="toggleNeedActive(need.id)"></ion-toggle>
         <ion-toggle v-else @ionChange="toggleNeedActive(need.id)" checked></ion-toggle>
       </div>
@@ -158,8 +158,6 @@ onBeforeMount(async () => {
   }
 });
 
-
-
 const showOptions = ref(false);
 
 type HandleNeedDeletionType = (needDelete: boolean) => void;
@@ -184,7 +182,6 @@ const isToday = computed(() => {
   const today = moment().tz(userStore.timezone);
   return needDate?.isSame(today, 'day');
 });
-
 
 // Add Record (need done) -button click event handler
 const addRecord = async (petId: string, need: Need) => {
@@ -386,10 +383,10 @@ const deleteNeed = async (needId: string) => {
     --inner-border-color: none !important;
   }
 
-  ion-label h5,
-  ion-label p {
-    margin: 0;
-  }
+  /* ion-label h5,
+    ion-label p {
+      margin: 0;
+    } */
 
   .complete-button,
   .done-label {
@@ -431,12 +428,12 @@ const deleteNeed = async (needId: string) => {
     .complete-button,
     .done-label {
       font-size: 0.70rem;
+      padding-right: 20px;
+      padding-left: 5px;
     }
 
-    .done-label {
-      margin-right: 20px;
-    }
 
+    /* Edit need modal styles */
     .custom-label {
       font-size: 1rem !important;
       color: var(--color-text-lilac);
@@ -445,7 +442,6 @@ const deleteNeed = async (needId: string) => {
     .custom-button {
       font-size: 0.6rem !important;
     }
-
 
   }
 </style>
