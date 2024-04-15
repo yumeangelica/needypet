@@ -25,7 +25,6 @@ import router from '@/router';
 const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
 const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
 
-
 const route = useRoute();
 
 const navigateTo = (name) => {
@@ -33,7 +32,5 @@ const navigateTo = (name) => {
     router.push({ name });
   }
 };
-
-
 
 </script>
