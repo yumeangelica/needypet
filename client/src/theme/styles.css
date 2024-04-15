@@ -275,22 +275,19 @@ ion-datetime {
 .paw-header-container {
   display: flex;
   justify-content: center;
-  /* Centers the items horizontally within the container */
   align-items: center;
-  /* Centers the items vertically (optional, depending on your design) */
   text-align: center;
-  /* Ensures the text inside h4 is centered in case of any responsive adjustments */
   width: 100%;
-  /* Takes full width of its parent to allow horizontal centering */
   margin: 0 auto;
-  /* Additional centering for the container itself */
 }
 
 .paw-header-container ion-icon {
   margin: 0 10px;
-  /* Adds horizontal spacing between the icons and the text */
 }
 
+.timezone-selector-field:hover {
+  cursor: pointer;
+}
 
 /* Error & valid messages */
 /* ---------------------- */
@@ -354,7 +351,6 @@ ion-modal ion-title {
 }
 
 
-
 /* Remove default input spinner in type number inputs */
 /* --------------------------- */
 input[type=number]::-webkit-inner-spin-button,
@@ -374,7 +370,7 @@ input[type=number]::-webkit-outer-spin-button {
   }
 
   .edit-pet-profile-button {
-    flex: 1 1 100%; /* Forces buttons to take full width on mobile screens */
+    flex: 1 1 100%;
   }
 
   ion-item {
