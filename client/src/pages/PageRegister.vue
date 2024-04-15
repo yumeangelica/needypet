@@ -27,11 +27,20 @@
               <ion-input class="login-register-field-input" v-model="password" placeholder="Password" type="password" required id="password"
                 aria-label="Password"></ion-input>
             </ion-item>
+
+            <ion-item class="login-register-field-item">
+              <ion-input class="login-register-field-input" v-model="confirmPassword" placeholder="Confirm password" type="password" required
+                id="confirmPassword" aria-label="Confirm Password"></ion-input>
+            </ion-item>
+
+
             <div class="password-note">(Password must contain 10 character with at least one uppercase, lowercase, number and special character)</div>
             <!-- Timezone select field -->
-            <ion-item class="login-register-field-item" @click="showModal = true" required>
+
+            <ion-item class="login-register-field-item timezone-selector-field" @click="showModal = true" required>
               <ion-label class="custom-timezone-label">{{ selectedTimezone || 'Select Timezone' }}</ion-label>
             </ion-item>
+
             <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
               @timezoneSelected="timezone => selectedTimezone = timezone" />
 
@@ -40,7 +49,7 @@
             <ion-buttons>
               <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
-              <ion-button @click="router.push({ name: 'landing' })" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
             </ion-buttons>
 
           </form>
@@ -76,6 +85,7 @@ const showModal = ref(false);
 const username = ref('');
 const email = ref('');
 const password = ref('');
+const confirmPassword = ref('');
 const selectedTimezone = ref('');
 const errorMessage = ref('');
 
@@ -85,6 +95,14 @@ const userStore = useUserStore();
 const createAccount = async () => {
   if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(password.value)) {
     errorMessage.value = 'Password must contain 10 character with at least one uppercase, lowercase, number and special character';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
+    return;
+  }
+
+  if (password.value !== confirmPassword.value) {
+    errorMessage.value = 'Passwords do not match';
     setTimeout(() => {
       errorMessage.value = '';
     }, 5000);
@@ -104,10 +122,21 @@ const createAccount = async () => {
     username.value = '';
     email.value = '';
     password.value = '';
+    confirmPassword.value = '';
     selectedTimezone.value = '';
   } else {
     errorMessage.value = 'Account creation failed, please try again';
   }
+};
+
+
+const goBack = () => {
+  router.push({ name: 'landing' });
+  username.value = '';
+  email.value = '';
+  password.value = '';
+  confirmPassword.value = '';
+  selectedTimezone.value = '';
 };
 
 
