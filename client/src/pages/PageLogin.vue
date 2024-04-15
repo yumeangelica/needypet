@@ -5,6 +5,7 @@
         <!-- Global styling for container element -->
         <div class="login-register-container">
           <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
+          <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
           <h4 class="ion-text-center">Login</h4>
 
           <form @submit.prevent="login">
@@ -25,7 +26,7 @@
             </ion-buttons>
 
             <!-- Global error message styling -->
-            <div v-if="loginError" class="error-message">
+            <div v-if="loginError" class="custom-error-message">
               Signing in failed. Please check your credentials and try again.
             </div>
           </form>
@@ -36,8 +37,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, defineAsyncComponent, onBeforeMount } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
@@ -57,6 +58,7 @@ const userName = ref('');
 const password = ref('');
 const loginError = ref(false);
 const router = useRouter();
+const route = useRoute();
 const userStore = useUserStore();
 const petStore = usePetStore();
 
@@ -73,6 +75,18 @@ const login = async () => {
     await petStore.getAllPets();
   }
 };
+
+const validMessage = ref('');
+
+onBeforeMount(() => {
+  if (route.query.accountCreated === 'true') {
+    validMessage.value = 'Your account has been successfully created.';
+    setTimeout(() => {
+      validMessage.value = '';
+      route.query.accountCreated = '';
+    }, 5000);
+  }
+});
 
 </script>
 
