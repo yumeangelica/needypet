@@ -60,6 +60,7 @@ const closeModal = () => {
 
 const selectTimezone = (zone) => {
   emit('timezoneSelected', zone);
+  searchQuery.value = '';
   closeModal();
 };
 </script>
