@@ -14,7 +14,7 @@
               <ion-input v-model="editData.email" type="email" required placeholder="Email"></ion-input>
             </ion-item>
             <ion-item @click="showModal = true">
-              <ion-label class="custom-timezone-label">{{ editData.timezone || 'Select Timezone' }}</ion-label>
+              <ion-label class="custom-timezone-label timezone-selector-field">{{ editData.timezone || 'Select Timezone' }}</ion-label>
             </ion-item>
             <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
               @timezoneSelected="timezone => editData.timezone = timezone" />
@@ -25,7 +25,7 @@
             <span class="custom-error-message" v-if="showPasswordNotification">Please enter your current password</span>
 
             <ion-buttons class="button-container">
-            <ion-button class="edit-pet-profile-button" type="submit" expand="block">Save Changes</ion-button>
+              <ion-button class="edit-pet-profile-button" type="submit" expand="block">Save Changes</ion-button>
               <ion-button class="edit-pet-profile-button" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
             </ion-buttons>
 
