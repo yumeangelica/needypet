@@ -7,13 +7,10 @@
 
             <div class="inline-container">
               <h3>{{ pet.name }}</h3>
-
               <ion-button v-if="pet.owner.id === userStore.id" slot="start" class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon
                   :icon="settingsOutline"></ion-icon>
               </ion-button>
-
             </div>
-
 
             <div class="pet-info">
               <p><strong>Description:</strong> {{ pet.description }}</p>
@@ -148,7 +145,6 @@
   </ion-page>
 </template>
 
-
 <script setup lang="ts">
 import { onBeforeMount, ref, computed, watch, Ref, provide, defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
@@ -178,7 +174,6 @@ const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonI
 const IonTitle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTitle));
 const TheNeedCard = defineAsyncComponent(() => import('@/components/TheNeedCard.vue'));
 
-
 const router = useRouter();
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -199,7 +194,6 @@ const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] |
 const validMessage: Ref<string> = ref('');
 const isOwner = ref(false);
 
-
 const changeDay = (delta: number) => {
 
   const newDate = moment.tz(currentDate.value, userStore.timezone).add(delta, 'days');
@@ -216,7 +210,6 @@ const needsByDate = computed(() => {
     return acc;
   }, {});
 });
-
 
 const units = {
   duration: 'minutes',
@@ -322,7 +315,6 @@ onBeforeMount(async () => {
   }
 });
 
-
 // Function to handle the need deletion
 const handleNeedDeleted = (deleted: boolean) => {
   if (deleted) {
@@ -338,39 +330,7 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
 </script>
 
 <style scoped>
-  /* Wrapping name and setting button */
-  .inline-container {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 0px;
-  }
-
-  /* Settings button */
-  .settings-button,
-  .settings-button:active,
-  .settings-button:focus,
-  .settings-button:hover {
-    --background: transparent !important;
-    --background-activated: transparent !important;
-    --background-focused: transparent !important;
-    --border: none !important;
-    --box-shadow: none !important;
-    --ripple-color: transparent !important;
-    --outline: none !important;
-    padding: 0;
-    margin: 0;
-    height: auto;
-    width: auto;
-  }
-
-  .settings-button ion-icon {
-    font-size: 28px;
-    color: var(--color-card-border);
-    margin: 0;
-    padding: 0;
-  }
-
+  /* centering the content */
   .pet-container,
   .header-button-container,
   .date-navigation {
