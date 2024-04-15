@@ -10,7 +10,7 @@
 
     <div class="centering-container">
       <ion-item class="custom-ion-item">
-        <ion-button class="complete-button" v-if="!need.completed && isTodayOrFuture" @click="addRecord(petId, need)">
+        <ion-button class="complete-button" v-if="!need.completed && isToday" @click="addRecord(petId, need)">
           <ion-icon :icon="checkmark"></ion-icon>Complete</ion-button>
         <div class="done-label" v-if="need.completed">
           <ion-icon :icon="checkmarkDone"></ion-icon>
@@ -26,11 +26,11 @@
     <!-- Toggleable buttons -->
     <div v-if="isOwner" class="options-container" :class="{ 'visible': showOptions }">
       <!-- Edit need button -->
-      <ion-button v-if="isTodayOrFuture" @click="editNeed" fill="clear" class="option-button">
+      <ion-button v-if="isToday && isFuture" @click="editNeed" fill="clear" class="option-button">
         <ion-icon :icon="pencil" slot="icon-only"></ion-icon>
       </ion-button>
       <!-- isActive toggle button -->
-      <div v-if="isTodayOrFuture">
+      <div v-if="isToday && isFuture">
         <ion-toggle v-if="!need.isActive" @ionChange="toggleNeedActive(need.id)"></ion-toggle>
         <ion-toggle v-else @ionChange="toggleNeedActive(need.id)" checked></ion-toggle>
       </div>
@@ -172,10 +172,17 @@ const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion');
 const isOwner = inject('isOwner'); // This value comes from the parent component
 
 // Check if the need is for today or in the future
-const isTodayOrFuture = computed(() => {
+const isFuture = computed(() => {
   const needDate = moment(need.dateFor).tz(userStore.timezone);
   const today = moment().tz(userStore.timezone);
-  return needDate?.isSameOrAfter(today, 'day');
+  return needDate?.isAfter(today, 'day');
+});
+
+// Check if the need is for today
+const isToday = computed(() => {
+  const needDate = moment(need.dateFor).tz(userStore.timezone);
+  const today = moment().tz(userStore.timezone);
+  return needDate?.isSame(today, 'day');
 });
 
 
