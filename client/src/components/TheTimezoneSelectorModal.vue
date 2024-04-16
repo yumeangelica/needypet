@@ -22,6 +22,7 @@
 <script setup lang='ts'>
 import { ref, computed, onBeforeMount, defineAsyncComponent } from 'vue';
 import { useAppStore } from '@/store/app';
+
 // Lazy load the components for better performance
 const IonModal = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonModal));
 const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));

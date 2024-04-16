@@ -34,8 +34,6 @@ const year = new Date().getFullYear();
 
 </script>
 
-
-
 <style>
   .copyright {
     margin-top: 30px;

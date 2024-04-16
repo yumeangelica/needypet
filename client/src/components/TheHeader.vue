@@ -28,7 +28,6 @@ const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.Io
 const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
 const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
 
-
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
