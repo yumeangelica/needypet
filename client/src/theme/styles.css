@@ -20,12 +20,20 @@ h1, h2, h3, h4, h5, h6, a {
   color: var(--color-text-lilac);
 }
 
-h3 {
+h1 {
+  font-size: 1.5rem !important;
+}
+
+h2 {
   font-size: 1.4rem !important;
 }
 
+h3 {
+  font-size: 1.3rem !important;
+}
+
 h4 {
-  font-size: 1.2rem !important;
+  font-size: 1.15rem !important;
 }
 
 strong {
@@ -139,7 +147,6 @@ ion-datetime {
 .custom-button:hover {
   --box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
 }
-
 
 /* Profile & edit profile pages styling */
 /* ------------------------------ */
@@ -363,10 +370,9 @@ input[type=number]::-webkit-outer-spin-button {
 /* Mobile styles */
 /* ------------- */
 
-/* Media query for mobile styles */
 @media (max-width: 568px) {
   .custom-button, .action-button, .login-register-field-item, .login-register-field-input, ion-select, ion-input, ion-title, ion-label, ion-textarea, .custom-timezone-label, .custom-error-message, .custom-valid-message, ion-radio, p, a, li {
-    font-size: 0.75rem !important;
+    font-size: 0.72rem !important;
   }
 
   .edit-pet-profile-button {
@@ -380,14 +386,18 @@ input[type=number]::-webkit-outer-spin-button {
   }
 
   h2 {
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
   }
 
   h3 {
-    font-size: 1.3rem !important;
+    font-size: 1.1rem !important;
   }
 
   h4 {
-    font-size: 1.1rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  h5 {
+    font-size: 0.8rem !important;
   }
 }
