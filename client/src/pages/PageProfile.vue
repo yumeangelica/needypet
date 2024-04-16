@@ -23,6 +23,9 @@
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccount"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
           </div>
+          <div v-if="validMessage">
+            <p class="custom-valid-message">{{ validMessage }}</p>
+          </div>
         </div>
 
         <div v-if="!user">
@@ -58,6 +61,8 @@ const userStore = useUserStore();
 const user = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
 
+const validMessage = ref('');
+
 const toggleSettings = () => {
   showSettings.value = !showSettings.value; // Toggle the value of showSettings
 };
@@ -67,9 +72,17 @@ const fetchUser = async () => {
   user.value = userData;
 };
 
+
 watchEffect(async () => {
   if (route.name === 'profile') {  // Ensure this is the correct route name for the profile page
     await fetchUser();
+  }
+
+  if (route.query.userUpdateSucceefully === 'true') {
+    validMessage.value = 'User details updated successfully';
+    setTimeout(() => {
+      validMessage.value = '';
+    }, 5000);
   }
 });
 
