@@ -5,13 +5,14 @@
         <!-- Global styling for container element -->
         <div class="login-register-container">
           <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
-          <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
 
           <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
             <h4>Login</h4>
             <ion-icon :icon="pawOutline"></ion-icon>
           </div>
+
+          <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
 
           <form @submit.prevent="login">
             <ion-item class="login-register-field-item">
@@ -31,8 +32,8 @@
             </ion-buttons>
 
             <!-- Global error message styling -->
-            <div v-if="loginError" class="custom-error-message">
-              Signing in failed. Please check your credentials and try again.
+            <div v-if="ErrorMessage" class="custom-error-message">
+              {{ ErrorMessage }}
             </div>
           </form>
         </div>
@@ -63,7 +64,7 @@ const isMobile = computed(() => appStore.isMobile);
 
 const userName = ref('');
 const password = ref('');
-const loginError = ref(false);
+const ErrorMessage = ref('');
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
@@ -72,14 +73,19 @@ const petStore = usePetStore();
 const login = async () => {
 
   // LoginError is boolean, set to true if login fails
-  loginError.value = !await userStore.login(userName.value, password.value);
+  const { isSuccess, message } = await userStore.login(userName.value, password.value);
 
   // If login was successful, redirect to home page
-  if (!loginError.value) {
+  if (isSuccess) {
     router.push({ name: 'home' });
     userName.value = '';
     password.value = '';
     await petStore.getAllPets();
+  } else {
+    ErrorMessage.value = message;
+    setTimeout(() => {
+      ErrorMessage.value = '';
+    }, 5000);
   }
 };
 
