@@ -6,7 +6,7 @@
           <div class="full-pet-card">
 
             <div class="inline-container">
-              <h3>{{ pet.name }}</h3>
+              <h2>{{ pet.name }}</h2>
               <ion-button v-if="pet.owner.id === userStore.id" slot="start" class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon
                   :icon="settingsOutline"></ion-icon>
               </ion-button>
@@ -109,7 +109,7 @@
               <!-- Date navigation buttons -->
               <div class="date-navigation">
                 <ion-button class="custom-button" @click="changeDay(-1)">Previous day</ion-button>
-                <h3>{{ currentDate }}</h3>
+                <h4>{{ currentDate }}</h4>
                 <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
               </div>
 
@@ -349,7 +349,7 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
     box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
     padding: 20px;
     width: 100%;
-    max-width: 600px;
+    max-width: 650px;
   }
 
   .need-cards-container {
