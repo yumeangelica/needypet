@@ -85,10 +85,8 @@ import { trashOutline } from 'ionicons/icons';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
-
 const router = useRouter();
 const route = useRoute();
-
 const petStore = usePetStore();
 
 const dateErrorMessage = ref('');
@@ -102,12 +100,14 @@ const existingPetObject: Ref<Pet> = ref({
 });
 const showDatePicker = ref(false);
 
+// Load the pet data when the component is mounted
 onBeforeMount(() => {
   if (!existingPetObject.value || !existingPetObject.value.id) {
     loadPetData();
   }
 });
 
+// Function to handle the date selected from the date picker
 const dateSelected = (selectedDateString: string) => {
   const currentDate = new Date();
   const selectedDate = new Date(selectedDateString);
@@ -120,6 +120,7 @@ const dateSelected = (selectedDateString: string) => {
   }
 };
 
+// Format the date for display
 const formattedDate = computed(() => {
   return existingPetObject.value.birthday
     ? new Date(existingPetObject.value.birthday).toLocaleDateString('en-CA')
@@ -127,6 +128,7 @@ const formattedDate = computed(() => {
 });
 
 
+// Confirm the update of the pet and then call the updatePet function
 const confirmUpdatePet = () => {
   if (window.confirm('Are you sure you want to update this pet?')) {
     updatePet();
@@ -134,6 +136,7 @@ const confirmUpdatePet = () => {
 };
 
 
+// Update the pet data and then navigate to the pet view page (PagePet)
 const updatePet = async () => {
   const petData = {
     id: existingPetObject.value.id,
@@ -154,7 +157,7 @@ const updatePet = async () => {
 };
 
 
-// Delete
+// Confirm the deletion of the pet and then call the deletePet function
 const confirmDeletePet = () => {
   if (window.confirm('Are you sure you want to delete this pet?')) {
     deletePet();
@@ -173,6 +176,7 @@ const deletePet = async () => {
   }
 };
 
+// Load the pet data from the store
 const loadPetData = async () => {
   const petId = route.params.id as string; // Get the pet ID from the route params
   if (petId) {
@@ -186,6 +190,7 @@ const loadPetData = async () => {
   }
 };
 
+// Cancel the edit and navigate back to the pet view page (PagePet)
 const cancelEdit = () => {
   router.push({ name: 'pet', params: { id: existingPetObject.value?.id } }); // Update to the correct route name if different
 };

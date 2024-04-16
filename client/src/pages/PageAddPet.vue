@@ -53,6 +53,7 @@ import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
+
 // Lazy load the components for better performance
 const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
 const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
@@ -87,6 +88,7 @@ const hideDatePicker = () => {
   showDatePicker.value = false;
 };
 
+// Set the selected date
 const dateSelected = (selectedDateString: string) => {
   const selectedDateTime = new Date(selectedDateString);
   selectedDateTime.setHours(0, 0, 0, 0);
@@ -98,9 +100,9 @@ const dateSelected = (selectedDateString: string) => {
   }
 
   hideDatePicker();
-
 };
 
+// Format the date for display
 const formattedDate = computed(() => {
   if (!newPetObject.value.birthday) {
     return '';
@@ -109,6 +111,7 @@ const formattedDate = computed(() => {
   return new Date(newPetObject.value.birthday).toLocaleDateString(undefined, options);
 });
 
+// Reset the form when navigating away
 onBeforeRouteLeave((to, from, next) => {
   newPetObject.value = {
     name: '',
@@ -118,10 +121,9 @@ onBeforeRouteLeave((to, from, next) => {
     birthday: null,
   };
   next();
-
 });
 
-
+// Submit the new pet to the store
 const submitPet = async () => {
   if (!newPetObject.value.name) {
     return;
@@ -147,7 +149,6 @@ const submitPet = async () => {
       errorMessage.value = '';
     }, 5000);
   }
-
 };
 
 </script>

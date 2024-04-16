@@ -40,7 +40,7 @@
       </ion-button>
     </div>
 
-
+    <!-- Edit need modal -->
     <ion-modal :is-open="isEditModalOpen">
       <ion-header translucent>
         <ion-toolbar>
@@ -87,6 +87,7 @@
     </ion-modal>
 
 
+    <!-- Error and success messages -->
     <ion-item class="custom-ion-item" v-if="errorMessage">
       <ion-label class="custom-error-message">{{ errorMessage }}</ion-label>
     </ion-item>
@@ -103,6 +104,8 @@ import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
 import moment from 'moment-timezone';
+
+// Lazy load the components for better performance
 const IonCard = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonCard));
 const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
 const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
@@ -126,7 +129,6 @@ const { need, petId } = defineProps<{
   need: Need,
   petId: string
 }>();
-
 
 const isEditModalOpen = ref(false);
 const editForm = ref({
@@ -157,10 +159,10 @@ onBeforeMount(async () => {
   }
 });
 
-const showOptions = ref(false);
 
 type HandleNeedDeletionType = (needDelete: boolean) => void;
 
+const showOptions = ref(false);
 const errorMessage = ref('');
 const validMessage = ref('');
 const reactiveNeed = ref(need);
@@ -222,8 +224,9 @@ const addRecord = async (petId: string, need: Need) => {
       errorMessage.value = '';
     }, 5000);
   }
-
 };
+
+// Toggle options visibility
 const toggleOptions = () => {
   if (!isOwner) {
     return;
@@ -231,13 +234,13 @@ const toggleOptions = () => {
   showOptions.value = !showOptions.value;
 };
 
+// Open edit need modal
 const editNeed = () => {
   isEditModalOpen.value = true;
-
   editForm.value = { category: need.category, description: need.description, ...editForm.value };
 };
 
-
+// Toggle need active status
 const toggleNeedActive = async (needId) => {
   if (!needId || !isOwner) {
     return;
@@ -256,6 +259,7 @@ const toggleNeedActive = async (needId) => {
     }, 5000);
   }
 };
+
 
 const closeEditModal = () => {
   isEditModalOpen.value = false;
@@ -414,7 +418,6 @@ const deleteNeed = async (needId: string) => {
     opacity: 1;
   }
 
-
   /* Mobile styles */
   @media (max-width: 568px) {
 
@@ -424,7 +427,6 @@ const deleteNeed = async (needId: string) => {
       padding-right: 20px;
       padding-left: 5px;
     }
-
 
     /* Edit need modal styles */
     .custom-label {

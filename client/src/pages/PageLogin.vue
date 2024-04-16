@@ -48,6 +48,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
+
 // Lazy load the components for better performance
 const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
 const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
@@ -70,6 +71,8 @@ const route = useRoute();
 const userStore = useUserStore();
 const petStore = usePetStore();
 
+const validMessage = ref('');
+
 const login = async () => {
 
   // LoginError is boolean, set to true if login fails
@@ -89,8 +92,7 @@ const login = async () => {
   }
 };
 
-const validMessage = ref('');
-
+// Display a message if the account was successfully created, get the query parameter from the URL and display the message
 onBeforeMount(() => {
   if (route.query.accountCreated === 'true') {
     validMessage.value = 'Your account has been successfully created.';
@@ -101,6 +103,7 @@ onBeforeMount(() => {
   }
 });
 
+// Function to go back to the landing page, and clear the input fields
 const goBack = () => {
   router.push({ name: 'landing' });
   userName.value = '';

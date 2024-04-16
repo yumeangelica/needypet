@@ -42,6 +42,7 @@ const setAuthData = async (
   });
 };
 
+
 /**
  * @description User store definition
  */
@@ -54,6 +55,11 @@ export const useUserStore = defineStore({
     timezone: null,
   }),
   actions: {
+    /**
+     * @description Get the user by id
+     * @param id
+     * @returns
+     */
     async getUserById(id: string): Promise<User> {
       if (!id) {
         return null;
@@ -84,6 +90,14 @@ export const useUserStore = defineStore({
 
       return response;
     },
+    /**
+     * @description Create a new account
+     * @param userName
+     * @param email
+     * @param newPassword
+     * @param timezone
+     * @returns
+     */
     async createAccount({
       userName,
       email,
@@ -136,6 +150,14 @@ export const useUserStore = defineStore({
         }
       }
     },
+    /**
+     * @description Update the user profile
+     * @param userName
+     * @param email
+     * @param timezone
+     * @param currentPassword
+     * @returns
+     */
     async updateUserProfile({
       userName,
       email,
@@ -183,6 +205,10 @@ export const useUserStore = defineStore({
         }
       }
     },
+    /**
+     * @description Delete the user account
+     * @returns
+     */
     async deleteAccount(): Promise<boolean> {
       try {
         const response = await axiosInstance.delete(
@@ -211,11 +237,20 @@ export const useUserStore = defineStore({
         return false;
       }
     },
+    /**
+     * @description Logout the user
+     */
     logout(): Promise<void> {
       this.$reset();
       localStorage.clear();
       return Promise.resolve();
     },
+    /**
+     * @description Login the user
+     * @param userName
+     * @param password
+     * @returns
+     */
     async login(userName: string, password: string): Promise<{ isSuccess: boolean; message: string }> {
       const response = axiosInstance({
         method: 'post',

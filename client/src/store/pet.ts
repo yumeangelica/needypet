@@ -52,6 +52,11 @@ export const usePetStore = defineStore({
 
       return response;
     },
+    /**
+     * @description Add a new pet to the server
+     * @param newPetObject
+     * @returns
+     */
     async addNewPet(newPetObject): Promise<boolean> {
       const userStore = useUserStore();
 
@@ -75,6 +80,11 @@ export const usePetStore = defineStore({
         return false;
       }
     },
+    /**
+     * @description Delete a pet by Id
+     * @param petId
+     * @returns
+     */
     async deletePet(petId: string): Promise<boolean> {
       const userStore = useUserStore();
 
@@ -97,6 +107,12 @@ export const usePetStore = defineStore({
         return false;
       }
     },
+    /**
+     * @description Update the pet by Id
+     * @param petId
+     * @param petData
+     * @returns
+     */
     async updatePet(petId, petData) {
       const userStore = useUserStore();
       const headers = {
@@ -372,19 +388,23 @@ export const usePetStore = defineStore({
     },
   },
   getters: {
+    // Gets the owner's pets from the state and returns them
     getOwnerPets: (state) => async (): Promise<Pet[]> => {
       const userStore = useUserStore();
       return state.pets.filter((pet) => pet.owner.id === userStore.id);
     },
+    // Gets the carer's pets from the state and returns them
     getCarerPets: (state) => async (): Promise<Pet[]> => {
       const userStore = useUserStore();
       return state.pets.filter((pet) => pet.owner.id !== userStore.id);
     },
+    // Gets the pet by id from the state and returns it
     getPetById:
       (state) =>
         async (id: string): Promise<Pet | undefined> => {
           return state.pets.find((pet) => pet.id === id);
         },
+    // Checks if the user is the owner of the pet
     isOwner:
       (state) =>
         async (petId: string): Promise<boolean> => {

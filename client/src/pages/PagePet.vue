@@ -301,13 +301,14 @@ watch(() => window.innerWidth, (newWidth) => {
   appStore.updateScreenSize(newWidth);
 });
 
-
+// Watch the selection value and update the unitOfSelection value accordingly
 watch(selection, (newValue) => {
   if (newValue === 'duration') {
     unitOfSelection.value = 'minutes';
   }
 });
 
+// Load the pet data from the store when the component is mounted
 onBeforeMount(async () => {
   const id = route.params.id as string;
   if (id) {
@@ -324,6 +325,8 @@ const handleNeedDeleted = (deleted: boolean) => {
     }, 5000);
   }
 };
+
+// Provide the function to the child component
 provide('isOwner', isOwner);
 provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the child component
 

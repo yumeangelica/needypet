@@ -28,15 +28,16 @@
                 aria-label="Password"></ion-input>
             </ion-item>
 
+            <!-- Confirm password input field -->
             <ion-item class="login-register-field-item">
               <ion-input class="login-register-field-input" v-model="confirmPassword" placeholder="Confirm password" type="password" required
                 id="confirmPassword" aria-label="Confirm Password"></ion-input>
             </ion-item>
 
-
-            <div class="password-note">(Password must contain 10 character with at least one uppercase, lowercase, number and special character)</div>
+            <div class="strong-password-note">(Password must contain 10 character with at least one uppercase, lowercase, number and special character)</div>
             <!-- Timezone select field -->
 
+            <!-- Timezone select field -->
             <ion-item class="login-register-field-item timezone-selector-field" @click="showModal = true" required>
               <ion-label class="custom-timezone-label">{{ selectedTimezone || 'Select Timezone' }}</ion-label>
             </ion-item>
@@ -81,6 +82,8 @@ import { pawOutline } from 'ionicons/icons';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
+const router = useRouter();
+const userStore = useUserStore();
 const showModal = ref(false);
 const username = ref('');
 const email = ref('');
@@ -89,8 +92,6 @@ const confirmPassword = ref('');
 const selectedTimezone = ref('');
 const errorMessage = ref('');
 
-const router = useRouter();
-const userStore = useUserStore();
 
 const createAccount = async () => {
   if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(password.value)) {
@@ -133,6 +134,7 @@ const createAccount = async () => {
 };
 
 
+// Function to navigate back to the landing page and clear the input fields
 const goBack = () => {
   router.push({ name: 'landing' });
   username.value = '';
@@ -146,7 +148,7 @@ const goBack = () => {
 </script>
 
 <style scoped>
-  .password-note {
+  .strong-password-note {
     font-size: 0.6rem;
     margin: 1rem;
   }

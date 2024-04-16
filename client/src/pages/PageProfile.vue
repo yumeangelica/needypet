@@ -20,7 +20,7 @@
             <ion-button class="custom-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit
               Profile</ion-button>
-            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccount"><ion-icon
+            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccountDeletion"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
           </div>
           <div v-if="validMessage">
@@ -44,6 +44,7 @@ import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
 import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
+
 // Lazy load the components for better performance
 const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
 const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
@@ -52,27 +53,26 @@ const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonI
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
-
 const router = useRouter();
 const route = useRoute();
-
 const userStore = useUserStore();
 
 const user = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
-
 const validMessage = ref('');
 
+// Function to toggle the settings button
 const toggleSettings = () => {
   showSettings.value = !showSettings.value; // Toggle the value of showSettings
 };
 
+// Function to fetch the user data
 const fetchUser = async () => {
   const userData = await userStore.getUserById(userStore.id);
   user.value = userData;
 };
 
-
+// Watch for changes in the route
 watchEffect(async () => {
   if (route.name === 'profile') {  // Ensure this is the correct route name for the profile page
     await fetchUser();
@@ -86,6 +86,7 @@ watchEffect(async () => {
   }
 });
 
+// Function to confirm logout action
 const confirmLogout = () => {
   if (window.confirm('Are you sure you want to logout?')) {
     logout();
@@ -97,7 +98,9 @@ const logout = async () => {
   router.push({ name: 'landing' });
 };
 
-const confirmAccount = () => {
+
+// Function to confirm account deletion
+const confirmAccountDeletion = () => {
   if (window.confirm('Are you sure you want to delete your account?')) {
     deleteAccount();
   }
@@ -115,6 +118,7 @@ const deleteAccount = async () => {
   }
 };
 
+// Reset the value of showSettings when leaving the page
 onBeforeRouteLeave(() => {
   showSettings.value = false; // Reset the value of showSettings when leaving the page
 });

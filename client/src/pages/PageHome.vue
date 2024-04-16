@@ -49,6 +49,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { addCircleOutline } from 'ionicons/icons';
+
 // Lazy load the components for better performance
 const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
 const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
@@ -58,13 +59,14 @@ const ThePetCard = defineAsyncComponent(() => import('@/components/ThePetCard.vu
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
-
 const router = useRouter();
 const route = useRoute();
 const petStore = usePetStore();
+
 const ownPets = ref([]);
 const carerPets = ref([]);
 
+// Update the pet lists from the store
 const updatePetLists = async () => {
   if (petStore.pets.length === 0) {
     return;
@@ -73,8 +75,10 @@ const updatePetLists = async () => {
   carerPets.value = await petStore.getCarerPets();
 };
 
+// Load the pet data when the component is mounted
 onBeforeMount(updatePetLists);
 
+// Update the pet lists when the route changes
 watch(() => route.params && petStore.pets, async () => {
   ownPets.value = await petStore.getOwnerPets();
   carerPets.value = await petStore.getCarerPets();
