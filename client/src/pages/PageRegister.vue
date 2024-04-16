@@ -109,14 +109,14 @@ const createAccount = async () => {
     return;
   }
 
-  const success = await userStore.createAccount({
+  const { isSuccess, message } = await userStore.createAccount({
     userName: username.value,
     email: email.value,
     newPassword: password.value,
     timezone: selectedTimezone.value
   });
 
-  if (success) {
+  if (isSuccess) {
     console.log('Account created successfully, redirecting to login...');
     router.push({ name: 'login', query: { accountCreated: 'true' } });
     username.value = '';
@@ -125,7 +125,10 @@ const createAccount = async () => {
     confirmPassword.value = '';
     selectedTimezone.value = '';
   } else {
-    errorMessage.value = 'Account creation failed, please try again';
+    errorMessage.value = message;
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
   }
 };
 
