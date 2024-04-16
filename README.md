@@ -1,5 +1,7 @@
 # NeedyPet - Pet Care Management Application
 
+#### Before using the application, read the [user guide](#how-to-use-the-application) for detailed instructions on how to use NeedyPet.
+
 ## Introduction
 
 NeedyPet simplifies pet care coordination within households and pet care facilities. This user-friendly application empowers family members and pet caretakers to collaboratively manage pet health and activities. It ensures everyone is informed about the pets' daily needs and care activities, preventing common issues like overfeeding or missed medication, thus enhancing pet care through technology.
@@ -28,6 +30,8 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
   - **Need Management**:
     - Needs can be added, viewed, updated, deleted, or toggled by owners; only active needs are carried over to the next day.
     - Carers can view and complete needs.
+  - **Daily needs algorithm**:
+    - Needs are automatically carried over to the next day and set to uncompleted if they are not toggled inactive with a toggle switch from need card. Updating happens at midnight in the user's timezone.
 
 - **Activity History**:
   - Logs of all care activities (completed, missed, or pending) provide comprehensive monitoring of pet care.
@@ -56,6 +60,7 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
 4. **Managing Needs**:
    - Enter need details in the **Add Need** modal and save.
    - Needs can be managed on the need card on the pet’s page; add, edit, delete, toggle inactive/active, and complete as necessary.
+   - Needs are automatically carried over to the next day and also set to uncompleted if they are not toggled inactive.
 
 5. **User Profile and Security**:
    - Update personal details or log out via the **Profile** button.
