@@ -2,7 +2,7 @@
   <ion-card :class="{ 'is-expanded': showOptions, 'card-active': need.isActive, 'card-inactive': !need.isActive }">
     <ion-item class="custom-ion-item">
       <ion-label>
-        <h4 class="ion-text-center need-card-field">{{ need.category }}</h4>
+        <h5 class="ion-text-center need-card-field">{{ need.category }}</h5>
         <p class="need-card-field">Description: {{ need.description }}</p>
         <p class="need-card-field">{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
@@ -71,7 +71,6 @@
               <ion-select-option value="ml">ml</ion-select-option>
               <ion-select-option value="g">g</ion-select-option>
             </ion-select>
-
           </ion-item>
 
           <ion-item v-else>
@@ -337,7 +336,7 @@ const deleteNeed = async (needId: string) => {
   }
 
   ion-card {
-    border-radius: 35px;
+    border-radius: 40px;
     background: var(--color-pet-need-background);
     width: 100%;
     max-width: 350px;
@@ -369,7 +368,6 @@ const deleteNeed = async (needId: string) => {
   .card-inactive .done-label,
   .card-inactive .option-button {
     color: #afa8a8;
-    /* Dim text/icons within the card */
   }
 
 
@@ -382,11 +380,6 @@ const deleteNeed = async (needId: string) => {
   .custom-model-input {
     --inner-border-color: none !important;
   }
-
-  /* ion-label h5,
-    ion-label p {
-      margin: 0;
-    } */
 
   .complete-button,
   .done-label {
@@ -442,6 +435,5 @@ const deleteNeed = async (needId: string) => {
     .custom-button {
       font-size: 0.6rem !important;
     }
-
   }
 </style>
