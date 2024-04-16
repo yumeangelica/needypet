@@ -145,7 +145,7 @@ const submitPet = async () => {
     errorMessage.value = 'Failed to add pet';
     setTimeout(() => {
       errorMessage.value = '';
-    }, 3000);
+    }, 5000);
   }
 
 };
