@@ -5,7 +5,14 @@
         <!-- Global styling for container element -->
         <div class="login-register-container">
           <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
-          <h4 class="ion-text-center">Login</h4>
+
+          <div class="paw-header-container">
+            <ion-icon :icon="pawOutline"></ion-icon>
+            <h4>Login</h4>
+            <ion-icon :icon="pawOutline"></ion-icon>
+          </div>
+
+          <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
 
           <form @submit.prevent="login">
             <ion-item class="login-register-field-item">
@@ -21,12 +28,12 @@
             <ion-buttons>
               <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
-              <ion-button @click="router.push({ name: 'landing' })" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
             </ion-buttons>
 
             <!-- Global error message styling -->
-            <div v-if="loginError" class="error-message">
-              Signing in failed. Please check your credentials and try again.
+            <div v-if="ErrorMessage" class="custom-error-message">
+              {{ ErrorMessage }}
             </div>
           </form>
         </div>
@@ -36,11 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, defineAsyncComponent, onBeforeMount } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
+
 // Lazy load the components for better performance
 const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
 const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
@@ -48,31 +56,58 @@ const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonI
 const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
 const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
 const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
+const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+
+import { pawOutline } from 'ionicons/icons';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
-
 const userName = ref('');
 const password = ref('');
-const loginError = ref(false);
+const ErrorMessage = ref('');
 const router = useRouter();
+const route = useRoute();
 const userStore = useUserStore();
 const petStore = usePetStore();
+
+const validMessage = ref('');
 
 const login = async () => {
 
   // LoginError is boolean, set to true if login fails
-  loginError.value = !await userStore.login(userName.value, password.value);
+  const { isSuccess, message } = await userStore.login(userName.value, password.value);
 
   // If login was successful, redirect to home page
-  if (!loginError.value) {
+  if (isSuccess) {
     router.push({ name: 'home' });
     userName.value = '';
     password.value = '';
     await petStore.getAllPets();
+  } else {
+    ErrorMessage.value = message;
+    setTimeout(() => {
+      ErrorMessage.value = '';
+    }, 5000);
   }
 };
 
-</script>
+// Display a message if the account was successfully created, get the query parameter from the URL and display the message
+onBeforeMount(() => {
+  if (route.query.accountCreated === 'true') {
+    validMessage.value = 'Your account has been successfully created.';
+    setTimeout(() => {
+      validMessage.value = '';
+      route.query.accountCreated = '';
+    }, 5000);
+  }
+});
 
+// Function to go back to the landing page, and clear the input fields
+const goBack = () => {
+  router.push({ name: 'landing' });
+  userName.value = '';
+  password.value = '';
+};
+
+</script>

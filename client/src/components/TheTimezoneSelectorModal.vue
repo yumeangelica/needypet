@@ -11,7 +11,7 @@
     </ion-header>
     <ion-content class="ion-padding">
       <ion-list>
-        <ion-item v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
+        <ion-item class="timezone-selector-field" v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
           {{ zone }}
         </ion-item>
       </ion-list>
@@ -22,6 +22,7 @@
 <script setup lang='ts'>
 import { ref, computed, onBeforeMount, defineAsyncComponent } from 'vue';
 import { useAppStore } from '@/store/app';
+
 // Lazy load the components for better performance
 const IonModal = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonModal));
 const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
@@ -60,6 +61,7 @@ const closeModal = () => {
 
 const selectTimezone = (zone) => {
   emit('timezoneSelected', zone);
+  searchQuery.value = '';
   closeModal();
 };
 </script>

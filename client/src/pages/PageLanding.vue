@@ -10,6 +10,7 @@
           <ion-button @click="router.push({ name: 'register' })" expand="block" class="action-button secondary-action-button">Create
             Account</ion-button>
         </div>
+        <div class="copyright">&copy; 2020 - {{ year }} yumeangelica.github.io. All Rights Reserved.</div>
       </div>
     </ion-content>
   </ion-page>
@@ -29,4 +30,20 @@ const isMobile = computed(() => appStore.isMobile);
 
 const router = useRouter();
 
+const year = new Date().getFullYear();
+
 </script>
+
+<style>
+  .copyright {
+    margin-top: 30px;
+    font-size: 0.7rem;
+    text-align: center;
+  }
+
+  @media (max-width: 568px) {
+    .copyright {
+      font-size: 0.55rem;
+    }
+  }
+</style>

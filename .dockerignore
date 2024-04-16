@@ -32,3 +32,5 @@ coverage/
 *.csv
 *.dat
 *.tmp
+
+stats.html

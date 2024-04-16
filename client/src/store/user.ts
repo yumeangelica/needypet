@@ -42,6 +42,7 @@ const setAuthData = async (
   });
 };
 
+
 /**
  * @description User store definition
  */
@@ -54,6 +55,11 @@ export const useUserStore = defineStore({
     timezone: null,
   }),
   actions: {
+    /**
+     * @description Get the user by id
+     * @param id
+     * @returns
+     */
     async getUserById(id: string): Promise<User> {
       if (!id) {
         return null;
@@ -84,12 +90,20 @@ export const useUserStore = defineStore({
 
       return response;
     },
+    /**
+     * @description Create a new account
+     * @param userName
+     * @param email
+     * @param newPassword
+     * @param timezone
+     * @returns
+     */
     async createAccount({
       userName,
       email,
       newPassword,
       timezone,
-    }): Promise<boolean> {
+    }): Promise<{ isSuccess: boolean; message: string }> {
       try {
         const response = await axiosInstance.post(`${servicePath}/users`, {
           userName,
@@ -100,28 +114,56 @@ export const useUserStore = defineStore({
 
         if (response.status === 201) {
           console.log('Account created successfully');
-          return true;
+
+          return {
+            isSuccess: true,
+            message: 'Account created successfully',
+          };
+
         } else {
           console.error(
             'Account creation failed with status: ',
             response.status
           );
-          return false;
+          return {
+            isSuccess: false,
+            message: 'Account creation failed',
+          };
+
         }
       } catch (error) {
         console.error(
           'Error creating account:',
           error.response?.data || error.message
         );
-        return false;
+        if (error.response?.data.errors.userName) {
+          return {
+            isSuccess: false,
+            message: 'Username already exists',
+          };
+        }
+        if (error.response?.data.errors.email) {
+          return {
+            isSuccess: false,
+            message: 'Email already exists',
+          };
+        }
       }
     },
+    /**
+     * @description Update the user profile
+     * @param userName
+     * @param email
+     * @param timezone
+     * @param currentPassword
+     * @returns
+     */
     async updateUserProfile({
       userName,
       email,
       timezone,
       currentPassword,
-    }): Promise<boolean> {
+    }): Promise<{isSuccess: boolean, message: string}> {
       try {
         const response = await axiosInstance.put(
           `${servicePath}/users/${this.id}`,
@@ -141,19 +183,32 @@ export const useUserStore = defineStore({
             timezone: response.data.timezone,
           });
           console.log('User updated successfully');
-          return true;
-        } else {
-          console.error('User update failed with status:', response.status);
-          return false;
+          return {
+            isSuccess: true,
+            message: 'User updated successfully',
+          };
         }
+        return {
+          isSuccess: false,
+          message: 'User update failed, please try again later',
+        };
       } catch (error) {
         console.error(
           'Error updating user profile:',
           error.response?.data || error.message
         );
-        return false;
+        if (error.response?.data.error) {
+          return {
+            isSuccess: false,
+            message: error.response.data.error,
+          };
+        }
       }
     },
+    /**
+     * @description Delete the user account
+     * @returns
+     */
     async deleteAccount(): Promise<boolean> {
       try {
         const response = await axiosInstance.delete(
@@ -182,12 +237,21 @@ export const useUserStore = defineStore({
         return false;
       }
     },
+    /**
+     * @description Logout the user
+     */
     logout(): Promise<void> {
       this.$reset();
       localStorage.clear();
       return Promise.resolve();
     },
-    async login(userName: string, password: string): Promise<boolean> {
+    /**
+     * @description Login the user
+     * @param userName
+     * @param password
+     * @returns
+     */
+    async login(userName: string, password: string): Promise<{ isSuccess: boolean; message: string }> {
       const response = axiosInstance({
         method: 'post',
         url: `${servicePath}/login`,
@@ -198,25 +262,30 @@ export const useUserStore = defineStore({
           userName,
           password,
         },
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            const { token, user } = response.data;
-            return setAuthData(
-              token,
-              user.userName,
-              user.id,
-              user.timezone
-            ).then(() => {
-              return true;
-            });
-          }
-          return false;
-        })
-        .catch((error) => {
-          console.error('Error during login:', error.response?.status);
-          return false;
-        });
+      }).then((response) => {
+        if (response.status === 200) {
+          const { token, user } = response.data;
+          return setAuthData(
+            token,
+            user.userName,
+            user.id,
+            user.timezone
+          ).then(() => {
+            return {
+              isSuccess: true,
+              message: 'Login successful',
+            };
+          });
+        }
+      }).catch((error) => {
+        console.error('Error during login:', error.response?.status);
+        if (error.response?.status === 401) {
+          return {
+            isSuccess: false,
+            message: 'Invalid credentials',
+          };
+        }
+      });
 
       return response;
     },

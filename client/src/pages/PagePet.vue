@@ -6,20 +6,11 @@
           <div class="full-pet-card">
 
             <div class="inline-container">
-              <h3>{{ pet.name }}</h3>
-              <ion-buttons slot="end" v-if="pet.owner.id === userStore.id">
-
-                <ion-button class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon :icon="settingsOutline"
-                    slot="start"></ion-icon>
-                </ion-button>
-
-                <ion-button class="settings-button" @click="confirmDeletePet()">
-                  <ion-icon :icon="trashOutline" slot="start"></ion-icon>
-                </ion-button>
-              </ion-buttons>
-
+              <h2>{{ pet.name }}</h2>
+              <ion-button v-if="pet.owner.id === userStore.id" slot="start" class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon
+                  :icon="settingsOutline"></ion-icon>
+              </ion-button>
             </div>
-
 
             <div class="pet-info">
               <p><strong>Description:</strong> {{ pet.description }}</p>
@@ -53,57 +44,63 @@
                   </ion-buttons>
                 </ion-toolbar>
               </ion-header>
+
               <ion-content class="ion-padding">
+                <form @submit.prevent="addNewNeed">
 
-                <ion-item>
-                  <ion-input v-model="category" label="Category" placeholder="input need's category (e.g. walk or feed)"></ion-input>
-                </ion-item>
-
-                <ion-item>
-                  <ion-input v-model="description" label="Description" placeholder="input need's description"></ion-input>
-                </ion-item>
-
-                <!-- display dateFor as currentDate -->
-                <ion-item>
-                  <ion-input readonly :value="currentDate" label="Date"></ion-input>
-                </ion-item>
-
-                <ion-item v-show="!selection">
-                  <ion-label>Choose</ion-label>
-                  <ion-radio-group v-model="selection">
-                    <ion-item>
-                      <ion-radio slot="start" value="duration">Duration</ion-radio>
-                    </ion-item>
-                    <ion-item>
-                      <ion-radio slot="start" value="quantity">Quantity</ion-radio>
-                    </ion-item>
-                  </ion-radio-group>
-                </ion-item>
-
-                <div v-if="selection === 'quantity'">
-                  <ion-item lines="none">
-                    <ion-input v-model="valueOfSelection" label="Enter value" :autofocus="true" @input="cleanInput($event)"></ion-input>
-                    <ion-select v-model="unitOfSelection" interface="popover">
-                      <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
-                    </ion-select>
+                  <ion-item>
+                    <ion-input v-model="category" label="Category" placeholder="input need's category (e.g. walk or feed)"></ion-input>
                   </ion-item>
-                </div>
 
-
-                <div v-if="selection === 'duration'">
-                  <ion-item lines="none">
-                    <ion-input v-model="valueOfSelection" label="Enter duration" :autofocus="true" @input="cleanInput($event)"></ion-input>
-                    <ion-label>minute(s)</ion-label>
+                  <ion-item>
+                    <ion-input v-model="description" label="Description" placeholder="input need's description"></ion-input>
                   </ion-item>
-                </div>
 
-                <div class="confirm-button-container">
-                  <ion-button class="custom-button" @click="addNewNeed()">Confirm</ion-button>
-                  <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
-                </div>
+                  <!-- display dateFor as currentDate -->
+                  <ion-item>
+                    <ion-input readonly :value="currentDate" label="Date"></ion-input>
+                  </ion-item>
 
-                <!-- Show error message if fields are not filled. Global error message styling. -->
-                <p class="error-message" v-if="errorMessage">{{ errorMessage }}</p>
+                  <ion-item v-show="!selection">
+                    <ion-label>Choose</ion-label>
+                    <ion-radio-group v-model="selection">
+                      <ion-item>
+                        <ion-radio slot="start" value="duration">Duration</ion-radio>
+                      </ion-item>
+                      <ion-item>
+                        <ion-radio slot="start" value="quantity">Quantity</ion-radio>
+                      </ion-item>
+                    </ion-radio-group>
+                  </ion-item>
+
+                  <!-- unit dropdown -->
+                  <div v-if="selection === 'quantity'">
+                    <ion-item lines="none">
+                      <ion-input v-model="valueOfSelection" label="Enter value" :autofocus="true" @input="cleanInput($event)"></ion-input>
+                      <ion-select v-model="unitOfSelection" interface="popover">
+                        <ion-select-option disabled selected value="">select unit</ion-select-option>
+                        <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </div>
+
+
+                  <div v-if="selection === 'duration'">
+                    <ion-item lines="none">
+                      <ion-input v-model="valueOfSelection" label="Enter duration" :autofocus="true" @input="cleanInput($event)"></ion-input>
+                      <ion-label>minute(s)</ion-label>
+                    </ion-item>
+                  </div>
+
+                  <div class="confirm-button-container">
+                    <ion-button class="custom-button" type="submit">Confirm</ion-button>
+                    <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
+                  </div>
+
+                  <!-- Show error message if fields are not filled. Global error message styling. -->
+                  <p class="custom-error-message" v-if="errorMessage">{{ errorMessage }}</p>
+
+                </form>
               </ion-content>
             </ion-modal>
             <!-- Modal ends -->
@@ -112,7 +109,7 @@
               <!-- Date navigation buttons -->
               <div class="date-navigation">
                 <ion-button class="custom-button" @click="changeDay(-1)">Previous day</ion-button>
-                <h3>{{ currentDate }}</h3>
+                <h4>{{ currentDate }}</h4>
                 <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
               </div>
 
@@ -148,13 +145,12 @@
   </ion-page>
 </template>
 
-
 <script setup lang="ts">
 import { onBeforeMount, ref, computed, watch, Ref, provide, defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { addCircleOutline, settingsOutline, trashOutline } from 'ionicons/icons';
+import { addCircleOutline, settingsOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
 import moment from 'moment-timezone';
 import { useRouter } from 'vue-router';
@@ -178,7 +174,6 @@ const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonI
 const IonTitle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTitle));
 const TheNeedCard = defineAsyncComponent(() => import('@/components/TheNeedCard.vue'));
 
-
 const router = useRouter();
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -188,23 +183,16 @@ const petStore = usePetStore();
 const userStore = useUserStore();
 
 const currentDate = ref(moment().format('YYYY-MM-DD')); // Initalized to today's date
-
 const pet: Ref<Pet | null> = ref(null);
 const isOpen: Ref<boolean> = ref(false);
-
 const category: Ref<Need['category']> = ref('');
 const description: Ref<Need['description']> = ref('');
-
 const errorMessage: Ref<string> = ref('');
-
 const selection: Ref<string> = ref('');
 const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
 const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
-
 const validMessage: Ref<string> = ref('');
-
 const isOwner = ref(false);
-
 
 const changeDay = (delta: number) => {
 
@@ -222,7 +210,6 @@ const needsByDate = computed(() => {
     return acc;
   }, {});
 });
-
 
 const units = {
   duration: 'minutes',
@@ -272,6 +259,9 @@ const addNewNeed = async () => {
 
   if (!category.value || !description.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value || !(currentDate.value >= today)) {
     errorMessage.value = 'Please fill in all fields.';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
     return;
   }
 
@@ -311,13 +301,14 @@ watch(() => window.innerWidth, (newWidth) => {
   appStore.updateScreenSize(newWidth);
 });
 
-
+// Watch the selection value and update the unitOfSelection value accordingly
 watch(selection, (newValue) => {
   if (newValue === 'duration') {
     unitOfSelection.value = 'minutes';
   }
 });
 
+// Load the pet data from the store when the component is mounted
 onBeforeMount(async () => {
   const id = route.params.id as string;
   if (id) {
@@ -325,23 +316,6 @@ onBeforeMount(async () => {
   }
 });
 
-const confirmDeletePet = () => {
-  if (window.confirm('Are you sure you want to delete this pet?')) {
-    deletePet();
-  }
-};
-
-const deletePet = async () => {
-  // Check if the pet ID exists
-  if (pet.value && pet.value.id) {
-    const success = await petStore.deletePet(pet.value.id);
-    if (success) {
-      router.push({ name: 'home' });
-    } else {
-      console.error('Failed to delete pet');
-    }
-  }
-};
 // Function to handle the need deletion
 const handleNeedDeleted = (deleted: boolean) => {
   if (deleted) {
@@ -351,45 +325,15 @@ const handleNeedDeleted = (deleted: boolean) => {
     }, 5000);
   }
 };
+
+// Provide the function to the child component
 provide('isOwner', isOwner);
 provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the child component
 
 </script>
 
 <style scoped>
-  /* Wrapping name and setting button */
-  .inline-container {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 0px;
-  }
-
-  /* Settings button */
-  .settings-button,
-  .settings-button:active,
-  .settings-button:focus,
-  .settings-button:hover {
-    --background: transparent !important;
-    --background-activated: transparent !important;
-    --background-focused: transparent !important;
-    --border: none !important;
-    --box-shadow: none !important;
-    --ripple-color: transparent !important;
-    --outline: none !important;
-    padding: 0;
-    margin: 0;
-    height: auto;
-    width: auto;
-  }
-
-  .settings-button ion-icon {
-    font-size: 28px;
-    color: var(--color-card-border);
-    margin: 0;
-    padding: 0;
-  }
-
+  /* centering the content */
   .pet-container,
   .header-button-container,
   .date-navigation {
@@ -408,7 +352,7 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
     box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
     padding: 20px;
     width: 100%;
-    max-width: 600px;
+    max-width: 650px;
   }
 
   .need-cards-container {
@@ -418,29 +362,11 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
     gap: 20px;
   }
 
-  /* Modal styles */
-  ion-modal {
-    --border-radius: 20px;
-    --width: 95%;
-    --max-width: 800px;
-    --max-height: 600px;
-    --background: var(--color-card-background-lilac);
-    --border-radius: 50px;
-  }
-
   /* Desktop specific styles */
   @media (min-width: 568px) {
     .date-navigation {
       flex-direction: row;
       justify-content: space-around;
     }
-  }
-
-
-  /* Remove default input spinner */
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 </style>
