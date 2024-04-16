@@ -30,8 +30,8 @@
             </ion-buttons>
 
             <!-- Global error message styling -->
-            <div v-if="editError" class="custom-error-message">
-              {{ editError }}
+            <div v-if="errorMessage" class="custom-error-message">
+              {{ errorMessage }}
             </div>
 
           </form>
@@ -65,7 +65,7 @@ const router = useRouter();
 
 const showPasswordNotification = ref(false);
 
-const editError = ref('');
+const errorMessage = ref('');
 
 const showModal = ref(false);
 
@@ -115,20 +115,20 @@ const submitForm = async () => {
     showPasswordNotification.value = true;
     setTimeout(() => {
       showPasswordNotification.value = false;
-    }, 3000);
+    }, 5000);
     return;
   }
 
-  const isSuccess = await userStore.updateUserProfile(editData.value);
+  const { isSuccess, message } = await userStore.updateUserProfile(editData.value);
   if (isSuccess) {
     editData.value.currentPassword = ''; // Clear the password field
     originalData.value = { ...editData.value };
-    router.push({ name: 'profile' }); // Ensure this route name matches your router configuration
+    router.push({ name: 'profile', query: { userUpdateSucceefully: 'true' } }); // Ensure this route name matches your router configuration
   } else {
-    editError.value = 'Please check your credentials and try again.';
+    errorMessage.value = message;
     setTimeout(() => {
-      editError.value = '';
-    }, 3000);
+      errorMessage.value = '';
+    }, 5000);
   }
 };
 
