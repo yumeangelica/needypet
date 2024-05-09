@@ -16,17 +16,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, computed } from 'vue';
+import { computed } from 'vue';
 import { pawOutline, personCircleOutline } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
 import { useRouter, useRoute } from 'vue-router';
-
-// Lazy load the components for better performance
-const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
-const IonToolbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToolbar));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+import { IonHeader, IonToolbar, IonButton, IonButtons, IonIcon } from '@ionic/vue';
 
 const userStore = useUserStore();
 const router = useRouter();

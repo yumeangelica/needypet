@@ -3,7 +3,7 @@
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="login-register-container">
-          <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
+          <img :src="needypet_logo" alt="Needypet Logo" class="logo" />
           <h4 class="ion-text-center">Loving care for your Needy Pet!</h4>
           <!-- Global button styling for action buttons -->
           <ion-button @click="router.push({ name: 'login' });" expand="block" class="action-button primary-action-button">Login</ion-button>
@@ -17,13 +17,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
-// Lazy load the components for better performance
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
+import { IonButton, IonContent, IonPage } from '@ionic/vue';
+import needypet_logo from '@/assets/images/needypet_logo.webp';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

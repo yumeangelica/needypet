@@ -15,15 +15,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useAppStore } from '@/store/app';
 import { useRoute } from 'vue-router';
-import { IonRouterOutlet, IonTabs } from '@ionic/vue';
-
-// Lazy load the components for better performance
-const IonApp = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonApp));
-const TheHeader = defineAsyncComponent(() => import('@/components/TheHeader.vue'));
-const TheMobileHeader = defineAsyncComponent(() => import('@/components/TheMobileHeader.vue'));
+import { IonRouterOutlet, IonTabs, IonApp } from '@ionic/vue';
+import TheHeader from '@/components/TheHeader.vue';
+import TheMobileHeader from '@/components/TheMobileHeader.vue';
 
 const appStore = useAppStore();
 const route = useRoute();

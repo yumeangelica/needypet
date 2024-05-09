@@ -6,7 +6,11 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), legacy(), visualizer({ open: true, gzipSize: true, brotliSize: true })],
+  plugins: [
+    vue(),
+    legacy(),
+    visualizer({ open: true, gzipSize: true, brotliSize: true }),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -16,13 +20,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes('src')) {
+            return 'src';
+          }
           if (id.includes('node_modules')) {
-            // Split vendor modules into their own chunk
-            return 'vendor';
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
           }
         },
       },
-    },
-    chunkSizeWarningLimit: 600, // Adjusting chunk size limit (in KB)
-  },
+    }
+  }
 });

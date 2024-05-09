@@ -98,29 +98,13 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, computed, inject, onBeforeMount, defineAsyncComponent } from 'vue';
+import { defineProps, ref, computed, inject, onBeforeMount } from 'vue';
 import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil } from 'ionicons/icons';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
 import moment from 'moment-timezone';
-
-// Lazy load the components for better performance
-const IonCard = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonCard));
-const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
-const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
-const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
-const IonToggle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToggle));
-const IonSelect = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelect));
-const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
-const IonSelectOption = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelectOption));
-const IonModal = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonModal));
-const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
-const IonTitle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTitle));
-const IonToolbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToolbar));
+import { IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonToggle, IonInput, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/vue';
 
 const petStore = usePetStore();
 const userStore = useUserStore();
