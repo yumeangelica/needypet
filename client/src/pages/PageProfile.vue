@@ -39,17 +39,12 @@
 
 <script setup lang="ts">
 
-import { ref, computed, watchEffect, defineAsyncComponent } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
 import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
-
-// Lazy load the components for better performance
-const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
+import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

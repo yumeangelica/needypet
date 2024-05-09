@@ -64,24 +64,13 @@
 
 
 <script setup lang="ts">
-import { computed, ref, onBeforeMount, Ref, defineAsyncComponent } from 'vue';
+import { computed, ref, onBeforeMount, Ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { Pet } from '@/types/pet';
-// Lazy load the components for better performance
-const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
-const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
-const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
-const IonTextarea = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTextarea));
-const IonDatetime = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonDatetime));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
-const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
-
 import { trashOutline } from 'ionicons/icons';
+import { IonButton, IonButtons, IonContent, IonDatetime, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

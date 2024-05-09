@@ -4,7 +4,7 @@
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <!-- Global styling for container element -->
         <div class="login-register-container">
-          <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
+          <img :src="needypet_logo" alt="NeedyPet logo">
 
           <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
@@ -43,22 +43,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent, onBeforeMount } from 'vue';
+import { ref, computed, onBeforeMount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
-
-// Lazy load the components for better performance
-const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
-const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
-const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
-
+import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
 import { pawOutline } from 'ionicons/icons';
+import needypet_logo from '@/assets/images/needypet_logo.webp';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

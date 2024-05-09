@@ -4,7 +4,7 @@
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <!-- Global styling for container element -->
         <div class="login-register-container">
-          <img src="/images/needypet_logo.jpeg" alt="NeedyPet logo">
+          <img :src="needypet_logo" alt="NeedyPet logo">
 
           <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
@@ -63,22 +63,14 @@
 
 
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent } from 'vue';
+import { ref, computed } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
-// Lazy load the components for better performance
-const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
-const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
-const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
-const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
-const TheTimezoneSelectorModal = defineAsyncComponent(() => import('@/components/TheTimezoneSelectorModal.vue'));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
-
+import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonButtons } from '@ionic/vue';
+import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
 import { pawOutline } from 'ionicons/icons';
+import needypet_logo from '@/assets/images/needypet_logo.webp';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

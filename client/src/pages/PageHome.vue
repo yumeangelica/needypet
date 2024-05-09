@@ -44,18 +44,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeMount, computed, defineAsyncComponent } from 'vue';
+import { ref, watch, onBeforeMount, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { addCircleOutline } from 'ionicons/icons';
-
-// Lazy load the components for better performance
-const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
-const ThePetCard = defineAsyncComponent(() => import('@/components/ThePetCard.vue'));
+import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
+import ThePetCard from '@/components/ThePetCard.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

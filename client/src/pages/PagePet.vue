@@ -146,7 +146,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, computed, watch, Ref, provide, defineAsyncComponent } from 'vue';
+import { onBeforeMount, ref, computed, watch, Ref, provide } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -155,24 +155,8 @@ import { Pet, Need } from '@/types/pet';
 import moment from 'moment-timezone';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
-// Lazy load the components for better performance
-const IonPage = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonPage));
-const IonContent = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonContent));
-const IonButton = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButton));
-const IonModal = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonModal));
-const IonItem = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonItem));
-const IonToolbar = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonToolbar));
-const IonHeader = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonHeader));
-const IonButtons = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonButtons));
-const IonInput = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonInput));
-const IonRadio = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonRadio));
-const IonSelect = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelect));
-const IonSelectOption = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonSelectOption));
-const IonLabel = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonLabel));
-const IonRadioGroup = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonRadioGroup));
-const IonIcon = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonIcon));
-const IonTitle = defineAsyncComponent(() => import('@ionic/vue').then(m => m.IonTitle));
-const TheNeedCard = defineAsyncComponent(() => import('@/components/TheNeedCard.vue'));
+import { IonPage, IonButton, IonContent, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon, IonTitle } from '@ionic/vue';
+import TheNeedCard from '@/components/TheNeedCard.vue';
 
 const router = useRouter();
 const appStore = useAppStore();
