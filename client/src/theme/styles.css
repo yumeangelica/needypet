@@ -11,7 +11,7 @@
 
 /* Background picture */
 body {
-  background-image: url('/images/needypet_background.png');
+  background-image: url('../assets/images/needypet_background.webp');
   background-size: cover;
   background-position: center;
 }
