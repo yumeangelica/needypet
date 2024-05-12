@@ -1,3 +1,5 @@
+**Disclaimer**: This timesheet was intended for the Full Stack Open course project. I will continue to develop the NeedyPet app but will no longer log the hours here. The project will be maintained and updated on GitHub.
+
 | Date      | Tasks                                                                                                                                                                | Hours Spent |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | 11.12.23  | Plan the project idea: NeedyPet, a pet care management app.                                                                                                          | 2           |
@@ -316,3 +318,5 @@
 |           | Test that everything works properly and is ready for publishing.                                                                                                     | 14          |
 |           |                                                                                                                                                                      |             |
 | **Total** |                                                                                                                                                                      | **281**     |
+
+**Disclaimer**: This timesheet was intended for the Full Stack Open course project. I will continue to develop the NeedyPet app but will no longer log the hours here. The project will be maintained and updated on GitHub.
