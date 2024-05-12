@@ -224,7 +224,7 @@ const cleanInput = (event) => {
   value = value.replace(/^0+/, '');
 
   // Update the valueOfSelection reactive property
-  valueOfSelection.value = value;
+  valueOfSelection.value = Number(value);
 };
 
 // Fetch the pet from the store
@@ -240,6 +240,16 @@ async function getPet(id: string) {
 const addNewNeed = async () => {
 
   const today = moment().format('YYYY-MM-DD');
+
+  // If value is too big
+  if (selection.value === 'duration' && valueOfSelection.value > 1440) {
+    errorMessage.value = 'Duration cannot be more than 1440 minutes (24 hours)';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
+    return;
+  }
+
 
   if (!category.value || !description.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value || !(currentDate.value >= today)) {
     errorMessage.value = 'Please fill in all fields.';
@@ -270,6 +280,9 @@ const addNewNeed = async () => {
   } catch (error) {
     console.error(error);
     errorMessage.value = 'Failed to add need';
+    setTimeout(() => {
+      errorMessage.value = '';
+    }, 5000);
   }
 };
 
@@ -280,9 +293,11 @@ watch(route, async () => {
   }
 });
 
-// Watch the window width and update the store, will be used to close the modal on mobile
-watch(() => window.innerWidth, (newWidth) => {
-  appStore.updateScreenSize(newWidth);
+// Update the screen size when the window is resized
+const newWidth = computed(() => window.innerWidth);
+
+document.addEventListener('resize', () => {
+  appStore.updateScreenSize(newWidth.value);
 });
 
 // Watch the selection value and update the unitOfSelection value accordingly
