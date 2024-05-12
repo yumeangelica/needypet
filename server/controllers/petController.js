@@ -2,6 +2,9 @@ const Pet = require('../models/petModel');
 const User = require('../models/userModel');
 const { dailyTaskCompleter, checkLocalDateByTimezone } = require('../helper');
 const moment = require('moment-timezone');
+const needValidation = require('../validations/needValidation');
+const recordValidation = require('../validations/recordValidation');
+const z = require('zod');
 
 /**
  * @description Gets all pets for the user.
@@ -169,66 +172,35 @@ const deletePet = async (request, response, next) => {
  * @returns
  */
 const addNewNeed = async (request, response, next) => {
-  const pet = request.pet;
-
-  const dateFor = new Date(request.body.need.dateFor.slice(0, 10)); // If date has time, remove it, format it to Yyyy-mm-dd
-
-  if (request.body.need.dateFor && dateFor < new Date().setHours(0, 0, 0, 0)) {
-    return response.status(400).json({ error: 'Date for need cannot be in the past' });
-  }
-
-  if (request.body.need.quantity && !request.body.need.quantity.unit) {
-    return response.status(400).json({ error: 'Quantity unit required' });
-  }
-
-  if (request.body.need.quantity && !request.body.need.quantity.value) {
-    return response.status(400).json({ error: 'Quantity value required' });
-  }
-
-  if (request.body.need.quantity && request.body.need.quantity.unit !== 'ml' && request.body.need.quantity.unit !== 'g') {
-    return response.status(400).json({ error: 'Quantity unit ml or g required' });
-  }
-
-  if (request.body.need.duration && !request.body.need.duration.unit) {
-    return response.status(400).json({ error: 'Duration unit required' });
-  }
-
-  if (request.body.need.duration && !request.body.need.duration.value) {
-    return response.status(400).json({ error: 'Duration time length required' });
-  }
-
-  if (request.body.need.duration && request.body.need.duration.value > 1440) {
-    return response.status(400).json({ error: 'Duration time length cannot be over 1440 minutes' });
-  }
-
-  if (request.body.need.duration && request.body.need.duration.unit !== 'minutes') {
-    return response.status(400).json({ error: 'Duration unit minute(s) required ' });
-  }
-
-  const newNeedObject = {
-    dateFor,
-    category: request.body.need.category,
-    description: request.body.need.description,
-  };
-
-  if (request.body.need.quantity) { // If quantity is provided
-    newNeedObject.quantity = {
-      value: request.body.need.quantity.value,
-      unit: request.body.need.quantity.unit,
-    };
-  } else if (request.body.need.duration) { // If duration is provided
-    newNeedObject.duration = {
-      value: request.body.need.duration.value,
-      unit: request.body.need.duration.unit,
-    };
-  }
-
-  pet.needs.push(newNeedObject);
-
   try {
+    request.body.need.dateFor = new Date(request.body.need.dateFor.slice(0, 10));
+    const validateNeed = needValidation(request.body.need);
+    const pet = request.pet;
+
+    const newNeedObject = {
+      dateFor: validateNeed.dateFor,
+      category: validateNeed.category,
+      description: validateNeed.description,
+    };
+
+    if (validateNeed.quantity) {
+      newNeedObject.quantity = validateNeed.quantity;
+    }
+
+    if (validateNeed.duration) {
+      newNeedObject.duration = validateNeed.duration;
+    }
+
+    pet.needs.push(newNeedObject);
+
     await pet.save();
     response.status(201).json(pet);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.log(error.flatten());
+      return response.status(400).json({ error: error.flatten() });
+    }
+
     next(error);
   }
 };
@@ -241,83 +213,53 @@ const addNewNeed = async (request, response, next) => {
  * @returns
  */
 const addNewRecord = async (request, response, next) => {
-  const pet = request.pet; // Pet comes from request.pet, which is attached to the request object by getPetHandler middleware
-
-  const need = pet.needs.id(request.params.needid);
-
-  if (!need) {
-    return response.status(404).json({ error: 'Need not found' });
-  }
-
-  if (need.completed) {
-    return response.status(400).json({ error: 'Need is already completed' });
-  }
-
-  if (need.archived) {
-    return response.status(400).json({ error: 'Need is archived' });
-  }
-
-  const currentDate = checkLocalDateByTimezone(request.user.timezone);
-  if (need.dateFor.toISOString().split('T')[0] !== currentDate) {
-    return response.status(400).json({ error: 'Need date is not the same as the current date' });
-  }
-
-  if (request.body.quantity && !request.body.quantity.value) { // If pet need has quantity and request body doesn't
-    return response.status(400).json({ error: 'Quantity value required' });
-  }
-
-  if (request.body.quantity && !request.body.quantity.unit) { // If pet need has quantity and request body doesn't
-    return response.status(400).json({ error: 'Quantity unit required' });
-  }
-
-  if (request.body.duration && !request.body.duration.value) { // If pet need has duration and request body doesn't
-    return response.status(400).json({ error: 'Duration time length required' });
-  }
-
-  if (request.body.duration && !request.body.duration.unit) { // If pet need has duration and request body doesn't
-    return response.status(400).json({ error: 'Duration unit required' });
-  }
-
-  if (request.body.quantity && request.body.quantity.unit !== 'ml' && request.body.quantity.unit !== 'g') { // If quantity unit is not ml or g
-    return response.status(400).json({ error: 'Quantity unit ml or g required' });
-  }
-
-  if (request.body.duration && request.body.duration.value > 1440) {
-    return response.status(400).json({ error: 'Duration time length cannot be over 1440 minutes' });
-  }
-
-  if (Object.hasOwn(need, 'quantity') && Object.hasOwn(request.body, 'duration')) {
-    return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
-  }
-
-  if (Object.hasOwn(need, 'duration') && Object.hasOwn(request.body, 'quantity')) {
-    return response.status(400).json({ error: `Classification need to be quantity and unit need to be ${need.quantity.unit}` });
-  }
-
-  const newRecordObject = {
-    careTaker: request.user.id,
-    date: moment().tz(request.user.timezone).format(), // Current date in user's timezone
-    note: request.body.note,
-  };
-
-  if (need.quantity && request.body.quantity) { // If quantity is provided
-    newRecordObject.quantity = {
-      value: request.body.quantity.value,
-      unit: request.body.quantity.unit,
-    };
-  } else if (need.duration && request.body.duration) { // If duration is provided
-    newRecordObject.duration = {
-      value: request.body.duration.value,
-      unit: request.body.duration.unit,
-    };
-  }
-
   try {
-    need.careRecords.push(newRecordObject); // Push new record to care records array
-    dailyTaskCompleter(need); // Check if daily task is completed and change need.completed to true if it is
+    const validateRecord = recordValidation(request.body);
+
+    const pet = request.pet; // Pet comes from request.pet, which is attached to the request object by getPetHandler middleware
+
+    const need = pet.needs.id(request.params.needid);
+
+    if (!need) {
+      return response.status(404).json({ error: 'Need not found' });
+    }
+
+    if (need.completed) {
+      return response.status(400).json({ error: 'Need is already completed' });
+    }
+
+    if (need.archived) {
+      return response.status(400).json({ error: 'Need is archived' });
+    }
+
+    const currentDate = checkLocalDateByTimezone(request.user.timezone);
+    if (need.dateFor.toISOString().split('T')[0] !== currentDate) {
+      return response.status(400).json({ error: 'Need date is not the same as the current date' });
+    }
+
+    const newRecordObject = {
+      careTaker: request.user.id,
+      date: moment().tz(request.user.timezone).format(),
+      note: validateRecord.note,
+    };
+
+    if (validateRecord.quantity) {
+      newRecordObject.quantity = validateRecord.quantity;
+    }
+
+    if (validateRecord.duration) {
+      newRecordObject.duration = validateRecord.duration;
+    }
+
+    need.careRecords.push(newRecordObject);
+    dailyTaskCompleter(need);
     await pet.save();
     response.status(201).json(pet);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return response.status(400).json({ error: error.flatten() });
+    }
+
     next(error);
   }
 };
