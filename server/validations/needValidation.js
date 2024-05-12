@@ -59,7 +59,7 @@ const frequencySchema = z.object({
   periodicity: periodicitySchema,
 });
 
-const quantityValueSchema = z.string({
+const quantityValueSchema = z.number({
   value: z.number(),
 });
 

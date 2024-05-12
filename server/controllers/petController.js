@@ -197,7 +197,6 @@ const addNewNeed = async (request, response, next) => {
     response.status(201).json(pet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error.flatten());
       return response.status(400).json({ error: error.flatten() });
     }
 
