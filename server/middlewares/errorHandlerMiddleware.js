@@ -50,6 +50,11 @@ const errorHandler = (error, request, response, next) => {
     return response.status(422).json({ error: 'Validation error', errors: error.errors });
   }
 
+  // Handle Zod validation errors specifically
+  if (error.name === 'ZodError') {
+    return response.status(422).json({ error: 'Zod validation error', details: error.flatten() });
+  }
+
   // Other errors, for example database errors
   response.status(500).json({ error: 'Internal Server Error' });
 };
