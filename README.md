@@ -94,11 +94,6 @@ The following features are planned for the next version update of NeedyPet, enha
 - **Frontend Technologies**: Vue.js, Ionic, TypeScript, ESLint, Jest
 - **DevOps Tools**: Docker, Nginx
 
-
-## Hours spent
-
-Link to the [work log](https://github.com/yumeangelica/needypet/blob/main/documentation/usedHours.md) where I keep track of used hours and specific tasks for the NeedyPet project.
-
 ## Credits
 
 This project was developed by yumeangelica. For more information on how this work can be used, please refer to the LICENSE.txt file.
