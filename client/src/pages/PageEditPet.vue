@@ -112,7 +112,7 @@ const dateSelected = (selectedDateString: string) => {
 // Format the date for display
 const formattedDate = computed(() => {
   return existingPetObject.value.birthday
-    ? new Date(existingPetObject.value.birthday).toLocaleDateString('en-CA')
+    ? new Date(existingPetObject.value.birthday).toLocaleDateString('en-GB')
     : '';
 });
 
