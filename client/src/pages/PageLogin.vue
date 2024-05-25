@@ -32,8 +32,8 @@
             </ion-buttons>
 
             <!-- Global error message styling -->
-            <div v-if="ErrorMessage" class="custom-error-message">
-              {{ ErrorMessage }}
+            <div v-if="errorMessage" class="custom-error-message">
+              {{ errorMessage }}
             </div>
           </form>
         </div>
@@ -57,7 +57,7 @@ const isMobile = computed(() => appStore.isMobile);
 
 const userName = ref('');
 const password = ref('');
-const ErrorMessage = ref('');
+const errorMessage = ref('');
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
@@ -77,9 +77,9 @@ const login = async () => {
     password.value = '';
     await petStore.getAllPets();
   } else {
-    ErrorMessage.value = message;
+    errorMessage.value = message;
     setTimeout(() => {
-      ErrorMessage.value = '';
+      errorMessage.value = '';
     }, 5000);
   }
 };
