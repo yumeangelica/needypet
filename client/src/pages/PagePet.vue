@@ -166,16 +166,16 @@ const route = useRoute();
 const petStore = usePetStore();
 const userStore = useUserStore();
 
-const currentDate = ref(moment().format('YYYY-MM-DD')); // Initalized to today's date
+const currentDate: Ref<string> = ref(moment().format('YYYY-MM-DD')); // Initalized to today's date
 const pet: Ref<Pet | null> = ref(null);
-const isOpen: Ref<boolean> = ref(false);
+const isOpen = ref(false);
 const category: Ref<Need['category']> = ref('');
 const description: Ref<Need['description']> = ref('');
-const errorMessage: Ref<string> = ref('');
-const selection: Ref<string> = ref('');
+const errorMessage = ref('');
+const selection = ref('');
 const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
 const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
-const validMessage: Ref<string> = ref('');
+const validMessage = ref('');
 const isOwner = ref(false);
 
 const changeDay = (delta: number) => {
