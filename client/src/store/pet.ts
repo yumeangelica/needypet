@@ -201,9 +201,6 @@ export const usePetStore = defineStore({
         return false;
       }
 
-      console.log('Updated need:', updatedNeed);
-      console.log('Need ID:', needId);
-
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
