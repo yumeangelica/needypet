@@ -22,7 +22,7 @@ import router from '@/router';
 
 const route = useRoute();
 
-const navigateTo = (name) => {
+const navigateTo = (name: string) => {
   if (route.name !== name) {
     router.push({ name });
   }

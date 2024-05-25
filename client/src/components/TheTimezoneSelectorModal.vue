@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, computed, onBeforeMount } from 'vue';
+import { ref, computed, onBeforeMount, Ref } from 'vue';
 import { useAppStore } from '@/store/app';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonSearchbar, IonContent, IonList, IonItem } from '@ionic/vue';
 
@@ -30,7 +30,7 @@ const { isOpen } = defineProps({
   isOpen: Boolean
 });
 
-const timezones = ref([]);
+const timezones: Ref<string[]> = ref([]);
 
 onBeforeMount(async () => {
   timezones.value = await appStore.getTimezones();
@@ -48,7 +48,7 @@ const closeModal = () => {
   emit('update:isOpen', false);
 };
 
-const selectTimezone = (zone) => {
+const selectTimezone = (zone: string) => {
   emit('timezoneSelected', zone);
   searchQuery.value = '';
   closeModal();

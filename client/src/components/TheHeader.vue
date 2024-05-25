@@ -28,7 +28,7 @@ const route = useRoute();
 
 const userName = computed(() => userStore.userName);
 
-const navigateTo = (name) => {
+const navigateTo = (name: string) => {
   if (route.name !== name) {
     router.push({ name });
   }

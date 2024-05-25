@@ -39,12 +39,14 @@
 
 <script setup lang="ts">
 
-import { ref, computed, watchEffect } from 'vue';
+import { ref, computed, watchEffect, Ref } from 'vue';
 import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
 import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
+import { User } from '@/types/user';
+
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -52,7 +54,7 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 
-const user = ref(null);
+const user: Ref<User> = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
 const validMessage = ref('');
 

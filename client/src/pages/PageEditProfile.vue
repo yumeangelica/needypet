@@ -43,12 +43,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount, computed } from 'vue';
+import { ref, onBeforeMount, computed, Ref } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonPage, IonButtons } from '@ionic/vue';
 import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
+import { User } from '@/types/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -71,7 +72,7 @@ const editData = ref({
   currentPassword: '',
 });
 
-const user = ref(null);
+const user: Ref<User> = ref(null);
 
 const fetchUser = async () => {
   const userData = await userStore.getUserById(userStore.id);

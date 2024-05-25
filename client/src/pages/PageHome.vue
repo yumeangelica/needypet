@@ -44,13 +44,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeMount, computed } from 'vue';
+import { ref, watch, onBeforeMount, computed, Ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { addCircleOutline } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
 import ThePetCard from '@/components/ThePetCard.vue';
+import { Pet } from '@/types/pet';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -58,8 +59,8 @@ const router = useRouter();
 const route = useRoute();
 const petStore = usePetStore();
 
-const ownPets = ref([]);
-const carerPets = ref([]);
+const ownPets: Ref<Pet[]> = ref([]);
+const carerPets: Ref<Pet[]> = ref([]);
 
 // Update the pet lists from the store
 const updatePetLists = async () => {

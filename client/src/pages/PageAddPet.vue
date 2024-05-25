@@ -48,12 +48,13 @@
 
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, Ref } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonDatetime, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
+import { NewPetObject } from '@/types/pet';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -62,11 +63,11 @@ const router = useRouter();
 const petStore = usePetStore();
 const userStore = useUserStore();
 
-const userId = ref(userStore.id);
+const userId: Ref<string | null> = ref(userStore.id);
 
 const errorMessage = ref('');
 
-const newPetObject = ref({
+const newPetObject: Ref<NewPetObject> = ref({
   name: '',
   breed: '',
   species: '',

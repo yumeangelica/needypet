@@ -72,4 +72,12 @@ interface PetState {
   pets: Pet[];
 }
 
-export { Pet, Need, CareRecord, PetState, QuantityRecord, DurationRecord };
+interface NewPetObject {
+  name: string;
+  breed: string;
+  species: string;
+  description: string;
+  birthday: Date | null;
+}
+
+export { Pet, Need, CareRecord, PetState, QuantityRecord, DurationRecord, NewPetObject };
