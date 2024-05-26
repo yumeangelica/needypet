@@ -29,11 +29,18 @@
       <ion-button v-if="isToday || isFuture" @click="editNeed" fill="clear" class="option-button">
         <ion-icon :icon="pencil" slot="icon-only"></ion-icon>
       </ion-button>
+
       <!-- isActive toggle button -->
       <div v-if="isToday || isFuture">
-        <ion-toggle v-if="!need.isActive" @ionChange="toggleNeedActive(need.id)"></ion-toggle>
-        <ion-toggle v-else @ionChange="toggleNeedActive(need.id)" checked></ion-toggle>
+        <ion-label class="need-toggle-title">
+          {{ need.isActive ? 'Active' : 'Inactive' }}
+        </ion-label>
+        <div class="centering-container">
+          <ion-toggle class="need-toggle-switch" v-if="!need.isActive" @ionChange="toggleNeedActive(need.id)"></ion-toggle>
+          <ion-toggle class="need-toggle-switch" v-else @ionChange="toggleNeedActive(need.id)" checked></ion-toggle>
+        </div>
       </div>
+
       <!-- delete need button -->
       <ion-button @click="confirmDeleteNeed(need.id)" fill="clear" class="option-button">
         <ion-icon :icon="trashOutline" slot="icon-only"></ion-icon>
@@ -312,10 +319,19 @@ const deleteNeed = async (needId: string) => {
 
 
 <style scoped>
+  .need-toggle-title {
+    display: block;
+  }
+
+  .need-toggle-switch {
+    margin-bottom: 10px;
+  }
+
   .need-card-field {
     margin-top: 10px;
   }
 
+  /* For centering content */
   .centering-container {
     display: flex;
     justify-content: center;
@@ -337,11 +353,6 @@ const deleteNeed = async (needId: string) => {
   .card-active {
     background: var(--color-pet-need-background);
   }
-
-  .card-active {
-    background: var(--color-pet-need-background);
-  }
-
   .card-inactive {
     background: #ded7e0;
     color: #a0a0a0;
