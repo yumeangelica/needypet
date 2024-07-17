@@ -53,6 +53,16 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/PageLogin.vue'),
   },
   {
+    path: '/request-password-reset',
+    name: 'request-password-reset',
+    component: () => import('@/pages/PageRequestPasswordReset.vue'),
+  },
+  {
+    path: '/confirm',
+    name: 'confirm',
+    component: () => import('@/pages/PageConfirm.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('@/pages/PageNotFound.vue'),
