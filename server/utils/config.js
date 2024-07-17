@@ -10,6 +10,10 @@ const mongodbUri = process.env.NODE_ENV === 'production' ? process.env.PRODUCTIO
 const backendPort = process.env.PORT || 3000; // Port for backend server
 const jwtSecret = process.env.JWT_SECRET;
 const allowedOrigins = process.env.ALLOWED_ORIGINS;
+const emailUser = process.env.EMAIL_USER;
+const emailPass = process.env.EMAIL_PASS;
+const emailService = process.env.EMAIL_SERVICE;
+const emailPort = process.env.EMAIL_PORT;
 
 module.exports = {
   isDevelopment,
@@ -19,4 +23,8 @@ module.exports = {
   backendPort,
   jwtSecret,
   allowedOrigins,
+  emailUser,
+  emailPass,
+  emailService,
+  emailPort,
 };

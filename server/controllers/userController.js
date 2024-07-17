@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const { passwordStrengthValidator } = require('../middlewares/passwordStrengthValidator');
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../utils/config');
+const { sendConfirmationEmail, sendPasswordResetEmail } = require('../utils/mailer');
 
 /**
  * @description Gets the user by id
@@ -74,7 +75,9 @@ const createNewUser = async (request, response, next) => {
 
   try {
     newUser.setPassword(newPassword); // Setting password with method from userModel which hashes the password
+    newUser.generateEmailConfirmToken(); // Generate email confirmation token
     await newUser.save();
+    await sendConfirmationEmail(newUser.email, newUser.emailConfirmToken); // Send confirmation email to user
     response.status(201).json(newUser);
   } catch (error) {
     next(error);
@@ -200,12 +203,47 @@ const loginUser = async (request, response, next) => {
 
     const token = user.generateJWT(); // Generate token with method from userModel
 
-    response.status(200).json({ token, user: { userName: user.userName, id: user._id, timezone: user.timezone } });
+    response.status(200).json({
+      token, user: {
+        userName: user.userName, id: user._id, timezone: user.timezone, emailConfirmed: user.emailConfirmed,
+      },
+    });
   } catch (error) {
     next(error);
   }
 };
 
+/**
+ * @description If user has forgotten password, they can request a password reset link
+ */
+const requestPasswordReset = async (request, response, next) => {
+  const { email } = request.body;
+
+  try {
+    const user = await User.findOne({ email }); // Find user by email
+
+    // Not revealing if user exists or not to avoid email enumeration
+    if (!user) {
+      return response.status(200).json({ message: 'Password reset link sent to email' });
+    }
+
+    if (!user.canResendVerificationEmail()) {
+      return response.status(200).json({ message: 'Password reset link sent to email' });
+    }
+
+    user.generatePasswordResetToken(); // Generate password reset token
+    await user.save(); // Save updated user to database
+    await sendPasswordResetEmail(user.email, user.passwordResetToken); // Send password reset email to user
+
+    response.status(200).json({ message: 'Password reset link sent to email' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @description Validates the user token
+ */
 const validateUserToken = async (request, response, next) => {
   const authHeader = request.headers.authorization; // Get authorization header
   let token = null; // Initialize token so it can be used outside of if statement
@@ -231,6 +269,98 @@ const validateUserToken = async (request, response, next) => {
   }
 };
 
+/**
+ * @description Verifies the email confirmation token
+ */
+const verifyEmailConfirmationToken = async (request, response, next) => {
+  const { token, email } = request.body;
+
+  try {
+    const user = await User.findOne({ email, emailConfirmToken: token }); // Find user by email and token
+
+    if (!user) { // If user not found or token is invalid
+      return response.status(401).json({ error: 'Invalid token' });
+    }
+
+    if (!user.verifyEmailConfirmToken(token)) {
+      return response.status(401).json({ error: 'Token expired' });
+    }
+
+    user.emailConfirmed = true; // Set emailConfirmed to true
+    user.emailConfirmToken = null; // Remove token
+    user.emailConfirmTokenExpires = null; // Remove expiration date
+    await user.save(); // Save updated user to database
+
+    response.status(200).json({ message: 'Email confirmed successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @description Resends the email confirmation to the user
+ */
+const resendEmailConfirmation = async (request, response, next) => {
+  const user = request.user; // User is attached to the request object by getUserHandler middleware
+
+  if (!user.canResendVerificationEmail()) {
+    return response.status(400).json({ error: 'Cannot resend email confirmation yet' });
+  }
+
+  try {
+    user.generateEmailConfirmToken(); // Generate new email confirmation token
+    await user.save(); // Save updated user to database
+    await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+
+    response.status(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @description Verifies the password reset token
+ */
+const verifyPasswordResetToken = async (request, response, next) => {
+  const { token, email } = request.body;
+
+  try {
+    const user = await User.findOne({ email, passwordResetToken: token }); // Find user by email and token
+
+    if (!user || !user.verifyPasswordResetToken(token)) { // If user not found or token is invalid
+      return response.status(401).json({ error: 'Invalid token' });
+    }
+
+    response.status(200).json({ message: 'Token is valid' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @description Resets the user password
+ */
+const passwordReset = async (request, response, next) => {
+  const { token, email, newPassword } = request.body;
+
+  try {
+    const user = await User.findOne({ email, passwordResetToken: token }); // Find user by email and token
+
+    if (!user || !user.verifyPasswordResetToken(token)) { // If user not found or token is invalid
+      return response.status(401).json({ error: 'Invalid token' });
+    }
+
+    user.setPassword(newPassword); // Set new password
+    user.passwordResetToken = null; // Remove token
+    user.passwordResetExpires = null; // Remove expiration date
+    await user.save(); // Save updated user to database
+
+    response.status(200).json({ message: 'Password reset successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUserById,
   getUserByName,
@@ -239,4 +369,9 @@ module.exports = {
   deleteUser,
   loginUser,
   validateUserToken,
+  verifyEmailConfirmationToken,
+  resendEmailConfirmation,
+  requestPasswordReset,
+  verifyPasswordResetToken,
+  passwordReset,
 };
