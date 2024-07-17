@@ -302,6 +302,8 @@ ion-datetime {
   font-size: 0.75rem;
   text-align: center;
   margin: 1rem;
+  white-space: pre-line;
+  word-wrap: break-word;
 }
 
 .custom-error-message {
