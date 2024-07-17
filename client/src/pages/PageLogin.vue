@@ -2,7 +2,6 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <!-- Global styling for container element -->
         <div class="login-register-container">
           <img :src="needypet_logo" alt="NeedyPet logo">
 
@@ -26,12 +25,14 @@
             </ion-item>
 
             <ion-buttons>
-              <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
               <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
             </ion-buttons>
 
-            <!-- Global error message styling -->
+            <!-- Did you forget your password button -->
+            <ion-button @click="router.push({ name: 'request-password-reset' })" expand="block" class="action-button secondary-action-button">Forgot
+              Password</ion-button>
+
             <div v-if="errorMessage" class="custom-error-message">
               {{ errorMessage }}
             </div>
@@ -43,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeMount } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
@@ -85,9 +86,9 @@ const login = async () => {
 };
 
 // Display a message if the account was successfully created, get the query parameter from the URL and display the message
-onBeforeMount(() => {
+onMounted(() => {
   if (route.query.accountCreated === 'true') {
-    validMessage.value = 'Your account has been successfully created.';
+    validMessage.value = 'Your account has been successfully created.\nPlease check your email to verify your account.';
     setTimeout(() => {
       validMessage.value = '';
       route.query.accountCreated = '';
