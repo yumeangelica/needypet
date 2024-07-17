@@ -27,9 +27,9 @@ const route = useRoute();
 const isMobile = computed(() => appStore.isMobile);
 
 // Desktop header should not be shown on login, register, and landing pages and not on mobile
-const showHeaderNavigation = computed(() => !appStore.isMobile && !['login', 'register', 'landing'].includes(route.name));
+const showHeaderNavigation = computed(() => !appStore.isMobile && !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(route.name));
 // Mobile navbar should not be shown on login, register, and landing pages and not on desktop
-const showMobileNavigation = computed(() => appStore.isMobile && !['login', 'register', 'landing'].includes(route.name));
+const showMobileNavigation = computed(() => appStore.isMobile && !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(route.name));
 
 // Update the screen size when the window is resized
 function updateScreenSize() {
