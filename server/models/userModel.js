@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../utils/config');
 const helper = require('../helper');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -23,6 +24,22 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: {
     type: String,
+  },
+  emailConfirmToken: {
+    type: String,
+  },
+  emailConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  emailConfirmTokenExpires: {
+    type: Date,
+  },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordResetExpires: {
+    type: Date,
   },
   pets: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -80,6 +97,68 @@ userSchema.methods.generateJWT = function () {
     id: this._id,
     // eslint-disable-next-line quotes
   }, config.jwtSecret, { expiresIn: "10h" });
+};
+
+/**
+ * @description Method to generate email confirmation token for user
+ */
+userSchema.methods.generateEmailConfirmToken = function () {
+  if (this.emailConfirmed) {
+    return;
+  }
+
+  const expiresInHours = 2;
+  const expirationDate = new Date(Date.now() + (expiresInHours * 60 * 60 * 1000));
+  const token = crypto.randomBytes(20).toString('hex');
+
+  this.emailConfirmToken = token;
+  this.emailConfirmTokenExpires = expirationDate;
+};
+
+/**
+ * @description Method to verify email confirmation token for user
+ * @param {*} token
+ * @returns true if token is valid
+ */
+userSchema.methods.verifyEmailConfirmToken = function (token) {
+  return this.emailConfirmToken === token && this.emailConfirmTokenExpires.getTime() > Date.now();
+};
+
+/**
+ * @description Method to check if user has expired email confirmation token
+ * @returns true if user can resend verification email
+ */
+userSchema.methods.canResendVerificationEmail = function () {
+  return (this.emailConfirmTokenExpires === null && this.emailConfirmTokenExpires === null) || (this.emailConfirmTokenExpires !== null && Date.now() > this.emailConfirmTokenExpires.getTime());
+};
+
+/**
+ * @description Method to generate password reset token for user, if they have forgotten password. Sets expiration time for token
+ */
+userSchema.methods.generatePasswordResetToken = function () {
+  const expiresInHours = 2;
+  const expirationDate = new Date(Date.now() + (expiresInHours * 60 * 60 * 1000));
+  const token = crypto.randomBytes(20).toString('hex');
+
+  this.passwordResetToken = token;
+  this.passwordResetExpires = expirationDate;
+};
+
+/**
+ * @description Method to verify password reset token for user
+ * @param {*} token
+ * @returns true if token is valid
+ */
+userSchema.methods.verifyPasswordResetToken = function (token) {
+  return this.passwordResetToken === token && this.passwordResetExpires.getTime() > Date.now();
+};
+
+/**
+ * @description Method to check if user can resend password reset email
+ * @returns true if user can resend password reset email
+ */
+userSchema.methods.canResendPasswordReset = function () {
+  return (this.passwordResetToken === null && this.passwordResetExpires === null) || (this.passwordResetExpires !== null && Date.now() > this.passwordResetExpires.getTime());
 };
 
 const User = mongoose.model('User', userSchema);
