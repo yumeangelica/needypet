@@ -33,7 +33,7 @@ async function initApp() {
   const petStore = usePetStore();
 
   // Define public routes
-  const publicRoutes = ['login', 'register', 'landing'];
+  const publicRoutes = ['login', 'register', 'landing', 'confirm', 'request-password-reset'];
 
   // Initialize user's session from local storage if token exists
   if (!userStore.token) {
@@ -43,22 +43,24 @@ async function initApp() {
   // Validate token and set user's session accordingly
   const isValidToken = await userStore.checkAndValidateToken();
 
+  router.beforeEach((to, from, next) => {
+    if (publicRoutes.includes(to.name as string)) {
+      next();
+    } else if (userStore.token) {
+      next();
+    } else {
+      next({ name: 'landing' });
+    }
+  });
+
   if (isValidToken) {
     // If token is valid, fetch pets and navigate to the intended route
     await petStore.getAllPets();
     const currentPath = sessionStorage.getItem('currentPath') || '/';
 
     // Navigate to saved path if it's not a public route or the home page by default
-    if (
-      !publicRoutes.includes(router.currentRoute.value.name as string) ||
-      currentPath !== '/'
-    ) {
+    if (!publicRoutes.includes(router.currentRoute.value.name as string) && currentPath !== '/') {
       router.push(currentPath);
-    }
-  } else {
-    // If token is not valid, navigate to login page unless it's a public route
-    if (!publicRoutes.includes(router.currentRoute.value.name as string)) {
-      router.push({ name: 'landing' });
     }
   }
 

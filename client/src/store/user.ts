@@ -27,18 +27,21 @@ const setAuthData = async (
   token: string,
   userName: string,
   id: string,
-  timezone: string
+  timezone: string,
+  emailConfirmed: boolean
 ): Promise<void> => {
   const userStore = useUserStore(); // Get the user store
   await setLocalStorageItem('token', token);
   await setLocalStorageItem('userName', userName);
   await setLocalStorageItem('id', id);
   await setLocalStorageItem('timezone', timezone);
+  await setLocalStorageItem('emailConfirmed', emailConfirmed.toString());
   userStore.$patch((state) => {
     state.token = token;
     state.userName = userName;
     state.id = id;
     state.timezone = timezone;
+    state.emailConfirmed = emailConfirmed;
   });
 };
 
@@ -53,6 +56,7 @@ export const useUserStore = defineStore({
     userName: null,
     id: null,
     timezone: null,
+    emailConfirmed: null,
   }),
   actions: {
     /**
@@ -269,7 +273,8 @@ export const useUserStore = defineStore({
             token,
             user.userName,
             user.id,
-            user.timezone
+            user.timezone,
+            user.emailConfirmed
           ).then(() => {
             return {
               isSuccess: true,
@@ -297,6 +302,7 @@ export const useUserStore = defineStore({
       this.userName = localStorage.getItem('userName') || null;
       this.id = localStorage.getItem('id') || null;
       this.timezone = localStorage.getItem('timezone') || null;
+      this.emailConfirmed = localStorage.getItem('emailConfirmed') === 'true' || false;
     },
     /**
      * @description Check if the token is valid
@@ -327,6 +333,148 @@ export const useUserStore = defineStore({
 
       return response;
     },
+    /**
+     * @description Confirm the user's email
+     * @param email
+     * @param token
+     * @returns
+     */
+    async confirmEmail(email: string, token: string): Promise<boolean> {
+      const response = axiosInstance({
+        method: 'post',
+        url: `${servicePath}/verify-email-confirmation-token`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          email,
+          token,
+        },
+      })
+        .then((response) => {
+          return response.status === 200;
+        })
+        .catch((error) => {
+          console.error('Error during email confirmation:', error.response?.status);
+          return false;
+        });
+
+      return response;
+    },
+    /**
+     * @description Resend the email confirmation
+     * @returns
+     */
+    async resendEmailConfirmation(): Promise<boolean> {
+
+      if (!this.token) {
+        return false;
+      }
+      const response = axiosInstance({
+        method: 'post',
+        url: `${servicePath}/resend-email-confirmation`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+        .then((response) => {
+          return response.status === 200;
+        })
+        .catch((error) => {
+          console.error('Error during email confirmation:', error.response?.status);
+          return false;
+        });
+
+      return response;
+    },
+    /**
+     * @description Request a password reset
+     * @param email
+     * @returns
+     */
+    async requestPasswordReset(email: string): Promise<boolean> {
+
+      const response = axiosInstance({
+        method: 'post',
+        url: `${servicePath}/request-password-reset`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          email,
+        },
+      })
+        .then((response) => {
+          return response.status === 200;
+        })
+        .catch((error) => {
+          console.error('Error during password reset request:', error.response?.status);
+          return false;
+        });
+
+      return response;
+    },
+    /**
+     * @description Verify the password reset token
+     * @param email
+     * @param token
+     * @returns
+     */
+    async verifyPasswordResetToken(email: string, token: string): Promise<boolean> {
+
+      const response = axiosInstance({
+        method: 'post',
+        url: `${servicePath}/verify-password-reset-token`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          email,
+          token,
+        },
+      })
+        .then((response) => {
+          return response.status === 200;
+        })
+        .catch((error) => {
+          console.error('Error during password reset token verification:', error.response?.status);
+          return false;
+        });
+
+      return response;
+    },
+    /**
+     * @description Reset the password
+     * @param email
+     * @param token
+     * @param newPassword
+     * @returns
+     */
+    async passwordReset(email: string, token: string, newPassword: string): Promise<boolean> {
+
+      const response = axiosInstance({
+        method: 'post',
+        url: `${servicePath}/password-reset`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          email,
+          token,
+          newPassword,
+        },
+      })
+        .then((response) => {
+          return response.status === 200;
+        })
+        .catch((error) => {
+          console.error('Error during password reset:', error.response?.status);
+          return false;
+        });
+
+      return response;
+    }
   },
   getters: {
     /**

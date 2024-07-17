@@ -12,6 +12,10 @@
           <div class="email">
             <p><strong>Email:</strong> {{ user.email }}</p>
           </div>
+          <div class="email-confirmed">
+            <p><strong>Email Confirmed:</strong> {{ user.emailConfirmed ? 'Yes' : 'No' }}</p>
+            <ion-button v-if="!user.emailConfirmed" class="custom-button small-button" :disabled="isButtonDisabled" fill="clear" @click="resendEmailConfirmation">Resend email</ion-button>
+          </div>
           <div class="timezone">
             <p><strong>Timezone:</strong> {{ user.timezone }}</p>
           </div>
@@ -57,6 +61,8 @@ const userStore = useUserStore();
 const user: Ref<User> = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
 const validMessage = ref('');
+
+const isButtonDisabled = ref(false); // State for disabling button
 
 // Function to toggle the settings button
 const toggleSettings = () => {
@@ -115,9 +121,42 @@ const deleteAccount = async () => {
   }
 };
 
-// Reset the value of showSettings when leaving the page
+const resendEmailConfirmation = async () => {
+
+  isButtonDisabled.value = true; // Disable button
+  try {
+    await userStore.resendEmailConfirmation();
+    validMessage.value = 'Please check your email for the confirmation link';
+  } catch (error) {
+    validMessage.value = 'Failed to resend confirmation email';
+  } finally {
+    setTimeout(() => {
+      isButtonDisabled.value = false; // Enable button after timeout
+    }, 30000); // Timeout duration in milliseconds
+  }
+
+};
+
 onBeforeRouteLeave(() => {
   showSettings.value = false; // Reset the value of showSettings when leaving the page
 });
 
 </script>
+
+
+<style scoped>
+.email-confirmed {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.small-button {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  font-size: 0.8rem;
+  text-align: center;
+  height: auto;
+  line-height: 1.2;
+}
+</style>

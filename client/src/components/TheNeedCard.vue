@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <!-- delete need button -->
+      <!-- Delete need button -->
       <ion-button @click="confirmDeleteNeed(need.id)" fill="clear" class="option-button">
         <ion-icon :icon="trashOutline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -105,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, computed, inject, onBeforeMount } from 'vue';
+import { ref, computed, inject, onBeforeMount } from 'vue';
 import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil } from 'ionicons/icons';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
