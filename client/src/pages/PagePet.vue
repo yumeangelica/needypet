@@ -25,13 +25,17 @@
             <!-- Need related container -->
             <div class="header-button-container">
               <h3 class="ion-text-center">Needs:</h3>
-              <ion-button class="custom-button" @click="setOpen(true)"
-                v-if="pet.owner.id === userStore.id && currentDate >= moment().format('YYYY-MM-DD')">
-                <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
-                Add need
-              </ion-button>
+              <template v-if="pet.owner.id === userStore.id && currentDate === moment().format('YYYY-MM-DD')">
+                <ion-button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate]?.length < 10">
+                  <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
+                  Add need
+                </ion-button>
+                <p v-else>Daily need limit reached</p>
+              </template>
               <ion-button class="custom-button" @click="currentDate = moment().format('YYYY-MM-DD')"
-                v-if="currentDate !== moment().format('YYYY-MM-DD')">Today</ion-button>
+                v-if="currentDate !== moment().format('YYYY-MM-DD')">
+                Today
+              </ion-button>
             </div>
 
             <!-- Modal which opens when 'add need' button is clicked -->
@@ -179,12 +183,13 @@ const validMessage = ref('');
 const isOwner = ref(false);
 
 const changeDay = (delta: number) => {
-
   const newDate = moment.tz(currentDate.value, userStore.timezone).add(delta, 'days');
   currentDate.value = newDate.format('YYYY-MM-DD');
 };
 
-const needsByDate = computed(() => {
+const needsByDate = ref({});
+
+const needsByDateComputed = computed(() => {
   if (!pet.value || !pet.value.needs) return [];
   return pet.value.needs.reduce((acc: Record<string, Need[]>, need) => {
     if (!acc[need.dateFor]) {
@@ -232,6 +237,7 @@ async function getPet(id: string) {
   const fetchedPet = await petStore.getPetById(id);
   if (fetchedPet) {
     pet.value = fetchedPet;
+    needsByDate.value = needsByDateComputed.value;
   }
   isOwner.value = await petStore.isOwner(id);
 }
@@ -316,8 +322,9 @@ onBeforeMount(async () => {
 });
 
 // Function to handle the need deletion
-const handleNeedDeleted = (deleted: boolean) => {
+const handleNeedDeleted = async (deleted: boolean) => {
   if (deleted) {
+    await getPet(pet.value.id);
     validMessage.value = 'Need deleted successfully';
     setTimeout(() => {
       validMessage.value = '';
