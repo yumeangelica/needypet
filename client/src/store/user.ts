@@ -180,12 +180,14 @@ export const useUserStore = defineStore({
         );
 
         if (response.status === 200) {
-          // Update the store state
           this.$patch({
             userName: response.data.userName,
             email: response.data.email,
             timezone: response.data.timezone,
           });
+          await setLocalStorageItem('userName', response.data.userName);
+          await setLocalStorageItem('email', response.data.email);
+          await setLocalStorageItem('timezone', response.data.timezone);
           console.log('User updated successfully');
           return {
             isSuccess: true,
