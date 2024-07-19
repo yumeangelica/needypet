@@ -177,6 +177,10 @@ const addNewNeed = async (request, response, next) => {
     const validateNeed = needValidation(request.body.need);
     const pet = request.pet;
 
+    if (pet.needs.filter(need => need.dateFor.toISOString().split('T')[0] === validateNeed.dateFor.toISOString().split('T')[0]).length >= 10) {
+      return response.status(400).json({ error: 'Maximum number of needs for the day reached' });
+    }
+
     const newNeedObject = {
       dateFor: validateNeed.dateFor,
       category: validateNeed.category,
