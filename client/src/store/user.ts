@@ -215,7 +215,7 @@ export const useUserStore = defineStore({
      * @description Delete the user account
      * @returns
      */
-    async deleteAccount(): Promise<boolean> {
+    async deleteAccount(): Promise<{isSuccess: boolean, message?: string}> {
       try {
         const response = await axiosInstance.delete(
           `${servicePath}/users/${this.id}`,
@@ -227,20 +227,18 @@ export const useUserStore = defineStore({
         );
 
         if (response.status === 204) {
-          return true;
-        } else {
-          console.error(
-            'Account deletion failed with status: ',
-            response.status
-          );
-          return false;
+          return {
+            isSuccess: true
+          };
         }
       } catch (error) {
-        console.error(
-          'Error deleting account:',
-          error.response?.data || error.message
-        );
-        return false;
+
+        if (error.response?.status === 401) {
+          return {
+            isSuccess: false,
+            message: 'Unauthorized',
+          };
+        }
       }
     },
     /**
@@ -257,7 +255,7 @@ export const useUserStore = defineStore({
      * @param password
      * @returns
      */
-    
+
     async login(userName: string, password: string): Promise<loginData> {
 
       try {
