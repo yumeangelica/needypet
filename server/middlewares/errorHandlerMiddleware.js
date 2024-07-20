@@ -10,53 +10,46 @@
 const errorHandler = (error, request, response, next) => {
   console.error(error);
 
-  if (error.name === 'CastError') {
-    return response.status(400).json({ error: 'Malformatted id' });
-  }
+  const statusCode = error.status || 500;
+  const message = error.message || 'An unexpected error occurred';
 
-  if (error.name === 'BadRequest') {
-    return response.status(400).json({ error: 'Bad Request', message: error.message });
-  }
+  const errorResponse = {
+    message,
+  };
 
-  if (error.name === 'Unauthorized') {
-    return response.status(401).json({ error: 'Unauthorized', message: error.message });
+  // Specific error handling
+  switch (error.name) {
+  case 'CastError':
+    errorResponse.message = 'Malformatted id';
+    return response.status(400).json(errorResponse);
+  case 'BadRequest':
+    errorResponse.message = 'Bad Request';
+    return response.status(400).json(errorResponse);
+  case 'Unauthorized':
+    errorResponse.message = 'Unauthorized';
+    return response.status(401).json(errorResponse);
+  case 'TokenExpiredError':
+    errorResponse.message = 'Token Expired';
+    return response.status(401).json(errorResponse);
+  case 'JsonWebTokenError':
+    errorResponse.message = 'Invalid token';
+    return response.status(401).json(errorResponse);
+  case 'Forbidden':
+    errorResponse.message = 'Forbidden';
+    return response.status(403).json(errorResponse);
+  case 'NotFound':
+  case 'User not found':
+  case 'Pet not found':
+    return response.status(404).json(errorResponse);
+  case 'ValidationError':
+    errorResponse.details = error.errors;
+    return response.status(422).json(errorResponse);
+  case 'ZodError':
+    errorResponse.details = error.flatten();
+    return response.status(422).json(errorResponse);
+  default:
+    return response.status(statusCode).json(errorResponse);
   }
-
-  if (error.name === 'TokenExpiredError') {
-    return response.status(401).json({ error: 'Token Expired', message: error.message });
-  }
-
-  if (error.name === 'JsonWebTokenError') {
-    return response.status(401).json({ error: 'Invalid token', message: error.message });
-  }
-
-  if (error.name === 'Forbidden') {
-    return response.status(403).json({ error: 'Forbidden', message: error.message });
-  }
-
-  if (error.name === 'NotFound') {
-    return response.status(404).json({ error: 'Not Found', message: error.message });
-  }
-
-  if (error.name === 'User not found') {
-    return response.status(404).json({ error: 'User not found', message: error.message });
-  }
-
-  if (error.name === 'Pet not found') {
-    return response.status(404).json({ error: 'Pet not found', message: error.message });
-  }
-
-  if (error.name === 'ValidationError') {
-    return response.status(422).json({ error: 'Validation error', errors: error.errors });
-  }
-
-  // Handle Zod validation errors specifically
-  if (error.name === 'ZodError') {
-    return response.status(422).json({ error: 'Zod validation error', details: error.flatten() });
-  }
-
-  // Other errors, for example database errors
-  response.status(500).json({ error: 'Internal Server Error' });
 };
 
 module.exports = errorHandler;
