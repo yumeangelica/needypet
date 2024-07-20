@@ -173,11 +173,7 @@ const updateUser = async (request, response, next) => {
 const deleteUser = async (request, response, next) => {
   try {
     const user = request.user; // User is attached to the request object by getUserHandler middleware
-    const result = await User.findByIdAndDelete(user.id);
-
-    if (!result) {
-      return response.status(404).json({ error: 'User not found' });
-    }
+    await User.findByIdAndDelete(user.id);
 
     response.status(204).json({ message: 'User deleted successfully' });
   } catch (error) {
