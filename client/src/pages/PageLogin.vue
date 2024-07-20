@@ -11,7 +11,9 @@
             <ion-icon :icon="pawOutline"></ion-icon>
           </div>
 
-          <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
+          <div class="custom-valid-message ion-text-center" v-if="validMessage">
+            {{ validMessage }}
+          </div>
 
           <form @submit.prevent="login">
             <ion-item class="login-register-field-item">
@@ -29,9 +31,9 @@
               <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
             </ion-buttons>
 
-            <!-- Did you forget your password button -->
-            <ion-button @click="router.push({ name: 'request-password-reset' })" expand="block" class="action-button secondary-action-button">Forgot
-              Password</ion-button>
+            <ion-button @click="router.push({ name: 'request-password-reset' })" expand="block" class="action-button secondary-action-button">
+              Forgot Password
+            </ion-button>
 
             <div v-if="errorMessage" class="custom-error-message">
               {{ errorMessage }}
@@ -59,33 +61,32 @@ const isMobile = computed(() => appStore.isMobile);
 const userName = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const validMessage = ref('');
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 const petStore = usePetStore();
 
-const validMessage = ref('');
-
 const login = async () => {
-
-  // LoginError is boolean, set to true if login fails
   const { isSuccess, message } = await userStore.login(userName.value, password.value);
 
-  // If login was successful, redirect to home page
   if (isSuccess) {
     router.push({ name: 'home' });
     userName.value = '';
     password.value = '';
     await petStore.getAllPets();
+    validMessage.value = message;
+    setTimeout(() => {
+      validMessage.value = '';
+    }, 5000);
   } else {
-    errorMessage.value = message;
+    errorMessage.value = message || 'An error occurred';
     setTimeout(() => {
       errorMessage.value = '';
     }, 5000);
   }
 };
 
-// Display a message if the account was successfully created, get the query parameter from the URL and display the message
 onMounted(() => {
   if (route.query.accountCreated === 'true') {
     validMessage.value = 'Your account has been successfully created.\nPlease check your email to verify your account.';
@@ -96,11 +97,9 @@ onMounted(() => {
   }
 });
 
-// Function to go back to the landing page, and clear the input fields
 const goBack = () => {
   router.push({ name: 'landing' });
   userName.value = '';
   password.value = '';
 };
-
 </script>

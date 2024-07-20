@@ -1,7 +1,7 @@
 // @ts-check
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { axiosInstance } from '@/services';
-import { UserStoreState, User } from '@/types/user';
+import { UserStoreState, User, loginData } from '@/types/user';
 
 const servicePath = '/auth';
 
@@ -257,44 +257,50 @@ export const useUserStore = defineStore({
      * @param password
      * @returns
      */
-    async login(userName: string, password: string): Promise<{ isSuccess: boolean; message: string }> {
-      const response = axiosInstance({
-        method: 'post',
-        url: `${servicePath}/login`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: {
-          userName,
-          password,
-        },
-      }).then((response) => {
+    
+    async login(userName: string, password: string): Promise<loginData> {
+
+      try {
+        const response = await axiosInstance({
+          method: 'post',
+          url: `${servicePath}/login`,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: {
+            userName,
+            password,
+          },
+        });
+
         if (response.status === 200) {
           const { token, user } = response.data;
-          return setAuthData(
-            token,
-            user.userName,
-            user.id,
-            user.timezone,
-            user.emailConfirmed
-          ).then(() => {
-            return {
-              isSuccess: true,
-              message: 'Login successful',
-            };
-          });
-        }
-      }).catch((error) => {
-        console.error('Error during login:', error.response?.status);
-        if (error.response?.status === 401) {
+          await setAuthData(token, user.userName, user.id, user.timezone, user.emailConfirmed);
           return {
-            isSuccess: false,
-            message: 'Invalid credentials',
+            isSuccess: true,
+            message: response.data.message || 'Login successful',
           };
         }
-      });
+      } catch (error) {
 
-      return response;
+        const status = error.response?.status;
+        const data = error.response?.data;
+
+        if (status === 401) {
+          return {
+            isSuccess: false,
+            message: data.message || 'Invalid credentials',
+          };
+        }
+
+        if (status === 422) {
+          return {
+            isSuccess: false,
+            message: data.message || 'Validation error',
+          };
+        }
+
+      }
     },
     /**
      * @description Initialize the store from the local storage

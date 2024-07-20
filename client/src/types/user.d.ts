@@ -17,4 +17,9 @@ interface UserStoreState {
   emailConfirmed: User['emailConfirmed'];
 }
 
-export { Token, User, UserStoreState };
+interface loginData {
+  isSuccess: boolean;
+  message: string;
+}
+
+export { Token, User, UserStoreState, loginData };
