@@ -3,6 +3,8 @@ const { passwordStrengthValidator } = require('../middlewares/passwordStrengthVa
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../utils/config');
 const { sendConfirmationEmail, sendPasswordResetEmail } = require('../utils/mailer');
+const loginValidation = require('../validations/loginValidation');
+const z = require('zod');
 
 /**
  * @description Gets the user by id
@@ -192,23 +194,40 @@ const deleteUser = async (request, response, next) => {
  * @returns JWT token and user details
  */
 const loginUser = async (request, response, next) => {
-  const { userName, password } = request.body;
-
   try {
-    const user = await User.findOne({ userName }); // Find user by username
+    const validationResult = loginValidation(request.body); // Validate request body
 
-    if (!user || !(await user.isValidPassword(password))) { // If user not found or password is wrong
-      return response.status(401).json({ error: 'Invalid username or password' });
+    const { userName, password } = validationResult;
+
+    const user = await User.findOne({ userName });
+
+    if (!user || !user.isValidPassword(password)) {
+      return next({
+        status: 401,
+        message: 'Invalid credentials',
+      });
     }
 
     const token = user.generateJWT(); // Generate token with method from userModel
 
     response.status(200).json({
-      token, user: {
-        userName: user.userName, id: user._id, timezone: user.timezone, emailConfirmed: user.emailConfirmed,
+      message: 'Login successful',
+      token,
+      user: {
+        userName: user.userName,
+        id: user._id,
+        timezone: user.timezone,
+        emailConfirmed: user.emailConfirmed,
       },
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.log('Validation error:', error.flatten());
+      return response.status(422).json({
+        message: 'Validation error',
+      });
+    }
+
     next(error);
   }
 };
