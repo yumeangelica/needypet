@@ -4,6 +4,10 @@
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div v-if="user" class="edit-pet-profile-container">
 
+          <div v-if="validMessage">
+            <p class="custom-valid-message">{{ validMessage }}</p>
+          </div>
+
           <div class="inline-container">
             <h3>{{ user.userName }}</h3>
             <ion-button class="settings-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
@@ -14,7 +18,8 @@
           </div>
           <div class="email-confirmed">
             <p><strong>Email Confirmed:</strong> {{ user.emailConfirmed ? 'Yes' : 'No' }}</p>
-            <ion-button v-if="!user.emailConfirmed" class="custom-button small-button" :disabled="isButtonDisabled" fill="clear" @click="resendEmailConfirmation">Resend email</ion-button>
+            <ion-button v-if="!user.emailConfirmed" class="custom-button small-button" :disabled="isButtonDisabled" fill="clear"
+              @click="resendEmailConfirmation">Resend email</ion-button>
           </div>
           <div class="timezone">
             <p><strong>Timezone:</strong> {{ user.timezone }}</p>
@@ -27,8 +32,9 @@
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccountDeletion"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
           </div>
-          <div v-if="validMessage">
-            <p class="custom-valid-message">{{ validMessage }}</p>
+
+          <div v-if="errorMessage">
+            <p class="custom-error-message">{{ errorMessage }}</p>
           </div>
         </div>
 
@@ -61,7 +67,7 @@ const userStore = useUserStore();
 const user: Ref<User> = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
 const validMessage = ref('');
-
+const errorMessage = ref('');
 const isButtonDisabled = ref(false); // State for disabling button
 
 // Function to toggle the settings button
@@ -92,13 +98,13 @@ watchEffect(async () => {
 // Function to confirm logout action
 const confirmLogout = () => {
   if (window.confirm('Are you sure you want to logout?')) {
-    logout();
+    logout({ userLoggedOut: 'true' });
   }
 };
 
-const logout = async () => {
-  userStore.logout();
-  router.push({ name: 'landing' });
+const logout = async (query) => {
+  await userStore.logout();
+  router.push({ name: 'landing', query });
 };
 
 
@@ -110,14 +116,12 @@ const confirmAccountDeletion = () => {
 };
 
 const deleteAccount = async () => {
-  const response = await userStore.deleteAccount(); // Returns true or false
+  const { isSuccess, message } = await userStore.deleteAccount(); // Returns true or false
 
-  if (response) {
-    userStore.logout();
-    console.log('Account deleted');
-    router.push({ name: 'landing' });
+  if (isSuccess) {
+    logout({ userDeleted: 'true' }); // Logout user after successful account deletion
   } else {
-    console.log('Account could not be deleted');
+    errorMessage.value = message;
   }
 };
 
@@ -145,18 +149,18 @@ onBeforeRouteLeave(() => {
 
 
 <style scoped>
-.email-confirmed {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .email-confirmed {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.small-button {
-  --padding-start: 10px;
-  --padding-end: 10px;
-  font-size: 0.8rem;
-  text-align: center;
-  height: auto;
-  line-height: 1.2;
-}
+  .small-button {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    font-size: 0.8rem;
+    text-align: center;
+    height: auto;
+    line-height: 1.2;
+  }
 </style>
