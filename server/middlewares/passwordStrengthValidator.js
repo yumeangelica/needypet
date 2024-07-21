@@ -1,3 +1,6 @@
+const passwordStrengthValidation = require('../validations/passwordStrengthValidation');
+const { z } = require('zod');
+
 /**
  * @description Validates the strength of a password, only strong passwords are allowed
  * @param {*} request
@@ -5,21 +8,27 @@
  * @param {*} next
  * @returns
  */
+
 const passwordStrengthValidator = (request, response, next) => {
-  const newPassword = request.body.newPassword;
+  const { newPassword } = request.body;
 
-  if (!newPassword) {
-    return response.status(400).json({ error: 'Password is required' });
+  try {
+    passwordStrengthValidation(newPassword);
+    console.log('Password is strong');
+    next();
+  } catch (error) {
+    console.log('error', error);
+    if (error instanceof z.ZodError) {
+      return response.status(422).json({
+        message: 'Validation error',
+        errorDetails: {
+          newPassword: error.errors[0].message,
+        },
+      });
+    }
+
+    next(error);
   }
-
-  // Requirements: at least one lowercase letter, one uppercase letter, one number, one special character and be at least 10 characters long
-  const strongPasswordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{10,})/;
-
-  if (!strongPasswordRequirements.test(newPassword)) {
-    return response.status(400).json({ error: 'Password does not meet the strength requirements. It must contain at least one lowercase letter, one uppercase letter, one number, one special character and be at least 10 characters long.' });
-  }
-
-  next();
 };
 
 module.exports = passwordStrengthValidator;

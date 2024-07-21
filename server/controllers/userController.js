@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../utils/config');
 const { sendConfirmationEmail, sendPasswordResetEmail } = require('../utils/mailer');
 const loginValidation = require('../validations/loginValidation');
+const registerValidation = require('../validations/registerValidation');
 const z = require('zod');
 
 /**
@@ -51,37 +52,48 @@ const getUserByName = async (request, response, next) => {
  * @returns
  */
 const createNewUser = async (request, response, next) => {
-  const { userName, email, newPassword, timezone } = request.body;
-
-  // Validations
-  if (!userName) {
-    return response.status(400).json({ error: 'Username is required' });
-  }
-
-  if (!email) {
-    return response.status(400).json({ error: 'Email is required' });
-  }
-
-  if (!newPassword) {
-    return response.status(400).json({ error: 'newPassword is required' });
-  }
-
-  // Create new user object
-  const newUserObject = {
-    userName,
-    email,
-    timezone,
-  };
-
-  const newUser = new User(newUserObject); // Creating new user without newPassword
-
   try {
-    newUser.setPassword(newPassword); // Setting password with method from userModel which hashes the password
-    newUser.generateEmailConfirmToken(); // Generate email confirmation token
-    await newUser.save();
-    await sendConfirmationEmail(newUser.email, newUser.emailConfirmToken); // Send confirmation email to user
-    response.status(201).json(newUser);
+    const validationResult = registerValidation(request.body); // Validate request body
+
+    const { userName, email, newPassword, timezone } = validationResult;
+
+    const existing = await User.findOne({ $or: [{ userName }, { email }] });
+
+    if (existing && existing.userName === userName) {
+      return next({
+        status: 400,
+        message: 'Username already exists',
+      });
+    }
+
+    if (existing && existing.email === email) {
+      return next({
+        status: 400,
+        message: 'Email already exists',
+      });
+    }
+
+    const user = new User({ userName, email, timezone });
+
+    user.setPassword(newPassword); // Setting password with method from userModel which hashes the password
+
+    user.generateEmailConfirmToken(); // Generate email confirmation token
+
+    await user.save();
+
+    await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+
+    response.status(201).json('user');
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.log('Validation error:', error.flatten());
+      const errorDetails = error.flatten();
+      return response.status(422).json({
+        message: 'Validation error',
+        errorDetails: errorDetails.fieldErrors,
+      });
+    }
+
     next(error);
   }
 };
