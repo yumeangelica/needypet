@@ -107,7 +107,7 @@ export const useUserStore = defineStore({
       email,
       newPassword,
       timezone,
-    }): Promise<{ isSuccess: boolean; message: string }> {
+    }): Promise<{ isSuccess: boolean; message: string, errorDetails?: any }> {
       try {
         const response = await axiosInstance.post(`${servicePath}/users`, {
           userName,
@@ -115,41 +115,29 @@ export const useUserStore = defineStore({
           newPassword,
           timezone,
         });
+        console.log('response', response);
 
         if (response.status === 201) {
-          console.log('Account created successfully');
-
           return {
             isSuccess: true,
             message: 'Account created successfully',
           };
 
-        } else {
-          console.error(
-            'Account creation failed with status: ',
-            response.status
-          );
-          return {
-            isSuccess: false,
-            message: 'Account creation failed',
-          };
-
         }
       } catch (error) {
-        console.error(
-          'Error creating account:',
-          error.response?.data || error.message
-        );
-        if (error.response?.data.errors.userName) {
+        console.log('error', error.response);
+        if (error.response?.status === 400) {
           return {
             isSuccess: false,
-            message: 'Username already exists',
+            message: error.response.data.message,
           };
         }
-        if (error.response?.data.errors.email) {
+
+        if (error.response?.status === 422) {
           return {
             isSuccess: false,
-            message: 'Email already exists',
+            message: 'Validation error',
+            errorDetails: error.response.data.errorDetails,
           };
         }
       }
