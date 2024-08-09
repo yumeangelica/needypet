@@ -22,8 +22,11 @@
             </ion-item>
 
             <ion-item class="login-register-field-item">
-              <ion-input class="login-register-field-input" type="password" v-model="password" placeholder="Enter your password"
+              <ion-input class="login-register-field-input" :type="passwordFieldType" v-model="password" placeholder="Enter your password"
                 aria-label="Password"></ion-input>
+                <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
+                <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
+              </ion-button>
             </ion-item>
 
             <ion-buttons>
@@ -52,7 +55,7 @@ import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
-import { pawOutline } from 'ionicons/icons';
+import { pawOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import needypet_logo from '@/assets/images/needypet_logo.webp';
 
 const appStore = useAppStore();
@@ -66,6 +69,12 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 const petStore = usePetStore();
+
+const passwordFieldType = ref<'password' | 'text'>('password');
+
+const togglePasswordVisibility = () => {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+};
 
 const login = async () => {
   const { isSuccess, message } = await userStore.login(userName.value, password.value);
