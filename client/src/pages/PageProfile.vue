@@ -29,6 +29,9 @@
             <ion-button class="custom-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit
               Profile</ion-button>
+
+            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'change-password' })">Change password</ion-button>
+
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccountDeletion"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
           </div>
@@ -86,9 +89,15 @@ watchEffect(async () => {
   if (route.name === 'profile') {  // Ensure this is the correct route name for the profile page
     await fetchUser();
   }
-
-  if (route.query.userUpdateSucceefully === 'true') {
+  if (route.query.userUpdateSuccessfully === 'true') {
     validMessage.value = 'User details updated successfully';
+    setTimeout(() => {
+      validMessage.value = '';
+    }, 5000);
+  }
+
+  if (route.query.passwordChangedSuccessfully === 'true') {
+    validMessage.value = 'Password changed successfully';
     setTimeout(() => {
       validMessage.value = '';
     }, 5000);

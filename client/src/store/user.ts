@@ -45,7 +45,6 @@ const setAuthData = async (
   });
 };
 
-
 /**
  * @description User store definition
  */
@@ -107,7 +106,8 @@ export const useUserStore = defineStore({
       email,
       newPassword,
       timezone,
-    }): Promise<{ isSuccess: boolean; message: string, errorDetails?: any }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
         const response = await axiosInstance.post(`${servicePath}/users`, {
           userName,
@@ -122,7 +122,6 @@ export const useUserStore = defineStore({
             isSuccess: true,
             message: 'Account created successfully',
           };
-
         }
       } catch (error) {
         console.log('error', error.response);
@@ -155,7 +154,8 @@ export const useUserStore = defineStore({
       email,
       timezone,
       currentPassword,
-    }): Promise<{isSuccess: boolean, message: string}> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
         const response = await axiosInstance.put(
           `${servicePath}/users/${this.id}`,
@@ -179,31 +179,87 @@ export const useUserStore = defineStore({
           console.log('User updated successfully');
           return {
             isSuccess: true,
-            message: 'User updated successfully',
+            message: response.data.message || 'User updated successfully',
           };
         }
-        return {
-          isSuccess: false,
-          message: 'User update failed, please try again later',
-        };
       } catch (error) {
-        console.error(
-          'Error updating user profile:',
-          error.response?.data || error.message
-        );
-        if (error.response?.data.error) {
+        console.log('error', error);
+        if (error.response?.status === 401) {
           return {
             isSuccess: false,
-            message: error.response.data.error,
+            message: error.response.data.message || 'Unauthorized',
           };
         }
+
+        if (error.response?.status === 422) {
+          return {
+            isSuccess: false,
+            message: error.response.data.message || 'Validation error',
+            errorDetails: error.response.data.errorDetails,
+          };
+        }
+
+        return {
+          isSuccess: false,
+          message: error.response.data.message || 'Error updating user profile',
+        };
+      }
+    },
+    /**
+     * @description Change the user password
+     * @param currentPassword
+     * @param newPassword
+     * @returns
+     */
+    async changePassword({
+      currentPassword,
+      newPassword,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+      try {
+        const response = await axiosInstance.put(
+          `${servicePath}/users/${this.id}`,
+          { currentPassword, newPassword },
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          return {
+            isSuccess: true,
+            message: response.data.message || 'Password changed successfully',
+          };
+        }
+      } catch (error) {
+        if (error.response?.status === 401) {
+          return {
+            isSuccess: false,
+            message: error.response.data.message || 'Unauthorized',
+          };
+        }
+
+        if (error.response?.status === 422) {
+          return {
+            isSuccess: false,
+            message: error.response.data.message || 'Validation error',
+            errorDetails: error.response.data.errorDetails,
+          };
+        }
+
+        return {
+          isSuccess: false,
+          message: error.response.data.message || 'Error changing password',
+        };
       }
     },
     /**
      * @description Delete the user account
      * @returns
      */
-    async deleteAccount(): Promise<{isSuccess: boolean, message?: string}> {
+    async deleteAccount(): Promise<{ isSuccess: boolean; message?: string }> {
       try {
         const response = await axiosInstance.delete(
           `${servicePath}/users/${this.id}`,
@@ -216,17 +272,21 @@ export const useUserStore = defineStore({
 
         if (response.status === 204) {
           return {
-            isSuccess: true
+            isSuccess: true,
           };
         }
       } catch (error) {
-
         if (error.response?.status === 401) {
           return {
             isSuccess: false,
-            message: 'Unauthorized',
+            message: error.response.data.message || 'Unauthorized',
           };
         }
+
+        return {
+          isSuccess: false,
+          message: error.response.data.message || 'Error deleting user account',
+        };
       }
     },
     /**
@@ -245,7 +305,6 @@ export const useUserStore = defineStore({
      */
 
     async login(userName: string, password: string): Promise<loginData> {
-
       try {
         const response = await axiosInstance({
           method: 'post',
@@ -261,14 +320,19 @@ export const useUserStore = defineStore({
 
         if (response.status === 200) {
           const { token, user } = response.data;
-          await setAuthData(token, user.userName, user.id, user.timezone, user.emailConfirmed);
+          await setAuthData(
+            token,
+            user.userName,
+            user.id,
+            user.timezone,
+            user.emailConfirmed
+          );
           return {
             isSuccess: true,
             message: response.data.message || 'Login successful',
           };
         }
       } catch (error) {
-
         const status = error.response?.status;
         const data = error.response?.data;
 
@@ -285,7 +349,6 @@ export const useUserStore = defineStore({
             message: data.message || 'Validation error',
           };
         }
-
       }
     },
     /**
@@ -296,7 +359,8 @@ export const useUserStore = defineStore({
       this.userName = localStorage.getItem('userName') || null;
       this.id = localStorage.getItem('id') || null;
       this.timezone = localStorage.getItem('timezone') || null;
-      this.emailConfirmed = localStorage.getItem('emailConfirmed') === 'true' || false;
+      this.emailConfirmed =
+        localStorage.getItem('emailConfirmed') === 'true' || false;
     },
     /**
      * @description Check if the token is valid
@@ -349,7 +413,10 @@ export const useUserStore = defineStore({
           return response.status === 200;
         })
         .catch((error) => {
-          console.error('Error during email confirmation:', error.response?.status);
+          console.error(
+            'Error during email confirmation:',
+            error.response?.status
+          );
           return false;
         });
 
@@ -360,7 +427,6 @@ export const useUserStore = defineStore({
      * @returns
      */
     async resendEmailConfirmation(): Promise<boolean> {
-
       if (!this.token) {
         return false;
       }
@@ -376,7 +442,10 @@ export const useUserStore = defineStore({
           return response.status === 200;
         })
         .catch((error) => {
-          console.error('Error during email confirmation:', error.response?.status);
+          console.error(
+            'Error during email confirmation:',
+            error.response?.status
+          );
           return false;
         });
 
@@ -388,7 +457,6 @@ export const useUserStore = defineStore({
      * @returns
      */
     async requestPasswordReset(email: string): Promise<boolean> {
-
       const response = axiosInstance({
         method: 'post',
         url: `${servicePath}/request-password-reset`,
@@ -403,7 +471,10 @@ export const useUserStore = defineStore({
           return response.status === 200;
         })
         .catch((error) => {
-          console.error('Error during password reset request:', error.response?.status);
+          console.error(
+            'Error during password reset request:',
+            error.response?.status
+          );
           return false;
         });
 
@@ -415,8 +486,10 @@ export const useUserStore = defineStore({
      * @param token
      * @returns
      */
-    async verifyPasswordResetToken(email: string, token: string): Promise<boolean> {
-
+    async verifyPasswordResetToken(
+      email: string,
+      token: string
+    ): Promise<boolean> {
       const response = axiosInstance({
         method: 'post',
         url: `${servicePath}/verify-password-reset-token`,
@@ -432,7 +505,10 @@ export const useUserStore = defineStore({
           return response.status === 200;
         })
         .catch((error) => {
-          console.error('Error during password reset token verification:', error.response?.status);
+          console.error(
+            'Error during password reset token verification:',
+            error.response?.status
+          );
           return false;
         });
 
@@ -445,8 +521,11 @@ export const useUserStore = defineStore({
      * @param newPassword
      * @returns
      */
-    async passwordReset(email: string, token: string, newPassword: string): Promise<boolean> {
-
+    async passwordReset(
+      email: string,
+      token: string,
+      newPassword: string
+    ): Promise<boolean> {
       const response = axiosInstance({
         method: 'post',
         url: `${servicePath}/password-reset`,
@@ -468,7 +547,7 @@ export const useUserStore = defineStore({
         });
 
       return response;
-    }
+    },
   },
   getters: {
     /**
