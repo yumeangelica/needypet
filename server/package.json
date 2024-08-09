@@ -1,6 +1,6 @@
 {
   "name": "needypet-server",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "pet care management app",
   "main": "index.js",
   "scripts": {

@@ -1,11 +1,12 @@
 const User = require('../models/userModel');
-const { passwordStrengthValidator } = require('../middlewares/passwordStrengthValidator');
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../utils/config');
 const { sendConfirmationEmail, sendPasswordResetEmail } = require('../utils/mailer');
 const loginValidation = require('../validations/loginValidation');
 const registerValidation = require('../validations/registerValidation');
+const updateUserValidation = require('../validations/updateUserValidation');
 const z = require('zod');
+const passwordStrengthValidation = require('../validations/passwordStrengthValidation');
 
 /**
  * @description Gets the user by id
@@ -99,78 +100,91 @@ const createNewUser = async (request, response, next) => {
 };
 
 /**
- * @description Updates the user password
- * @param {*} request
- * @param {*} response
- * @param {*} next
- * @returns
-*/
-
-const updateUserPassword = async (request, response, next) => {
-  try {
-    const user = request.user; // User is attached to the request object by getUserHandler middleware
-
-    const { newPassword, currentPassword } = request.body;
-
-    if (!newPassword) {
-      return response.status(400).json({ error: 'New password is required' });
-    }
-
-    if (currentPassword && !user.isValidPassword(currentPassword)) {
-      return response.status(401).json({ error: 'Invalid current password' });
-    }
-
-    user.setPassword(newPassword);
-    await user.save();
-    response.status(200).json({ message: 'Password updated successfully' });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    next(error);
-  }
-};
-
-/**
- * @description Updates the user
- * @param {*} request
- * @param {*} response
- * @param {*} next
- * @returns
+ * @description Updates the user details with or without new password
  */
 const updateUser = async (request, response, next) => {
-  if (request.body.newPassword && request.body.currentPassword) {
-    await passwordStrengthValidator(request, response, next);
-    await updateUserPassword(request, response, next);
-    return;
-  }
-
-  const { userName, email, currentPassword, timezone } = request.body;
-
   try {
-    const user = request.user; // User is attached to the request object by getUserHandler middleware
+    const user = request.user;
+    const isPasswordUpdate = request.body.newPassword && request.body.currentPassword; // Check if password is being updated
+    const validationResult = updateUserValidation(request.body, isPasswordUpdate); // Validate request body with or without new password
+
+    // If password is being updated
+    if (isPasswordUpdate) {
+      const { newPassword, currentPassword } = validationResult;
+
+      if (!user.isValidPassword(currentPassword)) { // Check if current password is valid
+        return next({
+          status: 401,
+          message: 'Invalid current password',
+        });
+      }
+
+      try {
+        passwordStrengthValidation(newPassword); // Validate password strength
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.log('Password strength validation error:', error.flatten());
+          const errorDetails = error.flatten();
+          return response.status(422).json({
+            message: 'Password strength validation error',
+            errorDetails: errorDetails.fieldErrors,
+          });
+        }
+
+        return next(error);
+      }
+
+      user.setPassword(newPassword);
+      await user.save();
+      return response.status(200).json({ message: 'Password updated successfully' });
+    }
+
+    // If password is not being updated
+    const { userName, email, currentPassword, timezone } = validationResult;
 
     if (!currentPassword || !user.isValidPassword(currentPassword)) {
-      return response.status(401).json({ error: 'Invalid current password' });
+      return next({
+        status: 401,
+        message: 'Invalid current password',
+      });
     }
 
     // Update user properties
-    if (userName) {
+    if (userName && userName !== user.userName) {
       user.userName = userName;
     }
 
-    if (email) {
+    if (email && email !== user.email) {
       user.email = email;
+      user.emailConfirmed = false; // Set emailConfirmed to false if email is updated
+      user.generateEmailConfirmToken(); // Generate new email confirmation token
+      console.log('Email confirmation sent to:', user.email);
     }
 
-    if (timezone) { // Check if there is timezone, it is valid and it is different from the current timezone
+    if (timezone && timezone !== user.timezone) {
       user.timezone = timezone;
     }
 
     await user.save(); // Save updated user to database
+    await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user after saving
+
     response.status(200).json({
-      message: 'User updated successfully', id: user._id, userName: user.userName, email: user.email, timezone: user.timezone,
+      message: 'User updated successfully',
+      id: user._id,
+      userName: user.userName,
+      email: user.email,
+      timezone: user.timezone,
     });
   } catch (error) {
-    console.error('Error updating user:', error);
+    if (error instanceof z.ZodError) {
+      console.log('Validation error:', error.flatten());
+      const errorDetails = error.flatten();
+      return response.status(422).json({
+        message: 'Validation error',
+        errorDetails: errorDetails.fieldErrors,
+      });
+    }
+
     next(error);
   }
 };
