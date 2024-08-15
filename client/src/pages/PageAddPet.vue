@@ -72,7 +72,7 @@ const newPetObject: Ref<NewPetObject> = ref({
   breed: '',
   species: '',
   description: '',
-  birthday: null,
+  birthday: null as Date | null,
 });
 const showDatePicker = ref(false);
 
