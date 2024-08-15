@@ -159,7 +159,6 @@ const createAccount = async () => {
   });
 
   if (isSuccess) {
-    console.log('Account created successfully, redirecting to login...');
     router.push({ name: 'login', query: { accountCreated: 'true' } });
     username.value = '';
     email.value = '';

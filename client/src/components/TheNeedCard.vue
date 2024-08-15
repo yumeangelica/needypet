@@ -110,8 +110,13 @@ import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
-import moment from 'moment-timezone';
 import { IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonToggle, IonInput, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/vue';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const petStore = usePetStore();
 const userStore = useUserStore();
@@ -163,15 +168,15 @@ const isOwner = inject('isOwner'); // This value comes from the parent component
 
 // Check if the need is for today or in the future
 const isFuture = computed(() => {
-  const needDate = moment(need.dateFor).tz(userStore.timezone);
-  const today = moment().tz(userStore.timezone);
+  const needDate = dayjs(need.dateFor).tz(userStore.timezone);
+  const today = dayjs().tz(userStore.timezone);
   return needDate?.isAfter(today, 'day');
 });
 
 // Check if the need is for today
 const isToday = computed(() => {
-  const needDate = moment(need.dateFor).tz(userStore.timezone);
-  const today = moment().tz(userStore.timezone);
+  const needDate = dayjs(need.dateFor).tz(userStore.timezone);
+  const today = dayjs().tz(userStore.timezone);
   return needDate?.isSame(today, 'day');
 });
 

@@ -25,15 +25,15 @@
             <!-- Need related container -->
             <div class="header-button-container">
               <h3 class="ion-text-center">Needs:</h3>
-              <template v-if="pet.owner.id === userStore.id && currentDate === moment().format('YYYY-MM-DD')">
-                <ion-button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate]?.length < 10">
+              <template v-if="pet.owner.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
+                <ion-button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
                   <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
                   Add need
                 </ion-button>
                 <p v-else>Daily need limit reached</p>
               </template>
-              <ion-button class="custom-button" @click="currentDate = moment().format('YYYY-MM-DD')"
-                v-if="currentDate !== moment().format('YYYY-MM-DD')">
+              <ion-button class="custom-button" @click="currentDate = dayjs().tz(userStore.timezone).format('YYYY-MM-DD')"
+                v-if="currentDate !== dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
                 Today
               </ion-button>
             </div>
@@ -156,11 +156,17 @@ import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { addCircleOutline, settingsOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
-import moment from 'moment-timezone';
+
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { IonPage, IonButton, IonContent, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon, IonTitle } from '@ionic/vue';
 import TheNeedCard from '@/components/TheNeedCard.vue';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const router = useRouter();
 const appStore = useAppStore();
@@ -170,7 +176,7 @@ const route = useRoute();
 const petStore = usePetStore();
 const userStore = useUserStore();
 
-const currentDate: Ref<string> = ref(moment().format('YYYY-MM-DD')); // Initalized to today's date
+const currentDate: Ref<string> = ref(dayjs().tz(userStore.timezone).format('YYYY-MM-DD')); // Initalized to today's date
 const pet: Ref<Pet | null> = ref(null);
 const isOpen = ref(false);
 const category: Ref<Need['category']> = ref('');
@@ -183,7 +189,7 @@ const validMessage = ref('');
 const isOwner = ref(false);
 
 const changeDay = (delta: number) => {
-  const newDate = moment.tz(currentDate.value, userStore.timezone).add(delta, 'days');
+  const newDate = dayjs.tz(currentDate.value, userStore.timezone).add(delta, 'days');
   currentDate.value = newDate.format('YYYY-MM-DD');
 };
 
@@ -199,6 +205,7 @@ const needsByDateComputed = computed(() => {
     return acc;
   }, {});
 });
+
 
 const units = {
   duration: 'minutes',
@@ -245,7 +252,7 @@ async function getPet(id: string) {
 // When the user clicks the addNewNeed button on the modal this function is called
 const addNewNeed = async () => {
 
-  const today = moment().format('YYYY-MM-DD');
+  const today = dayjs().tz(userStore.timezone).format('YYYY-MM-DD');
 
   // If value is too big
   if (selection.value === 'duration' && valueOfSelection.value > 1440) {

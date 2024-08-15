@@ -79,13 +79,13 @@ const route = useRoute();
 const petStore = usePetStore();
 
 const dateErrorMessage = ref('');
-const existingPetObject: Ref<Pet> = ref({
+const existingPetObject: Ref<Pet> = ref({ // Create a reactive reference to the pet object, updated when the pet data is loaded
   id: '',
   name: '',
   breed: '',
   species: '',
   description: '',
-  birthday: new Date(),
+  birthday: null as Date | null,
 });
 const showDatePicker = ref(false);
 
@@ -103,6 +103,7 @@ const dateSelected = (selectedDateString: string) => {
   if (selectedDate <= currentDate) {
     dateErrorMessage.value = '';
     existingPetObject.value.birthday = new Date(selectedDateString);
+    existingPetObject.value.birthday.setHours(0, 0, 0, 0);
     showDatePicker.value = false;
   } else {
     dateErrorMessage.value = 'Please select a date in the past or today';
@@ -138,7 +139,6 @@ const updatePet = async () => {
 
   const success = await petStore.updatePet(existingPetObject.value.id, petData);
   if (success) {
-    console.log('Pet updated successfully');
     router.push({ name: 'pet', params: { id: petData.id } }); // Update to the correct route name if different
   } else {
     console.error('Failed to update pet');
