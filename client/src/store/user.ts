@@ -54,7 +54,7 @@ export const useUserStore = defineStore({
     token: null,
     userName: null,
     id: null,
-    timezone: null,
+    timezone: 'UTC' || null, // Dayjs default not work with null
     emailConfirmed: null,
   }),
   actions: {
@@ -115,7 +115,6 @@ export const useUserStore = defineStore({
           newPassword,
           timezone,
         });
-        console.log('response', response);
 
         if (response.status === 201) {
           return {
@@ -124,7 +123,6 @@ export const useUserStore = defineStore({
           };
         }
       } catch (error) {
-        console.log('error', error.response);
         if (error.response?.status === 400) {
           return {
             isSuccess: false,
@@ -176,14 +174,12 @@ export const useUserStore = defineStore({
           await setLocalStorageItem('userName', response.data.userName);
           await setLocalStorageItem('email', response.data.email);
           await setLocalStorageItem('timezone', response.data.timezone);
-          console.log('User updated successfully');
           return {
             isSuccess: true,
             message: response.data.message || 'User updated successfully',
           };
         }
       } catch (error) {
-        console.log('error', error);
         if (error.response?.status === 401) {
           return {
             isSuccess: false,
