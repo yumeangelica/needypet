@@ -1,4 +1,11 @@
 const Pet = require('../models/petModel');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(isSameOrAfter);
 
 /**
  * @description Completes the daily task if the total quantity or duration is greater than or equal to the need quantity or duration
@@ -48,8 +55,7 @@ const dailyTaskCompleter = need => {
  * @returns true or false
  */
 const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsinki'
-  const momentTimezoneData = require('moment-timezone/data/meta/latest.json');
-  const timezones = Object.keys(momentTimezoneData.zones).map(key => momentTimezoneData.zones[key].name);
+  const timezones = Intl.supportedValuesOf('timeZone');
   return timezones.includes(timezone); // Check if the timezone is valid
 };
 
@@ -59,8 +65,12 @@ const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsi
  * @returns formatted date in 'YYYY-MM-DD' format
   */
 const checkLocalDateByTimezone = timezone => {
-  const moment = require('moment-timezone');
-  const newDate = moment.tz(timezone);
+  console.log('check', Intl.supportedValuesOf('timeZone').includes(timezone));
+  if (!Intl.supportedValuesOf('timeZone').includes(timezone)) {
+    return new Error('Invalid timezone');
+  }
+
+  const newDate = dayjs().tz(timezone);
   const formattedDate = newDate.format('YYYY-MM-DD');
   return formattedDate;
 };
@@ -74,13 +84,11 @@ const checkLocalDateByTimezone = timezone => {
   */
 const updatePetNeedstoNextDays = async () => {
   const User = require('../models/userModel');
-  const moment = require('moment-timezone');
 
   try {
-  //   // Check which timezones are midnight, make list of them
-    const timezones = moment.tz.names(); // Get all timezones from moment-timezone
-    const midnightTimezones = timezones.filter(timezone => { // Filter timezones which are midnight
-      const newDate = moment.tz(timezone);
+    const timezones = Intl.supportedValuesOf('timeZone');
+    const midnightTimezones = timezones.filter(timezone => {
+      const newDate = dayjs().tz(timezone);
       return newDate.hour() === 0 && newDate.minute() === 0;
     }, []);
 
@@ -109,7 +117,7 @@ const updatePetNeedstoNextDays = async () => {
       return;
     }
 
-    const newDate = moment.tz(timezoneUsers[0].timezone); // Get the new date object from the first timezone user
+    const newDate = dayjs().tz(timezoneUsers[0].timezone);
 
     const timezoneOffsetInMilliseconds = newDate.utcOffset() * 60 * 1000; // Get the timezone offset in milliseconds
 
@@ -145,7 +153,8 @@ const updatePetNeedstoNextDays = async () => {
       let needsUpdated = false; // Flag for checking if needs are updated
 
       notArchivedNeeds.forEach(need => {
-        if (moment(need.dateFor).isSameOrAfter(localDateObject, 'day')) {
+        const needDate = dayjs(need.dateFor);
+        if (needDate.isSameOrAfter(localDateObject, 'day')) {
           return;
         }
 
@@ -154,10 +163,12 @@ const updatePetNeedstoNextDays = async () => {
         need.isActive = false;
 
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
-        const howManyDaysDifference = moment(localDateObject).diff(moment(newNeedCopy.dateFor), 'days'); // Check how many days are between the last need date and today
+
+        const howManyDaysDifference = dayjs(localDateObject).diff(dayjs(newNeedCopy.dateFor), 'days');
+
         for (let i = 1; i <= howManyDaysDifference; i++) { // Loop through between the last need date and today
           let newNeed = {
-            dateFor: moment(newNeedCopy.dateFor).add(i, 'days').toDate(),
+            dateFor: dayjs(newNeedCopy.dateFor).add(i, 'days').toDate(),
             archived: i === howManyDaysDifference ? false : true, // If it's the last day, it's not archived
             isActive: i === howManyDaysDifference ? true : false, // If it's the last day, it's active
             category: newNeedCopy.category,

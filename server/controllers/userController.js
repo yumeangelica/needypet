@@ -166,7 +166,10 @@ const updateUser = async (request, response, next) => {
     }
 
     await user.save(); // Save updated user to database
-    await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user after saving
+
+    if (email && email !== user.email) { // If email is updated, send confirmation email
+      await sendConfirmationEmail(user.email, user.emailConfirmToken);
+    }
 
     response.status(200).json({
       message: 'User updated successfully',

@@ -108,7 +108,7 @@ const petSchema = new mongoose.Schema({
     },
     careRecords: [{
       date: {
-        type: Date,
+        type: Date, // UTC datetime
       },
       careTaker: { // User id, later will be connected to user model
         type: mongoose.Schema.Types.ObjectId,
@@ -137,6 +137,16 @@ const petSchema = new mongoose.Schema({
           type: String,
           emit: 'minutes',
         },
+      },
+      timezone: { // Format 'Europe/Helsinki', will indicate where the record was created
+        type: String,
+        required: true,
+        default: 'UTC',
+        validator(timezone) {
+          const timezones = Intl.supportedValuesOf('timeZone');
+          return timezones.includes(timezone);
+        },
+        message: 'Invalid timezone',
       },
     }],
     archived: { // When date is past, set to true
