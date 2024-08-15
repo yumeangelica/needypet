@@ -15,3 +15,6 @@ package-lock.json
 requests
 
 stats.html
+
+# For future database updates
+server_updates/
