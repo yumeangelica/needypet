@@ -1,10 +1,14 @@
 const Pet = require('../models/petModel');
 const User = require('../models/userModel');
 const { dailyTaskCompleter, checkLocalDateByTimezone } = require('../helper');
-const moment = require('moment-timezone');
 const needValidation = require('../validations/needValidation');
 const recordValidation = require('../validations/recordValidation');
 const z = require('zod');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 /**
  * @description Gets all pets for the user.
@@ -242,8 +246,9 @@ const addNewRecord = async (request, response, next) => {
 
     const newRecordObject = {
       careTaker: request.user.id,
-      date: moment().tz(request.user.timezone).format(),
+      date: new Date(dayjs().tz(request.user.timezone).format()),
       note: validateRecord.note,
+      timezone: request.user.timezone,
     };
 
     if (validateRecord.quantity) {
