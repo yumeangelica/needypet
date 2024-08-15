@@ -21,7 +21,6 @@ export const usePetStore = defineStore({
       const token = userStore.token;
 
       if (!token) {
-        console.log('Token not found');
         return false;
       }
 
@@ -149,7 +148,6 @@ export const usePetStore = defineStore({
       const token = userStore.token;
 
       if (!token) {
-        console.log('Token not found');
         return false;
       }
 
@@ -197,7 +195,6 @@ export const usePetStore = defineStore({
       const token = userStore.token;
 
       if (!token) {
-        console.log('Token not found');
         return false;
       }
 
@@ -249,7 +246,6 @@ export const usePetStore = defineStore({
       const token = userStore.token;
 
       if (!token) {
-        console.log('Token not found');
         return false;
       }
 
@@ -294,7 +290,6 @@ export const usePetStore = defineStore({
       const token = userStore.token;
 
       if (!token) {
-        console.log('Token not found');
         return false;
       }
 
@@ -343,7 +338,6 @@ export const usePetStore = defineStore({
       const token = userStore.token;
 
       if (!token) {
-        console.log('Token not found');
         return false;
       }
 
