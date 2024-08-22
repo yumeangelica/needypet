@@ -351,6 +351,10 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
     max-width: 100%;
   }
 
+  .pet-container {
+    margin-top: 30px;
+  }
+
   .full-pet-card {
     background-color: var(--color-card-background-lilac);
     border-radius: 50px;
