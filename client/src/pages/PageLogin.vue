@@ -3,7 +3,8 @@
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="login-register-container">
-          <img :src="needypet_logo" alt="NeedyPet logo">
+
+          <TheLogoImage altText="NeedyPet logo" />
 
           <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
@@ -24,7 +25,7 @@
             <ion-item class="login-register-field-item">
               <ion-input class="login-register-field-input" :type="passwordFieldType" v-model="password" placeholder="Enter your password"
                 aria-label="Password"></ion-input>
-                <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
+              <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
                 <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
               </ion-button>
             </ion-item>
@@ -56,7 +57,7 @@ import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
 import { pawOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import needypet_logo from '@/assets/images/needypet_logo.webp';
+import TheLogoImage from '@/components/TheLogoImage.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

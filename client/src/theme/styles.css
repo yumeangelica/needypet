@@ -5,15 +5,26 @@
   line-height: 1.9 !important;
 }
 
-
-/* Elements styling */
-/* ---------------- */
-
 /* Background picture */
 body {
-  background-image: url('../assets/images/needypet_background.webp');
+  background-image: url('../assets/images/needypet_background_desktop.webp');
   background-size: cover;
-  background-position: center;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Tablet version */
+@media (max-width: 1200px) {
+  body {
+    background-image: url('../assets/images/needypet_background_tablet.webp');
+  }
+}
+
+/* Mobile version */
+@media (max-width: 768px) {
+  body {
+    background-image: url('../assets/images/needypet_background_mobile.webp');
+  }
 }
 
 h1, h2, h3, h4, h5, h6, a {

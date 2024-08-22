@@ -3,7 +3,7 @@
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div class="login-register-container">
-          <img :src="needypet_logo" alt="NeedyPet logo">
+          <TheLogoImage altText="NeedyPet logo" />
 
           <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
@@ -15,8 +15,7 @@
 
           <form @submit.prevent="resetPassword">
             <ion-item class="login-register-field-item">
-              <ion-input class="login-register-field-input" type="email" v-model="email" placeholder="Enter your email"
-                aria-label="Email"></ion-input>
+              <ion-input class="login-register-field-input" type="email" v-model="email" placeholder="Enter your email" aria-label="Email"></ion-input>
             </ion-item>
 
             <ion-buttons>
@@ -38,7 +37,7 @@ import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
 import { pawOutline } from 'ionicons/icons';
-import needypet_logo from '@/assets/images/needypet_logo.webp';
+import TheLogoImage from '@/components/TheLogoImage.vue';
 
 const appStore = useAppStore();
 const userStore = useUserStore();

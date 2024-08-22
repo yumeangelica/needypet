@@ -31,19 +31,13 @@ const showHeaderNavigation = computed(() => !appStore.isMobile && !['login', 're
 // Mobile navbar should not be shown on login, register, and landing pages and not on desktop
 const showMobileNavigation = computed(() => appStore.isMobile && !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(route.name));
 
-// Update the screen size when the window is resized
-function updateScreenSize() {
-  appStore.updateScreenSize(window.innerWidth);
-}
-
-// Update the screen size when the component is mounted and when the window is resized
 onMounted(() => {
-  updateScreenSize();
-  window.addEventListener('resize', updateScreenSize);
-});
+  // Start watching the screen size
+  const cleanup = appStore.watchScreenSize();
 
-// Remove the event listener when the component is unmounted
-onUnmounted(() => {
-  window.removeEventListener('resize', updateScreenSize);
+  // Cleanup when the component is unmounted
+  onUnmounted(() => {
+    cleanup();
+  });
 });
 </script>

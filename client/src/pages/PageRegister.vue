@@ -2,9 +2,9 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <!-- Global styling for container element -->
+
         <div class="login-register-container">
-          <img :src="needypet_logo" alt="NeedyPet logo">
+          <TheLogoImage altText="Needypet Logo" />
 
           <div class="paw-header-container">
             <ion-icon :icon="pawOutline"></ion-icon>
@@ -90,7 +90,7 @@ import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonButtons } from '@ionic/vue';
 import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
 import { pawOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import needypet_logo from '@/assets/images/needypet_logo.webp';
+import TheLogoImage from '@/components/TheLogoImage.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -185,8 +185,6 @@ const createAccount = async () => {
   }
 };
 
-
-// Function to navigate back to the landing page and clear the input fields
 const goBack = () => {
   router.push({ name: 'landing' });
   username.value = '';

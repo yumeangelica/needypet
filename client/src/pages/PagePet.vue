@@ -306,13 +306,6 @@ watch(route, async () => {
   }
 });
 
-// Update the screen size when the window is resized
-const newWidth = computed(() => window.innerWidth);
-
-document.addEventListener('resize', () => {
-  appStore.updateScreenSize(newWidth.value);
-});
-
 // Watch the selection value and update the unitOfSelection value accordingly
 watch(selection, (newValue) => {
   if (newValue === 'duration') {

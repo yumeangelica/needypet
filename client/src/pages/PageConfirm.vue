@@ -13,7 +13,7 @@
         <!-- Password reset -->
         <div v-else-if="confirmationType === 'password'">
           <div v-if="showForm" class="login-register-container">
-            <img :src="needypet_logo" alt="NeedyPet logo">
+            <TheLogoImage altText="NeedyPet logo" />
 
             <div class="paw-header-container">
               <ion-icon :icon="pawOutline"></ion-icon>
@@ -68,7 +68,7 @@ import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
 import { pawOutline } from 'ionicons/icons';
-import needypet_logo from '@/assets/images/needypet_logo.webp';
+import TheLogoImage from '@/components/TheLogoImage.vue';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -163,45 +163,45 @@ const goToLogin = () => {
 </script>
 
 <style scoped>
-.confirmation-container {
-  padding: 20px;
-  border-radius: 50px;
-  background-color: var(--color-login-background);
-  border: 1px solid var(--color-login-button-and-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.confirmation-message {
-  margin-bottom: 20px;
-  font-size: 1rem;
-  color: var(--color-text-default);
-}
-
-.action-button {
-  margin-top: 20px;
-  --background: var(--color-login-button-and-border);
-  --border-radius: 25px;
-  --color: var(--color-text-lilac);
-  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-}
-
-.primary-action-button {
-  --background: var(--color-login-button-and-border) !important;
-}
-
-.secondary-action-button {
-  --background: var(--color-create-account-button) !important;
-}
-
-/* Responsive styles */
-@media (max-width: 568px) {
   .confirmation-container {
-    margin-top: 10vh;
+    padding: 20px;
+    border-radius: 50px;
+    background-color: var(--color-login-background);
+    border: 1px solid var(--color-login-button-and-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
 
   .confirmation-message {
-    font-size: 0.85rem;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: var(--color-text-default);
   }
-}
+
+  .action-button {
+    margin-top: 20px;
+    --background: var(--color-login-button-and-border);
+    --border-radius: 25px;
+    --color: var(--color-text-lilac);
+    box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+  }
+
+  .primary-action-button {
+    --background: var(--color-login-button-and-border) !important;
+  }
+
+  .secondary-action-button {
+    --background: var(--color-create-account-button) !important;
+  }
+
+  /* Responsive mobile styles */
+  @media (max-width: 568px) {
+    .confirmation-container {
+      margin-top: 10vh;
+    }
+
+    .confirmation-message {
+      font-size: 0.85rem;
+    }
+  }
 </style>
