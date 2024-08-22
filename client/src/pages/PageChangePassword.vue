@@ -44,7 +44,10 @@
             </div>
           </form>
         </div>
+
+
       </div>
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -56,6 +59,7 @@ import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

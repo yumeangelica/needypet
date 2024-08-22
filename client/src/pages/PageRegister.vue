@@ -75,7 +75,10 @@
 
           </form>
         </div>
+
+
       </div>
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -91,6 +94,7 @@ import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonPage, I
 import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
 import { pawOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import TheLogoImage from '@/components/TheLogoImage.vue';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

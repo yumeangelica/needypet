@@ -2,8 +2,8 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <h2 class="ion-text-center">Add new pet:</h2>
         <div class="add-pet-container">
+          <h2 class="ion-text-center">Add new pet:</h2>
           <form @submit.prevent="submitPet" class="add-pet-form">
             <ion-item>
               <ion-input aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name"></ion-input>
@@ -158,6 +158,7 @@ const submitPet = async () => {
     flex-direction: column;
     max-width: 500px;
     margin: auto;
+    margin-top: 30px;
     padding: 20px;
     background-color: var(--color-card-background-lilac);
     border-radius: 50px;

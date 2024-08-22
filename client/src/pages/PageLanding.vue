@@ -17,8 +17,10 @@
             Account</ion-button>
 
         </div>
-        <div class="copyright">&copy; 2020 - {{ year }} yumeangelica.github.io. All Rights Reserved.</div>
+
+
       </div>
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -29,6 +31,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonPage } from '@ionic/vue';
 import TheLogoImage from '@/components/TheLogoImage.vue';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -37,8 +40,6 @@ const route = useRoute();
 const validMessage = ref('');
 
 const router = useRouter();
-
-const year = new Date().getFullYear();
 
 onBeforeMount(() => {
   if (route.query.userLoggedOut === 'true') {
@@ -56,17 +57,3 @@ onBeforeMount(() => {
   }
 });
 </script>
-
-<style>
-  .copyright {
-    margin-top: 30px;
-    font-size: 0.7rem;
-    text-align: center;
-  }
-
-  @media (max-width: 568px) {
-    .copyright {
-      font-size: 0.55rem;
-    }
-  }
-</style>
