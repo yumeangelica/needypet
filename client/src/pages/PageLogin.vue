@@ -43,8 +43,12 @@
               {{ errorMessage }}
             </div>
           </form>
+
         </div>
+
+
       </div>
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -58,6 +62,7 @@ import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
 import { pawOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import TheLogoImage from '@/components/TheLogoImage.vue';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
