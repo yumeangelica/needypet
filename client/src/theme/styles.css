@@ -112,13 +112,19 @@ ion-item {
 .content-wrapper {
   max-width: 800px;
   margin: auto;
-  margin-top: 100px;
+  margin-top: 40px;
   padding: 20px;
 }
 
 .mobile-content-wrapper {
-  margin-top: 30px;
+  margin-top: 15px;
   padding: 20px;
+}
+
+/* For pushing TheFooter to the bottom of the page */
+.content-wrapper, .mobile-content-wrapper {
+  flex-grow: 1;
+  min-height: calc(90vh - 50px);
 }
 
 /* Calendar styling */
@@ -168,6 +174,7 @@ ion-datetime {
   flex-direction: column;
   max-width: 500px;
   margin: auto;
+  margin-top: 30px;
   padding: 20px;
   background-color: var(--color-card-background-lilac);
   border-radius: 50px;
