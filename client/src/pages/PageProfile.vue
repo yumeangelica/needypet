@@ -4,10 +4,6 @@
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
         <div v-if="user" class="edit-pet-profile-container">
 
-          <div v-if="validMessage">
-            <p class="custom-valid-message">{{ validMessage }}</p>
-          </div>
-
           <div class="inline-container">
             <h3>{{ user.userName }}</h3>
             <ion-button class="settings-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
@@ -36,9 +32,6 @@
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
           </div>
 
-          <div v-if="errorMessage">
-            <p class="custom-error-message">{{ errorMessage }}</p>
-          </div>
         </div>
 
         <div v-if="!user">
@@ -69,8 +62,6 @@ const userStore = useUserStore();
 
 const user: Ref<User> = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
-const validMessage = ref('');
-const errorMessage = ref('');
 const isButtonDisabled = ref(false); // State for disabling button
 
 // Function to toggle the settings button
@@ -90,30 +81,25 @@ watchEffect(async () => {
     await fetchUser();
   }
   if (route.query.userUpdateSuccessfully === 'true') {
-    validMessage.value = 'User details updated successfully';
-    setTimeout(() => {
-      validMessage.value = '';
-    }, 5000);
+    appStore.addNotification('User updated successfully', 'success');
   }
 
   if (route.query.passwordChangedSuccessfully === 'true') {
-    validMessage.value = 'Password changed successfully';
-    setTimeout(() => {
-      validMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Password changed successfully', 'success');
   }
 });
 
 // Function to confirm logout action
 const confirmLogout = () => {
   if (window.confirm('Are you sure you want to logout?')) {
-    logout({ userLoggedOut: 'true' });
+    logout();
   }
 };
 
-const logout = async (query) => {
+const logout = async () => {
   await userStore.logout();
-  router.push({ name: 'landing', query });
+  router.push({ name: 'landing' });
+  appStore.addNotification('You have been logged out', 'success');
 };
 
 
@@ -128,26 +114,24 @@ const deleteAccount = async () => {
   const { isSuccess, message } = await userStore.deleteAccount(); // Returns true or false
 
   if (isSuccess) {
-    logout({ userDeleted: 'true' }); // Logout user after successful account deletion
+    appStore.addNotification('Your account has been deleted', 'success');
+    logout(); // Logout user after successful account deletion
   } else {
-    errorMessage.value = message;
+    appStore.addNotification(message, 'error');
   }
 };
 
 const resendEmailConfirmation = async () => {
 
   isButtonDisabled.value = true; // Disable button
-  try {
-    await userStore.resendEmailConfirmation();
-    validMessage.value = 'Please check your email for the confirmation link';
-  } catch (error) {
-    validMessage.value = 'Failed to resend confirmation email';
-  } finally {
-    setTimeout(() => {
-      isButtonDisabled.value = false; // Enable button after timeout
-    }, 30000); // Timeout duration in milliseconds
-  }
 
+  const isSuccess = await userStore.resendEmailConfirmation();
+
+  if (isSuccess) {
+    appStore.addNotification('Please check your email for the confirmation link', 'success');
+  } else {
+    appStore.addNotification('Failed to resend email confirmation, please try again later', 'error');
+  }
 };
 
 onBeforeRouteLeave(() => {
