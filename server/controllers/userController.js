@@ -82,7 +82,20 @@ const createNewUser = async (request, response, next) => {
 
     await user.save();
 
-    await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+    try {
+      await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+    } catch (emailError) {
+      if (emailError.code === 'EAUTH') {
+        return next({
+          status: 535,
+          message: 'Failed to authenticate email. Please contact support.',
+        });
+      }
+      return next({
+        status: 535,
+        message: 'Unable to send confirmation email. Please try again later.',
+      })
+    }
 
     response.status(201).json('user');
   } catch (error) {

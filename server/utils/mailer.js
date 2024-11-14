@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const config = require('./config');
 
-// Create Transporter For Outlook
+// Create Transporter For Email Service
 const transporter = nodemailer.createTransport({
   host: config.emailService,
   port: config.emailPort,
@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 // Function to send email
 const sendMail = (to, subject, html) => {
   const mailOptions = {
-    from: config.emailUser, // Sender's email address
+    from: config.emailFrom, // Sender's email address
     to, // Recipient's email address
     subject, // Email subject
     html, // Email content in HTML format

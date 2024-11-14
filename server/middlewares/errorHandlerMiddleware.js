@@ -47,6 +47,15 @@ const errorHandler = (error, request, response, next) => {
   case 'ZodError':
     errorResponse.details = error.flatten();
     return response.status(422).json(errorResponse);
+
+  case 'SMTPAuthenticationError': // Specific SMTP authentication error
+    errorResponse.message = 'Email authentication failed. Please contact support.';
+    return response.status(535).json(errorResponse);
+
+  case 'SMTPError':
+    errorResponse.message = 'Email Error';
+    return response.status(535).json(errorResponse);
+
   default:
     return response.status(statusCode).json(errorResponse);
   }
