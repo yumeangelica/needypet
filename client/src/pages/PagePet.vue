@@ -53,16 +53,16 @@
                 <form @submit.prevent="addNewNeed">
 
                   <ion-item>
-                    <ion-input v-model="category" label="Category" placeholder="input need's category (e.g. walk or feed)"></ion-input>
+                    <ion-input v-model="category" label="Category" required placeholder="input need's category (e.g. walk or feed)"></ion-input>
                   </ion-item>
 
                   <ion-item>
-                    <ion-input v-model="description" label="Description" placeholder="input need's description"></ion-input>
+                    <ion-input v-model="description" label="Description" required placeholder="input need's description"></ion-input>
                   </ion-item>
 
                   <!-- display dateFor as currentDate -->
                   <ion-item>
-                    <ion-input readonly :value="currentDate" label="Date"></ion-input>
+                    <ion-input readonly :value="currentDate" required label="Date"></ion-input>
                   </ion-item>
 
                   <ion-item v-show="!selection">
@@ -80,8 +80,8 @@
                   <!-- unit dropdown -->
                   <div v-if="selection === 'quantity'">
                     <ion-item lines="none">
-                      <ion-input v-model="valueOfSelection" label="Enter value" :autofocus="true" @input="cleanInput($event)"></ion-input>
-                      <ion-select v-model="unitOfSelection" interface="popover">
+                      <ion-input v-model="valueOfSelection" label="Enter value" required :autofocus="true" @input="cleanInput($event)"></ion-input>
+                      <ion-select v-model="unitOfSelection" interface="popover" required>
                         <ion-select-option disabled selected value="">select unit</ion-select-option>
                         <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
                       </ion-select>
@@ -91,18 +91,21 @@
 
                   <div v-if="selection === 'duration'">
                     <ion-item lines="none">
-                      <ion-input v-model="valueOfSelection" label="Enter duration" :autofocus="true" @input="cleanInput($event)"></ion-input>
+                      <ion-input v-model="valueOfSelection" label="Enter duration" required :autofocus="true" @input="cleanInput($event)"></ion-input>
                       <ion-label>minute(s)</ion-label>
                     </ion-item>
                   </div>
 
+
                   <div class="confirm-button-container">
                     <ion-button class="custom-button" type="submit">Confirm</ion-button>
-                    <ion-button class="custom-button" @click="selection = ''" v-if="selection">Return</ion-button>
+                    <ion-button class="custom-button" @click="() => { selection = ''; valueOfSelection = null; unitOfSelection = ''; }"  v-if="selection">Return to selection</ion-button>
                   </div>
 
-                  <!-- Show error message if fields are not filled. Global error message styling. -->
-                  <p class="custom-error-message" v-if="errorMessage">{{ errorMessage }}</p>
+                  <!-- formfieldsobject duration or quantity and after that duration cannot be over 1440 minutes -->
+                  <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message">{{ formFieldsErrorDetailsObject.selection }}</div>
+                  <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message">{{ formFieldsErrorDetailsObject.durationValue }}</div>
+                  <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message">{{ formFieldsErrorDetailsObject.quantityUnit }}</div>
 
                 </form>
               </ion-content>
@@ -116,11 +119,6 @@
                 <h4>{{ currentDate }}</h4>
                 <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
               </div>
-
-              <!--  Valid message for need deletion -->
-              <ion-item v-if="validMessage">
-                <ion-label class="custom-valid-message custom-delete-message">{{ validMessage }}</ion-label>
-              </ion-item>
 
               <!-- Needs for the selected date -->
               <ul v-if="needsByDate[currentDate]">
@@ -181,11 +179,16 @@ const pet: Ref<Pet | null> = ref(null);
 const isOpen = ref(false);
 const category: Ref<Need['category']> = ref('');
 const description: Ref<Need['description']> = ref('');
-const errorMessage = ref('');
+
+const formFieldsErrorDetailsObject = ref({
+  selection: '',
+  durationValue: '',
+  quantityUnit: '',
+});
+
 const selection = ref('');
 const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
 const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
-const validMessage = ref('');
 const isOwner = ref(false);
 
 const changeDay = (delta: number) => {
@@ -224,7 +227,6 @@ const clearFields = () => {
   selection.value = '';
   valueOfSelection.value = null;
   unitOfSelection.value = '';
-  errorMessage.value = '';
 };
 
 const cleanInput = (event) => {
@@ -252,22 +254,40 @@ async function getPet(id: string) {
 // When the user clicks the addNewNeed button on the modal this function is called
 const addNewNeed = async () => {
 
-  const today = dayjs().tz(userStore.timezone).format('YYYY-MM-DD');
-
-  // If value is too big
-  if (selection.value === 'duration' && valueOfSelection.value > 1440) {
-    errorMessage.value = 'Duration cannot be more than 1440 minutes (24 hours)';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+  if (!category.value || !description.value) {
+    appStore.addNotification('Please fill in all fields', 'error');
     return;
   }
 
+  const validateSelection = () => {
+    if (!selection.value) {
+      formFieldsErrorDetailsObject.value.selection = 'Please choose a need type';
+      return false;
+    }
+    return true;
+  };
 
-  if (!category.value || !description.value || !selection.value || !valueOfSelection.value || !unitOfSelection.value || !(currentDate.value >= today)) {
-    errorMessage.value = 'Please fill in all fields.';
+  const validateDuration = () => {
+    if (selection.value === 'duration' && valueOfSelection.value > 1440) {
+      formFieldsErrorDetailsObject.value.durationValue = 'Duration cannot be over 1440 minutes';
+      return false;
+    }
+    return true;
+  };
+
+  const validateQuantityUnit = () => {
+    if (selection.value === 'quantity' && unitOfSelection.value === '') {
+      formFieldsErrorDetailsObject.value.quantityUnit = 'Please select a unit';
+      return false;
+    }
+    return true;
+  };
+
+  if (!validateSelection() || !validateDuration() || !validateQuantityUnit()) {
     setTimeout(() => {
-      errorMessage.value = '';
+      formFieldsErrorDetailsObject.value.selection = '';
+      formFieldsErrorDetailsObject.value.durationValue = '';
+      formFieldsErrorDetailsObject.value.quantityUnit = '';
     }, 5000);
     return;
   }
@@ -288,14 +308,10 @@ const addNewNeed = async () => {
       setOpen(false);
       await getPet(pet.value.id);
     } else {
-      errorMessage.value = 'Failed to add need';
+      appStore.addNotification('Failed to add need', 'error');
     }
   } catch (error) {
-    console.error(error);
-    errorMessage.value = 'Failed to add need';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Failed to add need', 'error');
   }
 };
 
@@ -325,10 +341,7 @@ onBeforeMount(async () => {
 const handleNeedDeleted = async (deleted: boolean) => {
   if (deleted) {
     await getPet(pet.value.id);
-    validMessage.value = 'Need deleted successfully';
-    setTimeout(() => {
-      validMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Need deleted successfully', 'success');
   }
 };
 
