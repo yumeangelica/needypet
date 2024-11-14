@@ -93,19 +93,11 @@
       </ion-content>
     </ion-modal>
 
-
-    <!-- Error and success messages -->
-    <ion-item class="custom-ion-item" v-if="errorMessage">
-      <ion-label class="custom-error-message">{{ errorMessage }}</ion-label>
-    </ion-item>
-    <ion-item class="custom-ion-item" v-if="validMessage">
-      <ion-label class="custom-valid-message">{{ validMessage }}</ion-label>
-    </ion-item>
   </ion-card>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject, onBeforeMount } from 'vue';
+import { ref, inject, computed, onBeforeMount } from 'vue';
 import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil } from 'ionicons/icons';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -114,12 +106,14 @@ import { IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, I
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { useAppStore } from '@/store/app';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const petStore = usePetStore();
 const userStore = useUserStore();
+const appStore = useAppStore();
 
 const { need, petId } = defineProps<{
   need: Need,
@@ -159,9 +153,6 @@ onBeforeMount(async () => {
 type HandleNeedDeletionType = (needDelete: boolean) => void;
 
 const showOptions = ref(false);
-const errorMessage = ref('');
-const validMessage = ref('');
-const reactiveNeed = ref(need);
 
 const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion'); // This function sends a signal to the parent component that a need has been deleted
 const isOwner = inject('isOwner'); // This value comes from the parent component
@@ -209,16 +200,9 @@ const addRecord = async (petId: string, need: Need) => {
 
   const updateSuccessful = await petStore.addRecord(petId, needId, recordObject);
   if (updateSuccessful) {
-    reactiveNeed.value.completed = true;
-    validMessage.value = 'Record added successfully';
-    setTimeout(() => {
-      validMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Record added successfully', 'success');
   } else {
-    errorMessage.value = 'Failed to add record';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Failed to add record', 'error');
   }
 };
 
@@ -244,15 +228,9 @@ const toggleNeedActive = async (needId) => {
 
   const response = await petStore.toggleNeedisActive(petId, needId);
   if (response) {
-    validMessage.value = 'Need active status toggled successfully';
-    setTimeout(() => {
-      validMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Need active status toggled successfully', 'success');
   } else {
-    errorMessage.value = 'Failed to toggle need active status';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Failed to toggle need active status', 'error');
   }
 };
 
@@ -263,10 +241,7 @@ const closeEditModal = () => {
 
 const updateNeed = async () => {
   if (!editForm.value.category || !editForm.value.description || !editForm.value.value || !editForm.value.unit) {
-    errorMessage.value = 'Please fill all fields';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Please fill all fields', 'error');
     return;
   }
 
@@ -280,18 +255,12 @@ const updateNeed = async () => {
       unit: editForm.value.unit
     }
   };
-  const response = await petStore.updateNeed(petId, needId, updatedNeed); // Implement this in your petStore
+  const isSuccess = await petStore.updateNeed(petId, needId, updatedNeed); // Implement this in your petStore
 
-  if (response) {
-    validMessage.value = 'Need updated successfully';
-    setTimeout(() => {
-      validMessage.value = '';
-    }, 5000);
+  if (isSuccess) {
+    appStore.addNotification('Need updated successfully', 'success');
   } else {
-    errorMessage.value = 'Failed to update need';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Failed to update need', 'error');
   }
   closeEditModal();
 };
@@ -311,12 +280,9 @@ const deleteNeed = async (needId: string) => {
 
   const response = await petStore.deleteNeed(petId, needId);
   if (response) {
-    handleNeedDeletion(true); // Send signal to parent component that a need has been deleted
+    handleNeedDeletion(true);
   } else {
-    errorMessage.value = 'Failed to delete need';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Failed to delete need', 'error');
   }
 };
 

@@ -2,6 +2,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { axiosInstance } from '@/services';
 import { UserStoreState, User, loginData } from '@/types/user';
+import { useAppStore } from '@/store/app';
 
 const servicePath = '/auth';
 
@@ -119,21 +120,15 @@ export const useUserStore = defineStore({
         if (response.status === 201) {
           return {
             isSuccess: true,
-            message: 'Account created successfully',
+            message: 'Account created successfully, please check your email to confirm your account',
+            errorDetails: null,
           };
         }
       } catch (error) {
-        if (error.response?.status === 400) {
+        if (error) {
           return {
             isSuccess: false,
             message: error.response.data.message,
-          };
-        }
-
-        if (error.response?.status === 422) {
-          return {
-            isSuccess: false,
-            message: 'Validation error',
             errorDetails: error.response.data.errorDetails,
           };
         }
@@ -426,7 +421,8 @@ export const useUserStore = defineStore({
       if (!this.token) {
         return false;
       }
-      const response = axiosInstance({
+      const appStore = useAppStore();
+      const response = await axiosInstance({
         method: 'post',
         url: `${servicePath}/resend-email-confirmation`,
         headers: {
@@ -438,10 +434,15 @@ export const useUserStore = defineStore({
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during email confirmation:',
-            error.response?.status
-          );
+          const status = error.response?.status;
+          console.error('Error during email confirmation resend:', status);
+
+          if (status === 535) {
+            appStore.addNotification('Email server authentication failed. Please contact support.', 'error');
+          } else {
+            appStore.addNotification('Unable to resend email confirmation. Please contact support.', 'error');
+          }
+
           return false;
         });
 
