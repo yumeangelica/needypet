@@ -14,6 +14,7 @@ const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 const emailService = process.env.EMAIL_SERVICE;
 const emailPort = process.env.EMAIL_PORT;
+const emailFrom = process.env.EMAIL_FROM;
 
 module.exports = {
   isDevelopment,
@@ -27,4 +28,5 @@ module.exports = {
   emailPass,
   emailService,
   emailPort,
+  emailFrom,
 };
