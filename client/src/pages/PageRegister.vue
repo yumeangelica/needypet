@@ -18,12 +18,12 @@
               <ion-input class="login-register-field-input" v-model="username" type="text" placeholder="Username" required
                 aria-label="Username"></ion-input>
             </ion-item>
-            <div v-if="errorDetailsObject.username" class="custom-error-message">{{ errorDetailsObject.username }}</div>
+            <div v-if="formFieldsErrorDetailsObject.username" class="custom-error-message">{{ formFieldsErrorDetailsObject.username }}</div>
             <!-- Email input field -->
             <ion-item class="login-register-field-item">
               <ion-input class="login-register-field-input" v-model="email" placeholder="Email" type="email" required aria-label="Email"></ion-input>
             </ion-item>
-            <div v-if="errorDetailsObject.email" class="custom-error-message">{{ errorDetailsObject.email }}</div>
+            <div v-if="formFieldsErrorDetailsObject.email" class="custom-error-message">{{ formFieldsErrorDetailsObject.email }}</div>
             <!-- Password input field -->
             <ion-item class="login-register-field-item">
               <ion-input class="login-register-field-input" v-model="password" @input="validatePassword" :type="passwordFieldType"
@@ -53,20 +53,18 @@
                 <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
               </ion-button>
             </ion-item>
-            <div v-if="errorDetailsObject.newPassword" class="custom-error-message">{{ errorDetailsObject.newPassword }}</div>
+            <div v-if="formFieldsErrorDetailsObject.newPassword" class="custom-error-message">{{ formFieldsErrorDetailsObject.newPassword }}</div>
 
 
             <!-- Timezone select field -->
             <ion-item class="login-register-field-item timezone-selector-field" @click="showModal = true" required>
               <ion-label class="custom-timezone-label">{{ selectedTimezone || 'Select Timezone' }}</ion-label>
             </ion-item>
-            <div v-if="errorDetailsObject.timezone" class="custom-error-message">{{ errorDetailsObject.timezone }}</div>
+            <div v-if="formFieldsErrorDetailsObject.timezone" class="custom-error-message">{{ formFieldsErrorDetailsObject.timezone }}</div>
 
             <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
               @timezoneSelected="timezone => selectedTimezone = timezone" />
 
-            <!-- Error message -->
-            <div v-if="errorMessage" class="custom-error-message">{{ errorMessage }}</div>
             <ion-buttons>
               <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
@@ -109,7 +107,7 @@ const selectedTimezone: Ref<string> = ref('');
 const errorMessage: Ref<string> = ref('');
 const passwordFieldType: Ref<'password' | 'text'> = ref('password');
 
-const errorDetailsObject = ref({
+const formFieldsErrorDetailsObject = ref({
   username: '' as string,
   email: '' as string,
   newPassword: '' as string,
@@ -140,17 +138,17 @@ const togglePasswordVisibility = () => {
 
 const createAccount = async () => {
   if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(password.value)) {
-    errorMessage.value = 'Password must contain 10 character with at least one uppercase, lowercase, number and special character';
+    formFieldsErrorDetailsObject.value.newPassword = 'Password must contain 10 character with at least one uppercase, lowercase, number and special character';
     setTimeout(() => {
-      errorMessage.value = '';
+      formFieldsErrorDetailsObject.value.newPassword = '';
     }, 5000);
     return;
   }
 
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = 'Passwords do not match';
+    formFieldsErrorDetailsObject.value.newPassword = 'Passwords do not match';
     setTimeout(() => {
-      errorMessage.value = '';
+      formFieldsErrorDetailsObject.value.newPassword = '';
     }, 5000);
     return;
   }
@@ -163,28 +161,29 @@ const createAccount = async () => {
   });
 
   if (isSuccess) {
-    router.push({ name: 'login', query: { accountCreated: 'true' } });
+    router.push({ name: 'login', replace: true });
+    appStore.addNotification(message, 'success');
     username.value = '';
     email.value = '';
     password.value = '';
     confirmPassword.value = '';
     selectedTimezone.value = '';
   } else {
-    errorDetailsObject.value = {
+    formFieldsErrorDetailsObject.value = {
       username: errorDetails?.userName?.[0] || '',
       email: errorDetails?.email?.[0] || '',
       newPassword: errorDetails?.newPassword?.[0] || '',
       timezone: errorDetails?.timezone?.[0] || ''
     };
-    errorMessage.value = message;
+    errorMessage.value = message? message : 'An error occurred. Please try again later.';
     setTimeout(() => {
-      errorMessage.value = '';
-      errorDetailsObject.value = {
+      formFieldsErrorDetailsObject.value = {
         username: '',
         email: '',
         newPassword: '',
         timezone: ''
       };
+      errorMessage.value = '';
     }, 5000);
   }
 };
