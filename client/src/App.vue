@@ -11,33 +11,49 @@
       <TheMobileHeader v-if="showMobileNavigation" />
     </ion-tabs>
 
+    <!-- Include the TheNotification component and pass the hasHeader prop -->
+    <TheNotification :hasDesktopHeader="showHeaderNavigation" />
   </ion-app>
 </template>
 
-<script setup>
+
+<script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useAppStore } from '@/store/app';
 import { useRoute } from 'vue-router';
 import { IonRouterOutlet, IonTabs, IonApp } from '@ionic/vue';
 import TheHeader from '@/components/TheHeader.vue';
 import TheMobileHeader from '@/components/TheMobileHeader.vue';
+import TheNotification from '@/components/TheNotification.vue';
 
 const appStore = useAppStore();
 const route = useRoute();
 const isMobile = computed(() => appStore.isMobile);
 
-// Desktop header should not be shown on login, register, and landing pages and not on mobile
-const showHeaderNavigation = computed(() => !appStore.isMobile && !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(route.name));
-// Mobile navbar should not be shown on login, register, and landing pages and not on desktop
-const showMobileNavigation = computed(() => appStore.isMobile && !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(route.name));
+const showHeaderNavigation = computed(
+  () =>
+    !appStore.isMobile &&
+    !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(
+      route.name as string
+    )
+);
+const showMobileNavigation = computed(
+  () =>
+    appStore.isMobile &&
+    !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(
+      route.name as string
+    )
+);
+
+let cleanup: () => void;
 
 onMounted(() => {
   // Start watching the screen size
-  const cleanup = appStore.watchScreenSize();
+  cleanup = appStore.watchScreenSize();
+});
 
+onUnmounted(() => {
   // Cleanup when the component is unmounted
-  onUnmounted(() => {
-    cleanup();
-  });
+  cleanup();
 });
 </script>
