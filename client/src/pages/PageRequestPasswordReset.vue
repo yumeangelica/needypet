@@ -11,8 +11,6 @@
             <ion-icon :icon="pawOutline"></ion-icon>
           </div>
 
-          <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
-
           <form @submit.prevent="resetPassword">
             <ion-item class="login-register-field-item">
               <ion-input class="login-register-field-input" type="email" v-model="email" placeholder="Enter your email" aria-label="Email"></ion-input>
@@ -25,7 +23,6 @@
 
           </form>
         </div>
-
 
       </div>
       <TheFooter />
@@ -50,16 +47,16 @@ const isMobile = computed(() => appStore.isMobile);
 const router = useRouter();
 
 const email = ref('');
-const validMessage = ref('');
 
 const resetPassword = async () => {
 
-  await userStore.requestPasswordReset(email.value);
-  validMessage.value = 'Password reset link sent to your email';
-  setTimeout(() => {
-    validMessage.value = '';
-    goBack();
-  }, 3000);
+  const isSuccess = await userStore.requestPasswordReset(email.value);
+  if (!isSuccess) {
+    appStore.addNotification('Failed to send password reset link, please try again later', 'error');
+  } else {
+    appStore.addNotification('Please check your email for the password reset link', 'success');
+  }
+  goBack();
 };
 
 const goBack = () => {
