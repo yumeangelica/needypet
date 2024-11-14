@@ -35,10 +35,6 @@
               <ion-button @click="router.push({ name: 'home' })" class="custom-button">Cancel</ion-button>
             </div>
 
-            <ion-item v-if="errorMessage" color="danger">
-              <ion-label>{{ errorMessage }}</ion-label>
-            </ion-item>
-
           </form>
         </div>
       </div>
@@ -53,7 +49,7 @@ import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
-import { IonButton, IonContent, IonDatetime, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
+import { IonButton, IonContent, IonDatetime, IonInput, IonItem, IonPage, IonTextarea } from '@ionic/vue';
 import { NewPetObject } from '@/types/pet';
 
 const appStore = useAppStore();
@@ -64,8 +60,6 @@ const petStore = usePetStore();
 const userStore = useUserStore();
 
 const userId: Ref<string | null> = ref(userStore.id);
-
-const errorMessage = ref('');
 
 const newPetObject: Ref<NewPetObject> = ref({
   name: '',
@@ -135,11 +129,9 @@ const submitPet = async () => {
       birthday: null,
     };
     router.push({ name: 'home' }); // Navigate user after success
+    appStore.addNotification('Pet added successfully', 'success');
   } else {
-    errorMessage.value = 'Failed to add pet';
-    setTimeout(() => {
-      errorMessage.value = '';
-    }, 5000);
+    appStore.addNotification('Failed to add pet, please try again later', 'error');
   }
 };
 
