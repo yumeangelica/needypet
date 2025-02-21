@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && vite build",
+    "build": "rm -rf dist && rm -rf ../server/dist && vite build && cp -r dist ../server",
     "preview": "vite preview",
     "test:e2e": "cypress run",
     "test:unit": "vitest",
