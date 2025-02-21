@@ -39,7 +39,7 @@
                 <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
                 <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
                 <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-                <li :class="{ 'valid': passwordValidations.special }">At least one special character</li>
+                <li :class="{ 'valid': passwordValidations.special }"> Valid special character</li>
                 <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
               </ul>
             </div>
@@ -124,10 +124,18 @@ const passwordValidations = ref({
 
 const validatePassword = () => {
   const pwd = password.value;
+
+  // Special characters that are allowed
+  const allowedSpecialChars = /[@$!%*?&.\-_]/;
+
+  // Special characters that are not allowed
+  const forbiddenSpecialChars = /[^a-zA-Z0-9@$!%*?&.\-_]/;
+
+
   passwordValidations.value.uppercase = /[A-Z]/.test(pwd);
   passwordValidations.value.lowercase = /[a-z]/.test(pwd);
   passwordValidations.value.number = /[0-9]/.test(pwd);
-  passwordValidations.value.special = /[!@#$%^&*]/.test(pwd);
+  passwordValidations.value.special = allowedSpecialChars.test(pwd) && !forbiddenSpecialChars.test(pwd);
   passwordValidations.value.minLength = pwd.length >= 10;
 };
 
@@ -137,8 +145,12 @@ const togglePasswordVisibility = () => {
 
 
 const createAccount = async () => {
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(password.value)) {
-    formFieldsErrorDetailsObject.value.newPassword = 'Password must contain 10 character with at least one uppercase, lowercase, number and special character';
+  if (!passwordValidations.value.uppercase ||
+    !passwordValidations.value.lowercase ||
+    !passwordValidations.value.number ||
+    !passwordValidations.value.special ||
+    !passwordValidations.value.minLength) {
+    formFieldsErrorDetailsObject.value.newPassword = 'Password does not meet the requirements.';
     setTimeout(() => {
       formFieldsErrorDetailsObject.value.newPassword = '';
     }, 5000);
