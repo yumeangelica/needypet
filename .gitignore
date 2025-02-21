@@ -18,3 +18,5 @@ stats.html
 
 # For future database updates
 server_updates/
+
+.vscode/
