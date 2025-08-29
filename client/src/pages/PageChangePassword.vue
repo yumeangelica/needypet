@@ -2,8 +2,8 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="edit-pet-profile-container">
-          <form @submit.prevent="submitForm" class="edit-pet-profile-form">
+        <div class="form-container">
+          <form @submit.prevent="submitForm">
             <h3>Change Password:</h3>
             <!-- Current Password input field -->
             <ion-item>
@@ -33,9 +33,9 @@
               </ul>
             </div>
 
-            <ion-buttons class="button-container">
-              <ion-button class="edit-pet-profile-button" type="submit" expand="block">Change Password</ion-button>
-              <ion-button class="edit-pet-profile-button" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
+            <ion-buttons class="form-button-group">
+              <ion-button class="form-button primary" type="submit" expand="block">Change Password</ion-button>
+              <ion-button class="form-button secondary" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
             </ion-buttons>
 
             <!-- Global error message styling -->
@@ -44,7 +44,6 @@
             </div>
           </form>
         </div>
-
 
       </div>
       <TheFooter />
@@ -124,35 +123,3 @@ const submitForm = async () => {
   }
 };
 </script>
-
-<style scoped>
-.custom-error-message {
-  color: var(--ion-color-danger);
-  font-size: 0.8rem;
-  margin-top: 4px;
-}
-
-.strong-password-note {
-  font-size: 0.6rem;
-  margin: 1rem;
-}
-
-.strong-password-note ul {
-  list-style-type: disc;
-  margin: 0;
-  padding: 0;
-  list-style-position: inside;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.strong-password-note li {
-  width: 50%;
-  box-sizing: border-box;
-  color: red;
-}
-
-.strong-password-note li.valid {
-  color: green;
-}
-</style>
