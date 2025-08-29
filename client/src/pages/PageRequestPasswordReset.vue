@@ -6,9 +6,9 @@
           <TheLogoImage altText="NeedyPet logo" />
 
           <div class="paw-header-container">
-            <ion-icon :icon="pawOutline"></ion-icon>
+            <ion-icon :icon="paw" class="paw-icon" />
             <h4>Forgot Password</h4>
-            <ion-icon :icon="pawOutline"></ion-icon>
+            <ion-icon :icon="paw" class="paw-icon" />
           </div>
 
           <form @submit.prevent="resetPassword">
@@ -35,10 +35,10 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
-import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
-import { pawOutline } from 'ionicons/icons';
+import { IonButton, IonContent, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
 import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import { paw } from 'ionicons/icons';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
