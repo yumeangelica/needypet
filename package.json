@@ -17,6 +17,6 @@
   "author": "yumeangelica",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "@ionic/cli": "^7.2.0"
+    "@ionic/cli": "^7.2.1"
   }
 }
