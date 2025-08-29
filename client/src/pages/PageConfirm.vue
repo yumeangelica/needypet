@@ -124,7 +124,7 @@ onBeforeMount(async () => {
         showLoginButton.value = true;
       }
     }
-  } catch (error) {
+  } catch (_error) {
     confirmationMessage.value = 'An error occurred. Please try again later.';
     showLoginButton.value = true;
   }
@@ -149,7 +149,7 @@ const resetPassword = async () => {
       validMessage.value = '';
       goBack();
     }, 3000);
-  } catch (error) {
+  } catch (_error) {
     errorMessage.value = 'Failed to reset password. Try to send a new reset link';
   }
 };
@@ -166,45 +166,31 @@ const goToLogin = () => {
 </script>
 
 <style scoped>
+.confirmation-container {
+  padding: 20px;
+  border-radius: 50px;
+  background-color: var(--color-login-background);
+  border: 1px solid var(--color-login-button-and-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.confirmation-message {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: var(--color-text-default);
+}
+
+/* .action-button, .primary-action-button and .secondary-action-button use global styles */
+
+/* Responsive mobile styles */
+@media (max-width: 568px) {
   .confirmation-container {
-    padding: 20px;
-    border-radius: 50px;
-    background-color: var(--color-login-background);
-    border: 1px solid var(--color-login-button-and-border);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    margin-top: 10vh;
   }
 
   .confirmation-message {
-    margin-bottom: 20px;
-    font-size: 1rem;
-    color: var(--color-text-default);
+    font-size: 0.85rem;
   }
-
-  .action-button {
-    margin-top: 20px;
-    --background: var(--color-login-button-and-border);
-    --border-radius: 25px;
-    --color: var(--color-text-lilac);
-    box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
-  }
-
-  .primary-action-button {
-    --background: var(--color-login-button-and-border) !important;
-  }
-
-  .secondary-action-button {
-    --background: var(--color-create-account-button) !important;
-  }
-
-  /* Responsive mobile styles */
-  @media (max-width: 568px) {
-    .confirmation-container {
-      margin-top: 10vh;
-    }
-
-    .confirmation-message {
-      font-size: 0.85rem;
-    }
-  }
+}
 </style>
