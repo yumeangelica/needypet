@@ -2,42 +2,59 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="add-pet-container">
-          <h2 class="ion-text-center">Add new pet:</h2>
-          <form @submit.prevent="submitPet" class="add-pet-form">
-            <ion-item>
-              <ion-input aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name"></ion-input>
-            </ion-item>
-
-            <ion-item>
-              <ion-input aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed"></ion-input>
-            </ion-item>
-
-            <ion-item>
-              <ion-input aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species"></ion-input>
-            </ion-item>
-
-            <ion-item>
-              <ion-textarea aria-label="Description" v-model="newPetObject.description" placeholder="About the pet"></ion-textarea>
-            </ion-item>
-
-            <ion-item @click="showDatePicker = true">
-              <ion-input readonly :value="formattedDate || 'Select Date'" color="medium"></ion-input>
-            </ion-item>
-
-            <div class="datetime-wrapper">
-              <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
-                @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
+        <div class="form-container">
+          <h3 class="form-header">Add new pet:</h3>
+          <form @submit.prevent="submitPet">
+            <div>
+              <ion-label>Name:</ion-label>
+              <ion-item class="form-field-item">
+                <ion-input class="form-field-input" aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name"></ion-input>
+              </ion-item>
             </div>
 
-            <div class="center-button-group">
-              <ion-button type="submit" class="custom-button">Add Pet</ion-button>
-              <ion-button @click="router.push({ name: 'home' })" class="custom-button">Cancel</ion-button>
+            <div>
+              <ion-label>Breed:</ion-label>
+              <ion-item class="form-field-item">
+                <ion-input class="form-field-input" aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed"></ion-input>
+              </ion-item>
+            </div>
+
+            <div>
+              <ion-label>Species:</ion-label>
+              <ion-item class="form-field-item">
+                <ion-input class="form-field-input" aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species"></ion-input>
+              </ion-item>
+            </div>
+
+            <div>
+              <ion-label>Description:</ion-label>
+              <ion-item class="form-field-item">
+                <ion-textarea class="form-field-input" aria-label="Description" v-model="newPetObject.description"
+                  placeholder="About the pet"></ion-textarea>
+              </ion-item>
+            </div>
+
+            <div>
+              <ion-label>Birthday:</ion-label>
+              <ion-item class="form-field-item" data-clickable="true" @click="showDatePicker = true">
+                <ion-input class="form-field-input" readonly :value="formattedDate || 'Select Birthday'" color="medium"></ion-input>
+              </ion-item>
+
+              <div class="datetime-wrapper">
+                <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
+                  @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
+              </div>
+            </div>
+
+            <div class="form-button-group">
+              <ion-button type="submit" class="form-button primary">Add Pet</ion-button>
+              <ion-button @click="router.push({ name: 'home' })" class="form-button secondary">Cancel</ion-button>
             </div>
 
           </form>
         </div>
       </div>
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -49,8 +66,9 @@ import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
-import { IonButton, IonContent, IonDatetime, IonInput, IonItem, IonPage, IonTextarea } from '@ionic/vue';
+import { IonButton, IonContent, IonDatetime, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
 import { NewPetObject } from '@/types/pet';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -136,30 +154,3 @@ const submitPet = async () => {
 };
 
 </script>
-
-
-<style scoped>
-  .center-button-group {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-
-  .add-pet-container {
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: auto;
-    margin-top: 30px;
-    padding: 20px;
-    background-color: var(--color-card-background-lilac);
-    border-radius: 50px;
-    border: 1px solid var(--color-card-border);
-    box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-  }
-
-  .add-pet-form {
-    display: flex;
-    flex-direction: column;
-  }
-</style>
