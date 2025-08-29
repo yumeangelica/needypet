@@ -1,5 +1,5 @@
 <template>
-  <ion-modal :is-open="isOpen" @ionModalDidPresent="focusInput">
+  <ion-modal class="timezone-selector-field" :is-open="isOpen" @ionModalDidPresent="focusInput">
     <ion-header translucent>
       <ion-toolbar>
         <ion-title>Select Timezone</ion-title>
@@ -13,7 +13,7 @@
     </ion-header>
     <ion-content class="ion-padding">
       <ion-list>
-        <ion-item class="timezone-selector-field" v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
+        <ion-item class="timezone-item" v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
           {{ zone }}
         </ion-item>
       </ion-list>
@@ -84,12 +84,11 @@ watch(() => isOpen,
   border: 1px solid var(--color-card-border);
   border-radius: 20px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  outline: none; /* Remove the focus outline */
+  outline: none;
 }
 
 .custom-searchbar:focus {
-  outline: none; /* Ensures no outline on focus */
-  border-color: var(--color-card-border); /* Optional: Keep the border color consistent on focus */
+  border-color: var(--color-card-border);
 }
 
 .custom-searchbar::placeholder {
@@ -97,5 +96,46 @@ watch(() => isOpen,
   opacity: 0.8;
 }
 
-</style>
+.timezone-item {
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
 
+.timezone-item:hover {
+  background: var(--color-card-background-lilac);
+  transform: translateY(-1px);
+}
+
+/* Force pointer cursor for all elements */
+.timezone-item,
+.timezone-item *,
+.timezone-item::before,
+.timezone-item::after {
+  cursor: pointer !important;
+}
+
+/* Ionic specific classes */
+.timezone-item .item-native,
+.timezone-item .item-inner,
+.timezone-item .item-wrapper,
+.timezone-item ion-label {
+  cursor: pointer !important;
+}
+
+/* Global enforcement for all timezone modal elements */
+ion-modal.timezone-selector-field ion-item,
+ion-modal.timezone-selector-field ion-item *,
+ion-modal.timezone-selector-field .item-native,
+ion-modal.timezone-selector-field .item-inner {
+  cursor: pointer !important;
+}
+
+/* Ionic CSS custom properties */
+.timezone-item {
+  --cursor: pointer !important;
+}
+
+.timezone-item:hover {
+  --background: var(--color-card-background-lilac) !important;
+}
+</style>
