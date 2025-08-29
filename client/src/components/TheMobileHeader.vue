@@ -2,7 +2,7 @@
   <ion-tab-bar slot="bottom">
 
     <ion-tab-button tab="home" @click.prevent="navigateTo('home')">
-      <ion-icon aria-hidden="true" :icon="pawOutline" />
+      <ion-icon :icon="paw"></ion-icon>
       <ion-label>Home</ion-label>
     </ion-tab-button>
 
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { pawOutline, personCircleOutline } from 'ionicons/icons';
+import { personCircleOutline, paw } from 'ionicons/icons';
 import { IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
