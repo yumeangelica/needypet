@@ -38,8 +38,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-  .logo {
-    width: 100%;
-    height: auto;
-  }
+.logo {
+  width: 90%;
+  max-width: 250px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
 </style>
