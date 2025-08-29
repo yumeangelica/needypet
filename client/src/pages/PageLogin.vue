@@ -7,9 +7,9 @@
           <TheLogoImage altText="NeedyPet logo" />
 
           <div class="paw-header-container">
-            <ion-icon :icon="pawOutline"></ion-icon>
+            <ion-icon :icon="paw"></ion-icon>
             <h4>Login</h4>
-            <ion-icon :icon="pawOutline"></ion-icon>
+            <ion-icon :icon="paw"></ion-icon>
           </div>
 
 
@@ -53,8 +53,8 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
-import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
-import { pawOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { IonButton, IonContent, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
+import { eyeOutline, eyeOffOutline, paw } from 'ionicons/icons';
 import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
 
