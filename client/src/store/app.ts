@@ -14,7 +14,7 @@ export const useAppStore = defineStore('app', {
   }),
   actions: {
     updateScreenSize(width: number) {
-      this.isMobile = width < 425.1;
+      this.isMobile = width < 768;
     },
     watchScreenSize() {
       this.updateScreenSize(window.innerWidth);
@@ -33,7 +33,11 @@ export const useAppStore = defineStore('app', {
       const data = Intl.supportedValuesOf('timeZone');
       return data;
     },
-    addNotification(message: string, type: 'success' | 'error' | 'info', duration = 5000) {
+    addNotification(
+      message: string,
+      type: 'success' | 'error' | 'info',
+      duration = 5000
+    ) {
       const id = Date.now();
       const newNotification: Notification = {
         id,
@@ -42,7 +46,13 @@ export const useAppStore = defineStore('app', {
         type,
       };
       // If new is same as last, don't add
-      if (this.notifications.length && this.notifications[this.notifications.length - 1].message === newNotification.message && this.notifications[this.notifications.length - 1].type === newNotification.type) {
+      if (
+        this.notifications.length &&
+        this.notifications[this.notifications.length - 1].message ===
+          newNotification.message &&
+        this.notifications[this.notifications.length - 1].type ===
+          newNotification.type
+      ) {
         return;
       }
       this.notifications.push(newNotification);
@@ -53,7 +63,7 @@ export const useAppStore = defineStore('app', {
       }, duration);
     },
     removeNotification(id: number) {
-      this.notifications = this.notifications.filter(n => n.id !== id);
+      this.notifications = this.notifications.filter((n) => n.id !== id);
     },
   },
 });
