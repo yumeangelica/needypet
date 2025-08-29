@@ -29,6 +29,8 @@ interface QuantityRecord {
   };
 }
 
+type CareRecord = QuantityRecord | DurationRecord;
+
 type Frequency = {
   times: number;
   periodicity: {
@@ -50,7 +52,7 @@ interface Need {
   quantity?: Quantity;
   duration?: Duration;
   completed?: boolean;
-  careRecords?: DurationRecord[] | QuantityRecord[];
+  careRecords?: CareRecord[];
   archived?: boolean;
   isActive?: boolean;
   frequency?: Frequency;
@@ -80,4 +82,12 @@ interface NewPetObject {
   birthday: Date | null;
 }
 
-export { Pet, Need, CareRecord, PetState, QuantityRecord, DurationRecord, NewPetObject };
+export {
+  Pet,
+  Need,
+  CareRecord,
+  PetState,
+  QuantityRecord,
+  DurationRecord,
+  NewPetObject,
+};
