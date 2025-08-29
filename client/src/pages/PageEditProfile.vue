@@ -2,35 +2,45 @@
   <ion-page>
     <ion-content :fullscreen="true">
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="edit-pet-profile-container">
-          <form @submit.prevent="submitForm" class="edit-pet-profile-form">
-            <h3>Edit Profile:</h3>
-            <ion-item>
-              <ion-input v-model="editData.userName" type="text" required placeholder="Username"></ion-input>
+        <div class="form-container">
+          <form @submit.prevent="submitForm" class="form-container">
+            <h3 class="form-header">Edit Profile:</h3>
+
+            <ion-label>Username:</ion-label>
+            <ion-item class="form-field-item">
+              <ion-input class="form-field-input" v-model="editData.userName" type="text" required placeholder="Username"></ion-input>
             </ion-item>
             <div v-if="errorDetailsObject.userName" class="custom-error-message">{{ errorDetailsObject.userName }}</div>
-            <ion-item>
-              <ion-input v-model="editData.email" type="email" required placeholder="Email"></ion-input>
+
+            <ion-label>Email:</ion-label>
+            <ion-item class="form-field-item">
+              <ion-input class="form-field-input" v-model="editData.email" type="email" required placeholder="Email"></ion-input>
             </ion-item>
             <div v-if="errorDetailsObject.email" class="custom-error-message">{{ errorDetailsObject.email }}</div>
-            <ion-item @click="showModal = true">
-              <ion-label class="custom-timezone-label timezone-selector-field">{{ editData.timezone || 'Select Timezone' }}</ion-label>
+
+            <ion-label>Timezone:</ion-label>
+            <ion-item class="form-field-item" data-clickable="true" @click="showModal = true">
+              <ion-label class="custom-timezone-label">{{ editData.timezone || 'Select Timezone' }}</ion-label>
             </ion-item>
             <div v-if="errorDetailsObject.timezone" class="custom-error-message">{{ errorDetailsObject.timezone }}</div>
+
             <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
               @timezoneSelected="timezone => editData.timezone = timezone" />
-            <ion-item>
-              <ion-input v-model="editData.currentPassword" :type="passwordFieldType" required placeholder="Current Password"></ion-input>
+
+            <ion-label>Current Password:</ion-label>
+            <ion-item class="form-field-item">
+              <ion-input class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required
+                placeholder="Current Password"></ion-input>
               <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
                 <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
               </ion-button>
             </ion-item>
             <div v-if="errorDetailsObject.currentPassword" class="custom-error-message">{{ errorDetailsObject.currentPassword }}</div>
             <span class="custom-error-message" v-if="showPasswordNotification">Please enter your current password</span>
-            <ion-buttons class="button-container">
-              <ion-button class="edit-pet-profile-button" type="submit" expand="block">Save Changes</ion-button>
-              <ion-button class="edit-pet-profile-button" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
-            </ion-buttons>
+            <div class="form-button-group">
+              <ion-button class="form-button primary" type="submit" expand="block">Save Changes</ion-button>
+              <ion-button class="form-button secondary" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
+            </div>
 
             <div v-if="errorMessage" class="custom-error-message">
               {{ errorMessage }}
@@ -38,6 +48,7 @@
           </form>
         </div>
       </div>
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -47,10 +58,11 @@ import { ref, onBeforeMount, computed, Ref } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useAppStore } from '@/store/app';
-import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonPage, IonButtons, IonIcon } from '@ionic/vue';
+import { IonButton, IonContent, IonInput, IonItem, IonLabel, IonPage, IonIcon } from '@ionic/vue';
 import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
 import { User } from '@/types/user';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -145,11 +157,3 @@ const submitForm = async () => {
   }
 };
 </script>
-
-<style scoped>
-  .custom-error-message {
-    color: var(--ion-color-danger);
-    font-size: 0.8rem;
-    margin-top: 4px;
-  }
-</style>
