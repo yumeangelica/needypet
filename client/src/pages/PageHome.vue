@@ -44,6 +44,7 @@
         </div>
       </div>
 
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -58,6 +59,7 @@ import { addCircleOutline } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
 import ThePetCard from '@/components/ThePetCard.vue';
 import { Pet } from '@/types/pet';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -102,31 +104,36 @@ const fetchUserEmailConfirmed = async () => {
 
 
 <style scoped>
-  .title-and-button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
+/* Base layout */
+.title-and-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
 
-  .pets-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
+.pets-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+}
 
-  .cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-  }
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin: 8px 0;
+  max-width: 100%;
+}
 
-  .section-title {
-    margin: 0;
-    font-size: 1.5rem;
-    padding: 10px 0;
-  }
+.section-title {
+  margin: 0;
+  font-size: 1.3rem;
+  padding: 6px 0;
+}
+
 </style>

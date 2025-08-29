@@ -68,12 +68,19 @@ li {
   margin-bottom: 5px;
 }
 
-
 /* Ionic elements styling */
 /* --------------------- */
 
 ion-content, ion-page {
   --ion-background-color: transparent;
+}
+
+/* Make common page shells flex columns so footer can sit at bottom */
+ion-content> :first-child,
+.content-wrapper,
+.mobile-content-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 ion-toolbar, ion-tab-bar {
@@ -104,7 +111,6 @@ ion-item {
   --color: var(--color-text-default);
   font-size: 0.95rem;
 }
-
 
 /* Custom content-wrapper classes to push content down */
 /* --------------------------------------------------- */
@@ -144,21 +150,17 @@ ion-datetime {
   --background: var(--color-input-background);
 }
 
-
-/* Global error message */
-.error-message {
-  color: var(--color-error-message);
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.8rem;
-}
-
 /* Global button styling for PagePet, PageAddPet, PageProfile, PageEditProfile, PageHome */
 .custom-button {
   --background: var(--color-button-pet-page);
   --border-radius: 20px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
   margin: 10px 8px;
-  font-size: 0.85rem;
+  font-size: 0.85rem !important;
+  min-height: 44px;
 }
 
 .custom-button:hover {
@@ -167,26 +169,6 @@ ion-datetime {
 
 /* Profile & edit profile pages styling */
 /* ------------------------------ */
-
-/* edit pet & edit profile containers */
-.edit-pet-profile-container {
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  margin: auto;
-  margin-top: 30px;
-  padding: 20px;
-  background-color: var(--color-card-background-lilac);
-  border-radius: 50px;
-  border: 2px solid var(--color-card-border);
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-}
-
-.edit-pet-profile-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
 /* Wrapping name and settings button */
 .inline-container {
@@ -221,39 +203,28 @@ ion-datetime {
   padding: 0;
 }
 
-/* Buttons for edit profile and edit pet */
-.button-container {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  padding: 10px 0;
-}
-
-.edit-pet-profile-button {
-  --background: var(--ion-color-primary) !important;
-  --padding-start: 15px !important;
-  --padding-end: 15px !important;
-  --background: var(--color-button-pet-page) !important;
-  --border-radius: 20px !important;
-  max-width: 260px;
-  margin-bottom: 10px;
-}
-
-/* Login, Register, Landing pages styling */
+/* Login, Register, Landing, Request Password pages styling */
 /* -------------------------------------- */
 
-/* Global container element for PageLogin, PageRegister, and PageLanding */
+/* Global container for PageLogin, PageRegister, PageLanding, PageRequestPasswordReset */
 .login-register-container {
-  max-width: 500px;
+  width: 100%;
+  max-width: 600px;
+  /* unified width across all auth pages */
+  box-sizing: border-box;
   margin: 5vh auto;
   padding: 20px;
   border-radius: 50px;
   background-color: var(--color-login-background);
   border: 1px solid var(--color-login-button-and-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--color-drop-shadow-pink);
+}
+
+@media (max-width: 568px) {
+  .login-register-container {
+    max-width: 92vw;
+    /* keep comfortable margins on small phones */
+  }
 }
 
 /* Input field in PageRegister and PageLogin */
@@ -310,8 +281,73 @@ ion-datetime {
   margin: 0 10px;
 }
 
-.timezone-selector-field:hover {
-  cursor: pointer;
+/* Universal form field styling - similar to login-register-field-item */
+.form-field-item {
+  --padding-start: 16px;
+  --inner-border-width: 0;
+  --inner-padding-end: 16px;
+  --background: var(--color-login-input-background);
+  --border-radius: 8px;
+  margin-bottom: 4px;
+  min-height: 28px;
+}
+
+/* Universal form input styling */
+.form-field-input {
+  --placeholder-color: var(--color-text-default);
+  --placeholder-font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* Universal form button group */
+.form-button-group {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Universal form buttons */
+.form-button {
+  margin: 0;
+  width: 100%;
+  max-width: 150px;
+  box-shadow: 0.5px 0.5px 0.5px var(--color-drop-shadow-pink);
+  --border-radius: 14px !important;
+  --background: var(--color-login-button-and-border);
+  --border: 2px solid var(--color-login-button-and-border);
+  --color: var(--color-text-lilac);
+  font-size: 0.7rem !important;
+  --padding-start: 6px !important;
+  --padding-end: 6px !important;
+}
+
+.form-button.primary {
+  --background: var(--color-button-pet-page);
+  --border: 2px solid var(--color-button-pet-page);
+  --color: var(--color-text-lilac);
+}
+
+.form-button.secondary {
+  --background: var(--form-secondary-button-bg-color);
+  --border: 2px solid var(--color-login-button-and-border);
+  --color: var(--color-text-default);
+}
+
+/* Danger/Destructive variant: high-contrast outline, readable text */
+.form-button.danger {
+  --background: transparent;
+  --border: 2px solid var(--ion-color-danger);
+  --color: var(--ion-color-danger);
+}
+
+.form-button.danger:hover,
+.form-button.danger:focus {
+  /* subtle tinted background for hover/focus while keeping text readable */
+  --background: rgba(var(--ion-color-danger-rgb), 0.08);
+  --color: var(--ion-color-danger);
 }
 
 /* Error & valid messages */
@@ -333,15 +369,57 @@ ion-datetime {
 }
 
 
+/* Password strength note (shared across pages) */
+/* ------------------------------------------- */
+.strong-password-note {
+  font-size: 0.55rem;
+  margin: 0.5rem;
+}
+
+/* Mobile responsive override */
+@media (max-width: 768px) {
+  .strong-password-note {
+    font-size: 0.45rem !important;
+    margin: 0.4rem !important;
+  }
+
+  .strong-password-note li {
+    width: 100% !important;
+    margin-bottom: 4px !important;
+    line-height: 1.3 !important;
+    padding: 1px 0 !important;
+  }
+}
+
+.strong-password-note ul {
+  list-style-type: disc;
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.strong-password-note li {
+  width: 50%;
+  box-sizing: border-box;
+  color: var(--color-error-message);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.strong-password-note li.valid {
+  color: var(--color-valid-message);
+}
+
 /* Global ion-modal styles */
 /* ----------------------- */
 ion-modal {
-  --border-radius: 20px;
+  --border-radius: 50px;
   --width: 95%;
   --max-width: 800px;
   --max-height: 600px;
   --background: var(--color-card-background-lilac);
-  --border-radius: 50px;
 }
 
 ion-modal ion-searchbar {
@@ -390,13 +468,16 @@ input[type=number]::-webkit-outer-spin-button {
 /* Mobile styles */
 /* ------------- */
 
+/* Leave space for the mobile tab bar so sticky footer can sit above it */
+@media (max-width: 768px) {
+  .mobile-content-wrapper {
+    padding-bottom: 70px;
+  }
+}
+
 @media (max-width: 568px) {
   .custom-button, .action-button, .login-register-field-item, .login-register-field-input, ion-select, ion-input, ion-title, ion-label, ion-textarea, .custom-timezone-label, .custom-error-message, .custom-valid-message, ion-radio, p, a, li {
     font-size: 0.72rem !important;
-  }
-
-  .edit-pet-profile-button {
-    flex: 1 1 100%;
   }
 
   ion-item {
@@ -419,5 +500,17 @@ input[type=number]::-webkit-outer-spin-button {
 
   h5 {
     font-size: 0.8rem !important;
+  }
+
+  .strong-password-note {
+    font-size: 0.4rem !important;
+    margin: 0.3rem !important;
+  }
+
+  .strong-password-note li {
+    width: 100% !important;
+    margin-bottom: 3px !important;
+    line-height: 1.2 !important;
+    padding: 1px 0 !important;
   }
 }

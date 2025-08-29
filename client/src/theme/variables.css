@@ -6,15 +6,20 @@ http://ionicframework.com/docs/theming/ */
 
   /* My custom colors */
   --color-primary-pink: #FBCDE6;
-  --color-card-background-lilac: #F2DDFE;
-  --color-card-border: #DB9DFF;
+  --color-card-background-lilac: rgb(254, 239, 249);
+  --color-card-border: rgb(178, 110, 150);
 
   /* My custom font colors */
   --color-text-default: #705E76;
-  --color-text-lilac: #9248AD;
+  --color-text-lilac: rgb(178, 77, 137);
+
+  /* My custom button colors */
+  --color-button-pet-page: #f3c3e3;
+  --form-secondary-button-bg-color: rgb(204, 179, 216);
+  --color-login-button-and-border: #FBCDE6;
+  --color-create-account-button: #FFE0F1;
 
   /* My custom pet page colors */
-  --color-button-pet-page: #FEADF6;
   --color-status-done: #BCE3FF;
   --color-pet-need-background: #F6EDFF;
 
@@ -22,17 +27,13 @@ http://ionicframework.com/docs/theming/ */
   --color-login-background: #FFEEF5;
   --color-login-input-background: #FFE0F1;
   --color-login-input-border: #FFBFE2;
-  --color-login-button-and-border: #FBCDE6;
-
-  /* My custom landing page create account button color */
-  --color-create-account-button: #FFE0F1;
 
   /* My custom error & valid message colors */
   --color-error-message: #ff3b30;
   --color-valid-message: #008c81;
 
   /* My custom shadow color */
-  --color-drop-shadow-pink: #E4BDD2;
+  --color-drop-shadow-pink: rgba(178, 110, 150, 0.3);
 }
 
 html {

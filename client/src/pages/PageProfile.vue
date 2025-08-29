@@ -2,10 +2,10 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div v-if="user" class="edit-pet-profile-container">
+        <div v-if="user" class="form-container">
 
           <div class="inline-container">
-            <h3>{{ user.userName }}</h3>
+            <h3 class="form-header">{{ user.userName }}</h3>
             <ion-button class="settings-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
           </div>
 
@@ -21,13 +21,12 @@
             <p><strong>Timezone:</strong> {{ user.timezone }}</p>
           </div>
 
-          <div>
+          <div class="profile-actions">
             <ion-button class="custom-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit
               Profile</ion-button>
-
-            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'change-password' })">Change password</ion-button>
-
+            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'change-password' })">Change
+              password</ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccountDeletion"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
           </div>
@@ -38,6 +37,7 @@
           <p class="ion-text-center">Loading...</p>
         </div>
       </div>
+      <TheFooter />
     </ion-content>
 
   </ion-page>
@@ -52,7 +52,7 @@ import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { User } from '@/types/user';
-
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -142,18 +142,17 @@ onBeforeRouteLeave(() => {
 
 
 <style scoped>
-  .email-confirmed {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.email-confirmed {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .small-button {
-    --padding-start: 10px;
-    --padding-end: 10px;
-    font-size: 0.8rem;
-    text-align: center;
-    height: auto;
-    line-height: 1.2;
-  }
+.small-button {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  text-align: center;
+  height: auto;
+  line-height: 1.2;
+}
 </style>

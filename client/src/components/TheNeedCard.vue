@@ -1,5 +1,5 @@
 <template>
-  <ion-card :class="{ 'is-expanded': showOptions, 'card-active': need.isActive, 'card-inactive': !need.isActive }">
+  <ion-card :class="{ 'is-expanded': showOptions, 'card-inactive': !need.isActive }">
     <ion-item class="custom-ion-item">
       <ion-label>
         <h5 class="ion-text-center need-card-field">{{ need.category }}</h5>
@@ -10,7 +10,7 @@
 
     <div class="centering-container">
       <ion-item class="custom-ion-item">
-        <ion-button class="complete-button" v-if="!need.completed && isToday" @click="addRecord(petId, need)">
+        <ion-button class="complete-button" v-if="!need.completed && isToday" :disabled="isSaving" @click="addRecord(petId, need)">
           <ion-icon :icon="checkmark"></ion-icon>Complete</ion-button>
         <div class="done-label" v-if="need.completed">
           <ion-icon :icon="checkmarkDone"></ion-icon>
@@ -24,7 +24,7 @@
     </div>
 
     <!-- Toggleable buttons -->
-    <div v-if="isOwner" class="options-container" :class="{ 'visible': showOptions }">
+    <div v-if="isOwner" class="options-container">
       <!-- Edit need button -->
       <ion-button v-if="isToday || isFuture" @click="editNeed" fill="clear" class="option-button">
         <ion-icon :icon="pencil" slot="icon-only"></ion-icon>
@@ -172,7 +172,11 @@ const isToday = computed(() => {
 });
 
 // Add Record (need done) -button click event handler
+const isSaving = ref(false);
+
 const addRecord = async (petId: string, need: Need) => {
+  if (isSaving.value) return;
+  isSaving.value = true;
   const needId = need.id;
   const isDuration = need.duration ? true : false;
 
@@ -204,6 +208,7 @@ const addRecord = async (petId: string, need: Need) => {
   } else {
     appStore.addNotification('Failed to add record', 'error');
   }
+  isSaving.value = false;
 };
 
 // Toggle options visibility
@@ -290,118 +295,119 @@ const deleteNeed = async (needId: string) => {
 
 
 <style scoped>
-  .need-toggle-title {
-    display: block;
-  }
+.need-toggle-title {
+  display: block;
+}
 
-  .need-toggle-switch {
-    margin-bottom: 10px;
-  }
+.need-toggle-switch {
+  margin-bottom: 10px;
+}
 
-  .need-card-field {
-    margin-top: 10px;
-  }
+.need-card-field {
+  margin-top: 10px;
+}
 
-  /* For centering content */
-  .centering-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-  }
+/* For centering content */
+.centering-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
 
-  ion-card {
-    border-radius: 40px;
-    background: var(--color-pet-need-background);
-    width: 100%;
-    max-width: 350px;
-    margin: 4px 0;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
-  }
-
-  .card-active {
-    background: var(--color-pet-need-background);
-  }
-  .card-inactive {
-    background: #ded7e0;
-    color: #a0a0a0;
-    border: 1px solid #d0d0d0;
-    opacity: 0.8;
-    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-  }
-
-  /* Additional styling for child elements in the inactive card to enhance the inactive look */
-  .card-inactive ion-label,
-  .card-inactive .complete-button,
-  .card-inactive .done-label,
-  .card-inactive .option-button {
-    color: #afa8a8;
-  }
+ion-card {
+  border-radius: 40px;
+  background: var(--color-pet-need-background);
+  width: 100%;
+  max-width: 350px;
+  margin: 4px 0;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+}
 
 
-  /* Remove bottom border */
-  ion-item.custom-ion-item {
-    --border-color: transparent;
-    --inner-border-color: transparent;
-  }
+.card-inactive {
+  background: #ded7e0;
+  color: #a0a0a0;
+  border: 1px solid #d0d0d0;
+  opacity: 0.8;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
 
-  .custom-model-input {
-    --inner-border-color: none !important;
-  }
+/* Additional styling for child elements in the inactive card to enhance the inactive look */
+.card-inactive ion-label,
+.card-inactive .complete-button,
+.card-inactive .done-label,
+.card-inactive .option-button {
+  color: #afa8a8;
+}
+
+
+/* Remove bottom border */
+ion-item.custom-ion-item {
+  --border-color: transparent;
+  --inner-border-color: transparent;
+}
+
+.complete-button {
+  --background: var(--color-button-pet-page);
+  --border-radius: 15px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  font-size: 0.85rem;
+  min-width: 60px;
+  height: auto;
+}
+
+.done-label {
+  background-color: var(--color-status-done);
+  color: var(--color-text-default);
+  border-radius: 15px;
+  text-align: center;
+  min-width: 60px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.options-container {
+  gap: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition: height 0.3s ease, opacity 0.3s ease;
+}
+
+.is-expanded .options-container {
+  height: 50px;
+  opacity: 1;
+}
+
+/* Mobile styles */
+@media (max-width: 568px) {
 
   .complete-button,
   .done-label {
-    --background: var(--color-button-pet-page);
-    --border-radius: 15px;
-    padding: 4px 10px;
-    font-size: 0.8rem;
+    font-size: 0.70rem;
+    padding: 5px 20px 6px 5px;
   }
 
-  .done-label {
-    background-color: var(--color-status-done);
-    color: var(--color-text-default);
-    border-radius: 15px;
-    text-align: center;
-    min-width: 60px;
-    margin-right: 28px;
+  /* Edit need modal styles */
+  .custom-label {
+    font-size: 1rem !important;
+    color: var(--color-text-lilac);
   }
 
-  .options-container {
-    gap: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    height: 0;
-    opacity: 0;
-    transition: height 0.3s ease, opacity 0.3s ease;
+  .custom-button {
+    font-size: 0.6rem !important;
   }
-
-  .is-expanded .options-container {
-    height: 50px;
-    opacity: 1;
-  }
-
-  /* Mobile styles */
-  @media (max-width: 568px) {
-
-    .complete-button,
-    .done-label {
-      font-size: 0.70rem;
-      padding-right: 20px;
-      padding-left: 5px;
-    }
-
-    /* Edit need modal styles */
-    .custom-label {
-      font-size: 1rem !important;
-      color: var(--color-text-lilac);
-    }
-
-    .custom-button {
-      font-size: 0.6rem !important;
-    }
-  }
+}
 </style>

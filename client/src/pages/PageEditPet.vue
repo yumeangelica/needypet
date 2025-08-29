@@ -2,40 +2,45 @@
   <ion-page>
     <ion-content>
       <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="edit-pet-profile-container">
-          <form @submit.prevent="confirmUpdatePet" class="edit-pet-profile-form">
+        <div class="form-container">
+          <form @submit.prevent="confirmUpdatePet">
+            <h3 class="form-header">Edit Pet</h3>
+
             <div>
               <ion-label>Name:</ion-label>
-              <ion-item class="custom-input">
-                <ion-input aria-label="Name" v-model="existingPetObject.name" required placeholder="Enter pet's name"></ion-input>
+              <ion-item class="form-field-item">
+                <ion-input class="form-field-input" aria-label="Name" v-model="existingPetObject.name" required
+                  placeholder="Enter pet's name"></ion-input>
               </ion-item>
             </div>
 
             <div>
               <ion-label>Breed:</ion-label>
-              <ion-item class="custom-input">
-                <ion-input aria-label="Breed" v-model="existingPetObject.breed" placeholder="Enter pet's breed"></ion-input>
+              <ion-item class="form-field-item">
+                <ion-input class="form-field-input" aria-label="Breed" v-model="existingPetObject.breed" placeholder="Enter pet's breed"></ion-input>
               </ion-item>
             </div>
 
             <div>
               <ion-label>Species:</ion-label>
-              <ion-item class="custom-input">
-                <ion-input aria-label="Species" v-model="existingPetObject.species" placeholder="Enter pet's species"></ion-input>
+              <ion-item class="form-field-item">
+                <ion-input class="form-field-input" aria-label="Species" v-model="existingPetObject.species"
+                  placeholder="Enter pet's species"></ion-input>
               </ion-item>
             </div>
 
             <div>
               <ion-label>Description</ion-label>
-              <ion-item class="custom-input">
-                <ion-textarea aria-label="Description" v-model="existingPetObject.description" placeholder="About the pet"></ion-textarea>
+              <ion-item class="form-field-item">
+                <ion-textarea class="form-field-input" aria-label="Description" v-model="existingPetObject.description"
+                  placeholder="About the pet"></ion-textarea>
               </ion-item>
             </div>
 
             <div>
               <ion-label>Birthday</ion-label>
-              <ion-item class="custom-input" @click="showDatePicker = true">
-                <ion-input readonly :value="formattedDate || 'Select Date'" color="medium"></ion-input>
+              <ion-item class="form-field-item" data-clickable="true" @click="showDatePicker = true">
+                <ion-input class="form-field-input" readonly :value="formattedDate || 'Select Date'" color="medium"></ion-input>
               </ion-item>
               <p class="custom-error-message" v-if="dateErrorMessage">{{ dateErrorMessage }}</p>
 
@@ -45,18 +50,18 @@
               </div>
             </div>
 
-            <ion-buttons class="button-container">
-              <ion-button type="submit" class="edit-pet-profile-button">Update Pet</ion-button>
-              <ion-button @click="cancelEdit" class="edit-pet-profile-button">Cancel</ion-button>
-
-              <ion-button class="edit-pet-profile-button" @click="confirmDeletePet()">
+            <div class="form-button-group">
+              <ion-button type="submit" class="form-button primary">Update Pet</ion-button>
+              <ion-button @click="cancelEdit" class="form-button secondary">Cancel</ion-button>
+              <ion-button class="form-button danger" @click="confirmDeletePet()">
                 <ion-icon :icon="trashOutline"></ion-icon>Delete Pet
               </ion-button>
-            </ion-buttons>
+            </div>
 
           </form>
         </div>
       </div>
+      <TheFooter />
     </ion-content>
   </ion-page>
 </template>
@@ -70,7 +75,8 @@ import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { Pet } from '@/types/pet';
 import { trashOutline } from 'ionicons/icons';
-import { IonButton, IonButtons, IonContent, IonDatetime, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
+import { IonButton, IonContent, IonDatetime, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
+import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

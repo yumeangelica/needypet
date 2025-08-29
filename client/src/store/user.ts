@@ -49,13 +49,12 @@ const setAuthData = async (
 /**
  * @description User store definition
  */
-export const useUserStore = defineStore({
-  id: 'user',
+export const useUserStore = defineStore('user', {
   state: (): UserStoreState => ({
     token: null,
     userName: null,
     id: null,
-    timezone: 'UTC' || null, // Dayjs default not work with null
+    timezone: 'UTC', // Dayjs default does not work with null
     emailConfirmed: null,
   }),
   actions: {
@@ -107,7 +106,7 @@ export const useUserStore = defineStore({
       email,
       newPassword,
       timezone,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
         const response = await axiosInstance.post(`${servicePath}/users`, {
@@ -120,7 +119,8 @@ export const useUserStore = defineStore({
         if (response.status === 201) {
           return {
             isSuccess: true,
-            message: 'Account created successfully, please check your email to confirm your account',
+            message:
+              'Account created successfully, please check your email to confirm your account',
             errorDetails: null,
           };
         }
@@ -147,7 +147,7 @@ export const useUserStore = defineStore({
       email,
       timezone,
       currentPassword,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
         const response = await axiosInstance.put(
@@ -205,7 +205,7 @@ export const useUserStore = defineStore({
     async changePassword({
       currentPassword,
       newPassword,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
         const response = await axiosInstance.put(
@@ -438,9 +438,15 @@ export const useUserStore = defineStore({
           console.error('Error during email confirmation resend:', status);
 
           if (status === 535) {
-            appStore.addNotification('Email server authentication failed. Please contact support.', 'error');
+            appStore.addNotification(
+              'Email server authentication failed. Please contact support.',
+              'error'
+            );
           } else {
-            appStore.addNotification('Unable to resend email confirmation. Please contact support.', 'error');
+            appStore.addNotification(
+              'Unable to resend email confirmation. Please contact support.',
+              'error'
+            );
           }
 
           return false;

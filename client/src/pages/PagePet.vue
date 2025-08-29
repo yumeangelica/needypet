@@ -7,8 +7,8 @@
 
             <div class="inline-container">
               <h2>{{ pet.name }}</h2>
-              <ion-button v-if="pet.owner.id === userStore.id" slot="start" class="settings-button" @click="router.push({ name: 'edit-pet' })"><ion-icon
-                  :icon="settingsOutline"></ion-icon>
+              <ion-button v-if="pet.owner.id === userStore.id" slot="start" class="settings-button"
+                @click="router.push({ name: 'edit-pet' })"><ion-icon :icon="settingsOutline"></ion-icon>
               </ion-button>
             </div>
 
@@ -26,7 +26,8 @@
             <div class="header-button-container">
               <h3 class="ion-text-center">Needs:</h3>
               <template v-if="pet.owner.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
-                <ion-button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
+                <ion-button class="custom-button" @click="setOpen(true)"
+                  v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
                   <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
                   Add need
                 </ion-button>
@@ -39,88 +40,98 @@
             </div>
 
             <!-- Modal which opens when 'add need' button is clicked -->
-            <ion-modal :is-open="isOpen">
+            <ion-modal :is-open="isOpen" :css-class="'add-need-modal'" :backdrop-dismiss="true" :can-dismiss="true" mode="md">
               <ion-header>
                 <ion-toolbar>
                   <ion-title>New need</ion-title>
                   <ion-buttons slot="end">
-                    <ion-button @click="setOpen(false)">Close form</ion-button>
+                    <ion-button fill="clear" size="small" @click="setOpen(false)">Close form</ion-button>
                   </ion-buttons>
                 </ion-toolbar>
               </ion-header>
 
-              <ion-content class="ion-padding">
-                <form @submit.prevent="addNewNeed">
+              <ion-content>
+                <div class="form-container">
+                  <form @submit.prevent="addNewNeed">
+                    <h3 class="form-header">Add New Need</h3>
 
-                  <ion-item>
-                    <ion-input v-model="category" label="Category" required placeholder="input need's category (e.g. walk or feed)"></ion-input>
-                  </ion-item>
-
-                  <ion-item>
-                    <ion-input v-model="description" label="Description" required placeholder="input need's description"></ion-input>
-                  </ion-item>
-
-                  <!-- display dateFor as currentDate -->
-                  <ion-item>
-                    <ion-input readonly :value="currentDate" required label="Date"></ion-input>
-                  </ion-item>
-
-                  <ion-item v-show="!selection">
-                    <ion-label>Choose</ion-label>
-                    <ion-radio-group v-model="selection">
-                      <ion-item>
-                        <ion-radio slot="start" value="duration">Duration</ion-radio>
-                      </ion-item>
-                      <ion-item>
-                        <ion-radio slot="start" value="quantity">Quantity</ion-radio>
-                      </ion-item>
-                    </ion-radio-group>
-                  </ion-item>
-
-                  <!-- unit dropdown -->
-                  <div v-if="selection === 'quantity'">
-                    <ion-item lines="none">
-                      <ion-input v-model="valueOfSelection" label="Enter value" required :autofocus="true" @input="cleanInput($event)"></ion-input>
-                      <ion-select v-model="unitOfSelection" interface="popover" required>
-                        <ion-select-option disabled selected value="">select unit</ion-select-option>
-                        <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
-                      </ion-select>
+                    <ion-label>Category:</ion-label>
+                    <ion-item class="form-field-item" lines="full">
+                      <ion-input class="form-field-input" v-model="category" required
+                        placeholder="input need's category (e.g. walk or feed)"></ion-input>
                     </ion-item>
-                  </div>
 
-
-                  <div v-if="selection === 'duration'">
-                    <ion-item lines="none">
-                      <ion-input v-model="valueOfSelection" label="Enter duration" required :autofocus="true" @input="cleanInput($event)"></ion-input>
-                      <ion-label>minute(s)</ion-label>
+                    <ion-label>Description:</ion-label>
+                    <ion-item class="form-field-item" lines="full">
+                      <ion-input class="form-field-input" v-model="description" required placeholder="input need's description"></ion-input>
                     </ion-item>
-                  </div>
 
+                    <ion-label>Date:</ion-label>
+                    <ion-item class="form-field-item" lines="full">
+                      <ion-input class="form-field-input" readonly :value="currentDate" required></ion-input>
+                    </ion-item>
 
-                  <div class="confirm-button-container">
-                    <ion-button class="custom-button" type="submit">Confirm</ion-button>
-                    <ion-button class="custom-button" @click="() => { selection = ''; valueOfSelection = null; unitOfSelection = ''; }"  v-if="selection">Return to selection</ion-button>
-                  </div>
+                    <ion-label>Choose Type:</ion-label>
+                    <div v-show="!selection" class="form-field-item compact-radio">
+                      <ion-radio-group v-model="selection">
+                        <div class="radio-row">
+                          <ion-item lines="none" class="radio-item">
+                            <ion-radio slot="start" value="duration"></ion-radio>
+                            <ion-label>Duration</ion-label>
+                          </ion-item>
+                          <ion-item lines="none" class="radio-item">
+                            <ion-radio slot="start" value="quantity"></ion-radio>
+                            <ion-label>Quantity</ion-label>
+                          </ion-item>
+                        </div>
+                      </ion-radio-group>
+                    </div>
 
-                  <!-- formfieldsobject duration or quantity and after that duration cannot be over 1440 minutes -->
-                  <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message">{{ formFieldsErrorDetailsObject.selection }}</div>
-                  <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message">{{ formFieldsErrorDetailsObject.durationValue }}</div>
-                  <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message">{{ formFieldsErrorDetailsObject.quantityUnit }}</div>
+                    <div v-if="selection === 'quantity'">
+                      <ion-label>Value and Unit:</ion-label>
+                      <ion-item class="form-field-item combo" lines="none">
+                        <ion-input class="form-field-input" v-model="valueOfSelection" required :autofocus="true" @input="cleanInput($event)"
+                          inputmode="numeric" placeholder="Enter value"></ion-input>
+                        <ion-select v-model="unitOfSelection" interface="popover" required placeholder="select unit" class="unit-select">
+                          <ion-select-option v-for="unit in units[selection]" :key="unit" :value="unit">{{ unit }}</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </div>
 
-                </form>
+                    <div v-if="selection === 'duration'">
+                      <ion-label>Duration (minutes):</ion-label>
+                      <ion-item class="form-field-item" lines="none">
+                        <ion-input class="form-field-input" v-model="valueOfSelection" required :autofocus="true" @input="cleanInput($event)"
+                          inputmode="numeric" placeholder="Enter duration in minutes"></ion-input>
+                      </ion-item>
+                    </div>
+
+                    <div class="form-button-group">
+                      <ion-button class="form-button primary" type="submit" size="small">Confirm</ion-button>
+                      <ion-button class="form-button secondary" size="small"
+                        @click="() => { selection = ''; valueOfSelection = null; unitOfSelection = ''; }" v-if="selection">Return</ion-button>
+                    </div>
+
+                    <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message">{{ formFieldsErrorDetailsObject.selection }}</div>
+                    <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message">{{ formFieldsErrorDetailsObject.durationValue
+                    }}</div>
+                    <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message">{{ formFieldsErrorDetailsObject.quantityUnit }}
+                    </div>
+
+                  </form>
+                </div>
               </ion-content>
+
             </ion-modal>
             <!-- Modal ends -->
 
             <div v-if="pet && needsByDate">
-              <!-- Date navigation buttons -->
               <div class="date-navigation">
                 <ion-button class="custom-button" @click="changeDay(-1)">Previous day</ion-button>
                 <h4>{{ currentDate }}</h4>
                 <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
               </div>
 
-              <!-- Needs for the selected date -->
               <ul v-if="needsByDate[currentDate]">
                 <li v-for="need in needsByDate[currentDate]" :key="need.id">
                   <div class="need-cards-container">
@@ -142,6 +153,8 @@
       <div v-else>
         <router-view />
       </div>
+
+      <TheFooter v-if="$route.matched.length === 1" />
     </ion-content>
 
   </ion-page>
@@ -162,6 +175,7 @@ import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { IonPage, IonButton, IonContent, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon, IonTitle } from '@ionic/vue';
 import TheNeedCard from '@/components/TheNeedCard.vue';
+import TheFooter from '@/components/TheFooter.vue';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -209,7 +223,6 @@ const needsByDateComputed = computed(() => {
   }, {});
 });
 
-
 const units = {
   duration: 'minutes',
   quantity: ['ml', 'g']
@@ -232,11 +245,9 @@ const clearFields = () => {
 const cleanInput = (event) => {
   // Remove all alphabets and special characters from the input value
   event.target.value = event.target.value.replace(/[^0-9]/g, '');
-
   // Remove leading zeros from the input value
   let value = event.target.value;
   value = value.replace(/^0+/, '');
-
   // Update the valueOfSelection reactive property
   valueOfSelection.value = Number(value);
 };
@@ -310,7 +321,7 @@ const addNewNeed = async () => {
     } else {
       appStore.addNotification('Failed to add need', 'error');
     }
-  } catch (error) {
+  } catch (_error) {
     appStore.addNotification('Failed to add need', 'error');
   }
 };
@@ -352,44 +363,138 @@ provide('handleNeedDeletion', handleNeedDeleted); // Provide the function to the
 </script>
 
 <style scoped>
-  /* centering the content */
-  .pet-container,
-  .header-button-container,
+/* Add New Need modal styling */
+.add-need-modal {
+  --max-width: 520px;
+  --max-height: 70vh;
+}
+
+.add-need-modal ion-title {
+  font-size: 1.0rem;
+}
+
+.add-need-modal ion-header ion-toolbar {
+  --min-height: 36px;
+}
+
+.add-need-modal ion-header ion-button {
+  --padding-start: 6px;
+  --padding-end: 6px;
+  min-height: 28px;
+  height: auto;
+  font-size: 0.8rem;
+  --border-radius: 8px;
+  --background: transparent;
+  --color: var(--color-text-lilac);
+}
+
+.add-need-modal .form-container {
+  max-width: 450px;
+  padding: 12px 16px;
+}
+
+.add-need-modal .form-field-item {
+  min-height: 34px;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  margin-bottom: 6px;
+}
+
+.add-need-modal .form-button {
+  min-height: 36px;
+  font-size: 0.8rem;
+  max-width: 140px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+.add-need-modal ion-radio-group ion-item {
+  min-height: 30px !important;
+  --padding-start: 10px !important;
+  --padding-end: 10px !important;
+  font-size: 0.8rem !important;
+}
+
+.add-need-modal ion-radio-group ion-label {
+  font-size: 0.8rem !important;
+}
+
+.add-need-modal ion-label {
+  font-size: 0.85rem;
+  margin-bottom: 3px;
+  margin-top: 6px;
+  display: block;
+}
+
+.add-need-modal h3.form-header {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  margin-top: 8px;
+}
+
+/* Base: centering the content */
+.pet-container,
+.header-button-container,
+.date-navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.pet-container {
+  margin-top: 20px;
+}
+
+.full-pet-card {
+  background-color: var(--color-card-background-lilac);
+  border-radius: 40px;
+  border: 2px solid var(--color-card-border);
+  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
+  padding: 20px;
+  width: 95%;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Center need cards */
+.need-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+
+/* Desktop specific styles */
+@media (min-width: 568px) {
   .date-navigation {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 140px 1fr 140px;
     align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
     gap: 10px;
-    width: 100%;
-    max-width: 100%;
   }
 
-  .pet-container {
-    margin-top: 30px;
+  .date-navigation .custom-button {
+    min-width: 140px;
+    --padding-start: 30px;
+    --padding-end: 30px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
   }
 
-  .full-pet-card {
-    background-color: var(--color-card-background-lilac);
-    border-radius: 50px;
-    border: 2px solid var(--color-card-border);
-    box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
-    padding: 20px;
-    width: 100%;
-    max-width: 650px;
+  .date-navigation h4 {
+    margin: 0;
+    text-align: center;
+    font-weight: bold;
+    grid-column: 2;
   }
-
-  .need-cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-  }
-
-  /* Desktop specific styles */
-  @media (min-width: 568px) {
-    .date-navigation {
-      flex-direction: row;
-      justify-content: space-around;
-    }
-  }
+}
 </style>

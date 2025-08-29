@@ -6,8 +6,7 @@ import { PetState, Pet, CareRecord } from '@/types/pet';
 
 const servicePath = '/api';
 
-export const usePetStore = defineStore({
-  id: 'pet',
+export const usePetStore = defineStore('pet', {
   state: (): PetState => ({
     pets: [],
   }),
@@ -311,7 +310,12 @@ export const usePetStore = defineStore({
               if (pet) {
                 const need = pet.needs.find((need) => need.id === needId);
                 if (need) {
-                  need.careRecords.push(recordObject);
+                  // Ensure careRecords exists, push the new record, and mark the need as completed
+                  if (!need.careRecords) {
+                    need.careRecords = [];
+                  }
+                  need.careRecords.push(recordObject as CareRecord);
+                  need.completed = true;
                 }
               }
             });

@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": false, // Remove strict mode so that JavaScript files can be used
+    "strict": false,
     "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -12,12 +12,13 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
-    "allowJs": true, // Allows JavaScript files to be used
-    "checkJs": false, // Remove type checking for JavaScript files
+    "allowJs": true,
+    "checkJs": false,
     "baseUrl": "./",
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["src/*"]
-    },
+    }
   },
   "include": ["src/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
