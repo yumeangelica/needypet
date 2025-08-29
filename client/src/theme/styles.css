@@ -203,18 +203,28 @@ ion-datetime {
   padding: 0;
 }
 
-/* Login, Register, Landing pages styling */
+/* Login, Register, Landing, Request Password pages styling */
 /* -------------------------------------- */
 
-/* Global container element for PageLogin, PageRegister, and PageLanding */
+/* Global container for PageLogin, PageRegister, PageLanding, PageRequestPasswordReset */
 .login-register-container {
-  max-width: 500px;
+  width: 100%;
+  max-width: 600px;
+  /* unified width across all auth pages */
+  box-sizing: border-box;
   margin: 5vh auto;
   padding: 20px;
   border-radius: 50px;
   background-color: var(--color-login-background);
   border: 1px solid var(--color-login-button-and-border);
   box-shadow: 0 2px 4px var(--color-drop-shadow-pink);
+}
+
+@media (max-width: 568px) {
+  .login-register-container {
+    max-width: 92vw;
+    /* keep comfortable margins on small phones */
+  }
 }
 
 /* Input field in PageRegister and PageLogin */
