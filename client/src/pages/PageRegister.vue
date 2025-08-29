@@ -7,9 +7,9 @@
           <TheLogoImage altText="Needypet Logo" />
 
           <div class="paw-header-container">
-            <ion-icon :icon="pawOutline"></ion-icon>
+            <ion-icon :icon="paw"></ion-icon>
             <h4>Create account</h4>
-            <ion-icon :icon="pawOutline"></ion-icon>
+            <ion-icon :icon="paw"></ion-icon>
           </div>
 
           <form @submit.prevent="createAccount">
@@ -46,8 +46,8 @@
 
             <!-- Confirm password input field -->
             <ion-item class="login-register-field-item">
-              <ion-input class="login-register-field-input" v-model="confirmPassword" placeholder="Confirm password" :type="passwordFieldType" required
-                id="confirmPassword" aria-label="Confirm Password"></ion-input>
+              <ion-input class="login-register-field-input" v-model="confirmPassword" placeholder="Confirm password" :type="passwordFieldType"
+                required id="confirmPassword" aria-label="Confirm Password"></ion-input>
 
               <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
                 <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
@@ -57,7 +57,7 @@
 
 
             <!-- Timezone select field -->
-            <ion-item class="login-register-field-item timezone-selector-field" @click="showModal = true" required>
+            <ion-item class="login-register-field-item" @click="showModal = true" required>
               <ion-label class="custom-timezone-label">{{ selectedTimezone || 'Select Timezone' }}</ion-label>
             </ion-item>
             <div v-if="formFieldsErrorDetailsObject.timezone" class="custom-error-message">{{ formFieldsErrorDetailsObject.timezone }}</div>
@@ -74,13 +74,11 @@
           </form>
         </div>
 
-
       </div>
       <TheFooter />
     </ion-content>
   </ion-page>
 </template>
-
 
 
 <script setup lang="ts">
@@ -90,7 +88,7 @@ import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonButtons } from '@ionic/vue';
 import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
-import { pawOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { eyeOutline, eyeOffOutline, paw } from 'ionicons/icons';
 import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
 
@@ -187,7 +185,7 @@ const createAccount = async () => {
       newPassword: errorDetails?.newPassword?.[0] || '',
       timezone: errorDetails?.timezone?.[0] || ''
     };
-    errorMessage.value = message? message : 'An error occurred. Please try again later.';
+    errorMessage.value = message ? message : 'An error occurred. Please try again later.';
     setTimeout(() => {
       formFieldsErrorDetailsObject.value = {
         username: '',
@@ -209,31 +207,4 @@ const goBack = () => {
   selectedTimezone.value = '';
 };
 
-
 </script>
-
-<style scoped>
-  .strong-password-note {
-    font-size: 0.6rem;
-    margin: 1rem;
-  }
-
-  .strong-password-note ul {
-    list-style-type: disc;
-    margin: 0;
-    padding: 0;
-    list-style-position: inside;
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .strong-password-note li {
-    width: 50%;
-    box-sizing: border-box;
-    color: red;
-  }
-
-  .strong-password-note li.valid {
-    color: green;
-  }
-</style>
