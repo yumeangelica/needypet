@@ -1,13 +1,6 @@
 <template>
-  <div
-    class="notification-container"
-    :class="{ 'with-header': hasDesktopHeader }"
-  >
-    <div
-      v-for="notification in sortedNotifications"
-      :key="notification.id"
-      :class="['notification', notification.type]"
-    >
+  <div class="notification-container" :class="{ 'with-header': hasDesktopHeader }">
+    <div v-for="notification in sortedNotifications" :key="notification.id" :class="['notification', notification.type]">
       {{ notification.type }}: {{ notification.message }}
     </div>
   </div>
@@ -38,8 +31,8 @@ defineProps<{
 }
 
 .notification-container.with-header {
-  /* Adjust the top position when header is present */
-  top: 70px; /* Adjust this value based on your header's height */
+  /* Offset when desktop header is present */
+  top: 70px;
 }
 
 .notification {
@@ -48,17 +41,20 @@ defineProps<{
   margin-bottom: 10px;
   border-radius: 14px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 10px solid transparent;
+  /* base width/style for accent bar */
 }
 
+/* Accents */
 .notification.success {
-  border-left: 10px solid #4caf50;
+  border-left-color: #4caf50;
 }
 
 .notification.error {
-  border-left: 10px solid #f44336;
+  border-left-color: #f44336;
 }
 
 .notification.info {
-  border-left: 10px solid #2196f3;
+  border-left-color: #2196f3;
 }
 </style>
