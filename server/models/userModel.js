@@ -73,9 +73,9 @@ userSchema.set('toJSON', {
  * @description Method to set password for user in registration
  * @param {*} password
  */
-userSchema.methods.setPassword = function (password) {
+userSchema.methods.setPassword = async function (password) {
   const saltRounds = 10;
-  this.passwordHash = bcrypt.hashSync(password, saltRounds);
+  this.passwordHash = await bcrypt.hash(password, saltRounds);
 };
 
 /**
@@ -83,8 +83,8 @@ userSchema.methods.setPassword = function (password) {
  * @param {*} password
  * @returns true if password is correct
  */
-userSchema.methods.isValidPassword = function (password) {
-  return bcrypt.compareSync(password, this.passwordHash);
+userSchema.methods.isValidPassword = async function (password) {
+  return bcrypt.compare(password, this.passwordHash);
 };
 
 /**
@@ -95,7 +95,7 @@ userSchema.methods.generateJWT = function () {
   return jwt.sign({
     userName: this.userName,
     id: this._id,
-    // eslint-disable-next-line quotes
+    // eslint-disable-next-line @stylistic/quotes
   }, config.jwtSecret, { expiresIn: "10h" });
 };
 

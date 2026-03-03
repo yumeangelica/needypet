@@ -13,7 +13,7 @@
   "author": "yumeangelica",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "cross-env": "^10.1.0",
     "dayjs": "^1.11.13",
@@ -28,8 +28,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "eslint": "^9.13.0",
-    "eslint-config-xo": "^0.46.0",
+    "eslint": "^10.0.2",
+    "eslint-config-xo": "^0.50.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.7",
     "supertest": "^7.0.0"

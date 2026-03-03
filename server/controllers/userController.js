@@ -76,7 +76,7 @@ const createNewUser = async (request, response, next) => {
 
     const user = new User({ userName, email, timezone });
 
-    user.setPassword(newPassword); // Setting password with method from userModel which hashes the password
+    await user.setPassword(newPassword); // Setting password with method from userModel which hashes the password
 
     user.generateEmailConfirmToken(); // Generate email confirmation token
 
@@ -91,10 +91,11 @@ const createNewUser = async (request, response, next) => {
           message: 'Failed to authenticate email. Please contact support.',
         });
       }
+
       return next({
         status: 535,
         message: 'Unable to send confirmation email. Please try again later.',
-      })
+      });
     }
 
     response.status(201).json(user);
@@ -125,7 +126,7 @@ const updateUser = async (request, response, next) => {
     if (isPasswordUpdate) {
       const { newPassword, currentPassword } = validationResult;
 
-      if (!user.isValidPassword(currentPassword)) { // Check if current password is valid
+      if (!(await user.isValidPassword(currentPassword))) { // Check if current password is valid
         return next({
           status: 401,
           message: 'Invalid current password',
@@ -147,7 +148,7 @@ const updateUser = async (request, response, next) => {
         return next(error);
       }
 
-      user.setPassword(newPassword);
+      await user.setPassword(newPassword);
       await user.save();
       return response.status(200).json({ message: 'Password updated successfully' });
     }
@@ -155,7 +156,7 @@ const updateUser = async (request, response, next) => {
     // If password is not being updated
     const { userName, email, currentPassword, timezone } = validationResult;
 
-    if (!currentPassword || !user.isValidPassword(currentPassword)) {
+    if (!currentPassword || !(await user.isValidPassword(currentPassword))) {
       return next({
         status: 401,
         message: 'Invalid current password',
@@ -239,7 +240,7 @@ const loginUser = async (request, response, next) => {
 
     const user = await User.findOne({ userName });
 
-    if (!user || !user.isValidPassword(password)) {
+    if (!user || !(await user.isValidPassword(password))) {
       return next({
         status: 401,
         message: 'Invalid credentials',
@@ -407,7 +408,7 @@ const passwordReset = async (request, response, next) => {
       return response.status(401).json({ error: 'Invalid token' });
     }
 
-    user.setPassword(newPassword); // Set new password
+    await user.setPassword(newPassword); // Set new password
     user.passwordResetToken = null; // Remove token
     user.passwordResetExpires = null; // Remove expiration date
     await user.save(); // Save updated user to database
