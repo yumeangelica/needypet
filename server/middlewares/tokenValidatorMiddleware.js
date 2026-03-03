@@ -29,11 +29,11 @@ const authenticateToken = (request, response, next) => {
     }
 
     request.decodedToken = decodedToken; // Add decoded token to request object
-  } catch (error) {
-    next(error);
-  }
 
-  next();
+    next();
+  } catch (error) {
+    return next(error);
+  }
 };
 
 module.exports = authenticateToken;
