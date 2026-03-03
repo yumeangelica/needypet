@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router(); // eslint-disable-line new-cap
 const { getUserById, createNewUser, updateUser, deleteUser, loginUser, validateUserToken, verifyEmailConfirmationToken, resendEmailConfirmation, verifyPasswordResetToken, requestPasswordReset, passwordReset } = require('../controllers/userController');
 const passwordStrengthValidator = require('../middlewares/passwordStrengthValidator');
 

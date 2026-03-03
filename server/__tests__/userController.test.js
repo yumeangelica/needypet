@@ -83,9 +83,7 @@ describe('POST /auth/users', () => {
     await createNewUser(request, response, next);
 
     expect(response.status).toHaveBeenCalledWith(422);
-    expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({ message: 'Validation error' }),
-    );
+    expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Validation error' }));
   });
 });
 
@@ -120,7 +118,7 @@ describe('POST /auth/users -testcases', () => {
     },
   ];
 
-  testCases.forEach(({ description, body, expectedError }) => {
+  testCases.forEach(({ description, body, expectedError: _expectedError }) => {
     it(`should not create a new user if ${description}`, async () => {
       const request = { body };
       const response = {
@@ -133,9 +131,7 @@ describe('POST /auth/users -testcases', () => {
 
       // Verify that the appropriate error response is sent
       expect(response.status).toHaveBeenCalledWith(422);
-      expect(response.json).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Validation error' }),
-      );
+      expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Validation error' }));
     });
   });
 });

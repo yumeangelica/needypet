@@ -31,7 +31,7 @@ const updateUserValidation = (data, isPasswordUpdate = false) => {
       throw error;
     }
 
-    throw new Error('Unknown error during validation');
+    throw new Error('Unknown error during validation', { cause: error });
   }
 };
 
