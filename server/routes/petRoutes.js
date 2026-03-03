@@ -1,5 +1,4 @@
 const express = require('express');
-// eslint-disable-next-line new-cap
 const router = express.Router();
 const { addNewPet, updatePet, deletePet, addNewNeed, addNewRecord, deleteNeed, getAllUserPets, toggleNeedisActive, updateNeed } = require('../controllers/petController');
 
