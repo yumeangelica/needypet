@@ -10,8 +10,6 @@ dist
 
 node_modules
 
-package-lock.json
-
 requests
 
 stats.html
