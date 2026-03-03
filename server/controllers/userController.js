@@ -97,7 +97,7 @@ const createNewUser = async (request, response, next) => {
       })
     }
 
-    response.status(201).json('user');
+    response.status(201).json(user);
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.log('Validation error:', error.flatten());
@@ -369,7 +369,7 @@ const resendEmailConfirmation = async (request, response, next) => {
     await user.save(); // Save updated user to database
     await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
 
-    response.status(200);
+    response.status(200).json({ message: 'Confirmation email resent' });
   } catch (error) {
     next(error);
   }

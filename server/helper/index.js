@@ -138,7 +138,7 @@ const updatePetNeedstoNextDays = async () => {
       return;
     }
 
-    allPets.forEach(pet => {
+    for (const pet of allPets) {
       // Find all needs which are not archived by pet
       const notArchivedNeeds = pet.needs.reduce((acc, need) => {
         if (!need.archived && !need.isActive) { // If the need is not archived and not active, set it as archived and not active
@@ -186,10 +186,10 @@ const updatePetNeedstoNextDays = async () => {
         }
       });
       if (needsUpdated) {
-        pet.save();
+        await pet.save();
         console.log(`${pet.name}'s needs updated`);
       }
-    });
+    }
   } catch (error) {
     console.error('Error in updatePetNeedstoNextDays', error);
   }
