@@ -1,16 +1,18 @@
+const { describe, it, before, after, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const { mongodbUri } = require('../utils/config');
 const User = require('../models/userModel');
 
-beforeAll(() => {
-  mongoose.connect(mongodbUri);
+before(async () => {
+  await mongoose.connect(mongodbUri);
 });
 
-afterAll(async () => {
+after(async () => {
   await User.deleteMany({});
-  mongoose.connection.close();
+  await mongoose.connection.close();
 });
 
 describe('API Tests', () => {
@@ -34,23 +36,23 @@ describe('API Tests', () => {
   });
 
   it('successfully creates a new user', async () => {
-    await supertest(app)
+    const response = await supertest(app)
       .post('/auth/users')
-      .send(newUserObject)
-      .expect(201);
+      .send(newUserObject);
+
+    assert.strictEqual(response.status, 201);
   });
 
   it('allows a user to log in and returns a token', async () => {
     await supertest(app)
       .post('/auth/users')
-      .send(newUserObject)
-      .expect(201);
+      .send(newUserObject);
 
     const response = await supertest(app)
       .post('/auth/login')
-      .send(credentials)
-      .expect(200);
+      .send(credentials);
 
-    expect(response.body).toHaveProperty('token');
+    assert.strictEqual(response.status, 200);
+    assert.ok(response.body.token, 'Response should have a token property');
   });
 });

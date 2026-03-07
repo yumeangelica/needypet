@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const { jwtSecret } = require('../utils/config');
+const { jwtVerify } = require('jose');
+const { jwtSecretEncoded } = require('../utils/config');
 
 /**
  * @description Authenticates token and attaches decoded token to request object
@@ -8,7 +8,7 @@ const { jwtSecret } = require('../utils/config');
  * @param {*} next
  * @returns
  */
-const authenticateToken = (request, response, next) => {
+const authenticateToken = async (request, response, next) => {
   const authHeader = request.headers.authorization; // Get authorization header
   let token = null; // Initialize token so it can be used outside of if statement
   request.decodedToken = null; // Initialize user so it can be used outside of try-catch block
@@ -22,13 +22,13 @@ const authenticateToken = (request, response, next) => {
   }
 
   try {
-    const decodedToken = jwt.verify(token, jwtSecret); // Verify token with secret key
+    const { payload } = await jwtVerify(token, jwtSecretEncoded); // Verify token with secret key
 
-    if (!decodedToken.id) {
+    if (!payload.id) {
       return response.status(401).json({ error: 'Token invalid' });
     }
 
-    request.decodedToken = decodedToken; // Add decoded token to request object
+    request.decodedToken = payload; // Add decoded token to request object
 
     next();
   } catch (error) {
