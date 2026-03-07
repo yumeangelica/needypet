@@ -40,10 +40,10 @@ NeedyPet is designed to streamline pet care management within households and pet
 
 ## Technical Requirements
 
-- **Back-end**: Utilizes MongoDB for data storage, Express.js, and Node.js for server-side logic. Secure password hashing with bcryptjs is used for data protection.
+- **Back-end**: Utilizes MongoDB for data storage, Express.js, and Node.js for server-side logic. Zod is used for request validation. Secure password hashing with bcryptjs is used for data protection.
 - **Front-end**: Developed with Vue.js and styled using Ionic for responsive design, ensuring compatibility across different devices and platforms.
-- **Email Services** (Planned Feature): Nodemailer will be used for account email verification, password resets, and sending activity reminders and alerts.
-- **Security**: Implements industry-standard security measures including encrypted sessions and GDPR-compliant data handling practices.
+- **Email Services**: Nodemailer is used for account email verification and password resets.
+- **Security**: Implements industry-standard security measures including JWT-based authentication (jose) and GDPR-compliant data handling practices.
 
 ## Compliance and Standards
 
