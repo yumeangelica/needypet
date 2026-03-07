@@ -5,7 +5,7 @@
 
         <div v-if="userEmailConfirmed === false || userEmailConfirmed === null">
           <div class="confirmation-message">
-            <p>Your email is not confirmed yet. Please check your email for the confirmation link.</p>
+            <p>Please verify your email to get started. Check your inbox for a confirmation link.</p>
           </div>
         </div>
 
@@ -13,7 +13,7 @@
           <div class="pets-container">
             <div v-if="ownPets.length > 0">
               <div class="title-and-button-container">
-                <h2 class="section-title">Your pets:</h2>
+                <h2 class="section-title">My pets</h2>
                 <ion-button @click="router.push({ name: 'add-pet' })" class="custom-button">
                   <ion-icon :icon="addCircleOutline"></ion-icon>
                   Add Pet</ion-button>
@@ -25,7 +25,7 @@
             </div>
 
             <div v-if="carerPets.length > 0">
-              <h2 class="section-title">Pets to take care of:</h2>
+              <h2 class="section-title">Shared With Me</h2>
               <div class="cards-container">
                 <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
               </div>
@@ -34,12 +34,12 @@
 
           <div v-if="ownPets.length === 0 && carerPets.length === 0">
             <div class="title-and-button-container">
-              <h2 class="section-title">Your pets:</h2>
+              <h2 class="section-title">My pets</h2>
               <ion-button @click="router.push({ name: 'add-pet' })" class="custom-button">
                 <ion-icon :icon="addCircleOutline"></ion-icon>
                 Add Pet</ion-button>
             </div>
-            <p class="ion-text-center">You don't have any pets yet.</p>
+            <p class="ion-text-center">No pets yet – add your first one!</p>
           </div>
         </div>
       </div>

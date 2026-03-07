@@ -6,7 +6,7 @@
 
           <TheLogoImage altText="Needypet Logo" />
 
-          <h4 class="ion-text-center"><ion-icon :icon="paw"></ion-icon>Loving care for your Needy Pet! <ion-icon :icon="paw"></ion-icon></h4>
+          <h4 class="ion-text-center"><ion-icon :icon="paw"></ion-icon>All your pet's needs, one place<ion-icon :icon="paw"></ion-icon></h4>
 
           <ion-button @click="router.push({ name: 'login' });" expand="block" class="action-button primary-action-button">Login</ion-button>
           <ion-button @click="router.push({ name: 'register' })" expand="block" class="action-button secondary-action-button">Create

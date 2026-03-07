@@ -31,7 +31,7 @@
                   <ion-icon :icon="addCircleOutline" slot="start"></ion-icon>
                   Add need
                 </ion-button>
-                <p v-else>Daily need limit reached</p>
+                <p v-else>Maximum 10 needs per day</p>
               </template>
               <ion-button class="custom-button" @click="currentDate = dayjs().tz(userStore.timezone).format('YYYY-MM-DD')"
                 v-if="currentDate !== dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
@@ -57,13 +57,12 @@
 
                     <ion-label>Category:</ion-label>
                     <ion-item class="form-field-item" lines="full">
-                      <ion-input class="form-field-input" v-model="category" required
-                        placeholder="input need's category (e.g. walk or feed)"></ion-input>
+                      <ion-input class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine"></ion-input>
                     </ion-item>
 
                     <ion-label>Description:</ion-label>
                     <ion-item class="form-field-item" lines="full">
-                      <ion-input class="form-field-input" v-model="description" required placeholder="input need's description"></ion-input>
+                      <ion-input class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park"></ion-input>
                     </ion-item>
 
                     <ion-label>Date:</ion-label>
@@ -71,7 +70,7 @@
                       <ion-input class="form-field-input" readonly :value="currentDate" required></ion-input>
                     </ion-item>
 
-                    <ion-label>Choose Type:</ion-label>
+                    <ion-label>Measurement type</ion-label>
                     <div v-show="!selection" class="form-field-item compact-radio">
                       <ion-radio-group v-model="selection">
                         <div class="radio-row">
@@ -114,7 +113,7 @@
 
                     <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message">{{ formFieldsErrorDetailsObject.selection }}</div>
                     <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message">{{ formFieldsErrorDetailsObject.durationValue
-                    }}</div>
+                      }}</div>
                     <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message">{{ formFieldsErrorDetailsObject.quantityUnit }}
                     </div>
 
@@ -127,9 +126,9 @@
 
             <div v-if="pet && needsByDate">
               <div class="date-navigation">
-                <ion-button class="custom-button" @click="changeDay(-1)">Previous day</ion-button>
+                <ion-button class="custom-button" @click="changeDay(-1)">← Previous</ion-button>
                 <h4>{{ currentDate }}</h4>
-                <ion-button class="custom-button" @click="changeDay(1)">Next Day</ion-button>
+                <ion-button class="custom-button" @click="changeDay(1)">Next →</ion-button>
               </div>
 
               <ul v-if="needsByDate[currentDate]">
@@ -139,7 +138,7 @@
                   </div>
                 </li>
               </ul>
-              <p v-else style="text-align: center;">No needs for today</p>
+              <p v-else style="text-align: center;">All clear for today! 🎉</p>
             </div>
 
           </div>
@@ -319,10 +318,10 @@ const addNewNeed = async () => {
       setOpen(false);
       await getPet(pet.value.id);
     } else {
-      appStore.addNotification('Failed to add need', 'error');
+      appStore.addNotification("Couldn't save the need. Please try again.", 'error');
     }
   } catch (_error) {
-    appStore.addNotification('Failed to add need', 'error');
+    appStore.addNotification("Couldn't save the need. Please try again.", 'error');
   }
 };
 
@@ -352,7 +351,7 @@ onBeforeMount(async () => {
 const handleNeedDeleted = async (deleted: boolean) => {
   if (deleted) {
     await getPet(pet.value.id);
-    appStore.addNotification('Need deleted successfully', 'success');
+    appStore.addNotification('Need removed', 'success');
   }
 };
 
