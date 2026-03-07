@@ -1,18 +1,35 @@
 <template>
   <div class="small-pet-card" @click="navigateToPetView">
+    <p v-if="pet.species || pet.breed" class="pet-subtitle">{{ [pet.species, pet.breed].filter(Boolean).join(' · ') }}</p>
     <h5>{{ pet.name }}</h5>
+    <p v-if="todayNeedsCount > 0" class="pet-needs-count">{{ todayNeedsCount }} {{ todayNeedsCount === 1 ? 'need' : 'needs' }} today</p>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/user';
 import { Pet } from '@/types/pet';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const { pet } = defineProps<{
   pet: Pet;
 }>();
 
 const router = useRouter();
+const userStore = useUserStore();
+
+const todayNeedsCount = computed(() => {
+  if (!pet.needs || pet.needs.length === 0) return 0;
+  const today = dayjs().tz(userStore.timezone).format('YYYY-MM-DD');
+  return pet.needs.filter(need => need.dateFor === today).length;
+});
 
 // Navigate to the pet view page (PagePet) when the card is clicked
 function navigateToPetView() {
@@ -56,5 +73,22 @@ function navigateToPetView() {
   margin-top: auto;
   padding-top: 15px;
   line-height: 1.3;
+}
+
+.pet-subtitle {
+  font-size: 0.7rem;
+  color: var(--color-text-default);
+  opacity: 0.7;
+  text-align: center;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.pet-needs-count {
+  font-size: 0.7rem;
+  color: var(--color-text-default);
+  opacity: 0.6;
+  text-align: center;
+  margin: 4px 0 0 0;
 }
 </style>

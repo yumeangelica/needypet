@@ -2,8 +2,8 @@
   <ion-card :class="{ 'is-expanded': showOptions, 'card-inactive': !need.isActive }">
     <ion-item class="custom-ion-item">
       <ion-label>
-        <h5 class="ion-text-center need-card-field">{{ need.category }}</h5>
-        <p class="need-card-field">Description: {{ need.description }}</p>
+        <h5 class="ion-text-center need-card-category">{{ need.category }}</h5>
+        <p class="need-card-description">{{ need.description }}</p>
         <p class="need-card-field">{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
       </ion-label>
     </ion-item>
@@ -102,7 +102,7 @@ import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
-import { IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonToggle, IonInput, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonToggle, IonInput, IonButtons, IonHeader, IonTitle, IonToolbar, alertController } from '@ionic/vue';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -270,11 +270,26 @@ const updateNeed = async () => {
   closeEditModal();
 };
 
-// Confirm deletion of a need
-const confirmDeleteNeed = (needId: string) => {
-  if (confirm('Are you sure you want to delete this need?')) {
-    deleteNeed(needId);
-  }
+// Confirm deletion of a need using Ionic alert
+const confirmDeleteNeed = async (needId: string) => {
+  const alert = await alertController.create({
+    header: 'Delete Need',
+    message: 'Are you sure you want to delete this need?',
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+      },
+      {
+        text: 'Delete',
+        role: 'destructive',
+        handler: () => {
+          deleteNeed(needId);
+        },
+      },
+    ],
+  });
+  await alert.present();
 };
 
 const deleteNeed = async (needId: string) => {
@@ -301,6 +316,18 @@ const deleteNeed = async (needId: string) => {
 
 .need-toggle-switch {
   margin-bottom: 10px;
+}
+
+.need-card-category {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.need-card-description {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 
 .need-card-field {

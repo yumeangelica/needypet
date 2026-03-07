@@ -36,7 +36,7 @@
 
               <ion-buttons>
                 <ion-button type="submit" expand="block" class="action-button primary-action-button">Set Password</ion-button>
-                <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">To Login</ion-button>
+                <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">← Back</ion-button>
               </ion-buttons>
 
               <div v-if="errorMessage" class="custom-error-message">
