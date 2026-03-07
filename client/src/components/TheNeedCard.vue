@@ -204,7 +204,7 @@ const addRecord = async (petId: string, need: Need) => {
 
   const updateSuccessful = await petStore.addRecord(petId, needId, recordObject);
   if (updateSuccessful) {
-    appStore.addNotification('Record added successfully', 'success');
+    appStore.addNotification('Need completed! ✓', 'success');
   } else {
     appStore.addNotification('Failed to add record', 'error');
   }

@@ -39,7 +39,7 @@
                 <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
                 <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
                 <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-                <li :class="{ 'valid': passwordValidations.special }"> Valid special character</li>
+                <li :class="{ 'valid': passwordValidations.special }">At least one special character (@$!%*?&amp;.-_)</li>
                 <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
               </ul>
             </div>
@@ -67,8 +67,8 @@
 
             <ion-buttons>
               <!-- Global button styling for action buttons -->
-              <ion-button type="submit" expand="block" class="action-button primary-action-button">Confirm</ion-button>
-              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+              <ion-button type="submit" expand="block" class="action-button primary-action-button">Create Account</ion-button>
+              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Back</ion-button>
             </ion-buttons>
 
           </form>

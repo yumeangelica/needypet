@@ -13,7 +13,11 @@
             <p><strong>Email:</strong> {{ user.email }}</p>
           </div>
           <div class="email-confirmed">
-            <p><strong>Email Confirmed:</strong> {{ user.emailConfirmed ? 'Yes' : 'No' }}</p>
+            <p>
+              <strong>Email verified</strong>
+              <ion-icon :icon="user.emailConfirmed ? checkmarkCircle : closeCircle"
+                :style="{ color: user.emailConfirmed ? '#4caf50' : '#f44336', marginLeft: '6px', verticalAlign: 'middle' }"></ion-icon>
+            </p>
             <ion-button v-if="!user.emailConfirmed" class="custom-button small-button" :disabled="isButtonDisabled" fill="clear"
               @click="resendEmailConfirmation">Resend email</ion-button>
           </div>
@@ -47,7 +51,7 @@
 
 import { ref, computed, watchEffect, Ref } from 'vue';
 import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
-import { trashOutline, exitOutline, settingsOutline } from 'ionicons/icons';
+import { trashOutline, exitOutline, settingsOutline, checkmarkCircle, closeCircle } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
