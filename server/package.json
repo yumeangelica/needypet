@@ -1,6 +1,6 @@
 {
   "name": "needypet-server",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "description": "pet care management app",
   "main": "index.js",
   "scripts": {
@@ -21,8 +21,7 @@
     "express": "^5.1.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.7.2",
-    "mongoose-unique-validator": "^5.0.0",
+    "mongoose": "^9.2.4",
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.1",
     "zod": "^3.23.8"

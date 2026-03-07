@@ -6,7 +6,7 @@
  * @returns
  */
 const petCareTakerValidationMiddleware = (request, response, next) => {
-  if (!(request.pet.careTakers.includes(request.user.id.toString()) || request.pet.owner.toString() === request.user.id.toString())) {
+  if (!(request.pet.careTakers.some(ct => ct.equals(request.user._id)) || request.pet.owner.toString() === request.user._id.toString())) {
     return response.status(401).json({ error: 'Unauthorized' });
   }
 
