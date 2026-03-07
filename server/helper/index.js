@@ -25,24 +25,24 @@ const dailyTaskCompleter = need => {
 
   switch (taskType) {
     case 'quantity':
-    {
-      const totalQuantity = need.careRecords.reduce((total, record) => total + record.quantity.value, 0); // Calculate the total quantity
-      if (totalQuantity >= need.quantity.value) { // If the total quantity is greater than or equal to the need quantity, set the need as completed
-        need.completed = true;
-      }
+      {
+        const totalQuantity = need.careRecords.reduce((total, record) => total + record.quantity.value, 0); // Calculate the total quantity
+        if (totalQuantity >= need.quantity.value) { // If the total quantity is greater than or equal to the need quantity, set the need as completed
+          need.completed = true;
+        }
 
-      break;
-    }
+        break;
+      }
 
     case 'duration':
-    {
-      const totalDuration = need.careRecords.reduce((total, record) => total + record.duration.value, 0); // Calculate the total duration
-      if (totalDuration >= need.duration.value) { // If the total duration is greater than or equal to the need duration, set the
-        need.completed = true;
-      }
+      {
+        const totalDuration = need.careRecords.reduce((total, record) => total + record.duration.value, 0); // Calculate the total duration
+        if (totalDuration >= need.duration.value) { // If the total duration is greater than or equal to the need duration, set the
+          need.completed = true;
+        }
 
-      break;
-    }
+        break;
+      }
 
     default:
       break;
