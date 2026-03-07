@@ -18,7 +18,7 @@ const durationValueSchema = z.number({
 });
 
 const durationUnitSchema = z.string({
-  unit: z.enum('minutes'),
+  unit: z.enum(['minutes']),
 });
 
 const durationSchema = z.object({
