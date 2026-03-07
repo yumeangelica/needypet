@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../utils/config');
@@ -54,8 +53,6 @@ const userSchema = new mongoose.Schema({
     },
   },
 });
-
-userSchema.plugin(uniqueValidator);
 
 userSchema.set('toJSON', {
   transform(document, returnedObject) {

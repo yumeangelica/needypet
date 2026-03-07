@@ -44,6 +44,14 @@ const errorHandler = (error, request, response, next) => {
     case 'ValidationError':
       errorResponse.details = error.errors;
       return response.status(422).json(errorResponse);
+    case 'MongoServerError':
+      if (error.code === 11000) {
+        const field = Object.keys(error.keyPattern)[0];
+        errorResponse.message = `${field} already exists`;
+        return response.status(409).json(errorResponse);
+      }
+
+      return response.status(statusCode).json(errorResponse);
     case 'ZodError':
       errorResponse.details = error.flatten();
       return response.status(422).json(errorResponse);

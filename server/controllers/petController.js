@@ -22,18 +22,18 @@ const getAllUserPets = async (request, response, next) => {
   try {
     const user = request.user; // User obj is attached to the request object by getUserHandler middleware
 
-    const pets = (await Pet.find({ $or: [{ owner: user.id }, { careTakers: user.id }] }) // Find all pets that the user is the owner or care taker
+    const pets = (await Pet.find({ $or: [{ owner: user._id }, { careTakers: user._id }] }) // Find all pets that the user is the owner or care taker
       .populate('needs')
       .populate('owner', 'userName')
       .populate('careTakers', 'userName')).map(pet => {
-      // Remove the caretakers list if the user is not the owner
-      if (pet.owner._id.toString() !== user.id.toString()) {
-        // Return only the user in careTakers list
-        pet.careTakers = pet.careTakers.filter(careTaker => careTaker._id.toString() === user.id.toString());
-      }
+        // Remove the caretakers list if the user is not the owner
+        if (pet.owner._id.toString() !== user._id.toString()) {
+          // Return only the user in careTakers list
+          pet.careTakers = pet.careTakers.filter(careTaker => careTaker._id.toString() === user._id.toString());
+        }
 
-      return pet;
-    });
+        return pet;
+      });
 
     response.json(pets);
   } catch (error) {
@@ -62,7 +62,7 @@ const addNewPet = async (request, response, next) => {
 
   const owner = request.user; // Owner is the user who is making the request
 
-  newPetObject.owner = owner.id;
+  newPetObject.owner = owner._id;
 
   let careTaker;
 
@@ -73,8 +73,8 @@ const addNewPet = async (request, response, next) => {
       return 'no user';
     }
 
-    if (!newPetObject.careTakers.includes(careTaker.id)) { // If care taker is not in care takers array
-      newPetObject.careTakers.push(careTaker.id);
+    if (!newPetObject.careTakers.includes(careTaker._id)) { // If care taker is not in care takers array
+      newPetObject.careTakers.push(careTaker._id);
     }
   }
 
@@ -82,8 +82,8 @@ const addNewPet = async (request, response, next) => {
     const pet = new Pet(newPetObject); // Creating new pet
     await pet.save();
 
-    if (!owner.pets.includes(pet.id)) {
-      owner.pets.push(pet.id); // Adding pet to owner's pets array
+    if (!owner.pets.includes(pet._id)) {
+      owner.pets.push(pet._id); // Adding pet to owner's pets array
       await owner.save();
     }
 
@@ -117,14 +117,14 @@ const updatePet = async (request, response, next) => {
     // Add pet id to care takers pets array
     await User.updateMany(
       { _id: { $in: careTakers } },
-      { $addToSet: { pets: request.pet.id } },
+      { $addToSet: { pets: request.pet._id } },
     );
   }
 
   try {
     const updatedPet = await Pet.findOneAndUpdate({ // Finds pet by id, validates by owner and updates it
-      _id: request.pet.id,
-      owner: request.user.id,
+      _id: request.pet._id,
+      owner: request.user._id,
     }, updateData, { new: true, runValidators: true });
 
     if (!updatedPet) {
@@ -148,8 +148,8 @@ const updatePet = async (request, response, next) => {
 const deletePet = async (request, response, next) => {
   try {
     const deletedPet = await Pet.findOneAndDelete({
-      _id: request.pet.id,
-      owner: request.user.id,
+      _id: request.pet._id,
+      owner: request.user._id,
     }, { runValidators: true });
 
     if (deletedPet === null) {
@@ -158,8 +158,8 @@ const deletePet = async (request, response, next) => {
 
     // Remove pet from owner's pets array
     await User.updateMany(
-      { pets: request.pet.id },
-      { $pull: { pets: request.pet.id } },
+      { pets: request.pet._id },
+      { $pull: { pets: request.pet._id } },
     );
 
     response.status(204).end();
@@ -245,7 +245,7 @@ const addNewRecord = async (request, response, next) => {
     }
 
     const newRecordObject = {
-      careTaker: request.user.id,
+      careTaker: request.user._id,
       date: new Date(dayjs().tz(request.user.timezone).format()),
       note: validateRecord.note,
       timezone: request.user.timezone,
@@ -331,8 +331,8 @@ const updateNeed = async (request, response, next) => {
 
   try {
     const updatedPet = await Pet.findOneAndUpdate(
-      { _id: request.pet.id, owner: request.user.id, 'needs._id': need.id },
-      { $set: { 'needs.$': { ...updateDataObject, _id: need.id } } },
+      { _id: request.pet._id, owner: request.user._id, 'needs._id': need._id },
+      { $set: { 'needs.$': { ...updateDataObject, _id: need._id } } },
       { runValidators: true, new: true },
     );
 
@@ -356,7 +356,7 @@ const deleteNeed = async (request, response, next) => {
   }
 
   try {
-    pet.needs.remove(need);
+    pet.needs.pull(need._id);
     await pet.save();
     response.status(204).end();
   } catch (error) {
