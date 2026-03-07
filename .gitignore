@@ -18,3 +18,5 @@ stats.html
 server_updates/
 
 .vscode/
+# Package lock files
+package-lock.json
