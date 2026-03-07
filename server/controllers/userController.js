@@ -1,6 +1,6 @@
 const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
-const { jwtSecret } = require('../utils/config');
+const { jwtVerify } = require('jose');
+const { jwtSecretEncoded } = require('../utils/config');
 const { sendConfirmationEmail, sendPasswordResetEmail } = require('../utils/mailer');
 const loginValidation = require('../validations/loginValidation');
 const registerValidation = require('../validations/registerValidation');
@@ -247,7 +247,7 @@ const loginUser = async (request, response, next) => {
       });
     }
 
-    const token = user.generateJWT(); // Generate token with method from userModel
+    const token = await user.generateJWT(); // Generate token with method from userModel
 
     response.status(200).json({
       message: 'Login successful',
@@ -314,9 +314,9 @@ const validateUserToken = async (request, response, next) => {
   }
 
   try {
-    const decodedToken = jwt.verify(token, jwtSecret); // Verify token with secret key
+    const { payload } = await jwtVerify(token, jwtSecretEncoded); // Verify token with secret key
 
-    if (!decodedToken.id) {
+    if (!payload.id) {
       return response.status(401).json({ error: 'Token invalid' });
     }
 

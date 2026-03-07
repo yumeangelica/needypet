@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { SignJWT } = require('jose');
 const config = require('../utils/config');
 const helper = require('../helper');
 const crypto = require('crypto');
@@ -88,12 +88,15 @@ userSchema.methods.isValidPassword = async function (password) {
  * @description Method to generate JWT token for user in login
  * @returns JWT token for user
  */
-userSchema.methods.generateJWT = function () {
-  return jwt.sign({
+userSchema.methods.generateJWT = async function () {
+  return new SignJWT({
     userName: this.userName,
-    id: this._id,
-    // eslint-disable-next-line @stylistic/quotes
-  }, config.jwtSecret, { expiresIn: "10h" });
+    id: this._id.toString(),
+  })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('10h')
+    .sign(config.jwtSecretEncoded);
 };
 
 /**

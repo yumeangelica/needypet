@@ -28,10 +28,15 @@ const errorHandler = (error, request, response, next) => {
     case 'Unauthorized':
       errorResponse.message = 'Unauthorized';
       return response.status(401).json(errorResponse);
-    case 'TokenExpiredError':
+    case 'TokenExpiredError': // jsonwebtoken legacy
+    case 'JWTExpired': // jose
       errorResponse.message = 'Token Expired';
       return response.status(401).json(errorResponse);
-    case 'JsonWebTokenError':
+    case 'JsonWebTokenError': // jsonwebtoken legacy
+    case 'JWSSignatureVerificationFailed': // jose
+    case 'JWTClaimValidationFailed': // jose
+    case 'JWTInvalid': // jose
+    case 'JWSInvalid': // jose - invalid compact JWS
       errorResponse.message = 'Invalid token';
       return response.status(401).json(errorResponse);
     case 'Forbidden':
@@ -65,6 +70,17 @@ const errorHandler = (error, request, response, next) => {
       return response.status(535).json(errorResponse);
 
     default:
+      // Catch jose errors by error code as fallback
+      if (error.code && error.code.startsWith('ERR_JWT')) {
+        errorResponse.message = error.code === 'ERR_JWT_EXPIRED' ? 'Token Expired' : 'Invalid token';
+        return response.status(401).json(errorResponse);
+      }
+
+      if (error.code && error.code.startsWith('ERR_JWS')) {
+        errorResponse.message = 'Invalid token';
+        return response.status(401).json(errorResponse);
+      }
+
       return response.status(statusCode).json(errorResponse);
   }
 };
