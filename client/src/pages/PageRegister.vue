@@ -68,7 +68,7 @@
             <ion-buttons>
               <!-- Global button styling for action buttons -->
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Create Account</ion-button>
-              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Back</ion-button>
+              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">← Back</ion-button>
             </ion-buttons>
 
           </form>
@@ -151,7 +151,7 @@ const createAccount = async () => {
     formFieldsErrorDetailsObject.value.newPassword = 'Password does not meet the requirements.';
     setTimeout(() => {
       formFieldsErrorDetailsObject.value.newPassword = '';
-    }, 5000);
+    }, 3000);
     return;
   }
 
@@ -159,7 +159,7 @@ const createAccount = async () => {
     formFieldsErrorDetailsObject.value.newPassword = 'Passwords do not match';
     setTimeout(() => {
       formFieldsErrorDetailsObject.value.newPassword = '';
-    }, 5000);
+    }, 3000);
     return;
   }
 
@@ -194,7 +194,7 @@ const createAccount = async () => {
         timezone: ''
       };
       errorMessage.value = '';
-    }, 5000);
+    }, 3000);
   }
 };
 

@@ -106,14 +106,14 @@
                     </div>
 
                     <div class="form-button-group">
-                      <ion-button class="form-button primary" type="submit" size="small">Confirm</ion-button>
+                      <ion-button class="form-button primary" type="submit" size="small">Add Need</ion-button>
                       <ion-button class="form-button secondary" size="small"
                         @click="() => { selection = ''; valueOfSelection = null; unitOfSelection = ''; }" v-if="selection">Return</ion-button>
                     </div>
 
                     <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message">{{ formFieldsErrorDetailsObject.selection }}</div>
                     <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message">{{ formFieldsErrorDetailsObject.durationValue
-                      }}</div>
+                    }}</div>
                     <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message">{{ formFieldsErrorDetailsObject.quantityUnit }}
                     </div>
 

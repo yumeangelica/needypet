@@ -13,12 +13,13 @@
 
           <form @submit.prevent="resetPassword">
             <ion-item class="login-register-field-item">
-              <ion-input class="login-register-field-input" type="email" v-model="email" placeholder="Enter your email" aria-label="Email"></ion-input>
+              <ion-input class="login-register-field-input" type="email" v-model="email" placeholder="Enter your email"
+                aria-label="Email"></ion-input>
             </ion-item>
 
             <ion-buttons>
               <ion-button type="submit" expand="block" class="action-button primary-action-button">Reset Password</ion-button>
-              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">Go Back</ion-button>
+              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">← Back</ion-button>
             </ion-buttons>
 
           </form>
