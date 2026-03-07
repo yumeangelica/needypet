@@ -18,12 +18,12 @@ const getPetHandler = async (request, response, next) => {
     }
 
     request.pet = pet;
+
+    next();
   } catch (error) {
     error.name = 'NotFound';
-    next(error);
+    return next(error);
   }
-
-  next();
 };
 
 module.exports = getPetHandler;

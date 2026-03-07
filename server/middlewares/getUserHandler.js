@@ -18,12 +18,12 @@ const getUserHandler = async (request, response, next) => {
     }
 
     request.user = user;
+
+    next();
   } catch (error) {
     console.error('Error getting user:', error);
-    next(error);
+    return next(error);
   }
-
-  next();
 };
 
 module.exports = getUserHandler;

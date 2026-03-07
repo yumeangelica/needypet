@@ -60,7 +60,7 @@ app.use('/api', authenticateToken, getUserHandler, petsRoutes);
 
 if (isProduction) {
   app.use(express.static(path.join(__dirname, 'dist')));
-  app.get('*', (request, response) => {
+  app.get('{*path}', (request, response) => {
     response.sendFile(path.join(__dirname, 'dist', 'index.html'));
   });
 }

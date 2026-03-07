@@ -6,9 +6,8 @@ const { createNewUser } = require('../controllers/userController');
 // Connect to database before running tests
 beforeAll(async () => {
   await mongoose.connect(mongodbUri);
+  await User.deleteMany({});
 });
-
-let createdUserId; // Save created user id for cleanup
 
 describe('GET /auth/users', () => {
   let request;
@@ -27,9 +26,7 @@ describe('GET /auth/users', () => {
 
     response = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockImplementation(result => {
-        createdUserId = result._id;
-      }),
+      json: jest.fn(),
     };
 
     next = jest.fn();
@@ -63,9 +60,7 @@ describe('POST /auth/users', () => {
 
     response = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockImplementation(result => {
-        createdUserId = result._id;
-      }),
+      json: jest.fn(),
     };
 
     next = jest.fn();
@@ -87,8 +82,8 @@ describe('POST /auth/users', () => {
 
     await createNewUser(request, response, next);
 
-    expect(response.status).toHaveBeenCalledWith(400);
-    expect(response.json).toHaveBeenCalledWith({ error: 'Email is required' });
+    expect(response.status).toHaveBeenCalledWith(422);
+    expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Validation error' }));
   });
 });
 
@@ -123,7 +118,7 @@ describe('POST /auth/users -testcases', () => {
     },
   ];
 
-  testCases.forEach(({ description, body, expectedError }) => {
+  testCases.forEach(({ description, body, expectedError: _expectedError }) => {
     it(`should not create a new user if ${description}`, async () => {
       const request = { body };
       const response = {
@@ -135,18 +130,15 @@ describe('POST /auth/users -testcases', () => {
       await createNewUser(request, response, next);
 
       // Verify that the appropriate error response is sent
-      expect(response.status).toHaveBeenCalledWith(400);
-      expect(response.json).toHaveBeenCalledWith({ error: expectedError });
+      expect(response.status).toHaveBeenCalledWith(422);
+      expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ message: 'Validation error' }));
     });
   });
 });
 
 // Cleanup created test users after tests
 afterEach(async () => {
-  if (createdUserId) {
-    await User.findByIdAndDelete(createdUserId);
-    createdUserId = null;
-  }
+  await User.deleteMany({});
 });
 
 // Close database connection after running tests

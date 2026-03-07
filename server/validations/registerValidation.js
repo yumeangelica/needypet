@@ -23,7 +23,7 @@ const registerValidation = data => {
       throw error;
     }
 
-    throw new Error('Unknown error during validation');
+    throw new Error('Unknown error during validation', { cause: error });
   }
 };
 
