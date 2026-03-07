@@ -73,9 +73,9 @@ The following features are planned for the next version update of NeedyPet, enha
 1. **Caretaker Support Throughout the Application**:
    - Extending caretaker functionalities to the frontend, allowing seamless management of caretaker permissions and responsibilities.
 
-2. **Email Integration with Nodemailer**:
-   - **Account Verification**: Enhance security by requiring email verification during registration.
-   - **Password Recovery**: Implement password recovery features, allowing users to reset passwords via email.
+2. **Email Integration with Nodemailer** (Partially Completed):
+   - **Account Verification**: Email verification during registration is implemented.
+   - **Password Recovery**: Password recovery via email is implemented.
    - **Caretaker Invitations**: Simplify adding caretakers with email invitations, managing roles and permissions efficiently.
 
 3. **Activity Reminders and Notifications**:
@@ -90,8 +90,8 @@ The following features are planned for the next version update of NeedyPet, enha
 
 ## Technical Setup
 
-- **Backend Technologies**: MongoDB, Express.js, Node.js, JavaScript, ESLint
-- **Frontend Technologies**: Vue.js, Ionic, TypeScript, ESLint, Jest
+- **Backend Technologies**: MongoDB, Express.js, Node.js, JavaScript, Zod, ESLint
+- **Frontend Technologies**: Vue.js, Ionic, TypeScript, Vitest, Cypress, ESLint
 - **DevOps Tools**: Docker, Nginx
 
 ## Credits
