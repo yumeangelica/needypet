@@ -26,20 +26,26 @@
           </div>
 
           <div class="profile-actions">
-            <ion-button class="custom-button" fill="clear" @click="confirmLogout"><ion-icon :icon="exitOutline"></ion-icon>Logout</ion-button>
+            <ion-button class="custom-button" fill="clear" @click="showLogoutDialog = true"><ion-icon
+                :icon="exitOutline"></ion-icon>Logout</ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit
               Profile</ion-button>
             <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'change-password' })">Change
               password</ion-button>
-            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="confirmAccountDeletion"><ion-icon
+            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="showDeleteDialog = true"><ion-icon
                 :icon="trashOutline"></ion-icon>Delete Account</ion-button>
           </div>
 
         </div>
 
-        <div v-if="!user">
-          <p class="ion-text-center">Loading...</p>
-        </div>
+        <TheLoadingSpinner v-if="!user" message="Loading profile..." />
+
+        <TheConfirmDialog :isOpen="showLogoutDialog" title="Logout" message="Are you sure you want to logout?" confirmLabel="Logout"
+          @confirm="logout(); showLogoutDialog = false" @cancel="showLogoutDialog = false" />
+
+        <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Account"
+          message="Are you sure you want to delete your account? This action cannot be undone." confirmLabel="Delete" variant="danger"
+          :icon="trashOutline" @confirm="deleteAccount(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
       </div>
       <TheFooter />
     </ion-content>
@@ -57,6 +63,8 @@ import { useAppStore } from '@/store/app';
 import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
 import { User } from '@/types/user';
 import TheFooter from '@/components/TheFooter.vue';
+import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
+import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -67,6 +75,8 @@ const userStore = useUserStore();
 const user: Ref<User> = ref(null);
 const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
 const isButtonDisabled = ref(false); // State for disabling button
+const showLogoutDialog = ref(false);
+const showDeleteDialog = ref(false);
 
 // Function to toggle the settings button
 const toggleSettings = () => {
@@ -95,9 +105,7 @@ watchEffect(async () => {
 
 // Function to confirm logout action
 const confirmLogout = () => {
-  if (window.confirm('Are you sure you want to logout?')) {
-    logout();
-  }
+  showLogoutDialog.value = true;
 };
 
 const logout = async () => {
@@ -109,9 +117,7 @@ const logout = async () => {
 
 // Function to confirm account deletion
 const confirmAccountDeletion = () => {
-  if (window.confirm('Are you sure you want to delete your account?')) {
-    deleteAccount();
-  }
+  showDeleteDialog.value = true;
 };
 
 const deleteAccount = async () => {

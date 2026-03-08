@@ -53,13 +53,19 @@
             <div class="form-button-group">
               <ion-button type="submit" class="form-button primary">Update Pet</ion-button>
               <ion-button @click="cancelEdit" class="form-button secondary">Cancel</ion-button>
-              <ion-button class="form-button danger" @click="confirmDeletePet()">
+              <ion-button class="form-button danger" @click="showDeleteDialog = true">
                 <ion-icon :icon="trashOutline"></ion-icon>Delete Pet
               </ion-button>
             </div>
 
           </form>
         </div>
+
+        <TheConfirmDialog :isOpen="showUpdateDialog" title="Update Pet" message="Are you sure you want to update this pet?" confirmLabel="Update"
+          @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
+
+        <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?" confirmLabel="Delete"
+          variant="danger" :icon="trashOutline" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
       </div>
       <TheFooter />
     </ion-content>
@@ -77,6 +83,7 @@ import { Pet } from '@/types/pet';
 import { trashOutline } from 'ionicons/icons';
 import { IonButton, IonContent, IonDatetime, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -84,6 +91,8 @@ const router = useRouter();
 const route = useRoute();
 const petStore = usePetStore();
 
+const showUpdateDialog = ref(false);
+const showDeleteDialog = ref(false);
 const dateErrorMessage = ref('');
 const existingPetObject: Ref<Pet> = ref({ // Create a reactive reference to the pet object, updated when the pet data is loaded
   id: '',
@@ -126,9 +135,7 @@ const formattedDate = computed(() => {
 
 // Confirm the update of the pet and then call the updatePet function
 const confirmUpdatePet = () => {
-  if (window.confirm('Are you sure you want to update this pet?')) {
-    updatePet();
-  }
+  showUpdateDialog.value = true;
 };
 
 
@@ -154,9 +161,7 @@ const updatePet = async () => {
 
 // Confirm the deletion of the pet and then call the deletePet function
 const confirmDeletePet = () => {
-  if (window.confirm('Are you sure you want to delete this pet?')) {
-    deletePet();
-  }
+  showDeleteDialog.value = true;
 };
 
 const deletePet = async () => {

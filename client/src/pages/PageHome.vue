@@ -10,7 +10,9 @@
         </div>
 
         <div v-else>
-          <div class="pets-container">
+          <TheLoadingSpinner v-if="isLoading" message="Loading your pets..." />
+
+          <div v-else-if="ownPets.length > 0 || carerPets.length > 0" class="pets-container">
             <div v-if="ownPets.length > 0">
               <div class="title-and-button-container">
                 <h2 class="section-title">My pets</h2>
@@ -32,14 +34,18 @@
             </div>
           </div>
 
-          <div v-if="ownPets.length === 0 && carerPets.length === 0">
+          <div v-else>
             <div class="title-and-button-container">
               <h2 class="section-title">My pets</h2>
-              <ion-button @click="router.push({ name: 'add-pet' })" class="custom-button">
-                <ion-icon :icon="addCircleOutline"></ion-icon>
-                Add Pet</ion-button>
             </div>
-            <p class="ion-text-center">No pets yet – add your first one!</p>
+            <TheEmptyState
+              :icon="pawOutline"
+              title="No pets yet"
+              message="Add your first pet to get started!"
+              actionLabel="Add Pet"
+              :actionIcon="addCircleOutline"
+              @action="router.push({ name: 'add-pet' })"
+            />
           </div>
         </div>
       </div>
@@ -55,9 +61,11 @@ import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
-import { addCircleOutline } from 'ionicons/icons';
+import { addCircleOutline, pawOutline } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon, IonPage } from '@ionic/vue';
 import ThePetCard from '@/components/ThePetCard.vue';
+import TheEmptyState from '@/components/TheEmptyState.vue';
+import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
 import { Pet } from '@/types/pet';
 import TheFooter from '@/components/TheFooter.vue';
 
@@ -70,6 +78,7 @@ const userStore = useUserStore();
 
 const ownPets: Ref<Pet[]> = ref([]);
 const carerPets: Ref<Pet[]> = ref([]);
+const isLoading = ref(true);
 
 const userEmailConfirmed: Ref<boolean> = ref(false);
 
@@ -86,6 +95,7 @@ const updatePetLists = async () => {
 onBeforeMount(async () => {
   await fetchUserEmailConfirmed();
   await updatePetLists();
+  isLoading.value = false;
 });
 
 // Update the pet lists when the route changes

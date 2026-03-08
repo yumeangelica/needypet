@@ -2,7 +2,8 @@
   <ion-page>
     <ion-content :key="currentDate">
       <div v-if="$route.matched.length === 1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div v-if="pet" class="pet-container">
+        <TheLoadingSpinner v-if="isLoading" message="Loading pet..." />
+        <div v-else-if="pet" class="pet-container">
           <div class="full-pet-card">
 
             <div class="inline-container">
@@ -113,7 +114,7 @@
 
                     <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message">{{ formFieldsErrorDetailsObject.selection }}</div>
                     <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message">{{ formFieldsErrorDetailsObject.durationValue
-                    }}</div>
+                      }}</div>
                     <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message">{{ formFieldsErrorDetailsObject.quantityUnit }}
                     </div>
 
@@ -164,7 +165,7 @@ import { onBeforeMount, ref, computed, watch, Ref, provide } from 'vue';
 import { useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { addCircleOutline, settingsOutline } from 'ionicons/icons';
+import { addCircleOutline, settingsOutline, calendarClearOutline } from 'ionicons/icons';
 import { Pet, Need } from '@/types/pet';
 
 import dayjs from 'dayjs';
@@ -175,6 +176,8 @@ import { useAppStore } from '@/store/app';
 import { IonPage, IonButton, IonContent, IonModal, IonItem, IonToolbar, IonHeader, IonButtons, IonInput, IonRadio, IonSelect, IonSelectOption, IonLabel, IonRadioGroup, IonIcon, IonTitle } from '@ionic/vue';
 import TheNeedCard from '@/components/TheNeedCard.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
+import TheEmptyState from '@/components/TheEmptyState.vue';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -189,6 +192,7 @@ const userStore = useUserStore();
 
 const currentDate: Ref<string> = ref(dayjs().tz(userStore.timezone).format('YYYY-MM-DD')); // Initalized to today's date
 const pet: Ref<Pet | null> = ref(null);
+const isLoading = ref(true);
 const isOpen = ref(false);
 const category: Ref<Need['category']> = ref('');
 const description: Ref<Need['description']> = ref('');
@@ -259,6 +263,7 @@ async function getPet(id: string) {
     needsByDate.value = needsByDateComputed.value;
   }
   isOwner.value = await petStore.isOwner(id);
+  isLoading.value = false;
 }
 
 // When the user clicks the addNewNeed button on the modal this function is called
