@@ -1,34 +1,35 @@
 <template>
-  <ion-page>
-    <ion-content>
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="login-register-container">
-          <TheLogoImage altText="NeedyPet logo" />
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div class="login-register-container">
+        <TheLogoImage altText="NeedyPet logo" />
 
-          <div class="paw-header-container">
-            <ion-icon :icon="paw" class="paw-icon" />
-            <h4>Forgot Password</h4>
-            <ion-icon :icon="paw" class="paw-icon" />
-          </div>
-
-          <form @submit.prevent="resetPassword">
-            <ion-item class="login-register-field-item">
-              <ion-input class="login-register-field-input" type="email" v-model="email" placeholder="Enter your email"
-                aria-label="Email"></ion-input>
-            </ion-item>
-
-            <ion-buttons>
-              <ion-button type="submit" expand="block" class="action-button primary-action-button">Reset Password</ion-button>
-              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">← Back</ion-button>
-            </ion-buttons>
-
-          </form>
+        <div class="paw-header-container">
+          <PawPrint class="inline-block w-5 h-5" />
+          <h4>Forgot Password</h4>
+          <PawPrint class="inline-block w-5 h-5" />
         </div>
 
+        <form @submit.prevent="resetPassword">
+          <div class="auth-field">
+            <input
+              class="auth-field-input"
+              type="email"
+              v-model="email"
+              placeholder="Enter your email"
+              aria-label="Email"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <button type="submit" class="action-button primary-action-button">Reset Password</button>
+            <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
+          </div>
+        </form>
       </div>
-      <TheFooter />
-    </ion-content>
-  </ion-page>
+    </div>
+    <TheFooter />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,10 +37,9 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
-import { IonButton, IonContent, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
+import { PawPrint } from 'lucide-vue-next';
 import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
-import { paw } from 'ionicons/icons';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -50,7 +50,6 @@ const router = useRouter();
 const email = ref('');
 
 const resetPassword = async () => {
-
   const isSuccess = await userStore.requestPasswordReset(email.value);
   if (!isSuccess) {
     appStore.addNotification('Failed to send password reset link, please try again later', 'error');
@@ -64,6 +63,4 @@ const goBack = () => {
   router.push({ name: 'login' });
   email.value = '';
 };
-
-
 </script>

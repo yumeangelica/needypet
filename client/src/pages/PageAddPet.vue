@@ -1,64 +1,59 @@
 <template>
-  <ion-page>
-    <ion-content>
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="form-container">
-          <h3 class="form-header">Add new pet:</h3>
-          <form @submit.prevent="submitPet">
-            <div>
-              <ion-label>Name:</ion-label>
-              <ion-item class="form-field-item">
-                <ion-input class="form-field-input" aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name"></ion-input>
-              </ion-item>
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div class="form-container">
+        <h3 class="form-header">Add new pet:</h3>
+        <form @submit.prevent="submitPet">
+          <div>
+            <label class="form-label">Name:</label>
+            <div class="form-field">
+              <input class="form-field-input" aria-label="Name" v-model="newPetObject.name" required
+                placeholder="Pet's name" />
             </div>
+          </div>
 
-            <div>
-              <ion-label>Breed:</ion-label>
-              <ion-item class="form-field-item">
-                <ion-input class="form-field-input" aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed"></ion-input>
-              </ion-item>
+          <div>
+            <label class="form-label">Breed:</label>
+            <div class="form-field">
+              <input class="form-field-input" aria-label="Breed" v-model="newPetObject.breed"
+                placeholder="Pet's breed" />
             </div>
+          </div>
 
-            <div>
-              <ion-label>Species:</ion-label>
-              <ion-item class="form-field-item">
-                <ion-input class="form-field-input" aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species"></ion-input>
-              </ion-item>
+          <div>
+            <label class="form-label">Species:</label>
+            <div class="form-field">
+              <input class="form-field-input" aria-label="Species" v-model="newPetObject.species"
+                placeholder="Pet's species" />
             </div>
+          </div>
 
-            <div>
-              <ion-label>Description:</ion-label>
-              <ion-item class="form-field-item">
-                <ion-textarea class="form-field-input" aria-label="Description" v-model="newPetObject.description"
-                  placeholder="About the pet"></ion-textarea>
-              </ion-item>
+          <div>
+            <label class="form-label">Description:</label>
+            <div class="form-field">
+              <textarea class="form-field-input" aria-label="Description" v-model="newPetObject.description"
+                placeholder="About the pet"></textarea>
             </div>
+          </div>
 
-            <div>
-              <ion-label>Birthday:</ion-label>
-              <ion-item class="form-field-item" data-clickable="true" @click="showDatePicker = true">
-                <ion-input class="form-field-input" readonly :value="formattedDate || 'Select Birthday'" color="medium"></ion-input>
-              </ion-item>
-
-              <div class="datetime-wrapper">
-                <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
-                  @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
-              </div>
+          <div>
+            <label class="form-label">Birthday:</label>
+            <div class="form-field">
+              <input class="form-field-input" type="date" aria-label="Birthday"
+                :value="birthdayInputValue" @change="dateSelected($event)" :max="todayString" />
             </div>
+          </div>
 
-            <div class="form-button-group">
-              <ion-button type="submit" class="form-button primary">Add Pet</ion-button>
-              <ion-button @click="router.push({ name: 'home' })" class="form-button secondary">Cancel</ion-button>
-            </div>
-
-          </form>
-        </div>
+          <div class="form-button-group">
+            <button type="submit" class="form-button primary">Add Pet</button>
+            <button type="button" @click="router.push({ name: 'home' })" class="form-button secondary">Cancel</button>
+          </div>
+        </form>
       </div>
-      <TheFooter />
-    </ion-content>
-  </ion-page>
+    </div>
+    <TheFooter />
+  </div>
 </template>
-
 
 <script setup lang="ts">
 import { computed, ref, Ref } from 'vue';
@@ -66,7 +61,6 @@ import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
-import { IonButton, IonContent, IonDatetime, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
 import { NewPetObject } from '@/types/pet';
 import TheFooter from '@/components/TheFooter.vue';
 
@@ -86,27 +80,32 @@ const newPetObject: Ref<NewPetObject> = ref({
   description: '',
   birthday: null as Date | null,
 });
-const showDatePicker = ref(false);
 
-const hideDatePicker = () => {
-  showDatePicker.value = false;
-};
+const todayString = computed(() => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+});
 
-// Set the selected date
-const dateSelected = (selectedDateString: string) => {
-  const selectedDateTime = new Date(selectedDateString);
-  selectedDateTime.setHours(0, 0, 0, 0);
-  const currentDateTime = new Date();
-  currentDateTime.setHours(0, 0, 0, 0);
+const birthdayInputValue = computed(() => {
+  if (!newPetObject.value.birthday) return '';
+  const d = new Date(newPetObject.value.birthday);
+  return d.toISOString().split('T')[0];
+});
 
-  if (selectedDateTime <= currentDateTime) { // Check if selected date is not in the future
-    newPetObject.value.birthday = selectedDateTime;
+const dateSelected = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.value) {
+    const selectedDateTime = new Date(target.value + 'T00:00:00');
+    selectedDateTime.setHours(0, 0, 0, 0);
+    const currentDateTime = new Date();
+    currentDateTime.setHours(0, 0, 0, 0);
+
+    if (selectedDateTime <= currentDateTime) {
+      newPetObject.value.birthday = selectedDateTime;
+    }
   }
-
-  hideDatePicker();
 };
 
-// Format the date for display
 const formattedDate = computed(() => {
   if (!newPetObject.value.birthday) {
     return '';
@@ -115,7 +114,6 @@ const formattedDate = computed(() => {
   return new Date(newPetObject.value.birthday).toLocaleDateString(undefined, options);
 });
 
-// Reset the form when navigating away
 onBeforeRouteLeave((to, from, next) => {
   newPetObject.value = {
     name: '',
@@ -127,7 +125,6 @@ onBeforeRouteLeave((to, from, next) => {
   next();
 });
 
-// Submit the new pet to the store
 const submitPet = async () => {
   if (!newPetObject.value.name) {
     return;
@@ -146,11 +143,10 @@ const submitPet = async () => {
       description: '',
       birthday: null,
     };
-    router.push({ name: 'home' }); // Navigate user after success
+    router.push({ name: 'home' });
     appStore.addNotification('Pet added successfully', 'success');
   } else {
     appStore.addNotification('Failed to add pet, please try again later', 'error');
   }
 };
-
 </script>

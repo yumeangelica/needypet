@@ -1,66 +1,72 @@
 <template>
-  <ion-page>
-    <ion-content>
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div v-if="user" class="form-container">
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div v-if="user" class="form-container">
 
-          <div class="inline-container">
-            <h3 class="form-header">{{ user.userName }}</h3>
-            <ion-button class="settings-button" fill="clear" @click="toggleSettings"><ion-icon :icon="settingsOutline"></ion-icon></ion-button>
-          </div>
-
-          <div class="email">
-            <p><strong>Email:</strong> {{ user.email }}</p>
-          </div>
-          <div class="email-confirmed">
-            <p>
-              <strong>Email verified</strong>
-              <ion-icon :icon="user.emailConfirmed ? checkmarkCircle : closeCircle"
-                :style="{ color: user.emailConfirmed ? '#4caf50' : '#f44336', marginLeft: '6px', verticalAlign: 'middle' }"></ion-icon>
-            </p>
-            <ion-button v-if="!user.emailConfirmed" class="custom-button small-button" :disabled="isButtonDisabled" fill="clear"
-              @click="resendEmailConfirmation">Resend email</ion-button>
-          </div>
-          <div class="timezone">
-            <p><strong>Timezone:</strong> {{ user.timezone }}</p>
-          </div>
-
-          <div class="profile-actions">
-            <ion-button class="custom-button" fill="clear" @click="showLogoutDialog = true"><ion-icon
-                :icon="exitOutline"></ion-icon>Logout</ion-button>
-            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'edit-profile' })">Edit
-              Profile</ion-button>
-            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="router.push({ name: 'change-password' })">Change
-              password</ion-button>
-            <ion-button v-show="showSettings" class="custom-button" fill="clear" @click="showDeleteDialog = true"><ion-icon
-                :icon="trashOutline"></ion-icon>Delete Account</ion-button>
-          </div>
-
+        <div class="inline-container">
+          <h3 class="form-header">{{ user.userName }}</h3>
+          <button class="settings-button" @click="toggleSettings">
+            <Settings class="w-5 h-5" />
+          </button>
         </div>
 
-        <TheLoadingSpinner v-if="!user" message="Loading profile..." />
+        <div class="email">
+          <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+        <div class="email-confirmed">
+          <p>
+            <strong>Email verified</strong>
+            <CheckCircle2 v-if="user.emailConfirmed" class="inline-block w-5 h-5 ml-1.5 align-middle text-green-500" />
+            <XCircle v-else class="inline-block w-5 h-5 ml-1.5 align-middle text-red-500" />
+          </p>
+          <button v-if="!user.emailConfirmed" class="custom-button text-sm px-2.5 py-1"
+            :disabled="isButtonDisabled" @click="resendEmailConfirmation">
+            Resend email
+          </button>
+        </div>
+        <div class="timezone">
+          <p><strong>Timezone:</strong> {{ user.timezone }}</p>
+        </div>
 
-        <TheConfirmDialog :isOpen="showLogoutDialog" title="Logout" message="Are you sure you want to logout?" confirmLabel="Logout"
-          @confirm="logout(); showLogoutDialog = false" @cancel="showLogoutDialog = false" />
+        <div class="profile-actions">
+          <button class="custom-button" @click="showLogoutDialog = true">
+            <LogOut class="inline-block w-4 h-4 mr-1" />
+            Logout
+          </button>
+          <button v-show="showSettings" class="custom-button" @click="router.push({ name: 'edit-profile' })">
+            Edit Profile
+          </button>
+          <button v-show="showSettings" class="custom-button" @click="router.push({ name: 'change-password' })">
+            Change password
+          </button>
+          <button v-show="showSettings" class="custom-button" @click="showDeleteDialog = true">
+            <Trash2 class="inline-block w-4 h-4 mr-1" />
+            Delete Account
+          </button>
+        </div>
 
-        <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Account"
-          message="Are you sure you want to delete your account? This action cannot be undone." confirmLabel="Delete" variant="danger"
-          :icon="trashOutline" @confirm="deleteAccount(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
       </div>
-      <TheFooter />
-    </ion-content>
 
-  </ion-page>
+      <TheLoadingSpinner v-if="!user" message="Loading profile..." />
+
+      <TheConfirmDialog :isOpen="showLogoutDialog" title="Logout" message="Are you sure you want to logout?"
+        confirmLabel="Logout" @confirm="logout(); showLogoutDialog = false" @cancel="showLogoutDialog = false" />
+
+      <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Account"
+        message="Are you sure you want to delete your account? This action cannot be undone." confirmLabel="Delete"
+        variant="danger" icon="trashOutline" @confirm="deleteAccount(); showDeleteDialog = false"
+        @cancel="showDeleteDialog = false" />
+    </div>
+    <TheFooter />
+  </div>
 </template>
 
 <script setup lang="ts">
-
 import { ref, computed, watchEffect, Ref } from 'vue';
 import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
-import { trashOutline, exitOutline, settingsOutline, checkmarkCircle, closeCircle } from 'ionicons/icons';
 import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
-import { IonPage, IonContent, IonButton, IonIcon } from '@ionic/vue';
+import { Trash2, LogOut, Settings, CheckCircle2, XCircle } from 'lucide-vue-next';
 import { User } from '@/types/user';
 import TheFooter from '@/components/TheFooter.vue';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
@@ -73,25 +79,22 @@ const route = useRoute();
 const userStore = useUserStore();
 
 const user: Ref<User> = ref(null);
-const showSettings = ref(false); // Boolean value to show or hide the settings button, default is false
-const isButtonDisabled = ref(false); // State for disabling button
+const showSettings = ref(false);
+const isButtonDisabled = ref(false);
 const showLogoutDialog = ref(false);
 const showDeleteDialog = ref(false);
 
-// Function to toggle the settings button
 const toggleSettings = () => {
-  showSettings.value = !showSettings.value; // Toggle the value of showSettings
+  showSettings.value = !showSettings.value;
 };
 
-// Function to fetch the user data
 const fetchUser = async () => {
   const userData = await userStore.getUserById(userStore.id);
   user.value = userData;
 };
 
-// Watch for changes in the route
 watchEffect(async () => {
-  if (route.name === 'profile') {  // Ensure this is the correct route name for the profile page
+  if (route.name === 'profile') {
     await fetchUser();
   }
   if (route.query.userUpdateSuccessfully === 'true') {
@@ -103,37 +106,25 @@ watchEffect(async () => {
   }
 });
 
-// Function to confirm logout action
-const confirmLogout = () => {
-  showLogoutDialog.value = true;
-};
-
 const logout = async () => {
   await userStore.logout();
   router.push({ name: 'landing' });
   appStore.addNotification('You have been logged out', 'success');
 };
 
-
-// Function to confirm account deletion
-const confirmAccountDeletion = () => {
-  showDeleteDialog.value = true;
-};
-
 const deleteAccount = async () => {
-  const { isSuccess, message } = await userStore.deleteAccount(); // Returns true or false
+  const { isSuccess, message } = await userStore.deleteAccount();
 
   if (isSuccess) {
     appStore.addNotification('Your account has been deleted', 'success');
-    logout(); // Logout user after successful account deletion
+    logout();
   } else {
     appStore.addNotification(message, 'error');
   }
 };
 
 const resendEmailConfirmation = async () => {
-
-  isButtonDisabled.value = true; // Disable button
+  isButtonDisabled.value = true;
 
   const isSuccess = await userStore.resendEmailConfirmation();
 
@@ -145,24 +136,14 @@ const resendEmailConfirmation = async () => {
 };
 
 onBeforeRouteLeave(() => {
-  showSettings.value = false; // Reset the value of showSettings when leaving the page
+  showSettings.value = false;
 });
-
 </script>
-
 
 <style scoped>
 .email-confirmed {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.small-button {
-  --padding-start: 10px;
-  --padding-end: 10px;
-  text-align: center;
-  height: auto;
-  line-height: 1.2;
 }
 </style>

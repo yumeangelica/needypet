@@ -1,19 +1,20 @@
 <template>
-  <div class="empty-state">
-    <ion-icon v-if="icon" :icon="icon" class="empty-state-icon"></ion-icon>
-    <h3 class="empty-state-title">{{ title }}</h3>
-    <p class="empty-state-message">{{ message }}</p>
-    <ion-button v-if="actionLabel" class="custom-button" @click="$emit('action')">
-      <ion-icon v-if="actionIcon" :icon="actionIcon" slot="start"></ion-icon>
+  <div class="flex flex-col items-center justify-center py-10 px-5 text-center">
+    <component v-if="iconComponent" :is="iconComponent" class="size-16 text-card-border mb-4 opacity-70" />
+    <h3 class="m-0 mb-2 text-lg">{{ title }}</h3>
+    <p class="m-0 mb-5 opacity-80 max-w-[300px]">{{ message }}</p>
+    <button v-if="actionLabel" class="custom-button" @click="$emit('action')">
+      <component v-if="actionIconComponent" :is="actionIconComponent" class="size-5" />
       {{ actionLabel }}
-    </ion-button>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { IonButton, IonIcon } from '@ionic/vue';
+import { computed } from 'vue';
+import { PawPrint, CirclePlus } from 'lucide-vue-next';
 
-defineProps<{
+const props = defineProps<{
   icon?: string;
   title: string;
   message: string;
@@ -24,33 +25,15 @@ defineProps<{
 defineEmits<{
   (e: 'action'): void;
 }>();
+
+// Map ionicon string names to Lucide components
+const iconMap: Record<string, any> = {
+  'paw-outline': PawPrint,
+  'pawOutline': PawPrint,
+  'add-circle-outline': CirclePlus,
+  'addCircleOutline': CirclePlus,
+};
+
+const iconComponent = computed(() => props.icon ? iconMap[props.icon] || PawPrint : null);
+const actionIconComponent = computed(() => props.actionIcon ? iconMap[props.actionIcon] || CirclePlus : null);
 </script>
-
-<style scoped>
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.empty-state-icon {
-  font-size: 64px;
-  color: var(--color-card-border);
-  margin-bottom: 16px;
-  opacity: 0.7;
-}
-
-.empty-state-title {
-  margin: 0 0 8px 0;
-  font-size: 1.2rem;
-}
-
-.empty-state-message {
-  margin: 0 0 20px 0;
-  opacity: 0.8;
-  max-width: 300px;
-}
-</style>

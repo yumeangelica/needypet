@@ -1,27 +1,23 @@
 <template>
-  <ion-header>
-    <ion-toolbar>
-
-      <ion-buttons slot="start">
-        <ion-button fill="clear" @click.prevent="navigateTo('home')"><ion-icon :icon="paw"></ion-icon>Home</ion-button>
-      </ion-buttons>
-
-      <ion-buttons slot="end" style="display: flex; align-items: center;">
-        <ion-button fill="clear" @click.prevent="navigateTo('profile')"><ion-icon :icon="personCircleOutline" aria-hidden="true"></ion-icon>{{
-          userName
-          }}</ion-button>
-      </ion-buttons>
-
-    </ion-toolbar>
-  </ion-header>
+  <header class="sticky top-0 z-40 bg-primary">
+    <nav class="flex items-center justify-between px-4 py-2">
+      <button class="flex items-center gap-2 bg-transparent border-none cursor-pointer text-primary-foreground font-sans text-sm" @click.prevent="navigateTo('home')">
+        <PawPrint class="size-5" />
+        Home
+      </button>
+      <button class="flex items-center gap-2 bg-transparent border-none cursor-pointer text-primary-foreground font-sans text-sm" @click.prevent="navigateTo('profile')">
+        <CircleUser class="size-5" />
+        {{ userName }}
+      </button>
+    </nav>
+  </header>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { personCircleOutline, paw } from 'ionicons/icons';
+import { PawPrint, CircleUser } from 'lucide-vue-next';
 import { useUserStore } from '@/store/user';
 import { useRouter, useRoute } from 'vue-router';
-import { IonHeader, IonToolbar, IonButton, IonButtons, IonIcon } from '@ionic/vue';
 
 const userStore = useUserStore();
 const router = useRouter();

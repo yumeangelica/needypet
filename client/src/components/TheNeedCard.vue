@@ -1,108 +1,103 @@
 <template>
-  <ion-card :class="{ 'is-expanded': showOptions, 'card-inactive': !need.isActive }">
-    <ion-item class="custom-ion-item">
-      <ion-label>
-        <h5 class="ion-text-center need-card-category">{{ need.category }}</h5>
-        <p class="need-card-description">{{ need.description }}</p>
-        <p class="need-card-field">{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
-      </ion-label>
-    </ion-item>
+  <div class="need-card" :class="{ 'is-expanded': showOptions, 'card-inactive': !need.isActive }">
+    <div class="text-center">
+      <h5 class="need-card-category">{{ need.category }}</h5>
+      <p class="need-card-description">{{ need.description }}</p>
+      <p class="need-card-field">{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
+    </div>
 
-    <div class="centering-container">
-      <ion-item class="custom-ion-item">
-        <ion-button class="complete-button" v-if="!need.completed && isToday" :disabled="isSaving" @click="addRecord(petId, need)">
-          <ion-icon :icon="checkmark"></ion-icon>Complete</ion-button>
-        <div class="done-label" v-if="need.completed">
-          <ion-icon :icon="checkmarkDone"></ion-icon>
-          Done
-        </div>
+    <div class="flex justify-center items-center gap-2">
+      <button class="complete-button" v-if="!need.completed && isToday" :disabled="isSaving" @click="addRecord(petId, need)">
+        <Check class="size-4" />Complete
+      </button>
+      <div class="done-label" v-if="need.completed">
+        <CheckCheck class="size-4" />
+        Done
+      </div>
 
-        <ion-button v-if="isOwner" fill="clear" @click="toggleOptions">
-          <ion-icon :icon="ellipsisVerticalOutline"></ion-icon>
-        </ion-button>
-      </ion-item>
+      <button v-if="isOwner" class="bg-transparent border-none cursor-pointer text-primary-foreground p-1" @click="toggleOptions">
+        <EllipsisVertical class="size-5" />
+      </button>
     </div>
 
     <!-- Toggleable buttons -->
     <div v-if="isOwner" class="options-container">
       <!-- Edit need button -->
-      <ion-button v-if="isToday || isFuture" @click="editNeed" fill="clear" class="option-button">
-        <ion-icon :icon="pencil" slot="icon-only"></ion-icon>
-      </ion-button>
+      <button v-if="isToday || isFuture" @click="editNeed" class="bg-transparent border-none cursor-pointer text-primary-foreground p-1">
+        <Pencil class="size-5" />
+      </button>
 
-      <!-- isActive toggle button -->
-      <div v-if="isToday || isFuture">
-        <ion-label class="need-toggle-title">
+      <!-- isActive toggle -->
+      <div v-if="isToday || isFuture" class="flex flex-col items-center">
+        <span class="text-sm text-primary-foreground block mb-1">
           {{ need.isActive ? 'Active' : 'Inactive' }}
-        </ion-label>
-        <div class="centering-container">
-          <ion-toggle class="need-toggle-switch" v-if="!need.isActive" @ionChange="toggleNeedActive(need.id)"></ion-toggle>
-          <ion-toggle class="need-toggle-switch" v-else @ionChange="toggleNeedActive(need.id)" checked></ion-toggle>
-        </div>
+        </span>
+        <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)" />
       </div>
 
       <!-- Delete need button -->
-      <ion-button @click="confirmDeleteNeed(need.id)" fill="clear" class="option-button">
-        <ion-icon :icon="trashOutline" slot="icon-only"></ion-icon>
-      </ion-button>
+      <button @click="showDeleteConfirm = true" class="bg-transparent border-none cursor-pointer text-primary-foreground p-1">
+        <Trash2 class="size-5" />
+      </button>
     </div>
 
+    <!-- Delete confirmation dialog -->
+    <AlertDialog
+      :open="showDeleteConfirm"
+      title="Delete Need"
+      message="Are you sure you want to delete this need?"
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
+      variant="danger"
+      @confirm="deleteNeed(need.id); showDeleteConfirm = false"
+      @cancel="showDeleteConfirm = false"
+    />
+
     <!-- Edit need modal -->
-    <ion-modal :is-open="isEditModalOpen">
-      <ion-header translucent>
-        <ion-toolbar>
-          <ion-title>Edit Need</ion-title>
-          <ion-buttons slot="end">
-            <ion-button @click="closeEditModal">Close</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
-        <form @submit.prevent="updateNeed">
-          <ion-item>
-            <ion-label position="stacked" class="custom-label" aria-label="Category">Category</ion-label>
-            <ion-input v-model="editForm.category" required type="text" placeholder="Enter need category" aria-label="Need category"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked" class="custom-label" aria-label="Description">Description</ion-label>
-            <ion-input v-model="editForm.description" required type="text" placeholder="Enter need description"
-              aria-label="Need description"></ion-input>
-          </ion-item>
+    <Dialog :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit Need" maxWidth="520px">
+      <form @submit.prevent="updateNeed">
+        <label class="form-label">Category</label>
+        <input v-model="editForm.category" required type="text" placeholder="Enter need category" class="form-field-item" />
 
-          <ion-item v-if="editForm.type === 'quantity'">
-            <ion-label position="stacked" class="custom-label" aria-label="Quantity">Quantity</ion-label>
-            <ion-input v-model="editForm.value" type="number" placeholder="Enter quantity" required aria-label="Quantity"></ion-input>
+        <label class="form-label">Description</label>
+        <input v-model="editForm.description" required type="text" placeholder="Enter need description" class="form-field-item" />
 
-            <ion-label position="stacked" class="custom-label" aria-label="Unit selection">Select unit</ion-label>
-            <ion-select v-model="editForm.unit" placeholder="Select unit" required aria-label="Unit">
-              <ion-select-option value="ml">ml</ion-select-option>
-              <ion-select-option value="g">g</ion-select-option>
-            </ion-select>
-          </ion-item>
+        <div v-if="editForm.type === 'quantity'">
+          <label class="form-label">Quantity</label>
+          <input v-model="editForm.value" type="number" placeholder="Enter quantity" required class="form-field-item" />
 
-          <ion-item v-else>
-            <div style="display: flex; align-items: center;">
-              <ion-input v-model="editForm.value" type="number" placeholder="Enter duration" required aria-label="Duration"></ion-input>
-              <ion-label>minute(s)</ion-label>
-            </div>
-          </ion-item>
-          <div class="confirm-button-container">
-            <ion-button type="submit" class="custom-button">Update Need</ion-button>
+          <label class="form-label">Select unit</label>
+          <Select
+            :modelValue="editForm.unit"
+            @update:modelValue="(v) => editForm.unit = v"
+            placeholder="Select unit"
+            :options="[{ value: 'ml', label: 'ml' }, { value: 'g', label: 'g' }]"
+          />
+        </div>
+
+        <div v-else>
+          <label class="form-label">Duration</label>
+          <div class="flex items-center gap-2">
+            <input v-model="editForm.value" type="number" placeholder="Enter duration" required class="form-field-item" />
+            <span class="text-sm text-foreground">minute(s)</span>
           </div>
-        </form>
-      </ion-content>
-    </ion-modal>
+        </div>
 
-  </ion-card>
+        <div class="flex justify-center mt-4">
+          <button type="submit" class="custom-button">Update Need</button>
+        </div>
+      </form>
+    </Dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, inject, computed, onBeforeMount } from 'vue';
-import { trashOutline, ellipsisVerticalOutline, checkmarkDone, checkmark, pencil } from 'ionicons/icons';
+import { Trash2, EllipsisVertical, CheckCheck, Check, Pencil } from 'lucide-vue-next';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
-import { IonButton, IonCard, IonContent, IonIcon, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonToggle, IonInput, IonButtons, IonHeader, IonTitle, IonToolbar, alertController } from '@ionic/vue';
+import { Dialog, AlertDialog, Switch, Select } from '@/components/ui';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -121,6 +116,7 @@ const { need, petId } = defineProps<{
 }>();
 
 const isEditModalOpen = ref(false);
+const showDeleteConfirm = ref(false);
 const editForm = ref({
   category: '' as string,
   description: '' as string,
@@ -149,29 +145,25 @@ onBeforeMount(async () => {
   }
 });
 
-
 type HandleNeedDeletionType = (needDelete: boolean) => void;
 
 const showOptions = ref(false);
 
-const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion'); // This function sends a signal to the parent component that a need has been deleted
-const isOwner = inject('isOwner'); // This value comes from the parent component
+const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion');
+const isOwner = inject('isOwner');
 
-// Check if the need is for today or in the future
 const isFuture = computed(() => {
   const needDate = dayjs(need.dateFor).tz(userStore.timezone);
   const today = dayjs().tz(userStore.timezone);
   return needDate?.isAfter(today, 'day');
 });
 
-// Check if the need is for today
 const isToday = computed(() => {
   const needDate = dayjs(need.dateFor).tz(userStore.timezone);
   const today = dayjs().tz(userStore.timezone);
   return needDate?.isSame(today, 'day');
 });
 
-// Add Record (need done) -button click event handler
 const isSaving = ref(false);
 
 const addRecord = async (petId: string, need: Need) => {
@@ -211,25 +203,18 @@ const addRecord = async (petId: string, need: Need) => {
   isSaving.value = false;
 };
 
-// Toggle options visibility
 const toggleOptions = () => {
-  if (!isOwner) {
-    return;
-  }
+  if (!isOwner) return;
   showOptions.value = !showOptions.value;
 };
 
-// Open edit need modal
 const editNeed = () => {
   isEditModalOpen.value = true;
   editForm.value = { category: need.category, description: need.description, ...editForm.value };
 };
 
-// Toggle need active status
 const toggleNeedActive = async (needId) => {
-  if (!needId || !isOwner) {
-    return;
-  }
+  if (!needId || !isOwner) return;
 
   const response = await petStore.toggleNeedisActive(petId, needId);
   if (response) {
@@ -238,7 +223,6 @@ const toggleNeedActive = async (needId) => {
     appStore.addNotification('Failed to toggle need active status', 'error');
   }
 };
-
 
 const closeEditModal = () => {
   isEditModalOpen.value = false;
@@ -260,7 +244,7 @@ const updateNeed = async () => {
       unit: editForm.value.unit
     }
   };
-  const isSuccess = await petStore.updateNeed(petId, needId, updatedNeed); // Implement this in your petStore
+  const isSuccess = await petStore.updateNeed(petId, needId, updatedNeed);
 
   if (isSuccess) {
     appStore.addNotification('Need updated successfully', 'success');
@@ -270,33 +254,8 @@ const updateNeed = async () => {
   closeEditModal();
 };
 
-// Confirm deletion of a need using Ionic alert
-const confirmDeleteNeed = async (needId: string) => {
-  const alert = await alertController.create({
-    header: 'Delete Need',
-    message: 'Are you sure you want to delete this need?',
-    buttons: [
-      {
-        text: 'Cancel',
-        role: 'cancel',
-      },
-      {
-        text: 'Delete',
-        role: 'destructive',
-        handler: () => {
-          deleteNeed(needId);
-        },
-      },
-    ],
-  });
-  await alert.present();
-};
-
 const deleteNeed = async (needId: string) => {
-
-  if (!needId) {
-    return;
-  }
+  if (!needId) return;
 
   const response = await petStore.deleteNeed(petId, needId);
   if (response) {
@@ -305,17 +264,30 @@ const deleteNeed = async (needId: string) => {
     appStore.addNotification('Failed to delete need', 'error');
   }
 };
-
 </script>
 
-
 <style scoped>
-.need-toggle-title {
-  display: block;
+.need-card {
+  border-radius: 40px;
+  background: var(--color-need-bg);
+  width: 100%;
+  max-width: 350px;
+  margin: 4px 0;
+  padding: 10px;
 }
 
-.need-toggle-switch {
-  margin-bottom: 10px;
+.card-inactive {
+  background: var(--color-need-inactive);
+  color: var(--color-muted-foreground);
+  border: 1px solid #d0d0d0;
+  opacity: 0.8;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.card-inactive .complete-button,
+.card-inactive .done-label,
+.card-inactive button {
+  color: #afa8a8;
 }
 
 .need-card-category {
@@ -334,71 +306,42 @@ const deleteNeed = async (needId: string) => {
   margin-top: 10px;
 }
 
-/* For centering content */
-.centering-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-}
-
-ion-card {
-  border-radius: 40px;
-  background: var(--color-pet-need-background);
-  width: 100%;
-  max-width: 350px;
-  margin: 4px 0;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 10px;
-}
-
-
-.card-inactive {
-  background: #ded7e0;
-  color: #a0a0a0;
-  border: 1px solid #d0d0d0;
-  opacity: 0.8;
-  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-}
-
-/* Additional styling for child elements in the inactive card to enhance the inactive look */
-.card-inactive ion-label,
-.card-inactive .complete-button,
-.card-inactive .done-label,
-.card-inactive .option-button {
-  color: #afa8a8;
-}
-
-
-/* Remove bottom border */
-ion-item.custom-ion-item {
-  --border-color: transparent;
-  --inner-border-color: transparent;
-}
-
 .complete-button {
-  --background: var(--color-button-pet-page);
-  --border-radius: 15px;
-  --padding-start: 12px;
-  --padding-end: 12px;
-  --padding-top: 6px;
-  --padding-bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-button-primary);
+  border: none;
+  border-radius: 15px;
+  padding: 6px 12px;
+  font-family: var(--font-sans);
   font-size: 0.85rem;
+  color: var(--color-primary-foreground);
+  cursor: pointer;
   min-width: 60px;
-  height: auto;
+  transition: opacity 0.2s;
+}
+
+.complete-button:hover {
+  opacity: 0.85;
+}
+
+.complete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .done-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   background-color: var(--color-status-done);
-  color: var(--color-text-default);
+  color: var(--color-foreground);
   border-radius: 15px;
   text-align: center;
   min-width: 60px;
   padding: 6px 12px;
   font-size: 0.85rem;
-  display: flex;
-  align-items: center;
   justify-content: center;
 }
 
@@ -418,23 +361,11 @@ ion-item.custom-ion-item {
   opacity: 1;
 }
 
-/* Mobile styles */
 @media (max-width: 568px) {
-
   .complete-button,
   .done-label {
     font-size: 0.70rem;
     padding: 5px 20px 6px 5px;
-  }
-
-  /* Edit need modal styles */
-  .custom-label {
-    font-size: 1rem !important;
-    color: var(--color-text-lilac);
-  }
-
-  .custom-button {
-    font-size: 0.6rem !important;
   }
 }
 </style>

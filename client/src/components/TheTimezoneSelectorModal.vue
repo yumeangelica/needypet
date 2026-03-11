@@ -1,30 +1,30 @@
 <template>
-  <ion-modal class="timezone-selector-field" :is-open="isOpen" @ionModalDidPresent="focusInput">
-    <ion-header translucent>
-      <ion-toolbar>
-        <ion-title>Select Timezone</ion-title>
-        <ion-buttons slot="end">
-          <ion-button @click="closeModal">Close</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-      <div class="ion-padding">
-        <input ref="inputField" v-model="searchQuery" placeholder="Search for timezone..." class="custom-searchbar" />
-      </div>
-    </ion-header>
-    <ion-content class="ion-padding">
-      <ion-list>
-        <ion-item class="timezone-item" v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)">
-          {{ zone }}
-        </ion-item>
-      </ion-list>
-    </ion-content>
-  </ion-modal>
+  <Dialog :open="isOpen" @update:open="(v) => { if (!v) closeModal(); }" title="Select Timezone">
+    <div class="mb-4">
+      <input
+        ref="inputField"
+        v-model="searchQuery"
+        placeholder="Search for timezone..."
+        class="w-full p-3 text-sm rounded-xl bg-auth-input-bg border border-card-border outline-none font-sans text-foreground"
+      />
+    </div>
+    <ul class="max-h-[400px] overflow-y-auto">
+      <li
+        v-for="(zone, index) in filteredTimezones"
+        :key="index"
+        @click="selectTimezone(zone)"
+        class="px-3 py-2 rounded-lg cursor-pointer transition-all hover:bg-card text-sm font-sans text-foreground"
+      >
+        {{ zone }}
+      </li>
+    </ul>
+  </Dialog>
 </template>
 
 <script setup lang='ts'>
 import { ref, computed, onBeforeMount, nextTick, watch } from 'vue';
 import { useAppStore } from '@/store/app';
-import { IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonList, IonItem } from '@ionic/vue';
+import { Dialog } from '@/components/ui';
 
 const appStore = useAppStore();
 
@@ -58,13 +58,12 @@ const selectTimezone = (zone: string) => {
 };
 
 const focusInput = async () => {
-  await nextTick();  // Ensure the DOM is updated before accessing the element
+  await nextTick();
   if (inputField.value) {
     inputField.value.focus();
   }
 };
 
-// Automatically focus the input field when the modal is presented
 watch(() => isOpen,
   (newVal) => {
     if (newVal) {
@@ -73,69 +72,3 @@ watch(() => isOpen,
   }
 );
 </script>
-
-<style scoped>
-.custom-searchbar {
-  width: 100%;
-  padding: 12px;
-  font-size: 0.95rem;
-  color: var(--color-text-default);
-  background-color: var(--color-input-background);
-  border: 1px solid var(--color-card-border);
-  border-radius: 20px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  outline: none;
-}
-
-.custom-searchbar:focus {
-  border-color: var(--color-card-border);
-}
-
-.custom-searchbar::placeholder {
-  color: var(--color-text-placeholder);
-  opacity: 0.8;
-}
-
-.timezone-item {
-  cursor: pointer !important;
-  transition: all 0.2s ease;
-}
-
-.timezone-item:hover {
-  background: var(--color-card-background-lilac);
-  transform: translateY(-1px);
-}
-
-/* Force pointer cursor for all elements */
-.timezone-item,
-.timezone-item *,
-.timezone-item::before,
-.timezone-item::after {
-  cursor: pointer !important;
-}
-
-/* Ionic specific classes */
-.timezone-item .item-native,
-.timezone-item .item-inner,
-.timezone-item .item-wrapper,
-.timezone-item ion-label {
-  cursor: pointer !important;
-}
-
-/* Global enforcement for all timezone modal elements */
-ion-modal.timezone-selector-field ion-item,
-ion-modal.timezone-selector-field ion-item *,
-ion-modal.timezone-selector-field .item-native,
-ion-modal.timezone-selector-field .item-inner {
-  cursor: pointer !important;
-}
-
-/* Ionic CSS custom properties */
-.timezone-item {
-  --cursor: pointer !important;
-}
-
-.timezone-item:hover {
-  --background: var(--color-card-background-lilac) !important;
-}
-</style>

@@ -1,23 +1,22 @@
 <template>
-  <ion-page>
-    <ion-content>
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <h1 class="ion-text-center">Oops! This page doesn't exist.</h1>
-        <p class="ion-text-center">Looks like you wandered off the trail. 🐾</p>
-        <div class="ion-text-center" style="margin-top: 20px;">
-          <ion-button class="action-button primary-action-button" @click="router.push({ name: 'home' })">Back to home</ion-button>
-        </div>
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <h1 class="text-center">Oops! This page doesn't exist.</h1>
+      <p class="text-center">Looks like you wandered off the trail. 🐾</p>
+      <div class="text-center mt-5">
+        <button class="action-button primary-action-button" @click="router.push({ name: 'home' })">
+          Back to home
+        </button>
       </div>
-      <TheFooter />
-    </ion-content>
-  </ion-page>
+    </div>
+    <TheFooter />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
-import { IonContent, IonPage, IonButton } from '@ionic/vue';
 import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();

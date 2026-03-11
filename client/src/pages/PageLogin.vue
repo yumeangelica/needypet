@@ -1,50 +1,54 @@
 <template>
-  <ion-page>
-    <ion-content>
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="login-register-container">
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div class="login-register-container">
+        <TheLogoImage altText="NeedyPet logo" />
 
-          <TheLogoImage altText="NeedyPet logo" />
-
-          <div class="paw-header-container">
-            <ion-icon :icon="paw"></ion-icon>
-            <h4>Login</h4>
-            <ion-icon :icon="paw"></ion-icon>
-          </div>
-
-
-          <form @submit.prevent="login">
-            <ion-item class="login-register-field-item">
-              <ion-input class="login-register-field-input" type="text" v-model="userName" placeholder="Enter your username"
-                aria-label="Username"></ion-input>
-            </ion-item>
-
-            <ion-item class="login-register-field-item">
-              <ion-input class="login-register-field-input" :type="passwordFieldType" v-model="password" placeholder="Enter your password"
-                aria-label="Password"></ion-input>
-              <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
-                <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
-              </ion-button>
-            </ion-item>
-
-            <ion-buttons>
-              <ion-button type="submit" expand="block" class="action-button primary-action-button">Log In</ion-button>
-              <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">← Back</ion-button>
-            </ion-buttons>
-
-            <ion-button @click="router.push({ name: 'request-password-reset' })" expand="block" class="action-button secondary-action-button">
-              Forgot Password
-            </ion-button>
-
-          </form>
-
+        <div class="paw-header-container">
+          <PawPrint class="inline-block w-5 h-5" />
+          <h4>Login</h4>
+          <PawPrint class="inline-block w-5 h-5" />
         </div>
 
+        <form @submit.prevent="login">
+          <div class="auth-field">
+            <input
+              class="auth-field-input"
+              type="text"
+              v-model="userName"
+              placeholder="Enter your username"
+              aria-label="Username"
+            />
+          </div>
 
+          <div class="auth-field">
+            <input
+              class="auth-field-input"
+              :type="passwordFieldType"
+              v-model="password"
+              placeholder="Enter your password"
+              aria-label="Password"
+            />
+            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
+              <EyeOff v-else class="w-5 h-5" />
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <button type="submit" class="action-button primary-action-button">Log In</button>
+            <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
+          </div>
+
+          <button type="button" @click="router.push({ name: 'request-password-reset' })"
+            class="action-button secondary-action-button mt-2">
+            Forgot Password
+          </button>
+        </form>
       </div>
-      <TheFooter />
-    </ion-content>
-  </ion-page>
+    </div>
+    <TheFooter />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -53,8 +57,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
-import { IonButton, IonContent, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
-import { eyeOutline, eyeOffOutline, paw } from 'ionicons/icons';
+import { PawPrint, Eye, EyeOff } from 'lucide-vue-next';
 import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
 

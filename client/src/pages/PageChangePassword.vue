@@ -1,54 +1,58 @@
 <template>
-  <ion-page>
-    <ion-content :fullscreen="true">
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="form-container">
-          <form @submit.prevent="submitForm">
-            <h3>Change Password:</h3>
-            <!-- Current Password input field -->
-            <ion-item>
-              <ion-input v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password"></ion-input>
-              <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
-                <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
-              </ion-button>
-            </ion-item>
-            <div v-if="errorDetailsObject.currentPassword" class="custom-error-message">{{ errorDetailsObject.currentPassword }}</div>
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div class="form-container">
+        <form @submit.prevent="submitForm">
+          <h3>Change Password:</h3>
 
-            <!-- New Password input field -->
-            <ion-item>
-              <ion-input v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required placeholder="New Password"></ion-input>
-              <ion-button fill="clear" @click="togglePasswordVisibility" class="show-password-button">
-                <ion-icon :icon="passwordFieldType === 'password' ? eyeOutline : eyeOffOutline"></ion-icon>
-              </ion-button>
-            </ion-item>
-            <div v-if="errorDetailsObject.newPassword" class="custom-error-message">{{ errorDetailsObject.newPassword }}</div>
+          <!-- Current Password input field -->
+          <div class="form-field">
+            <input v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
+            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
+              <EyeOff v-else class="w-5 h-5" />
+            </button>
+          </div>
+          <div v-if="errorDetailsObject.currentPassword" class="custom-error-message">
+            {{ errorDetailsObject.currentPassword }}
+          </div>
 
-            <div class="strong-password-note">
-              <ul>
-                <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
-                <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
-                <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-                <li :class="{ 'valid': passwordValidations.special }">At least one special character</li>
-                <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
-              </ul>
-            </div>
+          <!-- New Password input field -->
+          <div class="form-field">
+            <input v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
+              placeholder="New Password" />
+            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
+              <EyeOff v-else class="w-5 h-5" />
+            </button>
+          </div>
+          <div v-if="errorDetailsObject.newPassword" class="custom-error-message">
+            {{ errorDetailsObject.newPassword }}
+          </div>
 
-            <ion-buttons class="form-button-group">
-              <ion-button class="form-button primary" type="submit" expand="block">Change Password</ion-button>
-              <ion-button class="form-button secondary" @click="router.push({ name: 'profile' })" expand="block" fill="clear">Cancel</ion-button>
-            </ion-buttons>
+          <div class="strong-password-note">
+            <ul>
+              <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
+              <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
+              <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
+              <li :class="{ 'valid': passwordValidations.special }">At least one special character</li>
+              <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
+            </ul>
+          </div>
 
-            <!-- Global error message styling -->
-            <div v-if="errorMessage" class="custom-error-message">
-              {{ errorMessage }}
-            </div>
-          </form>
-        </div>
+          <div class="form-button-group">
+            <button class="form-button primary" type="submit">Change Password</button>
+            <button type="button" class="form-button secondary" @click="router.push({ name: 'profile' })">Cancel</button>
+          </div>
 
+          <div v-if="errorMessage" class="custom-error-message">
+            {{ errorMessage }}
+          </div>
+        </form>
       </div>
-      <TheFooter />
-    </ion-content>
-  </ion-page>
+    </div>
+    <TheFooter />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -56,8 +60,7 @@ import { ref, computed } from 'vue';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'vue-router';
 import { useAppStore } from '@/store/app';
-import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
-import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { Eye, EyeOff } from 'lucide-vue-next';
 import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
@@ -69,7 +72,7 @@ const router = useRouter();
 const errorMessage = ref('');
 const errorDetailsObject = ref({
   currentPassword: '',
-  newPassword: ''
+  newPassword: '',
 });
 
 const currentPassword = ref('');
@@ -81,7 +84,7 @@ const passwordValidations = ref({
   lowercase: false,
   number: false,
   special: false,
-  minLength: false
+  minLength: false,
 });
 
 const validatePassword = () => {
@@ -100,7 +103,7 @@ const togglePasswordVisibility = () => {
 const submitForm = async () => {
   const { isSuccess, message, errorDetails } = await userStore.changePassword({
     currentPassword: currentPassword.value,
-    newPassword: newPassword.value
+    newPassword: newPassword.value,
   });
 
   if (isSuccess) {
@@ -110,14 +113,14 @@ const submitForm = async () => {
   } else {
     errorDetailsObject.value = {
       currentPassword: errorDetails?.currentPassword?.[0] || '',
-      newPassword: errorDetails?.newPassword?.[0] || ''
+      newPassword: errorDetails?.newPassword?.[0] || '',
     };
     errorMessage.value = message;
     setTimeout(() => {
       errorMessage.value = '';
       errorDetailsObject.value = {
         currentPassword: '',
-        newPassword: ''
+        newPassword: '',
       };
     }, 5000);
   }

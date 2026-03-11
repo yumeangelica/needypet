@@ -1,19 +1,17 @@
 <template>
-  <ion-app>
-    <!-- Desktop header and content -->
+  <div class="min-h-screen flex flex-col">
+    <!-- Desktop header -->
     <TheHeader v-if="showHeaderNavigation" />
-    <ion-router-outlet v-if="!isMobile" :animated="false"></ion-router-outlet>
 
-    <!-- Using ion-tabs for mobile navigation -->
-    <ion-tabs v-if="isMobile">
-      <!-- Mobile content -->
-      <ion-router-outlet :animated="false"></ion-router-outlet>
-      <TheMobileHeader v-if="showMobileNavigation" />
-    </ion-tabs>
+    <!-- Main content -->
+    <router-view />
 
-    <!-- Include the TheNotification component and pass the hasHeader prop -->
+    <!-- Mobile bottom navigation -->
+    <TheMobileHeader v-if="showMobileNavigation" />
+
+    <!-- Notifications -->
     <TheNotification :hasDesktopHeader="showHeaderNavigation" />
-  </ion-app>
+  </div>
 </template>
 
 
@@ -21,14 +19,12 @@
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useAppStore } from '@/store/app';
 import { useRoute } from 'vue-router';
-import { IonRouterOutlet, IonTabs, IonApp } from '@ionic/vue';
 import TheHeader from '@/components/TheHeader.vue';
 import TheMobileHeader from '@/components/TheMobileHeader.vue';
 import TheNotification from '@/components/TheNotification.vue';
 
 const appStore = useAppStore();
 const route = useRoute();
-const isMobile = computed(() => appStore.isMobile);
 
 const showHeaderNavigation = computed(
   () =>
