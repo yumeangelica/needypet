@@ -1,78 +1,68 @@
 <template>
-  <ion-page>
-    <ion-content>
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <div class="form-container">
-          <form @submit.prevent="confirmUpdatePet">
-            <h3 class="form-header">Edit Pet</h3>
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div class="form-container">
+        <form @submit.prevent="confirmUpdatePet">
+          <h3 class="form-header">Edit Pet</h3>
 
-            <div>
-              <ion-label>Name:</ion-label>
-              <ion-item class="form-field-item">
-                <ion-input class="form-field-input" aria-label="Name" v-model="existingPetObject.name" required
-                  placeholder="Enter pet's name"></ion-input>
-              </ion-item>
+          <div>
+            <label class="form-label">Name:</label>
+            <div class="form-field">
+              <input class="form-field-input" aria-label="Name" v-model="existingPetObject.name" required placeholder="Enter pet's name" />
             </div>
+          </div>
 
-            <div>
-              <ion-label>Breed:</ion-label>
-              <ion-item class="form-field-item">
-                <ion-input class="form-field-input" aria-label="Breed" v-model="existingPetObject.breed" placeholder="Enter pet's breed"></ion-input>
-              </ion-item>
+          <div>
+            <label class="form-label">Breed:</label>
+            <div class="form-field">
+              <input class="form-field-input" aria-label="Breed" v-model="existingPetObject.breed" placeholder="Enter pet's breed" />
             </div>
+          </div>
 
-            <div>
-              <ion-label>Species:</ion-label>
-              <ion-item class="form-field-item">
-                <ion-input class="form-field-input" aria-label="Species" v-model="existingPetObject.species"
-                  placeholder="Enter pet's species"></ion-input>
-              </ion-item>
+          <div>
+            <label class="form-label">Species:</label>
+            <div class="form-field">
+              <input class="form-field-input" aria-label="Species" v-model="existingPetObject.species" placeholder="Enter pet's species" />
             </div>
+          </div>
 
-            <div>
-              <ion-label>Description</ion-label>
-              <ion-item class="form-field-item">
-                <ion-textarea class="form-field-input" aria-label="Description" v-model="existingPetObject.description"
-                  placeholder="About the pet"></ion-textarea>
-              </ion-item>
+          <div>
+            <label class="form-label">Description</label>
+            <div class="form-field">
+              <textarea class="form-field-input" aria-label="Description" v-model="existingPetObject.description"
+                placeholder="About the pet"></textarea>
             </div>
+          </div>
 
-            <div>
-              <ion-label>Birthday</ion-label>
-              <ion-item class="form-field-item" data-clickable="true" @click="showDatePicker = true">
-                <ion-input class="form-field-input" readonly :value="formattedDate || 'Select Date'" color="medium"></ion-input>
-              </ion-item>
-              <p class="custom-error-message" v-if="dateErrorMessage">{{ dateErrorMessage }}</p>
-
-              <div class="datetime-wrapper">
-                <ion-datetime aria-label="Birthday" v-show="showDatePicker" display-format="DD/MM/YYYY" picker-format="DD/MM/YYYY"
-                  @ionChange="dateSelected($event.detail.value as string)" presentation="date"></ion-datetime>
-              </div>
+          <div>
+            <label class="form-label">Birthday</label>
+            <div class="form-field">
+              <input class="form-field-input" type="date" aria-label="Birthday" :value="birthdayInputValue" @change="dateSelected($event)"
+                :max="todayString" />
             </div>
+            <p class="custom-error-message" v-if="dateErrorMessage">{{ dateErrorMessage }}</p>
+          </div>
 
-            <div class="form-button-group">
-              <ion-button type="submit" class="form-button primary">Update Pet</ion-button>
-              <ion-button @click="cancelEdit" class="form-button secondary">Cancel</ion-button>
-              <ion-button class="form-button danger" @click="showDeleteDialog = true">
-                <ion-icon :icon="trashOutline"></ion-icon>Delete Pet
-              </ion-button>
-            </div>
-
-          </form>
-        </div>
-
-        <TheConfirmDialog :isOpen="showUpdateDialog" title="Update Pet" message="Are you sure you want to update this pet?" confirmLabel="Update"
-          @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
-
-        <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?" confirmLabel="Delete"
-          variant="danger" :icon="trashOutline" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
+          <div class="form-button-group">
+            <button type="submit" class="form-button primary">Update Pet</button>
+            <button type="button" @click="cancelEdit" class="form-button secondary">Cancel</button>
+            <button type="button" class="form-button danger" @click="showDeleteDialog = true">
+              <Trash2 class="inline-block w-4 h-4 mr-1" />
+              Delete Pet
+            </button>
+          </div>
+        </form>
       </div>
-      <TheFooter />
-    </ion-content>
-  </ion-page>
+
+      <TheConfirmDialog :isOpen="showUpdateDialog" title="Update Pet" message="Are you sure you want to update this pet?" confirmLabel="Update"
+        @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
+
+      <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?" confirmLabel="Delete"
+        variant="danger" icon="trashOutline" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
+    </div>
+    <TheFooter />
+  </div>
 </template>
-
-
 
 <script setup lang="ts">
 import { computed, ref, onBeforeMount, Ref } from 'vue';
@@ -80,8 +70,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { Pet } from '@/types/pet';
-import { trashOutline } from 'ionicons/icons';
-import { IonButton, IonContent, IonDatetime, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonTextarea } from '@ionic/vue';
+import { Trash2 } from 'lucide-vue-next';
 import TheFooter from '@/components/TheFooter.vue';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
 
@@ -94,7 +83,7 @@ const petStore = usePetStore();
 const showUpdateDialog = ref(false);
 const showDeleteDialog = ref(false);
 const dateErrorMessage = ref('');
-const existingPetObject: Ref<Pet> = ref({ // Create a reactive reference to the pet object, updated when the pet data is loaded
+const existingPetObject: Ref<Pet> = ref({
   id: '',
   name: '',
   breed: '',
@@ -102,44 +91,49 @@ const existingPetObject: Ref<Pet> = ref({ // Create a reactive reference to the 
   description: '',
   birthday: null as Date | null,
 });
-const showDatePicker = ref(false);
 
-// Load the pet data when the component is mounted
+const todayString = computed(() => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+});
+
+const birthdayInputValue = computed(() => {
+  if (!existingPetObject.value.birthday) return '';
+  const d = new Date(existingPetObject.value.birthday);
+  return d.toISOString().split('T')[0];
+});
+
 onBeforeMount(() => {
   if (!existingPetObject.value || !existingPetObject.value.id) {
     loadPetData();
   }
 });
 
-// Function to handle the date selected from the date picker
-const dateSelected = (selectedDateString: string) => {
-  const currentDate = new Date();
-  const selectedDate = new Date(selectedDateString);
-  if (selectedDate <= currentDate) {
-    dateErrorMessage.value = '';
-    existingPetObject.value.birthday = new Date(selectedDateString);
-    existingPetObject.value.birthday.setHours(0, 0, 0, 0);
-    showDatePicker.value = false;
-  } else {
-    dateErrorMessage.value = 'Please select a date in the past or today';
+const dateSelected = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.value) {
+    const currentDate = new Date();
+    const selectedDate = new Date(target.value + 'T00:00:00');
+    if (selectedDate <= currentDate) {
+      dateErrorMessage.value = '';
+      existingPetObject.value.birthday = selectedDate;
+      existingPetObject.value.birthday.setHours(0, 0, 0, 0);
+    } else {
+      dateErrorMessage.value = 'Please select a date in the past or today';
+    }
   }
 };
 
-// Format the date for display
 const formattedDate = computed(() => {
   return existingPetObject.value.birthday
     ? new Date(existingPetObject.value.birthday).toLocaleDateString('en-GB')
     : '';
 });
 
-
-// Confirm the update of the pet and then call the updatePet function
 const confirmUpdatePet = () => {
   showUpdateDialog.value = true;
 };
 
-
-// Update the pet data and then navigate to the pet view page (PagePet)
 const updatePet = async () => {
   const petData = {
     id: existingPetObject.value.id,
@@ -152,20 +146,17 @@ const updatePet = async () => {
 
   const success = await petStore.updatePet(existingPetObject.value.id, petData);
   if (success) {
-    router.push({ name: 'pet', params: { id: petData.id } }); // Update to the correct route name if different
+    router.push({ name: 'pet', params: { id: petData.id } });
   } else {
     console.error('Failed to update pet');
   }
 };
 
-
-// Confirm the deletion of the pet and then call the deletePet function
 const confirmDeletePet = () => {
   showDeleteDialog.value = true;
 };
 
 const deletePet = async () => {
-  // Check if the pet ID exists
   if (existingPetObject.value && existingPetObject.value.id) {
     const success = await petStore.deletePet(existingPetObject.value.id);
     if (success) {
@@ -176,22 +167,19 @@ const deletePet = async () => {
   }
 };
 
-// Load the pet data from the store
 const loadPetData = async () => {
-  const petId = route.params.id as string; // Get the pet ID from the route params
+  const petId = route.params.id as string;
   if (petId) {
     const petData = await petStore.getPetById(petId);
     if (petData) {
       existingPetObject.value = { ...petData };
     } else {
-      // If there is no pet data, redirect to the home page
       router.push({ name: 'pet', params: { id: petId } });
     }
   }
 };
 
-// Cancel the edit and navigate back to the pet view page (PagePet)
 const cancelEdit = () => {
-  router.push({ name: 'pet', params: { id: existingPetObject.value?.id } }); // Update to the correct route name if different
+  router.push({ name: 'pet', params: { id: existingPetObject.value?.id } });
 };
 </script>

@@ -8,7 +8,8 @@
   <base href="/" />
 
   <meta name="color-scheme" content="light dark" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 
@@ -20,12 +21,25 @@
 
   <!-- add to homescreen for mobile -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Ionic App" />
+  <meta name="apple-mobile-web-app-title" content="NeedyPet" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <!-- Loading indicator shown while app initializes (replaced by Vue on mount) -->
+    <div
+      style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;font-family:'Krona One',Arial,sans-serif;color:#b24d89">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" opacity="0.25" />
+        <path d="M12 2a10 10 0 0 1 10 10" stroke-dasharray="31.4" stroke-dashoffset="0">
+          <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite" />
+        </path>
+      </svg>
+      <span style="font-size:0.85rem">Loading NeedyPet...</span>
+    </div>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

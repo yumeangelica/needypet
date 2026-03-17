@@ -1,0 +1,766 @@
+/* Strong icon style for header icons */
+.icon-strong,
+.icon-strong svg,
+.icon-strong .lucide {
+  color: var(--color-primary-foreground) !important;
+  stroke-width: 2.2;
+}
+/* Lucide PawPrint default color globally */
+.paw-header-container svg,
+.paw-header-container .lucide,
+.paw-header-container .lucide-paw-print {
+  color: var(--color-primary-foreground) !important;
+  fill: var(--color-primary-foreground) !important;
+}
+@import "tailwindcss";
+
+/* ============================================
+   NeedyPet — Custom Theme (Pastel Pink/Lilac)
+   ============================================ */
+
+@theme {
+  /* Brand colors mapped to Tailwind tokens */
+  --color-primary: #FBCDE6;
+  --color-primary-foreground: rgb(178, 77, 137);
+  --color-background: transparent;
+  --color-foreground: #705E76;
+  --color-card: rgb(254, 239, 249);
+  --color-card-border: rgb(178, 110, 150);
+  --color-destructive: #ff3b30;
+  --color-success: #008c81;
+  --color-muted: #ded7e0;
+  --color-muted-foreground: #a0a0a0;
+
+  /* App-specific colors */
+  --color-status-done: #BCE3FF;
+  --color-need-bg: #F6EDFF;
+  --color-need-inactive: #ded7e0;
+
+  /* Auth page colors */
+  --color-auth-bg: #FFEEF5;
+  --color-auth-input-bg: #FFE0F1;
+  --color-auth-input-border: #FFBFE2;
+  --color-auth-button: #FBCDE6;
+  --color-auth-button-secondary: #FFE0F1;
+
+  /* Button colors */
+  --color-button-primary: #f3c3e3;
+  --color-button-secondary: rgb(204, 179, 216);
+
+  /* Shadow */
+  --color-shadow-pink: rgba(178, 110, 150, 0.3);
+  --color-drop-shadow-pink: rgba(178, 110, 150, 0.3);
+
+  /* Legacy color aliases (used by ThePetCard) */
+  --color-card-background-lilac: rgb(254, 239, 249);
+  --color-text-default: #705E76;
+
+  /* Font family */
+  --font-sans: 'Krona One', 'Arial', sans-serif;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 25px;
+  --radius-2xl: 40px;
+  --radius-3xl: 50px;
+}
+
+/* ============================================
+   Global base styles
+   ============================================ */
+
+* {
+  text-transform: none;
+  line-height: 1.6;
+}
+
+button {
+  cursor: pointer;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  background-image: url('./assets/images/needypet_background_desktop.webp');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Tablet background */
+@media (max-width: 1200px) {
+  body {
+    background-image: url('./assets/images/needypet_background_tablet.webp');
+  }
+}
+
+/* Mobile background */
+@media (max-width: 768px) {
+  body {
+    background-image: url('./assets/images/needypet_background_mobile.webp');
+  }
+}
+
+h1, h2, h3, h4, h5, h6, a {
+  color: var(--color-primary-foreground);
+}
+
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.3rem; }
+h4 { font-size: 1.15rem; }
+
+strong {
+  color: var(--color-primary-foreground);
+}
+
+p {
+  font-size: 0.95rem;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 5px;
+}
+
+/* ============================================
+   Layout wrappers
+   ============================================ */
+
+/* Every page root element should use this so the footer
+   is always pushed to the bottom via TheFooter's margin-top:auto */
+.page-root {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  margin-top: 40px;
+  padding: 20px;
+  flex-grow: 1;
+  min-height: calc(90vh - 60px);
+  box-sizing: border-box;
+}
+
+.mobile-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+  padding: 20px;
+  flex-grow: 1;
+  min-height: calc(90vh - 60px);
+}
+
+
+
+/* ============================================
+   Auth pages (Login, Register, Landing, etc.)
+   ============================================ */
+
+.login-register-container {
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+  margin: 5vh auto;
+  padding: 20px;
+  border-radius: var(--radius-3xl);
+  background-color: var(--color-auth-bg);
+  border: 1px solid var(--color-auth-button);
+  box-shadow: 0 2px 4px var(--color-shadow-pink);
+}
+
+@media (max-width: 568px) {
+  .login-register-container {
+    max-width: 92vw;
+  }
+}
+
+/* Auth input fields (wrapper div around inputs on auth pages) */
+.auth-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  background: var(--color-auth-input-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.auth-field:focus-within {
+  border-color: var(--color-card-border);
+  box-shadow: 0 0 0 3px rgba(178, 110, 150, 0.15);
+}
+
+/* The actual input inside auth-field */
+.auth-field-input {
+  width: 100%;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-foreground);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.auth-field-input::placeholder {
+  color: var(--color-foreground);
+  font-style: italic;
+  opacity: 0.55;
+}
+
+/* Password toggle button (shared across auth & form pages) */
+.show-password-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-primary-foreground);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+@media (hover: hover) {
+  .show-password-button:hover {
+    background: rgba(178, 77, 137, 0.1);
+  }
+}
+
+.show-password-button:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
+}
+
+/* Auth buttons */
+.action-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: var(--radius-xl);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-primary-foreground);
+  cursor: pointer;
+  box-shadow: 0 1px 3px var(--color-shadow-pink);
+  text-align: center;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+@media (hover: hover) {
+  .action-button:hover {
+    opacity: 0.85;
+    box-shadow: 0 2px 6px var(--color-shadow-pink);
+  }
+}
+
+.action-button:active {
+  transform: scale(0.97);
+}
+
+.action-button:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
+}
+
+.primary-action-button {
+  background: var(--color-auth-button);
+}
+
+.secondary-action-button {
+  background: var(--color-auth-button-secondary);
+}
+
+/* Paw header container */
+.paw-header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
+  gap: 10px;
+}
+
+/* ============================================
+   Form container (pet/profile forms — card-like wrapper)
+   ============================================ */
+
+.form-container {
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+  margin: 2vh auto;
+  padding: 24px;
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 2px 6px var(--color-shadow-pink);
+}
+
+.form-header {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+/* ============================================
+   Form fields (used in pet/profile forms)
+   ============================================ */
+
+/* form-field: wrapper div around inputs in forms */
+.form-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+/* form-field-input: the actual input/textarea inside .form-field */
+.form-field-input,
+input.form-field-input,
+textarea.form-field-input {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--color-auth-input-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: var(--color-foreground);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-field-input::placeholder,
+input.form-field-input::placeholder,
+textarea.form-field-input::placeholder {
+  color: var(--color-foreground);
+  font-style: italic;
+  opacity: 0.55;
+}
+
+.form-field-input:focus,
+input.form-field-input:focus,
+textarea.form-field-input:focus {
+  border-color: var(--color-card-border);
+  box-shadow: 0 0 0 3px rgba(178, 110, 150, 0.15);
+}
+
+textarea.form-field-input {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* Date input specific styling */
+input[type="date"].form-field-input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="date"].form-field-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  padding: 4px;
+  border-radius: 4px;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+input[type="date"].form-field-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background: rgba(178, 77, 137, 0.1);
+}
+
+/* Span used as fake input display (timezone selector) */
+span.form-field-input {
+  display: block;
+  cursor: pointer;
+}
+
+/* form-field-item: standalone styled input (used in TheNeedCard edit modal) */
+.form-field-item {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--color-auth-input-bg);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: var(--color-foreground);
+  outline: none;
+  margin-bottom: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-field-item::placeholder {
+  color: var(--color-foreground);
+  font-style: italic;
+  opacity: 0.55;
+}
+
+.form-field-item:focus {
+  border-color: var(--color-card-border);
+  box-shadow: 0 0 0 3px rgba(178, 110, 150, 0.15);
+}
+
+textarea.form-field-item {
+  resize: vertical;
+  min-height: 60px;
+  font-family: var(--font-sans);
+}
+
+/* Form labels */
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-primary-foreground);
+  margin-bottom: 3px;
+  margin-top: 6px;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.custom-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-button-primary);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 12px 20px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-primary-foreground);
+  cursor: pointer;
+  min-height: 44px;
+  transition: box-shadow 0.15s, transform 0.1s, background 0.15s;
+}
+
+@media (hover: hover) {
+  .custom-button:hover {
+    box-shadow: 0 2px 8px var(--color-shadow-pink);
+    background: #eeb8d8;
+  }
+}
+
+.custom-button:active {
+  transform: scale(0.97);
+}
+
+.custom-button:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
+}
+
+.custom-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Form button group */
+.form-button-group {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-button {
+  margin: 0;
+  width: 100%;
+  max-width: 150px;
+  padding: 8px 6px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  cursor: pointer;
+  box-shadow: 0 1px 3px var(--color-shadow-pink);
+  text-align: center;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+@media (hover: hover) {
+  .form-button:hover {
+    opacity: 0.85;
+    box-shadow: 0 2px 6px var(--color-shadow-pink);
+  }
+}
+
+.form-button:active {
+  transform: scale(0.97);
+}
+
+.form-button:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
+}
+
+.form-button.primary {
+  background: var(--color-button-primary);
+  color: var(--color-primary-foreground);
+}
+
+.form-button.secondary {
+  background: var(--color-button-secondary);
+  color: var(--color-foreground);
+}
+
+.form-button.danger {
+  background: transparent;
+  border: 2px solid var(--color-destructive);
+  color: var(--color-destructive);
+}
+
+@media (hover: hover) {
+  .form-button.danger:hover {
+    background: rgba(255, 59, 48, 0.08);
+  }
+}
+
+/* Settings button (transparent icon button) */
+.settings-button {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 50%;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+@media (hover: hover) {
+  .settings-button:hover {
+    background: rgba(178, 77, 137, 0.1);
+  }
+}
+
+.settings-button:active {
+  opacity: 0.7;
+}
+
+.settings-button:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
+}
+
+.settings-button svg {
+  width: 28px;
+  height: 28px;
+  color: var(--color-card-border);
+}
+
+/* ============================================
+   Profile actions layout
+   ============================================ */
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+/* ============================================
+   Confirmation message (email verification, etc.)
+   ============================================ */
+
+.confirmation-message {
+  padding: 20px;
+  border-radius: var(--radius-3xl);
+  background-color: var(--color-auth-bg);
+  border: 1px solid var(--color-button-primary);
+  box-shadow: 0 2px 4px var(--color-shadow-pink);
+  text-align: center;
+  margin-top: 5vh;
+}
+
+/* ============================================
+   Error & valid messages
+   ============================================ */
+
+.custom-error-message,
+.custom-valid-message {
+  font-size: 0.75rem;
+  text-align: center;
+  margin: 1rem;
+  white-space: pre-line;
+  word-wrap: break-word;
+}
+
+.custom-error-message {
+  color: var(--color-destructive);
+}
+
+.custom-valid-message {
+  color: var(--color-success);
+}
+
+/* ============================================
+   Password strength note
+   ============================================ */
+
+.strong-password-note {
+  font-size: 0.55rem;
+  margin: 0.5rem;
+}
+
+.strong-password-note ul {
+  list-style-type: disc;
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.strong-password-note li {
+  width: 50%;
+  box-sizing: border-box;
+  color: var(--color-destructive);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.strong-password-note li.valid {
+  color: var(--color-success);
+}
+
+/* ============================================
+   Inline container (name + settings icon)
+   ============================================ */
+
+.inline-container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 4px;
+}
+
+/* ============================================
+   Timezone label
+   ============================================ */
+
+.custom-timezone-label {
+  font-size: 0.80rem;
+}
+
+/* ============================================
+   Date picker wrapper
+   ============================================ */
+
+.datetime-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ============================================
+   Number input spinner removal
+   ============================================ */
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ============================================
+   Mobile responsive overrides
+   ============================================ */
+
+@media (max-width: 768px) {
+  .mobile-content-wrapper {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .strong-password-note {
+    font-size: 0.6rem;
+    margin: 0.4rem;
+  }
+
+  .strong-password-note li {
+    width: 100%;
+    margin-bottom: 4px;
+    line-height: 1.3;
+    padding: 1px 0;
+  }
+}
+
+@media (max-width: 568px) {
+  .custom-button,
+  .action-button,
+  .form-button,
+  .custom-error-message,
+  .custom-valid-message,
+  .custom-timezone-label,
+  .form-field-item,
+  .form-field-input,
+  .auth-field,
+  .confirmation-message,
+  p, a, li {
+    font-size: 0.72rem;
+  }
+
+  h2 { font-size: 1.2rem; }
+  h3 { font-size: 1.1rem; }
+  h4 { font-size: 0.9rem; }
+  h5 { font-size: 0.8rem; }
+
+  .strong-password-note {
+    font-size: 0.55rem;
+    margin: 0.3rem;
+  }
+
+  .strong-password-note li {
+    width: 100%;
+    margin-bottom: 3px;
+    line-height: 1.2;
+    padding: 1px 0;
+  }
+}

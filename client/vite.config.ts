@@ -1,18 +1,13 @@
 import { fileURLToPath, URL } from 'node:url';
-import legacy from '@vitejs/plugin-legacy';
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
-import { visualizer } from 'rollup-plugin-visualizer';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    legacy({
-      targets: ['defaults', 'not IE 11'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime'], // For async/await support in older browsers
-    }),
-    visualizer({ open: true, gzipSize: true, brotliSize: true }),
+    tailwindcss(),
   ],
   resolve: {
     alias: {

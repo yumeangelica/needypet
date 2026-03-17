@@ -1,66 +1,67 @@
 <template>
-  <ion-page>
-    <ion-content>
-      <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-        <!-- Email confirmation -->
-        <div v-if="confirmationType === 'email'">
-          <div class="confirmation-container">
-            <div class="confirmation-message">{{ confirmationMessage }}</div>
-            <ion-button v-if="showLoginButton" @click="goToLogin" expand="block" class="action-button primary-action-button">Go to Login</ion-button>
-          </div>
-        </div>
-
-        <!-- Password reset -->
-        <div v-else-if="confirmationType === 'password'">
-          <div v-if="showForm" class="login-register-container">
-            <TheLogoImage altText="NeedyPet logo" />
-
-            <div class="paw-header-container">
-              <ion-icon :icon="pawOutline"></ion-icon>
-              <h4>Reset Password</h4>
-              <ion-icon :icon="pawOutline"></ion-icon>
-            </div>
-
-            <div class="custom-valid-message ion-text-center">{{ validMessage }}</div>
-
-            <form @submit.prevent="resetPassword">
-              <ion-item class="login-register-field-item">
-                <ion-input class="login-register-field-input" type="password" v-model="newPassword" placeholder="Enter new password"
-                  aria-label="New Password"></ion-input>
-              </ion-item>
-
-              <ion-item class="login-register-field-item">
-                <ion-input class="login-register-field-input" type="password" v-model="confirmPassword" placeholder="Confirm new password"
-                  aria-label="Confirm Password"></ion-input>
-              </ion-item>
-
-              <ion-buttons>
-                <ion-button type="submit" expand="block" class="action-button primary-action-button">Set Password</ion-button>
-                <ion-button @click="goBack" expand="block" class="action-button secondary-action-button">← Back</ion-button>
-              </ion-buttons>
-
-              <div v-if="errorMessage" class="custom-error-message">
-                {{ errorMessage }}
-              </div>
-            </form>
-          </div>
-
-          <div v-else class="confirmation-container">
-            <div class="confirmation-message">{{ confirmationMessage }}</div>
-            <ion-button @click="goToLogin" expand="block" class="action-button primary-action-button">Go to Login</ion-button>
-          </div>
-        </div>
-
-        <!-- Invalid confirmation link -->
-        <div v-else class="confirmation-container">
+  <div>
+    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <!-- Email confirmation -->
+      <div v-if="confirmationType === 'email'">
+        <div class="confirmation-container">
           <div class="confirmation-message">{{ confirmationMessage }}</div>
-          <ion-button v-if="showLoginButton" @click="goToLogin" expand="block" class="action-button primary-action-button">Go to Login</ion-button>
+          <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
+            Go to Login
+          </button>
         </div>
       </div>
 
-      <TheFooter />
-    </ion-content>
-  </ion-page>
+      <!-- Password reset -->
+      <div v-else-if="confirmationType === 'password'">
+        <div v-if="showForm" class="login-register-container">
+          <TheLogoImage altText="NeedyPet logo" />
+
+          <div class="paw-header-container">
+            <PawPrint class="inline-block w-5 h-5" />
+            <h4>Reset Password</h4>
+            <PawPrint class="inline-block w-5 h-5" />
+          </div>
+
+          <div class="custom-valid-message text-center">{{ validMessage }}</div>
+
+          <form @submit.prevent="resetPassword">
+            <div class="auth-field">
+              <input class="auth-field-input" type="password" v-model="newPassword" placeholder="Enter new password" aria-label="New Password" />
+            </div>
+
+            <div class="auth-field">
+              <input class="auth-field-input" type="password" v-model="confirmPassword" placeholder="Confirm new password"
+                aria-label="Confirm Password" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <button type="submit" class="action-button primary-action-button">Set Password</button>
+              <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
+            </div>
+
+            <div v-if="errorMessage" class="custom-error-message">
+              {{ errorMessage }}
+            </div>
+          </form>
+        </div>
+
+        <div v-else class="confirmation-container">
+          <div class="confirmation-message">{{ confirmationMessage }}</div>
+          <button @click="goToLogin" class="action-button primary-action-button">Go to Login</button>
+        </div>
+      </div>
+
+      <!-- Invalid confirmation link -->
+      <div v-else class="confirmation-container">
+        <div class="confirmation-message">{{ confirmationMessage }}</div>
+        <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
+          Go to Login
+        </button>
+      </div>
+    </div>
+
+    <TheFooter />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -68,8 +69,7 @@ import { ref, computed, onBeforeMount } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
-import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonButtons } from '@ionic/vue';
-import { pawOutline } from 'ionicons/icons';
+import { PawPrint } from 'lucide-vue-next';
 import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
 
@@ -169,8 +169,8 @@ const goToLogin = () => {
 .confirmation-container {
   padding: 20px;
   border-radius: 50px;
-  background-color: var(--color-login-background);
-  border: 1px solid var(--color-login-button-and-border);
+  background-color: var(--color-auth-bg);
+  border: 1px solid var(--color-button-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
@@ -178,12 +178,9 @@ const goToLogin = () => {
 .confirmation-message {
   margin-bottom: 20px;
   font-size: 1rem;
-  color: var(--color-text-default);
+  color: var(--color-foreground);
 }
 
-/* .action-button, .primary-action-button and .secondary-action-button use global styles */
-
-/* Responsive mobile styles */
 @media (max-width: 568px) {
   .confirmation-container {
     margin-top: 10vh;

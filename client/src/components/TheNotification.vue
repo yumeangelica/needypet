@@ -26,7 +26,7 @@ defineProps<{
   position: fixed;
   top: 10px;
   right: 10px;
-  width: 300px;
+  width: min(300px, calc(100vw - 20px));
   z-index: 30000;
 }
 
