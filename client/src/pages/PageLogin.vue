@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="page-root">
     <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="login-register-container">
-        <TheLogoImage altText="NeedyPet logo" />
+        <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="paw-header-container">
           <PawPrint class="inline-block w-5 h-5" />
@@ -12,23 +12,11 @@
 
         <form @submit.prevent="login">
           <div class="auth-field">
-            <input
-              class="auth-field-input"
-              type="text"
-              v-model="userName"
-              placeholder="Enter your username"
-              aria-label="Username"
-            />
+            <input class="auth-field-input" type="text" v-model="userName" placeholder="Enter your username" aria-label="Username" />
           </div>
 
           <div class="auth-field">
-            <input
-              class="auth-field-input"
-              :type="passwordFieldType"
-              v-model="password"
-              placeholder="Enter your password"
-              aria-label="Password"
-            />
+            <input class="auth-field-input" :type="passwordFieldType" v-model="password" placeholder="Enter your password" aria-label="Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />
@@ -40,8 +28,7 @@
             <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
           </div>
 
-          <button type="button" @click="router.push({ name: 'request-password-reset' })"
-            class="action-button secondary-action-button mt-2">
+          <button type="button" @click="router.push({ name: 'request-password-reset' })" class="action-button secondary-action-button mt-2">
             Forgot Password
           </button>
         </form>

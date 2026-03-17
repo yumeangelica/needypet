@@ -12,13 +12,7 @@
 
         <form @submit.prevent="resetPassword">
           <div class="auth-field">
-            <input
-              class="auth-field-input"
-              type="email"
-              v-model="email"
-              placeholder="Enter your email"
-              aria-label="Email"
-            />
+            <input class="auth-field-input" type="email" v-model="email" placeholder="Enter your email" aria-label="Email" />
           </div>
 
           <div class="flex flex-col gap-2">

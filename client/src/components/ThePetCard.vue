@@ -62,8 +62,14 @@ function navigateToPetView() {
   box-sizing: border-box;
 }
 
-.small-pet-card:hover {
-  transform: translateY(-5px);
+@media (hover: hover) {
+  .small-pet-card:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.small-pet-card:active {
+  transform: scale(0.97);
 }
 
 .small-pet-card h5 {

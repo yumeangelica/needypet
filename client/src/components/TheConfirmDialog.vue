@@ -1,14 +1,6 @@
 <template>
-  <AlertDialog
-    :open="isOpen"
-    :title="title"
-    :message="message"
-    :confirmLabel="confirmLabel"
-    :cancelLabel="cancelLabel"
-    :variant="variant"
-    @confirm="handleConfirm"
-    @cancel="handleCancel"
-  >
+  <AlertDialog :open="isOpen" :title="title" :message="message" :confirmLabel="confirmLabel" :cancelLabel="cancelLabel" :variant="variant"
+    @confirm="handleConfirm" @cancel="handleCancel">
     <component v-if="iconComponent" :is="iconComponent" class="size-10 mb-3" :class="variantClass" />
   </AlertDialog>
 </template>

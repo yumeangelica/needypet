@@ -4,7 +4,7 @@
       <h1 class="text-center">Oops! This page doesn't exist.</h1>
       <p class="text-center">Looks like you wandered off the trail. 🐾</p>
       <div class="text-center mt-5">
-        <button class="action-button primary-action-button" @click="router.push({ name: 'home' })">
+        <button class="action-button primary-action-button inline-block w-auto" @click="router.push({ name: 'home' })">
           Back to home
         </button>
       </div>

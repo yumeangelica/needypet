@@ -7,40 +7,36 @@
           <div>
             <label class="form-label">Name:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Name" v-model="newPetObject.name" required
-                placeholder="Pet's name" />
+              <input class="form-field-input" aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name" />
             </div>
           </div>
 
           <div>
             <label class="form-label">Breed:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Breed" v-model="newPetObject.breed"
-                placeholder="Pet's breed" />
+              <input class="form-field-input" aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed" />
             </div>
           </div>
 
           <div>
             <label class="form-label">Species:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Species" v-model="newPetObject.species"
-                placeholder="Pet's species" />
+              <input class="form-field-input" aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species" />
             </div>
           </div>
 
           <div>
             <label class="form-label">Description:</label>
             <div class="form-field">
-              <textarea class="form-field-input" aria-label="Description" v-model="newPetObject.description"
-                placeholder="About the pet"></textarea>
+              <textarea class="form-field-input" aria-label="Description" v-model="newPetObject.description" placeholder="About the pet"></textarea>
             </div>
           </div>
 
           <div>
             <label class="form-label">Birthday:</label>
             <div class="form-field">
-              <input class="form-field-input" type="date" aria-label="Birthday"
-                :value="birthdayInputValue" @change="dateSelected($event)" :max="todayString" />
+              <input class="form-field-input" type="date" aria-label="Birthday" :value="birthdayInputValue" @change="dateSelected($event)"
+                :max="todayString" />
             </div>
           </div>
 

@@ -15,7 +15,9 @@
         Done
       </div>
 
-      <button v-if="isOwner" class="bg-transparent border-none cursor-pointer text-primary-foreground p-1" @click="toggleOptions">
+      <button v-if="isOwner"
+        class="bg-transparent border-none cursor-pointer text-primary-foreground p-1 rounded-full transition-colors hover:bg-black/10 active:bg-black/15"
+        @click="toggleOptions">
         <EllipsisVertical class="size-5" />
       </button>
     </div>
@@ -23,7 +25,8 @@
     <!-- Toggleable buttons -->
     <div v-if="isOwner" class="options-container">
       <!-- Edit need button -->
-      <button v-if="isToday || isFuture" @click="editNeed" class="bg-transparent border-none cursor-pointer text-primary-foreground p-1">
+      <button v-if="isToday || isFuture" @click="editNeed"
+        class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-black/10 active:bg-black/15">
         <Pencil class="size-5" />
       </button>
 
@@ -36,25 +39,19 @@
       </div>
 
       <!-- Delete need button -->
-      <button @click="showDeleteConfirm = true" class="bg-transparent border-none cursor-pointer text-primary-foreground p-1">
+      <button @click="showDeleteConfirm = true"
+        class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-red-500/15 active:bg-red-500/25">
         <Trash2 class="size-5" />
       </button>
     </div>
 
-    <!-- Delete confirmation dialog -->
-    <AlertDialog
-      :open="showDeleteConfirm"
-      title="Delete Need"
-      message="Are you sure you want to delete this need?"
-      confirmLabel="Delete"
-      cancelLabel="Cancel"
-      variant="danger"
-      @confirm="deleteNeed(need.id); showDeleteConfirm = false"
-      @cancel="showDeleteConfirm = false"
-    />
+    <!-- Delete confirmation dialog — only rendered when needed -->
+    <AlertDialog v-if="showDeleteConfirm" :open="showDeleteConfirm" title="Delete Need" message="Are you sure you want to delete this need?"
+      confirmLabel="Delete" cancelLabel="Cancel" variant="danger" @confirm="deleteNeed(need.id); showDeleteConfirm = false"
+      @cancel="showDeleteConfirm = false" />
 
-    <!-- Edit need modal -->
-    <Dialog :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit Need" maxWidth="520px">
+    <!-- Edit need modal — only rendered when needed -->
+    <Dialog v-if="isEditModalOpen" :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit Need" maxWidth="520px">
       <form @submit.prevent="updateNeed">
         <label class="form-label">Category</label>
         <input v-model="editForm.category" required type="text" placeholder="Enter need category" class="form-field-item" />
@@ -67,12 +64,8 @@
           <input v-model="editForm.value" type="number" placeholder="Enter quantity" required class="form-field-item" />
 
           <label class="form-label">Select unit</label>
-          <Select
-            :modelValue="editForm.unit"
-            @update:modelValue="(v) => editForm.unit = v"
-            placeholder="Select unit"
-            :options="[{ value: 'ml', label: 'ml' }, { value: 'g', label: 'g' }]"
-          />
+          <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit"
+            :options="[{ value: 'ml', label: 'ml' }, { value: 'g', label: 'g' }]" />
         </div>
 
         <div v-else>
@@ -114,6 +107,8 @@ const { need, petId } = defineProps<{
   need: Need,
   petId: string
 }>();
+
+const emit = defineEmits(['needDeleted', 'needUpdated']);
 
 const isEditModalOpen = ref(false);
 const showDeleteConfirm = ref(false);
@@ -218,6 +213,7 @@ const toggleNeedActive = async (needId) => {
 
   const response = await petStore.toggleNeedisActive(petId, needId);
   if (response) {
+    emit('needUpdated');
     appStore.addNotification('Need active status toggled successfully', 'success');
   } else {
     appStore.addNotification('Failed to toggle need active status', 'error');
@@ -247,6 +243,7 @@ const updateNeed = async () => {
   const isSuccess = await petStore.updateNeed(petId, needId, updatedNeed);
 
   if (isSuccess) {
+    emit('needUpdated');
     appStore.addNotification('Need updated successfully', 'success');
   } else {
     appStore.addNotification('Failed to update need', 'error');
@@ -319,16 +316,28 @@ const deleteNeed = async (needId: string) => {
   color: var(--color-primary-foreground);
   cursor: pointer;
   min-width: 60px;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.1s;
 }
 
-.complete-button:hover {
-  opacity: 0.85;
+@media (hover: hover) {
+  .complete-button:hover {
+    opacity: 0.85;
+  }
+}
+
+.complete-button:active {
+  transform: scale(0.96);
+}
+
+.complete-button:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
 }
 
 .complete-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .done-label {
@@ -362,10 +371,11 @@ const deleteNeed = async (needId: string) => {
 }
 
 @media (max-width: 568px) {
+
   .complete-button,
   .done-label {
     font-size: 0.70rem;
-    padding: 5px 20px 6px 5px;
+    padding: 5px 10px;
   }
 }
 </style>

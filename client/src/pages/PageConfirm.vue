@@ -26,23 +26,12 @@
 
           <form @submit.prevent="resetPassword">
             <div class="auth-field">
-              <input
-                class="auth-field-input"
-                type="password"
-                v-model="newPassword"
-                placeholder="Enter new password"
-                aria-label="New Password"
-              />
+              <input class="auth-field-input" type="password" v-model="newPassword" placeholder="Enter new password" aria-label="New Password" />
             </div>
 
             <div class="auth-field">
-              <input
-                class="auth-field-input"
-                type="password"
-                v-model="confirmPassword"
-                placeholder="Confirm new password"
-                aria-label="Confirm Password"
-              />
+              <input class="auth-field-input" type="password" v-model="confirmPassword" placeholder="Confirm new password"
+                aria-label="Confirm Password" />
             </div>
 
             <div class="flex flex-col gap-2">

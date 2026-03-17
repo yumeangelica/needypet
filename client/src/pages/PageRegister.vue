@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="page-root">
     <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="login-register-container">
-        <TheLogoImage altText="Needypet Logo" />
+      <div class="login-register-container" style="overflow-y: auto; max-height: 90vh;">
+        <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="paw-header-container">
           <PawPrint class="inline-block w-5 h-5" />
@@ -10,17 +10,10 @@
           <PawPrint class="inline-block w-5 h-5" />
         </div>
 
-        <form @submit.prevent="createAccount">
+        <form @submit.prevent="createAccount" style="gap: 0.7rem;">
           <!-- Username input field -->
           <div class="auth-field">
-            <input
-              class="auth-field-input"
-              v-model="username"
-              type="text"
-              placeholder="Username"
-              required
-              aria-label="Username"
-            />
+            <input class="auth-field-input" v-model="username" type="text" placeholder="Username" required aria-label="Username" />
           </div>
           <div v-if="formFieldsErrorDetailsObject.username" class="custom-error-message">
             {{ formFieldsErrorDetailsObject.username }}
@@ -28,14 +21,7 @@
 
           <!-- Email input field -->
           <div class="auth-field">
-            <input
-              class="auth-field-input"
-              v-model="email"
-              placeholder="Email"
-              type="email"
-              required
-              aria-label="Email"
-            />
+            <input class="auth-field-input" v-model="email" placeholder="Email" type="email" required aria-label="Email" />
           </div>
           <div v-if="formFieldsErrorDetailsObject.email" class="custom-error-message">
             {{ formFieldsErrorDetailsObject.email }}
@@ -43,16 +29,8 @@
 
           <!-- Password input field -->
           <div class="auth-field">
-            <input
-              class="auth-field-input"
-              v-model="password"
-              @input="validatePassword"
-              :type="passwordFieldType"
-              placeholder="Password"
-              required
-              id="password"
-              aria-label="Password"
-            />
+            <input class="auth-field-input" v-model="password" @input="validatePassword" :type="passwordFieldType" placeholder="Password" required
+              id="password" aria-label="Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />
@@ -71,15 +49,8 @@
 
           <!-- Confirm password input field -->
           <div class="auth-field">
-            <input
-              class="auth-field-input"
-              v-model="confirmPassword"
-              placeholder="Confirm password"
-              :type="passwordFieldType"
-              required
-              id="confirmPassword"
-              aria-label="Confirm Password"
-            />
+            <input class="auth-field-input" v-model="confirmPassword" placeholder="Confirm password" :type="passwordFieldType" required
+              id="confirmPassword" aria-label="Confirm Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />
@@ -99,11 +70,8 @@
             {{ formFieldsErrorDetailsObject.timezone }}
           </div>
 
-          <TheTimezoneSelectorModal
-            :isOpen="showModal"
-            @update:isOpen="showModal = $event"
-            @timezoneSelected="timezone => selectedTimezone = timezone"
-          />
+          <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
+            @timezoneSelected="timezone => selectedTimezone = timezone" />
 
           <div class="flex flex-col gap-2">
             <button type="submit" class="action-button primary-action-button">Create Account</button>

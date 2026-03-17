@@ -6,8 +6,8 @@
           <h3>Change Password:</h3>
 
           <!-- Current Password input field -->
-          <div class="form-field">
-            <input v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
+          <div class="auth-field">
+            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />
@@ -18,8 +18,8 @@
           </div>
 
           <!-- New Password input field -->
-          <div class="form-field">
-            <input v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
+          <div class="auth-field">
+            <input class="auth-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
               placeholder="New Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />

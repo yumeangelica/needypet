@@ -7,8 +7,7 @@
 
           <div class="inline-container">
             <h2>{{ pet.name }}</h2>
-            <button v-if="pet.owner.id === userStore.id" class="settings-button"
-              @click="router.push({ name: 'edit-pet' })">
+            <button v-if="pet.owner.id === userStore.id" class="settings-button" @click="router.push({ name: 'edit-pet' })">
               <Settings class="w-5 h-5" />
             </button>
           </div>
@@ -29,10 +28,9 @@
 
           <!-- Need related container -->
           <div class="header-button-container">
-            <h3 class="text-center">Needs:</h3>
+            <h3 class="text-center mt-2 mb-0">Needs:</h3>
             <template v-if="pet.owner.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
-              <button class="custom-button" @click="setOpen(true)"
-                v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
+              <button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
                 <CirclePlus class="inline-block w-4 h-4 mr-1" />
                 Add need
               </button>
@@ -45,8 +43,8 @@
           </div>
 
           <!-- Add Need Modal -->
-          <Dialog :open="isOpen" @update:open="setOpen($event)" title="New need">
-            <div class="form-container">
+          <Dialog v-if="isOpen" :open="isOpen" @update:open="setOpen($event)" title="New need">
+            <div>
               <form @submit.prevent="addNewNeed">
                 <h3 class="form-header">Add New Need</h3>
 
@@ -79,8 +77,8 @@
                   <label class="form-label">Value and Unit:</label>
                   <div class="flex gap-2 items-center">
                     <div class="form-field flex-1">
-                      <input class="form-field-input" v-model="valueOfSelection" required autofocus
-                        @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value" />
+                      <input class="form-field-input w-full min-w-[80px]" v-model="valueOfSelection" required autofocus @input="cleanInput($event)"
+                        inputmode="numeric" placeholder="Enter value" />
                     </div>
                     <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="select unit" class="w-28" />
                   </div>
@@ -89,8 +87,8 @@
                 <div v-if="selection === 'duration'">
                   <label class="form-label">Duration (minutes):</label>
                   <div class="form-field">
-                    <input class="form-field-input" v-model="valueOfSelection" required autofocus
-                      @input="cleanInput($event)" inputmode="numeric" placeholder="Enter duration in minutes" />
+                    <input class="form-field-input" v-model="valueOfSelection" required autofocus @input="cleanInput($event)" inputmode="numeric"
+                      placeholder="Enter duration in minutes" />
                   </div>
                 </div>
 
@@ -125,7 +123,7 @@
             <ul v-if="needsByDate[currentDate]">
               <li v-for="need in needsByDate[currentDate]" :key="need.id">
                 <div class="need-cards-container">
-                  <the-need-card :need="need" :petId="pet.id" @needDeleted="handleNeedDeleted" />
+                  <the-need-card :need="need" :petId="pet.id" @needDeleted="handleNeedDeleted" @needUpdated="getPet(pet.id)" />
                 </div>
               </li>
             </ul>
@@ -354,13 +352,23 @@ provide('handleNeedDeletion', handleNeedDeleted);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 8px;
   width: 100%;
   max-width: 100%;
 }
 
+.header-button-container {
+  margin-bottom: 8px;
+}
+
+.date-navigation {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
 .pet-container {
   margin-top: 20px;
+  gap: 12px;
 }
 
 .full-pet-card {
@@ -373,6 +381,14 @@ provide('handleNeedDeletion', handleNeedDeleted);
   max-width: 800px;
   margin: 0 auto;
   box-sizing: border-box;
+}
+
+.pet-info {
+  margin: 8px 0 12px;
+}
+
+.pet-info p {
+  margin: 4px 0;
 }
 
 .need-cards-container {

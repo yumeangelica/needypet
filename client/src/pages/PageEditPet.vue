@@ -8,24 +8,21 @@
           <div>
             <label class="form-label">Name:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Name" v-model="existingPetObject.name" required
-                placeholder="Enter pet's name" />
+              <input class="form-field-input" aria-label="Name" v-model="existingPetObject.name" required placeholder="Enter pet's name" />
             </div>
           </div>
 
           <div>
             <label class="form-label">Breed:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Breed" v-model="existingPetObject.breed"
-                placeholder="Enter pet's breed" />
+              <input class="form-field-input" aria-label="Breed" v-model="existingPetObject.breed" placeholder="Enter pet's breed" />
             </div>
           </div>
 
           <div>
             <label class="form-label">Species:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Species" v-model="existingPetObject.species"
-                placeholder="Enter pet's species" />
+              <input class="form-field-input" aria-label="Species" v-model="existingPetObject.species" placeholder="Enter pet's species" />
             </div>
           </div>
 
@@ -40,8 +37,8 @@
           <div>
             <label class="form-label">Birthday</label>
             <div class="form-field">
-              <input class="form-field-input" type="date" aria-label="Birthday"
-                :value="birthdayInputValue" @change="dateSelected($event)" :max="todayString" />
+              <input class="form-field-input" type="date" aria-label="Birthday" :value="birthdayInputValue" @change="dateSelected($event)"
+                :max="todayString" />
             </div>
             <p class="custom-error-message" v-if="dateErrorMessage">{{ dateErrorMessage }}</p>
           </div>
@@ -57,12 +54,11 @@
         </form>
       </div>
 
-      <TheConfirmDialog :isOpen="showUpdateDialog" title="Update Pet" message="Are you sure you want to update this pet?"
-        confirmLabel="Update" @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
+      <TheConfirmDialog :isOpen="showUpdateDialog" title="Update Pet" message="Are you sure you want to update this pet?" confirmLabel="Update"
+        @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
 
-      <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?"
-        confirmLabel="Delete" variant="danger" icon="trashOutline"
-        @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
+      <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?" confirmLabel="Delete"
+        variant="danger" icon="trashOutline" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
     </div>
     <TheFooter />
   </div>

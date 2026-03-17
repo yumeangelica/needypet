@@ -2,7 +2,7 @@
   <div>
     <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
-        <form @submit.prevent="submitForm" class="form-container">
+        <form @submit.prevent="submitForm">
           <h3 class="form-header">Edit Profile:</h3>
 
           <label class="form-label">Username:</label>
@@ -30,8 +30,7 @@
 
           <label class="form-label">Current Password:</label>
           <div class="form-field">
-            <input class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required
-              placeholder="Current Password" />
+            <input class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />

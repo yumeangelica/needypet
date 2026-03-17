@@ -4,27 +4,25 @@
       <div v-if="user" class="form-container">
 
         <div class="inline-container">
-          <h3 class="form-header">{{ user.userName }}</h3>
+          <h3 class="form-header mb-0">{{ user.userName }}</h3>
           <button class="settings-button" @click="toggleSettings">
             <Settings class="w-5 h-5" />
           </button>
         </div>
 
-        <div class="email">
+        <div class="profile-info">
           <p><strong>Email:</strong> {{ user.email }}</p>
-        </div>
-        <div class="email-confirmed">
-          <p>
-            <strong>Email verified</strong>
-            <CheckCircle2 v-if="user.emailConfirmed" class="inline-block w-5 h-5 ml-1.5 align-middle text-green-500" />
-            <XCircle v-else class="inline-block w-5 h-5 ml-1.5 align-middle text-red-500" />
-          </p>
-          <button v-if="!user.emailConfirmed" class="custom-button text-sm px-2.5 py-1"
-            :disabled="isButtonDisabled" @click="resendEmailConfirmation">
-            Resend email
-          </button>
-        </div>
-        <div class="timezone">
+          <div class="email-confirmed">
+            <p>
+              <strong>Email verified</strong>
+              <CheckCircle2 v-if="user.emailConfirmed" class="inline-block w-5 h-5 ml-1.5 align-middle text-green-500" />
+              <XCircle v-else class="inline-block w-5 h-5 ml-1.5 align-middle text-red-500" />
+            </p>
+            <button v-if="!user.emailConfirmed" class="custom-button text-sm px-2.5 py-1" :disabled="isButtonDisabled"
+              @click="resendEmailConfirmation">
+              Resend email
+            </button>
+          </div>
           <p><strong>Timezone:</strong> {{ user.timezone }}</p>
         </div>
 
@@ -49,13 +47,12 @@
 
       <TheLoadingSpinner v-if="!user" message="Loading profile..." />
 
-      <TheConfirmDialog :isOpen="showLogoutDialog" title="Logout" message="Are you sure you want to logout?"
-        confirmLabel="Logout" @confirm="logout(); showLogoutDialog = false" @cancel="showLogoutDialog = false" />
+      <TheConfirmDialog :isOpen="showLogoutDialog" title="Logout" message="Are you sure you want to logout?" confirmLabel="Logout"
+        @confirm="logout(); showLogoutDialog = false" @cancel="showLogoutDialog = false" />
 
       <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Account"
-        message="Are you sure you want to delete your account? This action cannot be undone." confirmLabel="Delete"
-        variant="danger" icon="trashOutline" @confirm="deleteAccount(); showDeleteDialog = false"
-        @cancel="showDeleteDialog = false" />
+        message="Are you sure you want to delete your account? This action cannot be undone." confirmLabel="Delete" variant="danger"
+        icon="trashOutline" @confirm="deleteAccount(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
     </div>
     <TheFooter />
   </div>
@@ -141,6 +138,14 @@ onBeforeRouteLeave(() => {
 </script>
 
 <style scoped>
+.profile-info {
+  margin: 4px 0 8px;
+}
+
+.profile-info p {
+  margin: 4px 0;
+}
+
 .email-confirmed {
   display: flex;
   justify-content: space-between;

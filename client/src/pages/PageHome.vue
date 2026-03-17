@@ -2,13 +2,13 @@
   <div>
     <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
 
-      <div v-if="userEmailConfirmed === false || userEmailConfirmed === null">
+      <div v-if="userEmailConfirmed === false">
         <div class="confirmation-message">
           <p>Please verify your email to get started. Check your inbox for a confirmation link.</p>
         </div>
       </div>
 
-      <div v-else>
+      <div v-else-if="userEmailConfirmed === true">
         <TheLoadingSpinner v-if="isLoading" message="Loading your pets..." />
 
         <div v-else-if="ownPets.length > 0 || carerPets.length > 0" class="pets-container">
@@ -38,16 +38,13 @@
           <div class="title-and-button-container">
             <h2 class="section-title">My pets</h2>
           </div>
-          <TheEmptyState
-            icon="pawOutline"
-            title="No pets yet"
-            message="Add your first pet to get started!"
-            actionLabel="Add Pet"
-            actionIcon="addCircleOutline"
-            @action="router.push({ name: 'add-pet' })"
-          />
+          <TheEmptyState icon="pawOutline" title="No pets yet" message="Add your first pet to get started!" actionLabel="Add Pet"
+            actionIcon="addCircleOutline" @action="router.push({ name: 'add-pet' })" />
         </div>
       </div>
+
+      <TheLoadingSpinner v-else message="Loading..." />
+
     </div>
 
     <TheFooter />
@@ -78,7 +75,7 @@ const ownPets: Ref<Pet[]> = ref([]);
 const carerPets: Ref<Pet[]> = ref([]);
 const isLoading = ref(true);
 
-const userEmailConfirmed: Ref<boolean> = ref(false);
+const userEmailConfirmed: Ref<boolean | null> = ref(null);
 
 const updatePetLists = async () => {
   if (petStore.pets.length === 0) {

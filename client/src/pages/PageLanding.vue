@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="page-root">
     <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="login-register-container">
-        <TheLogoImage altText="Needypet Logo" />
+        <TheLogoImage altText="NeedyPet Logo" />
 
-        <h4 class="text-center">
+        <h4 class="text-center paw-header-container">
           <PawPrint class="inline-block w-5 h-5" />
           All your pet's needs, one place
           <PawPrint class="inline-block w-5 h-5" />
