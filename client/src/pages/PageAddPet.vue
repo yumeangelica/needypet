@@ -102,14 +102,6 @@ const dateSelected = (event: Event) => {
   }
 };
 
-const formattedDate = computed(() => {
-  if (!newPetObject.value.birthday) {
-    return '';
-  }
-  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-  return new Date(newPetObject.value.birthday).toLocaleDateString(undefined, options);
-});
-
 onBeforeRouteLeave((to, from, next) => {
   newPetObject.value = {
     name: '',

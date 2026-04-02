@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page-root">
     <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="login-register-container">
         <TheLogoImage altText="NeedyPet logo" />

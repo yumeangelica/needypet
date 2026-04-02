@@ -124,12 +124,6 @@ const dateSelected = (event: Event) => {
   }
 };
 
-const formattedDate = computed(() => {
-  return existingPetObject.value.birthday
-    ? new Date(existingPetObject.value.birthday).toLocaleDateString('en-GB')
-    : '';
-});
-
 const confirmUpdatePet = () => {
   showUpdateDialog.value = true;
 };
@@ -150,10 +144,6 @@ const updatePet = async () => {
   } else {
     console.error('Failed to update pet');
   }
-};
-
-const confirmDeletePet = () => {
-  showDeleteDialog.value = true;
 };
 
 const deletePet = async () => {

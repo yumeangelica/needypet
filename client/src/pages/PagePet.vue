@@ -216,11 +216,6 @@ const needsByDateComputed = computed(() => {
   }, {});
 });
 
-const units = {
-  duration: 'minutes',
-  quantity: ['ml', 'g'],
-};
-
 const setOpen = (open: boolean) => {
   isOpen.value = open;
   clearFields();
@@ -307,10 +302,10 @@ const addNewNeed = async () => {
       setOpen(false);
       await getPet(pet.value.id);
     } else {
-      appStore.addNotification("Couldn't save the need. Please try again.", 'error');
+      appStore.addNotification('Couldn\'t save the need. Please try again.', 'error');
     }
   } catch (_error) {
-    appStore.addNotification("Couldn't save the need. Please try again.", 'error');
+    appStore.addNotification('Couldn\'t save the need. Please try again.', 'error');
   }
 };
 
