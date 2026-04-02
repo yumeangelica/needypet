@@ -1,5 +1,7 @@
 **Disclaimer**: This timesheet was intended for the Full Stack Open course project. I will continue to develop the NeedyPet app but will no longer log the hours here. The project will be maintained and updated on GitHub.
 
+**Historical Note**: This file is a development log and includes older technology choices from earlier stages of the project (for example Ionic and Axios references). Current stack details are documented in [README](../README.md).
+
 | Date      | Tasks                                                                                                                                                                | Hours Spent |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | 11.12.23  | Plan the project idea: NeedyPet, a pet care management app.                                                                                                          | 2           |
