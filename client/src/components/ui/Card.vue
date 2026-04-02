@@ -2,6 +2,10 @@
 import { type HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
 
+defineOptions({
+  name: 'UiCard',
+});
+
 const props = defineProps<{
   class?: HTMLAttributes['class'];
 }>();

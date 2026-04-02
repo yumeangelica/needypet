@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { SwitchRoot, SwitchThumb } from 'reka-ui';
 import { cn } from '@/lib/utils';
+
+defineOptions({
+  name: 'UiSwitch',
+});
 
 const props = defineProps<{
   checked?: boolean;

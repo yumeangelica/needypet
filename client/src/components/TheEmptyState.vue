@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, type Component } from 'vue';
 import { PawPrint, CirclePlus } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -27,7 +27,7 @@ defineEmits<{
 }>();
 
 // Map ionicon string names to Lucide components
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, Component> = {
   'paw-outline': PawPrint,
   'pawOutline': PawPrint,
   'add-circle-outline': CirclePlus,
