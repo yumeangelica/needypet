@@ -1,10 +1,27 @@
 // @ts-check
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { axiosInstance } from '@/services';
+import { apiClient } from '@/services';
 import { UserStoreState, User, loginData } from '@/types/user';
 import { useAppStore } from '@/store/app';
 
 const servicePath = '/auth';
+
+interface UpdateUserResponse {
+  userName: string;
+  email: string;
+  timezone: string;
+  message?: string;
+}
+
+interface MessageResponse {
+  message?: string;
+}
+
+interface LoginResponse {
+  token: string;
+  user: User;
+  message?: string;
+}
 
 /**
  * @description Set an item in the local storage
@@ -63,7 +80,7 @@ export const useUserStore = defineStore('user', {
      * @param id
      * @returns
      */
-    async getUserById(id: string): Promise<User> {
+    async getUserById(id: string): Promise<User | null> {
       if (!id) {
         return null;
       }
@@ -72,7 +89,7 @@ export const useUserStore = defineStore('user', {
         return null;
       }
 
-      const response = axiosInstance({
+      const response = apiClient<User>({
         method: 'get',
         url: `${servicePath}/users/${id}`,
         headers: {
@@ -109,7 +126,7 @@ export const useUserStore = defineStore('user', {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
-        const response = await axiosInstance.post(`${servicePath}/users`, {
+        const response = await apiClient.post(`${servicePath}/users`, {
           userName,
           email,
           newPassword,
@@ -150,7 +167,7 @@ export const useUserStore = defineStore('user', {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
-        const response = await axiosInstance.put(
+        const response = await apiClient.put<UpdateUserResponse>(
           `${servicePath}/users/${this.id}`,
           { userName, email, timezone, currentPassword },
           {
@@ -208,7 +225,7 @@ export const useUserStore = defineStore('user', {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
       try {
-        const response = await axiosInstance.put(
+        const response = await apiClient.put<MessageResponse>(
           `${servicePath}/users/${this.id}`,
           { currentPassword, newPassword },
           {
@@ -252,7 +269,7 @@ export const useUserStore = defineStore('user', {
      */
     async deleteAccount(): Promise<{ isSuccess: boolean; message?: string }> {
       try {
-        const response = await axiosInstance.delete(
+        const response = await apiClient.delete(
           `${servicePath}/users/${this.id}`,
           {
             headers: {
@@ -297,7 +314,7 @@ export const useUserStore = defineStore('user', {
 
     async login(userName: string, password: string): Promise<loginData> {
       try {
-        const response = await axiosInstance({
+        const response = await apiClient<LoginResponse>({
           method: 'post',
           url: `${servicePath}/login`,
           headers: {
@@ -361,7 +378,7 @@ export const useUserStore = defineStore('user', {
         return false;
       }
 
-      const response = axiosInstance({
+      const response = apiClient({
         method: 'post',
         url: `${servicePath}/validatetoken`,
         headers: {
@@ -389,7 +406,7 @@ export const useUserStore = defineStore('user', {
      * @returns
      */
     async confirmEmail(email: string, token: string): Promise<boolean> {
-      const response = axiosInstance({
+      const response = apiClient({
         method: 'post',
         url: `${servicePath}/verify-email-confirmation-token`,
         headers: {
@@ -422,7 +439,7 @@ export const useUserStore = defineStore('user', {
         return false;
       }
       const appStore = useAppStore();
-      const response = await axiosInstance({
+      const response = await apiClient({
         method: 'post',
         url: `${servicePath}/resend-email-confirmation`,
         headers: {
@@ -460,7 +477,7 @@ export const useUserStore = defineStore('user', {
      * @returns
      */
     async requestPasswordReset(email: string): Promise<boolean> {
-      const response = axiosInstance({
+      const response = apiClient({
         method: 'post',
         url: `${servicePath}/request-password-reset`,
         headers: {
@@ -493,7 +510,7 @@ export const useUserStore = defineStore('user', {
       email: string,
       token: string
     ): Promise<boolean> {
-      const response = axiosInstance({
+      const response = apiClient({
         method: 'post',
         url: `${servicePath}/verify-password-reset-token`,
         headers: {
@@ -529,7 +546,7 @@ export const useUserStore = defineStore('user', {
       token: string,
       newPassword: string
     ): Promise<boolean> {
-      const response = axiosInstance({
+      const response = apiClient({
         method: 'post',
         url: `${servicePath}/password-reset`,
         headers: {

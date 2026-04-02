@@ -2,7 +2,11 @@
 import { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectViewport, SelectItem, SelectItemText, SelectItemIndicator } from 'reka-ui';
 import { ChevronDown, Check } from 'lucide-vue-next';
 
-const props = defineProps<{
+defineOptions({
+  name: 'UiSelect',
+});
+
+defineProps<{
   modelValue?: string;
   placeholder?: string;
   options: { value: string; label: string }[];

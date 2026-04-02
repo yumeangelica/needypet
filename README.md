@@ -10,10 +10,12 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
 
 - **User Registration and Authentication**:
   - **Registration**: New users create an account by providing a username, password, email, and selecting their timezone.
+  - **Email Verification**: Users receive a confirmation email upon registration and must verify their email before accessing full functionality.
   - **Login**: Users log in to access their profiles and manage pet details. Passwords are securely hashed and stored.
+  - **Password Recovery**: Users can request a password reset link via email if they forget their password.
 
 - **User Profiles**:
-  - **Profile Management**: Users can update their profile information including name, email, password, and can delete their profiles.
+  - **Profile Management**: Users can update their profile information including username, email, timezone, and password, and can delete their accounts.
   - **Roles and Permissions**:
     - **Pet Owners**: Can add, update, delete pets and manage detailed pet profiles including care needs.
     - **Carers** (Backend Only): Can complete needs but cannot modify pet ownership details or toggle need statuses. Frontend support for carer roles is planned.
@@ -28,16 +30,16 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
     - **Description**: Detailed information about the need.
     - **Duration or Quantity**: Needs can specify a duration in minutes or a quantity in milliliters or grams.
   - **Need Management**:
-    - Needs can be added, viewed, updated, deleted, or toggled by owners; only active needs are carried over to the next day.
+    - Needs can be added, viewed, updated, deleted, or toggled active/inactive by owners.
     - Carers can view and complete needs.
   - **Daily needs algorithm**:
-    - Needs are automatically carried over to the next day and set to uncompleted if they are not toggled inactive with a toggle switch from need card. Updating happens at midnight in the user's timezone.
+    - Active needs are automatically carried over to the next day and set to uncompleted. Inactive needs are not carried over. The rollover happens at midnight in the user's timezone.
 
 - **Activity History**:
   - Logs of all care activities (completed, missed, or pending) provide comprehensive monitoring of pet care.
 
 - **Responsive Design**:
-  - The application is optimized for various devices, ensuring a consistent user experience across desktops, tablets, and smartphones.
+  - The application features a fully responsive layout with dedicated desktop and mobile navigation, optimized for various screen sizes including desktops, tablets, and smartphones.
 
 - **Security and Data Integrity**:
   - Robust error handling and authentication mechanisms ensure data integrity and privacy.
@@ -45,44 +47,42 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
 ## How to Use the Application
 
 1. **Initial Setup**:
-   - **New Users**: Register via the landing page by entering required details.
+   - **New Users**: Register via the landing page by entering your username, email, password, and selecting your timezone.
+   - **Email Verification**: Check your inbox for a confirmation email and verify your account.
    - **Returning Users**: Log in to access your account.
 
 2. **Pet Management**:
    - View your pets on the homepage after logging in.
-   - Add new pets by clicking **Add Pet**, filling in details, and clicking **Save**.
+   - Add new pets by clicking **Add Pet**, filling in details (name, breed, species, description, birthday), and submitting.
 
 3. **Viewing and Editing Pet Details**:
    - Access pet details by clicking on a pet card.
-   - Edit pet details or delete pets as needed.
+   - Edit pet details or delete pets via the settings icon on the pet's page.
    - Add needs by clicking **Add Need** and filling out the relevant information.
 
 4. **Managing Needs**:
-   - Enter need details in the **Add Need** modal and save.
-   - Needs can be managed on the need card on the pet’s page; add, edit, delete, toggle inactive/active, and complete as necessary.
-   - Needs are automatically carried over to the next day and also set to uncompleted if they are not toggled inactive.
+   - Enter need details in the **Add Need** modal (category, description, measurement type, and value) and save.
+   - Needs can be managed on the need card on the pet's page: complete, edit, delete, or toggle active/inactive as necessary.
+   - Navigate between dates to view needs for different days.
+   - Active needs are automatically carried over to the next day and set to uncompleted.
 
 5. **User Profile and Security**:
-   - Update personal details or log out via the **Profile** button.
-   - Deleting your profile will remove all associated data and log you out permanently.
+   - Update personal details, change password, or log out via the **Profile** page.
+   - Access profile settings by clicking the settings icon next to your username.
+   - Deleting your account will remove all associated data and log you out permanently.
 
-## Upcoming Features in the Next Versions
+## Upcoming Features
 
-The following features are planned for the next version update of NeedyPet, enhancing functionality and user experience:
+The following features are planned for future versions of NeedyPet:
 
 1. **Caretaker Support Throughout the Application**:
-   - Extending caretaker functionalities to the frontend, allowing seamless management of caretaker permissions and responsibilities.
+   - Extending caretaker functionalities to the frontend, allowing seamless management of caretaker permissions and responsibilities, including email-based invitations for adding caretakers.
 
-2. **Email Integration with Nodemailer** (Partially Completed):
-   - **Account Verification**: Email verification during registration is implemented.
-   - **Password Recovery**: Password recovery via email is implemented.
-   - **Caretaker Invitations**: Simplify adding caretakers with email invitations, managing roles and permissions efficiently.
+2. **Activity Reminders and Notifications**:
+   - A notification system to alert users of upcoming care activities, ensuring pets receive consistent care.
 
-3. **Activity Reminders and Notifications**:
-   - Introduce a notification system to alert users of upcoming care activities, ensuring pets receive consistent care.
-
-4. **Native Mobile Applications**:
-   - Develop native applications for iOS and Android to provide a seamless mobile experience.
+3. **Native Mobile Applications**:
+   - Native applications for iOS and Android to provide a seamless mobile experience.
 
 #### Note
 
@@ -91,7 +91,8 @@ The following features are planned for the next version update of NeedyPet, enha
 ## Technical Setup
 
 - **Backend Technologies**: MongoDB, Express.js, Node.js, JavaScript, Zod, ESLint
-- **Frontend Technologies**: Vue.js, Ionic, TypeScript, Vitest, Cypress, ESLint
+- **Frontend Technologies**: Vue.js 3 (Composition API), TypeScript, Tailwind CSS, Pinia, Vue Router, Lucide Vue Next, dayjs, Vitest, Cypress, ESLint
+- **Frontend API Client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts` (no Axios dependency)
 - **DevOps Tools**: Docker, Nginx
 
 ## Credits

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RadioGroupRoot, RadioGroupItem, RadioGroupIndicator } from 'reka-ui';
+import { RadioGroupRoot } from 'reka-ui';
 
 defineProps<{
   modelValue?: string;
@@ -11,7 +11,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <RadioGroupRoot :model-value="modelValue" @update:model-value="(v: any) => emit('update:modelValue', String(v))">
+  <RadioGroupRoot :model-value="modelValue" @update:model-value="(v: unknown) => emit('update:modelValue', String(v))">
     <slot />
   </RadioGroupRoot>
 </template>

@@ -2,6 +2,10 @@
 import { type HTMLAttributes, computed } from 'vue';
 import { cn } from '@/lib/utils';
 
+defineOptions({
+  name: 'UiButton',
+});
+
 const props = withDefaults(defineProps<{
   class?: HTMLAttributes['class'];
   variant?: 'default' | 'destructive' | 'outline' | 'ghost' | 'link';

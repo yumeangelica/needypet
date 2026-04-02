@@ -1,8 +1,8 @@
 // @ts-check
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { axiosInstance } from '@/services';
+import { apiClient } from '@/services';
 import { useUserStore } from './user';
-import { PetState, Pet, CareRecord } from '@/types/pet';
+import { PetState, Pet, CareRecord, Need } from '@/types/pet';
 
 const servicePath = '/api';
 
@@ -29,7 +29,7 @@ export const usePetStore = defineStore('pet', {
         Authorization: `bearer ${token}`,
       };
 
-      const response = axiosInstance({
+      const response = apiClient<Pet[]>({
         method: 'get',
         url: `${servicePath}/pets`,
         headers,
@@ -64,7 +64,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await axiosInstance.post(
+        const response = await apiClient.post(
           `${servicePath}/pets`,
           newPetObject,
           { headers }
@@ -92,7 +92,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await axiosInstance.delete(
+        const response = await apiClient.delete(
           `${servicePath}/pets/${petId}`,
           { headers }
         );
@@ -119,7 +119,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await axiosInstance.put(
+        const response = await apiClient.put(
           `${servicePath}/pets/${petId}`,
           petData,
           { headers }
@@ -156,7 +156,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await axiosInstance({
+        const response = await apiClient({
           method: 'patch',
           url: `${servicePath}/pets/${petId}/needs/${needId}/togglestatus`,
           headers,
@@ -203,7 +203,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await axiosInstance({
+        const response = await apiClient<{ needs: Need[] }>({
           method: 'put',
           url: `${servicePath}/pets/${petId}/needs/${needId}`,
           headers,
@@ -254,7 +254,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await axiosInstance({
+        const response = await apiClient({
           method: 'delete',
           url: `${servicePath}/pets/${petId}/needs/${needId}`,
           headers,
@@ -297,7 +297,7 @@ export const usePetStore = defineStore('pet', {
         Authorization: `bearer ${token}`,
       };
 
-      const response = axiosInstance({
+      const response = apiClient({
         method: 'post',
         url: `${servicePath}/pets/${petId}/needs/${needId}/newrecord`,
         headers,
@@ -351,7 +351,7 @@ export const usePetStore = defineStore('pet', {
         Authorization: `bearer ${token}`,
       };
 
-      const response = axiosInstance({
+      const response = apiClient<{ needs: Need[] }>({
         method: 'post',
         url: `${servicePath}/pets/${petId}/newneed`,
         headers,

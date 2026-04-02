@@ -2,6 +2,10 @@
 import { ref, watch, onBeforeUnmount } from 'vue';
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle, DialogDescription, DialogClose } from 'reka-ui';
 
+defineOptions({
+  name: 'UiDialog',
+});
+
 const props = withDefaults(defineProps<{
   open: boolean;
   title?: string;
@@ -45,8 +49,7 @@ function handleOpenChange(val: boolean) {
   <DialogRoot :open="internalOpen" @update:open="handleOpenChange">
     <DialogPortal v-if="shouldRender">
       <DialogOverlay class="dialog-overlay fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
-      <DialogContent
-        class="dialog-content fixed z-50 w-[95%] rounded-3xl bg-card border border-card-border shadow-lg overflow-hidden"
+      <DialogContent class="dialog-content fixed z-50 w-[95%] rounded-3xl bg-card border border-card-border shadow-lg overflow-hidden"
         :style="{ maxWidth }">
         <div v-if="title || $slots.header" class="bg-primary px-6 py-3 flex items-center justify-between">
           <DialogTitle v-if="title" class="text-lg font-sans text-primary-foreground">{{ title }}</DialogTitle>
@@ -86,13 +89,23 @@ function handleOpenChange(val: boolean) {
 }
 
 @keyframes overlay-show {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes overlay-hide {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes content-show {
@@ -100,6 +113,7 @@ function handleOpenChange(val: boolean) {
     opacity: 0;
     transform: translate(-50%, -48%) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -111,6 +125,7 @@ function handleOpenChange(val: boolean) {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translate(-50%, -48%) scale(0.96);

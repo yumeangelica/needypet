@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page-root">
     <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <!-- Email confirmation -->
       <div v-if="confirmationType === 'email'">
