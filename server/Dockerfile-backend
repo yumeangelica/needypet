@@ -1,5 +1,5 @@
 # Use node 22 as the base image (app runs on the Node runtime)
-FROM node:22
+FROM node:24
 
 # Install Bun, used only for dependency installation
 RUN npm install -g bun
