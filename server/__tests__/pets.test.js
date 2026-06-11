@@ -157,6 +157,37 @@ describe('Pet API', () => {
 
       assert.strictEqual(response.status, 422);
     });
+
+    it('returns 404 when the care taker does not exist', async () => {
+      const missingUserId = new mongoose.Types.ObjectId().toString();
+
+      const response = await api
+        .post('/api/pets')
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .send({ name: 'Rex', careTaker: missingUserId });
+
+      assert.strictEqual(response.status, 404);
+    });
+
+    it('creates a pet with a valid care taker', async () => {
+      const { user: caretaker } = await createUserWithToken({
+        userName: 'petCaretaker',
+        email: 'pet-caretaker@example.com',
+      });
+
+      const response = await api
+        .post('/api/pets')
+        .set('Authorization', `Bearer ${ownerToken}`)
+        .send({ name: 'Rex', careTaker: caretaker._id.toString() });
+
+      assert.strictEqual(response.status, 201);
+
+      const petInDb = await Pet.findOne({ name: 'Rex', owner: owner._id });
+      assert.ok(
+        petInDb.careTakers.some((id) => id.equals(caretaker._id)),
+        'expected the care taker to be added to the pet',
+      );
+    });
   });
 
   describe('PUT /api/pets/:id', () => {
