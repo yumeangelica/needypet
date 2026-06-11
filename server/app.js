@@ -12,7 +12,7 @@ const dbReady = require('./middlewares/dbReadyMiddleware');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 const { updatePetNeedstoNextDays } = require('./helper');
-const { corsHeaders, corsOptions } = require('./utils/corsConfig');
+const { corsOptions } = require('./utils/corsConfig');
 const helmet = require('helmet');
 const { isTesting, isProduction, allowedOrigins } = require('./utils/config');
 const path = require('node:path');
@@ -28,9 +28,6 @@ connectDatabase();
 
 // Cors configuration
 app.use(cors(corsOptions));
-
-// Cors headers
-app.use(corsHeaders);
 
 // Helmet
 app.use(
