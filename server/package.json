@@ -7,8 +7,8 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "test": "cross-env NODE_ENV=testing node --test --test-concurrency=1 __tests__/*.test.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "author": "yumeangelica",
   "license": "SEE LICENSE IN LICENSE",
@@ -16,19 +16,18 @@
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "cross-env": "^10.1.0",
-    "dayjs": "^1.11.19",
-    "dotenv": "^17.3.1",
+    "dayjs": "^1.11.21",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "helmet": "^8.1.0",
-    "jose": "^6.2.0",
-    "mongoose": "^9.2.4",
+    "helmet": "^8.2.0",
+    "jose": "^6.2.3",
+    "mongoose": "^9.7.0",
     "node-cron": "^4.2.1",
-    "nodemailer": "^8.0.1",
-    "zod": "^4.3.6"
+    "nodemailer": "^8.0.11",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "eslint": "^10.0.2",
-    "eslint-config-xo": "^0.50.0",
+    "@biomejs/biome": "2.4.16",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
   }
