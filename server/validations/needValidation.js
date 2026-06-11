@@ -1,48 +1,40 @@
 const { z } = require('zod');
 
-const dateForSchema = z.date({
-  dateFor: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-});
+// The dateFor value is converted to a Date in the controller before validation runs.
+const dateForSchema = z.date({ message: 'A valid date is required' });
 
-const categorySchema = z.string({
-  category: z.string().min(3).max(50),
-});
+const categorySchema = z
+  .string()
+  .min(3, { message: 'Category must be at least 3 characters' })
+  .max(50, { message: 'Category must be at most 50 characters' });
 
-const descriptionSchema = z.string({
-  description: z.string().max(1000),
-});
+const descriptionSchema = z
+  .string()
+  .max(1000, { message: 'Description must be at most 1000 characters' });
 
-const timesSchema = z.number({
-  times: z.number().min(1),
-});
+const timesSchema = z.number().min(1);
 
-const periodicityUnitSchema = z.string({
-  unit: z.enum(['daily', 'weekly', 'monthly', 'yearly', 'custom']),
-});
+const periodicityUnitSchema = z.enum([
+  'daily',
+  'weekly',
+  'monthly',
+  'yearly',
+  'custom',
+]);
 
-const periodicityIntervalSchema = z.number({
-  interval: z.number().min(1),
-});
+const periodicityIntervalSchema = z.number().min(1);
 
-const periodicityCustomIntervalDaysSchema = z.number({
-  customIntervalDays: z.number().min(1),
-});
+const periodicityCustomIntervalDaysSchema = z.number().min(1);
 
-const periodicityStartDateSchema = z.date({
-  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
-});
+const isoDateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
-const periodicityEndDateSchema = z.date({
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
-});
+const periodicityStartDateSchema = z.string().regex(isoDateTimeRegex);
 
-const periodicityNextReminderSchema = z.date({
-  nextReminder: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
-});
+const periodicityEndDateSchema = z.string().regex(isoDateTimeRegex);
 
-const periodicityActiveSchema = z.boolean({
-  active: z.boolean(),
-});
+const periodicityNextReminderSchema = z.string().regex(isoDateTimeRegex);
+
+const periodicityActiveSchema = z.boolean();
 
 const periodicitySchema = z.object({
   unit: periodicityUnitSchema,
@@ -59,43 +51,32 @@ const frequencySchema = z.object({
   periodicity: periodicitySchema,
 });
 
-const quantityValueSchema = z.number({
-  value: z.number(),
-});
+const quantityValueSchema = z.number({ message: 'Quantity value must be a number' });
 
-const quantityUnitSchema = z.string({
-  unit: z.enum(['ml', 'g']),
-});
+const quantityUnitSchema = z.enum(['ml', 'g'], { message: 'Quantity unit must be ml or g' });
 
 const quantitySchema = z.object({
   value: quantityValueSchema,
   unit: quantityUnitSchema,
 });
 
-const durationValueSchema = z.number({
-  value: z.number().min(1).max(1440),
-});
+const durationValueSchema = z
+  .number({ message: 'Duration value must be a number' })
+  .min(1, { message: 'Duration must be at least 1 minute' })
+  .max(1440, { message: 'Duration cannot be over 1440 minutes' });
 
-const durationUnitSchema = z.string({
-  unit: z.enum('minutes'),
-});
+const durationUnitSchema = z.enum(['minutes'], { message: 'Duration unit must be minutes' });
 
 const durationSchema = z.object({
   value: durationValueSchema,
   unit: durationUnitSchema,
 });
 
-const completedSchema = z.boolean({
-  completed: z.boolean(),
-});
+const completedSchema = z.boolean();
 
-const archivedSchema = z.boolean({
-  archived: z.boolean(),
-});
+const archivedSchema = z.boolean();
 
-const isActiveSchema = z.boolean({
-  isActive: z.boolean(),
-});
+const isActiveSchema = z.boolean();
 
 const needSchema = z.object({
   dateFor: dateForSchema,

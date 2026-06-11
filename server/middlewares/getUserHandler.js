@@ -14,7 +14,7 @@ const getUserHandler = async (request, response, next) => {
     const user = await User.findById(id);
 
     if (!user) {
-      return response.status(404).json({ error: 'User not found' });
+      return response.status(404).json({ message: 'User not found' });
     }
 
     request.user = user;

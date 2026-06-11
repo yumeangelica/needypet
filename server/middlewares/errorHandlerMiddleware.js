@@ -28,15 +28,15 @@ const errorHandler = (error, request, response, next) => {
     case 'Unauthorized':
       errorResponse.message = 'Unauthorized';
       return response.status(401).json(errorResponse);
-    case 'TokenExpiredError': // jsonwebtoken legacy
-    case 'JWTExpired': // jose
+    case 'TokenExpiredError': // Jsonwebtoken legacy
+    case 'JWTExpired': // Jose
       errorResponse.message = 'Token Expired';
       return response.status(401).json(errorResponse);
-    case 'JsonWebTokenError': // jsonwebtoken legacy
-    case 'JWSSignatureVerificationFailed': // jose
-    case 'JWTClaimValidationFailed': // jose
-    case 'JWTInvalid': // jose
-    case 'JWSInvalid': // jose - invalid compact JWS
+    case 'JsonWebTokenError': // Jsonwebtoken legacy
+    case 'JWSSignatureVerificationFailed': // Jose
+    case 'JWTClaimValidationFailed': // Jose
+    case 'JWTInvalid': // Jose
+    case 'JWSInvalid': // Jose - invalid compact JWS
       errorResponse.message = 'Invalid token';
       return response.status(401).json(errorResponse);
     case 'Forbidden':
@@ -47,7 +47,9 @@ const errorHandler = (error, request, response, next) => {
     case 'Pet not found':
       return response.status(404).json(errorResponse);
     case 'ValidationError':
-      errorResponse.details = error.errors;
+      // Expose per-field messages in the same { field: [messages] } shape the
+      // frontend and the controllers' zod responses use.
+      errorResponse.errorDetails = Object.fromEntries(Object.entries(error.errors).map(([field, fieldError]) => [field, [fieldError.message]]));
       return response.status(422).json(errorResponse);
     case 'MongoServerError':
       if (error.code === 11000) {
@@ -58,7 +60,7 @@ const errorHandler = (error, request, response, next) => {
 
       return response.status(statusCode).json(errorResponse);
     case 'ZodError':
-      errorResponse.details = error.flatten();
+      errorResponse.errorDetails = error.flatten().fieldErrors;
       return response.status(422).json(errorResponse);
 
     case 'SMTPAuthenticationError': // Specific SMTP authentication error

@@ -8,6 +8,7 @@ const getUserHandler = require('./middlewares/getUserHandler');
 const requestLogger = require('./middlewares/requestLoggerMiddleware');
 const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
+const dbReady = require('./middlewares/dbReadyMiddleware');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 const { updatePetNeedstoNextDays } = require('./helper');
@@ -55,8 +56,8 @@ if (!isTesting) {
 }
 
 // Routes
-app.use('/auth', usersRoutes);
-app.use('/api', authenticateToken, getUserHandler, petsRoutes);
+app.use('/auth', dbReady, usersRoutes);
+app.use('/api', dbReady, authenticateToken, getUserHandler, petsRoutes);
 
 if (isProduction) {
   app.use(express.static(path.join(__dirname, 'dist')));
