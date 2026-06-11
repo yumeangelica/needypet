@@ -7,7 +7,7 @@
  */
 const petOwnerValidationMiddleware = (request, response, next) => {
   if (request.pet.owner.toString() !== request.user._id.toString()) {
-    return response.status(401).json({ error: 'Unauthorized' });
+    return response.status(401).json({ message: 'Unauthorized' });
   }
 
   next();

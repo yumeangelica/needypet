@@ -36,7 +36,7 @@ const getUserByName = async (request, response, next) => {
     const userName = request.params.userName;
     const user = await User.findOne({ userName });
     if (!user) {
-      return response.status(404).json({ error: 'User not found' });
+      return response.status(404).json({ message: 'User not found' });
     }
 
     response.status(200).json({ id: user._id, userName: user.userName });
@@ -306,7 +306,7 @@ const validateUserToken = async (request, response, next) => {
   const authHeader = request.headers.authorization; // Get authorization header
   let token = null; // Initialize token so it can be used outside of if statement
   if (!authHeader) {
-    return response.status(401).json({ error: 'Token missing or invalid' });
+    return response.status(401).json({ message: 'Token missing or invalid' });
   }
 
   if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
@@ -317,7 +317,7 @@ const validateUserToken = async (request, response, next) => {
     const { payload } = await jwtVerify(token, jwtSecretEncoded); // Verify token with secret key
 
     if (!payload.id) {
-      return response.status(401).json({ error: 'Token invalid' });
+      return response.status(401).json({ message: 'Token invalid' });
     }
 
     console.log('Token validated:', token);
@@ -337,11 +337,11 @@ const verifyEmailConfirmationToken = async (request, response, next) => {
     const user = await User.findOne({ email, emailConfirmToken: token }); // Find user by email and token
 
     if (!user) { // If user not found or token is invalid
-      return response.status(401).json({ error: 'Invalid token' });
+      return response.status(401).json({ message: 'Invalid token' });
     }
 
     if (!user.verifyEmailConfirmToken(token)) {
-      return response.status(401).json({ error: 'Token expired' });
+      return response.status(401).json({ message: 'Token expired' });
     }
 
     user.emailConfirmed = true; // Set emailConfirmed to true
@@ -362,7 +362,7 @@ const resendEmailConfirmation = async (request, response, next) => {
   const user = request.user; // User is attached to the request object by getUserHandler middleware
 
   if (!user.canResendVerificationEmail()) {
-    return response.status(400).json({ error: 'Cannot resend email confirmation yet' });
+    return response.status(400).json({ message: 'Cannot resend email confirmation yet' });
   }
 
   try {
@@ -386,7 +386,7 @@ const verifyPasswordResetToken = async (request, response, next) => {
     const user = await User.findOne({ email, passwordResetToken: token }); // Find user by email and token
 
     if (!user || !user.verifyPasswordResetToken(token)) { // If user not found or token is invalid
-      return response.status(401).json({ error: 'Invalid token' });
+      return response.status(401).json({ message: 'Invalid token' });
     }
 
     response.status(200).json({ message: 'Token is valid' });
@@ -405,7 +405,7 @@ const passwordReset = async (request, response, next) => {
     const user = await User.findOne({ email, passwordResetToken: token }); // Find user by email and token
 
     if (!user || !user.verifyPasswordResetToken(token)) { // If user not found or token is invalid
-      return response.status(401).json({ error: 'Invalid token' });
+      return response.status(401).json({ message: 'Invalid token' });
     }
 
     await user.setPassword(newPassword); // Set new password

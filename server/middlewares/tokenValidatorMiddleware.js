@@ -14,7 +14,7 @@ const authenticateToken = async (request, response, next) => {
   request.decodedToken = null; // Initialize user so it can be used outside of try-catch block
 
   if (!authHeader) {
-    return response.status(401).json({ error: 'Token missing or invalid' });
+    return response.status(401).json({ message: 'Token missing or invalid' });
   }
 
   if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
@@ -25,7 +25,7 @@ const authenticateToken = async (request, response, next) => {
     const { payload } = await jwtVerify(token, jwtSecretEncoded); // Verify token with secret key
 
     if (!payload.id) {
-      return response.status(401).json({ error: 'Token invalid' });
+      return response.status(401).json({ message: 'Token invalid' });
     }
 
     request.decodedToken = payload; // Add decoded token to request object
