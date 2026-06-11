@@ -12,7 +12,6 @@ import { useAppStore } from '@/store/app';
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 const year = new Date().getFullYear();
-
 </script>
 
 <style scoped>

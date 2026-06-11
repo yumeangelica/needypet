@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Strong icon style for header icons */
 .icon-strong,
 .icon-strong svg,
@@ -12,7 +14,6 @@
   color: var(--color-primary-foreground) !important;
   fill: var(--color-primary-foreground) !important;
 }
-@import "tailwindcss";
 
 /* ============================================
    NeedyPet — Custom Theme (Pastel Pink/Lilac)
@@ -348,10 +349,13 @@ li {
   box-sizing: border-box;
 }
 
-/* form-field-input: the actual input/textarea inside .form-field */
+/* Shared input styling.
+   .form-field-input: input/textarea inside a .form-field wrapper.
+   .form-field-item: standalone variant (TheNeedCard edit modal). */
 .form-field-input,
 input.form-field-input,
-textarea.form-field-input {
+textarea.form-field-input,
+.form-field-item {
   width: 100%;
   padding: 10px 16px;
   background: var(--color-auth-input-bg);
@@ -367,7 +371,8 @@ textarea.form-field-input {
 
 .form-field-input::placeholder,
 input.form-field-input::placeholder,
-textarea.form-field-input::placeholder {
+textarea.form-field-input::placeholder,
+.form-field-item::placeholder {
   color: var(--color-foreground);
   font-style: italic;
   opacity: 0.55;
@@ -375,7 +380,8 @@ textarea.form-field-input::placeholder {
 
 .form-field-input:focus,
 input.form-field-input:focus,
-textarea.form-field-input:focus {
+textarea.form-field-input:focus,
+.form-field-item:focus {
   border-color: var(--color-card-border);
   box-shadow: 0 0 0 3px rgba(178, 110, 150, 0.15);
 }
@@ -412,31 +418,9 @@ span.form-field-input {
   cursor: pointer;
 }
 
-/* form-field-item: standalone styled input (used in TheNeedCard edit modal) */
+/* form-field-item only differs from form-field-input by its own bottom margin */
 .form-field-item {
-  width: 100%;
-  padding: 10px 16px;
-  background: var(--color-auth-input-bg);
-  border: 2px solid transparent;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-  color: var(--color-foreground);
-  outline: none;
   margin-bottom: 4px;
-  box-sizing: border-box;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.form-field-item::placeholder {
-  color: var(--color-foreground);
-  font-style: italic;
-  opacity: 0.55;
-}
-
-.form-field-item:focus {
-  border-color: var(--color-card-border);
-  box-shadow: 0 0 0 3px rgba(178, 110, 150, 0.15);
 }
 
 textarea.form-field-item {
@@ -698,6 +682,61 @@ textarea.form-field-item {
   align-items: center;
   justify-content: center;
   padding: 20px;
+}
+
+/* ============================================
+   Dialog / AlertDialog open-close animations (shared)
+   ============================================ */
+
+.ui-dialog-overlay {
+  animation: ui-overlay-show 150ms ease-out;
+}
+
+.ui-dialog-overlay[data-state='closed'] {
+  animation: ui-overlay-hide 100ms ease-in;
+}
+
+.ui-dialog-content {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: ui-content-show 200ms ease-out;
+}
+
+.ui-dialog-content[data-state='closed'] {
+  animation: ui-content-hide 150ms ease-in;
+}
+
+@keyframes ui-overlay-show {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ui-overlay-hide {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes ui-content-show {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes ui-content-hide {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
 }
 
 /* ============================================
