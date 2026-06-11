@@ -54,41 +54,36 @@ const getAllUserPets = async (request, response, next) => {
  * @returns
  */
 const addNewPet = async (request, response, next) => {
-  const newPetObject = {
-    name: request.body.name || '',
-    breed: request.body.breed || '',
-    description: request.body.description || '',
-    species: request.body.species || '',
-    birthday: request.body.birthday || '',
-    owner: '',
-    careTakers: [],
-  };
-
-  const owner = request.user; // Owner is the user who is making the request
-
-  newPetObject.owner = owner._id;
-
-  let careTaker;
-
-  if (request.body.careTaker && request.body.careTaker !== owner) {
-    careTaker = await User.findById(request.body.careTaker); // Find care taker by id
-
-    if (!careTaker) {
-      return 'no user';
-    }
-
-    if (!newPetObject.careTakers.includes(careTaker._id)) {
-      // If care taker is not in care takers array
-      newPetObject.careTakers.push(careTaker._id);
-    }
-  }
-
   try {
-    const pet = new Pet(newPetObject); // Creating new pet
+    const owner = request.user;
+
+    const newPetObject = {
+      name: request.body.name || '',
+      breed: request.body.breed || '',
+      description: request.body.description || '',
+      species: request.body.species || '',
+      birthday: request.body.birthday || '',
+      owner: owner._id,
+      careTakers: [],
+    };
+
+    if (request.body.careTaker && request.body.careTaker !== owner) {
+      const careTaker = await User.findById(request.body.careTaker);
+
+      if (!careTaker) {
+        return response.status(404).json({ message: 'Care taker not found' });
+      }
+
+      if (!newPetObject.careTakers.includes(careTaker._id)) {
+        newPetObject.careTakers.push(careTaker._id);
+      }
+    }
+
+    const pet = new Pet(newPetObject);
     await pet.save();
 
     if (!owner.pets.includes(pet._id)) {
-      owner.pets.push(pet._id); // Adding pet to owner's pets array
+      owner.pets.push(pet._id);
       await owner.save();
     }
 
