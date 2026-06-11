@@ -1,4 +1,12 @@
-const { describe, it, before, after, afterEach, beforeEach, mock } = require('node:test');
+const {
+  describe,
+  it,
+  before,
+  after,
+  afterEach,
+  beforeEach,
+  mock,
+} = require('node:test');
 const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
 const User = require('../models/userModel');
@@ -104,7 +112,10 @@ describe('POST /auth/users', () => {
 
     assert.strictEqual(response.status.mock.calls[0].arguments[0], 422);
     assert.strictEqual(response.json.mock.calls.length, 1);
-    assert.strictEqual(response.json.mock.calls[0].arguments[0].message, 'Validation error');
+    assert.strictEqual(
+      response.json.mock.calls[0].arguments[0].message,
+      'Validation error',
+    );
   });
 });
 
@@ -149,7 +160,10 @@ describe('POST /auth/users -testcases', () => {
 
       // Verify that the appropriate error response is sent
       assert.strictEqual(response.status.mock.calls[0].arguments[0], 422);
-      assert.strictEqual(response.json.mock.calls[0].arguments[0].message, 'Validation error');
+      assert.strictEqual(
+        response.json.mock.calls[0].arguments[0].message,
+        'Validation error',
+      );
     });
   }
 });

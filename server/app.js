@@ -15,11 +15,11 @@ const { updatePetNeedstoNextDays } = require('./helper');
 const { corsHeaders, corsOptions } = require('./utils/corsConfig');
 const helmet = require('helmet');
 const { isTesting, isProduction, allowedOrigins } = require('./utils/config');
-const path = require('path');
+const path = require('node:path');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
-if (process.env.NODE_ENV !== 'test') {
+if (!isTesting) {
   app.use(requestLogger); // Request logger
 }
 
@@ -33,22 +33,24 @@ app.use(cors(corsOptions));
 app.use(corsHeaders);
 
 // Helmet
-app.use(helmet({
-  referrerPolicy: { policy: 'no-referrer' },
-  noSniff: true,
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ['\'self\''],
-      scriptSrc: ['\'self\'', '\'unsafe-inline\''],
-      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com'],
-      fontSrc: ['\'self\'', 'fonts.gstatic.com'],
-      imgSrc: ['\'self\'', 'data:'],
-      connectSrc: ['\'self\'', allowedOrigins],
-      objectSrc: ['\'none\''],
-      upgradeInsecureRequests: [],
+app.use(
+  helmet({
+    referrerPolicy: { policy: 'no-referrer' },
+    noSniff: true,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+        fontSrc: ["'self'", 'fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:'],
+        connectSrc: ["'self'", allowedOrigins],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
     },
-  },
-}));
+  }),
+);
 
 if (!isTesting) {
   // Run every hour

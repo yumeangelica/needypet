@@ -5,4 +5,3 @@ const { backendPort } = require('./utils/config');
 app.listen(backendPort, () => {
   console.log(`Server running on port ${backendPort}`);
 });
-

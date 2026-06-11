@@ -29,102 +29,72 @@ const petSchema = new mongoose.Schema({
     required: true,
     ref: 'User',
   },
-  careTakers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  needs: [{
-    dateFor: {
-      type: Date,
-      required: true,
+  careTakers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
-    category: {
-      type: String,
-      required: true,
-      minlength: 3,
-      maxlength: 50,
-    },
-    description: {
-      type: String,
-      maxlength: 1000,
-    },
-    // Frequency will be used in next version; will be used to generate notifications
-    frequency: { // Number of times per day, week, month, year
-      times: {
-        type: Number,
-        min: 1,
+  ],
+  needs: [
+    {
+      dateFor: {
+        type: Date,
+        required: true,
       },
-      periodicity: {
-        unit: {
-          type: String,
-          enum: ['daily', 'weekly', 'monthly', 'yearly', 'custom'],
-        },
-        interval: { // How often in the unit
+      category: {
+        type: String,
+        required: true,
+        minlength: 3,
+        maxlength: 50,
+      },
+      description: {
+        type: String,
+        maxlength: 1000,
+      },
+      // Frequency will be used in next version; will be used to generate notifications
+      frequency: {
+        // Number of times per day, week, month, year
+        times: {
           type: Number,
           min: 1,
         },
-        customIntervalDays: {
-          type: Number,
-          min: 1,
+        periodicity: {
+          unit: {
+            type: String,
+            enum: ['daily', 'weekly', 'monthly', 'yearly', 'custom'],
+          },
+          interval: {
+            // How often in the unit
+            type: Number,
+            min: 1,
+          },
+          customIntervalDays: {
+            type: Number,
+            min: 1,
+          },
+          startDate: {
+            type: Date,
+          },
+          endDate: {
+            type: Date,
+          },
+          nextReminder: {
+            type: Date,
+          },
+          active: {
+            type: Boolean,
+          },
         },
-        startDate: {
-          type: Date,
-        },
-        endDate: {
-          type: Date,
-        },
-        nextReminder: {
-          type: Date,
-        },
-        active: {
-          type: Boolean,
-        },
-      },
-    },
-    quantity: {
-      value: {
-        type: Number,
-      },
-      unit: { // For measurement unit
-        type: String,
-        maxlength: 20,
-        enum: ['ml', 'g'],
-      },
-    },
-    duration: {
-      value: {
-        type: Number,
-        max: 1440, // 24 hours
-      },
-      unit: {
-        type: String,
-        enum: ['minutes'],
-      },
-    },
-    completed: { // Automatically changes when all tasks of this need are completed -- logic need to be implemented
-      type: Boolean,
-      default: false,
-    },
-    careRecords: [{
-      date: {
-        type: Date, // UTC datetime
-      },
-      careTaker: { // User id, later will be connected to user model
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-      note: {
-        type: String,
-        maxlength: 300,
       },
       quantity: {
         value: {
           type: Number,
         },
-        unit: { // For measurement unit
+        unit: {
+          // For measurement unit
           type: String,
           maxlength: 20,
-          emit: ['ml', 'g'],
+          enum: ['ml', 'g'],
         },
       },
       duration: {
@@ -134,29 +104,74 @@ const petSchema = new mongoose.Schema({
         },
         unit: {
           type: String,
-          emit: 'minutes',
+          enum: ['minutes'],
         },
       },
-      timezone: { // Format 'Europe/Helsinki', will indicate where the record was created
-        type: String,
-        required: true,
-        default: 'UTC',
-        validator(timezone) {
-          const timezones = Intl.supportedValuesOf('timeZone');
-          return timezones.includes(timezone);
-        },
-        message: 'Invalid timezone',
+      completed: {
+        // Automatically changes when all tasks of this need are completed -- logic need to be implemented
+        type: Boolean,
+        default: false,
       },
-    }],
-    archived: { // When date is past, set to true
-      type: Boolean,
-      default: false,
+      careRecords: [
+        {
+          date: {
+            type: Date, // UTC datetime
+          },
+          careTaker: {
+            // User id, later will be connected to user model
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+          },
+          note: {
+            type: String,
+            maxlength: 300,
+          },
+          quantity: {
+            value: {
+              type: Number,
+            },
+            unit: {
+              // For measurement unit
+              type: String,
+              maxlength: 20,
+              emit: ['ml', 'g'],
+            },
+          },
+          duration: {
+            value: {
+              type: Number,
+              max: 1440, // 24 hours
+            },
+            unit: {
+              type: String,
+              emit: 'minutes',
+            },
+          },
+          timezone: {
+            // Format 'Europe/Helsinki', will indicate where the record was created
+            type: String,
+            required: true,
+            default: 'UTC',
+            validator(timezone) {
+              const timezones = Intl.supportedValuesOf('timeZone');
+              return timezones.includes(timezone);
+            },
+            message: 'Invalid timezone',
+          },
+        },
+      ],
+      archived: {
+        // When date is past, set to true
+        type: Boolean,
+        default: false,
+      },
+      isActive: {
+        // In case user wants to pause the need
+        type: Boolean,
+        default: true,
+      },
     },
-    isActive: { // In case user wants to pause the need
-      type: Boolean,
-      default: true,
-    },
-  }],
+  ],
 });
 
 petSchema.set('toJSON', {
@@ -170,12 +185,14 @@ petSchema.set('toJSON', {
 
     // Format birthday
     if (returnedObject.birthday) {
-      returnedObject.birthday = returnedObject.birthday.toISOString().split('T')[0]; // Yyyy-mm-dd
+      returnedObject.birthday = returnedObject.birthday
+        .toISOString()
+        .split('T')[0]; // Yyyy-mm-dd
     }
 
     // Process needs array
     if (returnedObject.needs) {
-      returnedObject.needs.forEach(need => {
+      returnedObject.needs.forEach((need) => {
         // Convert _id to id for each need
         if (need._id) {
           need.id = need._id.toString();
@@ -189,7 +206,7 @@ petSchema.set('toJSON', {
 
         // Process careRecords array within each need
         if (need.careRecords) {
-          need.careRecords.forEach(record => {
+          need.careRecords.forEach((record) => {
             // Convert _id to id for each care record
             if (record._id) {
               record.id = record._id.toString();

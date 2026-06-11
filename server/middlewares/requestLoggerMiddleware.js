@@ -10,7 +10,7 @@ const requestLogger = (request, response, next) => {
   const start = new Date();
 
   response.on('finish', () => {
-    const duration = new Date() - start;
+    const duration = Date.now() - start;
     const logParts = [
       new Date().toISOString(),
       request.method,
@@ -22,7 +22,10 @@ const requestLogger = (request, response, next) => {
 
     // Log query and body in development mode
     if (isDevelopment) {
-      logParts.push(`Query: ${JSON.stringify(request.query)}`, `Body: ${JSON.stringify(request.body)}`);
+      logParts.push(
+        `Query: ${JSON.stringify(request.query)}`,
+        `Body: ${JSON.stringify(request.body)}`,
+      );
     }
 
     console.log(logParts.join(' '));

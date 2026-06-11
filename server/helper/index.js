@@ -12,21 +12,31 @@ dayjs.extend(isSameOrAfter);
  * @param {*} need
  * @returns
  */
-const dailyTaskCompleter = need => {
-  if (!need.careRecords) { // If there are no care records, return false
+const dailyTaskCompleter = (need) => {
+  if (!need.careRecords) {
+    // If there are no care records, return false
     return false;
   }
 
-  if (need.completed) { // If the need is already completed, return
+  if (need.completed) {
+    // If the need is already completed, return
     return;
   }
 
-  const taskType = need.quantity.value ? 'quantity' : need.duration.value ? 'duration' : null; // Check if the need is quantity or duration
+  const taskType = need.quantity.value
+    ? 'quantity'
+    : need.duration.value
+      ? 'duration'
+      : null; // Check if the need is quantity or duration
 
   switch (taskType) {
     case 'quantity': {
-      const totalQuantity = need.careRecords.reduce((total, record) => total + record.quantity.value, 0); // Calculate the total quantity
-      if (totalQuantity >= need.quantity.value) { // If the total quantity is greater than or equal to the need quantity, set the need as completed
+      const totalQuantity = need.careRecords.reduce(
+        (total, record) => total + record.quantity.value,
+        0,
+      ); // Calculate the total quantity
+      if (totalQuantity >= need.quantity.value) {
+        // If the total quantity is greater than or equal to the need quantity, set the need as completed
         need.completed = true;
       }
 
@@ -34,8 +44,12 @@ const dailyTaskCompleter = need => {
     }
 
     case 'duration': {
-      const totalDuration = need.careRecords.reduce((total, record) => total + record.duration.value, 0); // Calculate the total duration
-      if (totalDuration >= need.duration.value) { // If the total duration is greater than or equal to the need duration, set the
+      const totalDuration = need.careRecords.reduce(
+        (total, record) => total + record.duration.value,
+        0,
+      ); // Calculate the total duration
+      if (totalDuration >= need.duration.value) {
+        // If the total duration is greater than or equal to the need duration, set the
         need.completed = true;
       }
 
@@ -52,7 +66,8 @@ const dailyTaskCompleter = need => {
  * @param {*} timezone
  * @returns true or false
  */
-const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsinki'
+const tzIdentifierChecker = (timezone) => {
+  // Timezone is in format 'Europe/Helsinki'
   const timezones = Intl.supportedValuesOf('timeZone');
   return timezones.includes(timezone); // Check if the timezone is valid
 };
@@ -61,8 +76,8 @@ const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsi
  * @description Checks the local date by timezone, returns the formatted date
  * @param {*} timezone
  * @returns formatted date in 'YYYY-MM-DD' format
-  */
-const checkLocalDateByTimezone = timezone => {
+ */
+const checkLocalDateByTimezone = (timezone) => {
   console.log('check', Intl.supportedValuesOf('timeZone').includes(timezone));
   if (!Intl.supportedValuesOf('timeZone').includes(timezone)) {
     return new Error('Invalid timezone');
@@ -79,13 +94,13 @@ const checkLocalDateByTimezone = timezone => {
  * @param {*} _response
  * @param {*} next
  * @returns
-  */
+ */
 const updatePetNeedstoNextDays = async () => {
   const User = require('../models/userModel');
 
   try {
     const timezones = Intl.supportedValuesOf('timeZone');
-    const midnightTimezones = timezones.filter(timezone => {
+    const midnightTimezones = timezones.filter((timezone) => {
       const newDate = dayjs().tz(timezone);
       return newDate.hour() === 0 && newDate.minute() === 0;
     }, []);
@@ -95,14 +110,16 @@ const updatePetNeedstoNextDays = async () => {
       return;
     }
 
-    const timezoneUsers = await User.aggregate([ // Find all users by midnight timezones from database
+    const timezoneUsers = await User.aggregate([
+      // Find all users by midnight timezones from database
       {
         $match: {
           timezone: { $in: midnightTimezones },
         },
       },
       {
-        $project: { // Exclude from result
+        $project: {
+          // Exclude from result
           passwordHash: 0,
           __v: 0,
           email: 0,
@@ -121,11 +138,13 @@ const updatePetNeedstoNextDays = async () => {
 
     const utcDateObject = new Date(); // Get the UTC date object
 
-    const localDateObject = new Date(utcDateObject.getTime() + timezoneOffsetInMilliseconds); // Get the local date object
+    const localDateObject = new Date(
+      utcDateObject.getTime() + timezoneOffsetInMilliseconds,
+    ); // Get the local date object
 
     // Find all pets of the timezoneUsers with reduce make unique set list of all pets
     const allPetsSet = timezoneUsers.reduce((allPets, user) => {
-      user.pets.forEach(petId => allPets.add(petId));
+      user.pets.forEach((petId) => allPets.add(petId));
       return allPets;
     }, new Set());
     const uniquePetIdsList = [...allPetsSet];
@@ -139,7 +158,8 @@ const updatePetNeedstoNextDays = async () => {
     for (const pet of allPets) {
       // Find all needs which are not archived by pet
       const notArchivedNeeds = pet.needs.reduce((acc, need) => {
-        if (!need.archived && !need.isActive) { // If the need is not archived and not active, set it as archived and not active
+        if (!need.archived && !need.isActive) {
+          // If the need is not archived and not active, set it as archived and not active
           need.archived = true;
         } else if (!need.archived && need.isActive) {
           acc.push(need);
@@ -150,7 +170,7 @@ const updatePetNeedstoNextDays = async () => {
 
       let needsUpdated = false; // Flag for checking if needs are updated
 
-      notArchivedNeeds.forEach(need => {
+      notArchivedNeeds.forEach((need) => {
         const needDate = dayjs(need.dateFor);
         if (needDate.isSameOrAfter(localDateObject, 'day')) {
           return;
@@ -162,9 +182,13 @@ const updatePetNeedstoNextDays = async () => {
 
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
 
-        const howManyDaysDifference = dayjs(localDateObject).diff(dayjs(newNeedCopy.dateFor), 'days');
+        const howManyDaysDifference = dayjs(localDateObject).diff(
+          dayjs(newNeedCopy.dateFor),
+          'days',
+        );
 
-        for (let i = 1; i <= howManyDaysDifference; i++) { // Loop through between the last need date and today
+        for (let i = 1; i <= howManyDaysDifference; i++) {
+          // Loop through between the last need date and today
           let newNeed = {
             dateFor: dayjs(newNeedCopy.dateFor).add(i, 'days').toDate(),
             archived: i === howManyDaysDifference ? false : true, // If it's the last day, it's not archived
@@ -184,7 +208,7 @@ const updatePetNeedstoNextDays = async () => {
         }
       });
       if (needsUpdated) {
-        await pet.save(); // eslint-disable-line no-await-in-loop
+        await pet.save();
         console.log(`${pet.name}'s needs updated`);
       }
     }

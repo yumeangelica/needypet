@@ -44,13 +44,9 @@ describe('API Tests', () => {
   });
 
   it('allows a user to log in and returns a token', async () => {
-    await supertest(app)
-      .post('/auth/users')
-      .send(newUserObject);
+    await supertest(app).post('/auth/users').send(newUserObject);
 
-    const response = await supertest(app)
-      .post('/auth/login')
-      .send(credentials);
+    const response = await supertest(app).post('/auth/login').send(credentials);
 
     assert.strictEqual(response.status, 200);
     assert.ok(response.body.token, 'Response should have a token property');

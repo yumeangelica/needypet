@@ -5,11 +5,12 @@ const mongoose = require('mongoose');
  * @description Connects to the MongoDB database
  */
 const connectDatabase = () => {
-  mongoose.connect(mongodbUri)
+  mongoose
+    .connect(mongodbUri)
     .then(() => {
       console.log('Connected to MongoDB');
     })
-    .catch(error => {
+    .catch((error) => {
       console.log('Error connecting to MongoDB:', error.message);
     });
 };

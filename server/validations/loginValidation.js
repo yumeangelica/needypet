@@ -11,4 +11,3 @@ const loginSchema = z.object({
 const loginValidation = loginSchema.parse;
 
 module.exports = loginValidation;
-

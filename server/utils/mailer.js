@@ -24,7 +24,10 @@ const sendMail = (to, subject, html) => {
   return transporter.sendMail(mailOptions);
 };
 
-const sendConfirmationEmail = async (recipientEmail, emailConfirmationToken) => {
+const sendConfirmationEmail = async (
+  recipientEmail,
+  emailConfirmationToken,
+) => {
   // URL for email confirmation
   const confirmationUrl = `${config.allowedOrigins}/confirm?confirmationType=email&email=${encodeURIComponent(recipientEmail)}&token=${emailConfirmationToken}`;
 
@@ -44,9 +47,16 @@ const sendConfirmationEmail = async (recipientEmail, emailConfirmationToken) => 
 `;
 
   try {
-    await sendMail(recipientEmail, 'Please Confirm Your NeedyPet Email Address', message);
+    await sendMail(
+      recipientEmail,
+      'Please Confirm Your NeedyPet Email Address',
+      message,
+    );
   } catch (error) {
-    console.error('Error sending confirmation email to email: ', recipientEmail + ' Error: ' + error);
+    console.error(
+      'Error sending confirmation email to email: ',
+      `${recipientEmail} Error: ${error}`,
+    );
   }
 };
 
@@ -68,7 +78,10 @@ const sendPasswordResetEmail = async (recipientEmail, passwordResetToken) => {
   try {
     await sendMail(recipientEmail, 'Reset Your NeedyPet Password', message);
   } catch (error) {
-    console.error('Error sending password reset email to email: ', recipientEmail + ' Error: ' + error);
+    console.error(
+      'Error sending password reset email to email: ',
+      `${recipientEmail} Error: ${error}`,
+    );
   }
 };
 
