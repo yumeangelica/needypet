@@ -41,7 +41,6 @@ const getAllUserPets = async (request, response, next) => {
 
     response.json(pets);
   } catch (error) {
-    console.log('error getting user pets');
     next(error);
   }
 };
@@ -138,7 +137,6 @@ const updatePet = async (request, response, next) => {
 
     response.json(updatedPet);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -185,17 +183,17 @@ const deletePet = async (request, response, next) => {
  */
 const addNewNeed = async (request, response, next) => {
   try {
-    request.body.need.dateFor = new Date(
+    request.body.need.dateFor = dayjs(
       request.body.need.dateFor.slice(0, 10),
-    );
+    ).toDate();
     const validateNeed = needValidation(request.body.need);
     const pet = request.pet;
 
     if (
       pet.needs.filter(
         (need) =>
-          need.dateFor.toISOString().split('T')[0] ===
-          validateNeed.dateFor.toISOString().split('T')[0],
+          dayjs(need.dateFor).format('YYYY-MM-DD') ===
+          dayjs(validateNeed.dateFor).format('YYYY-MM-DD'),
       ).length >= 10
     ) {
       return response
@@ -265,7 +263,7 @@ const addNewRecord = async (request, response, next) => {
     }
 
     const currentDate = checkLocalDateByTimezone(request.user.timezone);
-    if (need.dateFor.toISOString().split('T')[0] !== currentDate) {
+    if (dayjs(need.dateFor).format('YYYY-MM-DD') !== currentDate) {
       return response
         .status(400)
         .json({ message: 'Need date is not the same as the current date' });
@@ -273,7 +271,7 @@ const addNewRecord = async (request, response, next) => {
 
     const newRecordObject = {
       careTaker: request.user._id,
-      date: new Date(dayjs().tz(request.user.timezone).format()),
+      date: dayjs().tz(request.user.timezone).toDate(),
       note: validateRecord.note,
       timezone: request.user.timezone,
     };

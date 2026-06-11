@@ -78,14 +78,11 @@ const tzIdentifierChecker = (timezone) => {
  * @returns formatted date in 'YYYY-MM-DD' format
  */
 const checkLocalDateByTimezone = (timezone) => {
-  console.log('check', Intl.supportedValuesOf('timeZone').includes(timezone));
   if (!Intl.supportedValuesOf('timeZone').includes(timezone)) {
     return new Error('Invalid timezone');
   }
 
-  const newDate = dayjs().tz(timezone);
-  const formattedDate = newDate.format('YYYY-MM-DD');
-  return formattedDate;
+  return dayjs().tz(timezone).format('YYYY-MM-DD');
 };
 
 /**
@@ -132,15 +129,7 @@ const updatePetNeedstoNextDays = async () => {
       return;
     }
 
-    const newDate = dayjs().tz(timezoneUsers[0].timezone);
-
-    const timezoneOffsetInMilliseconds = newDate.utcOffset() * 60 * 1000; // Get the timezone offset in milliseconds
-
-    const utcDateObject = new Date(); // Get the UTC date object
-
-    const localDateObject = new Date(
-      utcDateObject.getTime() + timezoneOffsetInMilliseconds,
-    ); // Get the local date object
+    const localDate = dayjs().tz(timezoneUsers[0].timezone);
 
     // Find all pets of the timezoneUsers with reduce make unique set list of all pets
     const allPetsSet = timezoneUsers.reduce((allPets, user) => {
@@ -172,7 +161,7 @@ const updatePetNeedstoNextDays = async () => {
 
       notArchivedNeeds.forEach((need) => {
         const needDate = dayjs(need.dateFor);
-        if (needDate.isSameOrAfter(localDateObject, 'day')) {
+        if (needDate.isSameOrAfter(localDate, 'day')) {
           return;
         }
 
@@ -182,7 +171,7 @@ const updatePetNeedstoNextDays = async () => {
 
         const newNeedCopy = JSON.parse(JSON.stringify(need)); // Take deep copy of need
 
-        const howManyDaysDifference = dayjs(localDateObject).diff(
+        const howManyDaysDifference = dayjs(localDate).diff(
           dayjs(newNeedCopy.dateFor),
           'days',
         );
