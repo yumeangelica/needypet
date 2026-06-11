@@ -6,38 +6,38 @@
           <h3 class="form-header">Edit Pet</h3>
 
           <div>
-            <label class="form-label">Name:</label>
+            <label class="form-label" :for="nameId">Name:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Name" v-model="existingPetObject.name" required placeholder="Enter pet's name" />
+              <input :id="nameId" class="form-field-input" v-model="existingPetObject.name" required placeholder="Enter pet's name" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Breed:</label>
+            <label class="form-label" :for="breedId">Breed:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Breed" v-model="existingPetObject.breed" placeholder="Enter pet's breed" />
+              <input :id="breedId" class="form-field-input" v-model="existingPetObject.breed" placeholder="Enter pet's breed" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Species:</label>
+            <label class="form-label" :for="speciesId">Species:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Species" v-model="existingPetObject.species" placeholder="Enter pet's species" />
+              <input :id="speciesId" class="form-field-input" v-model="existingPetObject.species" placeholder="Enter pet's species" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Description</label>
+            <label class="form-label" :for="descriptionId">Description</label>
             <div class="form-field">
-              <textarea class="form-field-input" aria-label="Description" v-model="existingPetObject.description"
+              <textarea :id="descriptionId" class="form-field-input" v-model="existingPetObject.description"
                 placeholder="About the pet"></textarea>
             </div>
           </div>
 
           <div>
-            <label class="form-label">Birthday</label>
+            <label class="form-label" :for="birthdayId">Birthday</label>
             <div class="form-field">
-              <input class="form-field-input" type="date" aria-label="Birthday" :value="birthdayInputValue" @change="dateSelected($event)"
+              <input :id="birthdayId" class="form-field-input" type="date" :value="birthdayInputValue" @change="dateSelected($event)"
                 :max="todayString" />
             </div>
             <p class="custom-error-message" v-if="dateErrorMessage">{{ dateErrorMessage }}</p>
@@ -65,17 +65,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onBeforeMount, Ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { usePetStore } from '@/store/pet';
-import { useAppStore } from '@/store/app';
-import { Pet } from '@/types/pet';
-import { Trash2 } from 'lucide-vue-next';
-import TheFooter from '@/components/TheFooter.vue';
+import { Trash2 } from '@lucide/vue';
+import { computed, onBeforeMount, type Ref, ref, useId } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
+import TheFooter from '@/components/TheFooter.vue';
+import { useAppStore } from '@/store/app';
+import { usePetStore } from '@/store/pet';
+import type { Pet } from '@/types/pet';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
+
+// Unique ids to associate each visible label with its input
+const nameId = useId();
+const breedId = useId();
+const speciesId = useId();
+const descriptionId = useId();
+const birthdayId = useId();
 const router = useRouter();
 const route = useRoute();
 const petStore = usePetStore();
@@ -104,7 +111,7 @@ const birthdayInputValue = computed(() => {
 });
 
 onBeforeMount(() => {
-  if (!existingPetObject.value || !existingPetObject.value.id) {
+  if (!existingPetObject.value?.id) {
     loadPetData();
   }
 });
@@ -113,7 +120,7 @@ const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.value) {
     const currentDate = new Date();
-    const selectedDate = new Date(target.value + 'T00:00:00');
+    const selectedDate = new Date(`${target.value}T00:00:00`);
     if (selectedDate <= currentDate) {
       dateErrorMessage.value = '';
       existingPetObject.value.birthday = selectedDate;
@@ -129,6 +136,8 @@ const confirmUpdatePet = () => {
 };
 
 const updatePet = async () => {
+  if (!existingPetObject.value.id) return;
+
   const petData = {
     id: existingPetObject.value.id,
     name: existingPetObject.value.name,
@@ -138,29 +147,29 @@ const updatePet = async () => {
     birthday: existingPetObject.value.birthday,
   };
 
-  const success = await petStore.updatePet(existingPetObject.value.id, petData);
-  if (success) {
+  const result = await petStore.updatePet(existingPetObject.value.id, petData);
+  if (result.isSuccess) {
     router.push({ name: 'pet', params: { id: petData.id } });
   } else {
-    console.error('Failed to update pet');
+    appStore.addNotification(result.message || 'Failed to update pet', 'error');
   }
 };
 
 const deletePet = async () => {
-  if (existingPetObject.value && existingPetObject.value.id) {
-    const success = await petStore.deletePet(existingPetObject.value.id);
-    if (success) {
+  if (existingPetObject.value?.id) {
+    const result = await petStore.deletePet(existingPetObject.value.id);
+    if (result.isSuccess) {
       router.push({ name: 'home' });
     } else {
-      console.error('Failed to delete pet');
+      appStore.addNotification(result.message || 'Failed to delete pet', 'error');
     }
   }
 };
 
-const loadPetData = async () => {
+const loadPetData = () => {
   const petId = route.params.id as string;
   if (petId) {
-    const petData = await petStore.getPetById(petId);
+    const petData = petStore.getPetById(petId);
     if (petData) {
       existingPetObject.value = { ...petData };
     } else {

@@ -1,8 +1,8 @@
 // @ts-check
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
+import { type ApiResult, getErrorDetails, getErrorMessage, getErrorStatus } from '@/lib/apiError';
 import { apiClient } from '@/services';
-import { UserStoreState, User, loginData } from '@/types/user';
-import { useAppStore } from '@/store/app';
+import type { loginData, User, UserStoreState } from '@/types/user';
 
 const servicePath = '/auth';
 
@@ -23,15 +23,37 @@ interface LoginResponse {
   message?: string;
 }
 
+interface AccountFormData {
+  userName: string;
+  email: string;
+  newPassword: string;
+  timezone: string;
+}
+
+interface ProfileFormData {
+  userName: string;
+  email: string;
+  timezone: string;
+  currentPassword: string;
+}
+
+interface PasswordFormData {
+  currentPassword: string;
+  newPassword: string;
+}
+
+interface ActionResponse {
+  isSuccess: boolean;
+  message: string;
+  errorDetails?: Record<string, string[]> | null;
+}
+
 /**
  * @description Set an item in the local storage
  * @param key
  * @param value
  */
-const setLocalStorageItem = async (
-  key: string,
-  value: string
-): Promise<void> => {
+const setLocalStorageItem = async (key: string, value: string): Promise<void> => {
   localStorage.setItem(key, value);
 };
 
@@ -46,7 +68,7 @@ const setAuthData = async (
   userName: string,
   id: string,
   timezone: string,
-  emailConfirmed: boolean
+  emailConfirmed: boolean,
 ): Promise<void> => {
   const userStore = useUserStore(); // Get the user store
   await setLocalStorageItem('token', token);
@@ -123,8 +145,7 @@ export const useUserStore = defineStore('user', {
       email,
       newPassword,
       timezone,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    }: AccountFormData): Promise<ActionResponse> {
       try {
         const response = await apiClient.post(`${servicePath}/users`, {
           userName,
@@ -142,14 +163,17 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error) {
-          return {
-            isSuccess: false,
-            message: error.response.data.message,
-            errorDetails: error.response.data.errorDetails,
-          };
-        }
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Error creating account'),
+          errorDetails: getErrorDetails(error),
+        };
       }
+
+      return {
+        isSuccess: false,
+        message: 'Error creating account',
+      };
     },
     /**
      * @description Update the user profile
@@ -164,8 +188,7 @@ export const useUserStore = defineStore('user', {
       email,
       timezone,
       currentPassword,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    }: ProfileFormData): Promise<ActionResponse> {
       try {
         const response = await apiClient.put<UpdateUserResponse>(
           `${servicePath}/users/${this.id}`,
@@ -174,7 +197,7 @@ export const useUserStore = defineStore('user', {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
-          }
+          },
         );
 
         if (response.status === 200) {
@@ -192,26 +215,33 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error.response?.status === 401) {
+        const status = getErrorStatus(error);
+
+        if (status === 401) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Unauthorized',
+            message: getErrorMessage(error, 'Unauthorized'),
           };
         }
 
-        if (error.response?.status === 422) {
+        if (status === 422) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Validation error',
-            errorDetails: error.response.data.errorDetails,
+            message: getErrorMessage(error, 'Validation error'),
+            errorDetails: getErrorDetails(error),
           };
         }
 
         return {
           isSuccess: false,
-          message: error.response.data.message || 'Error updating user profile',
+          message: getErrorMessage(error, 'Error updating user profile'),
         };
       }
+
+      return {
+        isSuccess: false,
+        message: 'Error updating user profile',
+      };
     },
     /**
      * @description Change the user password
@@ -222,8 +252,7 @@ export const useUserStore = defineStore('user', {
     async changePassword({
       currentPassword,
       newPassword,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    }: PasswordFormData): Promise<ActionResponse> {
       try {
         const response = await apiClient.put<MessageResponse>(
           `${servicePath}/users/${this.id}`,
@@ -232,7 +261,7 @@ export const useUserStore = defineStore('user', {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
-          }
+          },
         );
 
         if (response.status === 200) {
@@ -242,26 +271,33 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error.response?.status === 401) {
+        const status = getErrorStatus(error);
+
+        if (status === 401) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Unauthorized',
+            message: getErrorMessage(error, 'Unauthorized'),
           };
         }
 
-        if (error.response?.status === 422) {
+        if (status === 422) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Validation error',
-            errorDetails: error.response.data.errorDetails,
+            message: getErrorMessage(error, 'Validation error'),
+            errorDetails: getErrorDetails(error),
           };
         }
 
         return {
           isSuccess: false,
-          message: error.response.data.message || 'Error changing password',
+          message: getErrorMessage(error, 'Error changing password'),
         };
       }
+
+      return {
+        isSuccess: false,
+        message: 'Error changing password',
+      };
     },
     /**
      * @description Delete the user account
@@ -269,14 +305,11 @@ export const useUserStore = defineStore('user', {
      */
     async deleteAccount(): Promise<{ isSuccess: boolean; message?: string }> {
       try {
-        const response = await apiClient.delete(
-          `${servicePath}/users/${this.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          }
-        );
+        const response = await apiClient.delete(`${servicePath}/users/${this.id}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
 
         if (response.status === 204) {
           return {
@@ -284,18 +317,23 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error.response?.status === 401) {
+        if (getErrorStatus(error) === 401) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Unauthorized',
+            message: getErrorMessage(error, 'Unauthorized'),
           };
         }
 
         return {
           isSuccess: false,
-          message: error.response.data.message || 'Error deleting user account',
+          message: getErrorMessage(error, 'Error deleting user account'),
         };
       }
+
+      return {
+        isSuccess: false,
+        message: 'Error deleting user account',
+      };
     },
     /**
      * @description Logout the user
@@ -332,8 +370,8 @@ export const useUserStore = defineStore('user', {
             token,
             user.userName,
             user.id,
-            user.timezone,
-            user.emailConfirmed
+            user.timezone ?? 'UTC',
+            user.emailConfirmed,
           );
           return {
             isSuccess: true,
@@ -341,23 +379,41 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        const status = error.response?.status;
-        const data = error.response?.data;
+        const status = getErrorStatus(error);
 
         if (status === 401) {
           return {
             isSuccess: false,
-            message: data.message || 'Invalid credentials',
+            message: getErrorMessage(error, 'Invalid credentials'),
           };
         }
 
         if (status === 422) {
           return {
             isSuccess: false,
-            message: data.message || 'Validation error',
+            message: getErrorMessage(error, 'Validation error'),
+          };
+        }
+
+        if (status === 503) {
+          return {
+            isSuccess: false,
+            message: getErrorMessage(error, 'Service temporarily unavailable. Please try again.'),
+          };
+        }
+
+        if (status === undefined) {
+          return {
+            isSuccess: false,
+            message: 'Cannot reach the server. Please try again.',
           };
         }
       }
+
+      return {
+        isSuccess: false,
+        message: 'Something went wrong. Please try again.',
+      };
     },
     /**
      * @description Initialize the store from the local storage
@@ -366,9 +422,8 @@ export const useUserStore = defineStore('user', {
       this.token = localStorage.getItem('token') || null;
       this.userName = localStorage.getItem('userName') || null;
       this.id = localStorage.getItem('id') || null;
-      this.timezone = localStorage.getItem('timezone') || null;
-      this.emailConfirmed =
-        localStorage.getItem('emailConfirmed') === 'true' || false;
+      this.timezone = localStorage.getItem('timezone') || 'UTC';
+      this.emailConfirmed = localStorage.getItem('emailConfirmed') === 'true' || false;
     },
     /**
      * @description Check if the token is valid
@@ -390,10 +445,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during token validation:',
-            error.response?.status
-          );
+          console.error('Error during token validation:', getErrorStatus(error));
           return false;
         });
 
@@ -421,10 +473,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during email confirmation:',
-            error.response?.status
-          );
+          console.error('Error during email confirmation:', getErrorStatus(error));
           return false;
         });
 
@@ -434,42 +483,47 @@ export const useUserStore = defineStore('user', {
      * @description Resend the email confirmation
      * @returns
      */
-    async resendEmailConfirmation(): Promise<boolean> {
+    async resendEmailConfirmation(): Promise<ApiResult> {
       if (!this.token) {
-        return false;
+        return { isSuccess: false };
       }
-      const appStore = useAppStore();
-      const response = await apiClient({
-        method: 'post',
-        url: `${servicePath}/resend-email-confirmation`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-        .then((response) => {
-          return response.status === 200;
-        })
-        .catch((error) => {
-          const status = error.response?.status;
-          console.error('Error during email confirmation resend:', status);
 
-          if (status === 535) {
-            appStore.addNotification(
-              'Email server authentication failed. Please contact support.',
-              'error'
-            );
-          } else {
-            appStore.addNotification(
-              'Unable to resend email confirmation. Please contact support.',
-              'error'
-            );
-          }
-
-          return false;
+      try {
+        const response = await apiClient({
+          method: 'post',
+          url: `${servicePath}/resend-email-confirmation`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.token}`,
+          },
         });
 
-      return response;
+        if (response.status === 200) {
+          return { isSuccess: true };
+        }
+      } catch (error) {
+        const status = getErrorStatus(error);
+
+        if (status === 535) {
+          return {
+            isSuccess: false,
+            message: getErrorMessage(
+              error,
+              'Email server authentication failed. Please contact support.',
+            ),
+          };
+        }
+
+        return {
+          isSuccess: false,
+          message: getErrorMessage(
+            error,
+            'Unable to resend email confirmation. Please try again later.',
+          ),
+        };
+      }
+
+      return { isSuccess: false };
     },
     /**
      * @description Request a password reset
@@ -491,10 +545,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during password reset request:',
-            error.response?.status
-          );
+          console.error('Error during password reset request:', getErrorStatus(error));
           return false;
         });
 
@@ -506,10 +557,7 @@ export const useUserStore = defineStore('user', {
      * @param token
      * @returns
      */
-    async verifyPasswordResetToken(
-      email: string,
-      token: string
-    ): Promise<boolean> {
+    async verifyPasswordResetToken(email: string, token: string): Promise<boolean> {
       const response = apiClient({
         method: 'post',
         url: `${servicePath}/verify-password-reset-token`,
@@ -525,10 +573,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during password reset token verification:',
-            error.response?.status
-          );
+          console.error('Error during password reset token verification:', getErrorStatus(error));
           return false;
         });
 
@@ -541,11 +586,7 @@ export const useUserStore = defineStore('user', {
      * @param newPassword
      * @returns
      */
-    async passwordReset(
-      email: string,
-      token: string,
-      newPassword: string
-    ): Promise<boolean> {
+    async passwordReset(email: string, token: string, newPassword: string): Promise<boolean> {
       const response = apiClient({
         method: 'post',
         url: `${servicePath}/password-reset`,
@@ -562,7 +603,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error('Error during password reset:', error.response?.status);
+          console.error('Error during password reset:', getErrorStatus(error));
           return false;
         });
 

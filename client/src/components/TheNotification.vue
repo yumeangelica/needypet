@@ -13,7 +13,7 @@ import { useAppStore } from '@/store/app';
 const appStore = useAppStore();
 
 const sortedNotifications = computed(() =>
-  [...appStore.notifications].sort((a, b) => b.timestamp - a.timestamp)
+  [...appStore.notifications].sort((a, b) => b.timestamp - a.timestamp),
 );
 
 defineProps<{

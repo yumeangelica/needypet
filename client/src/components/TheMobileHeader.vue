@@ -18,11 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import { PawPrint, CircleUser } from 'lucide-vue-next';
-import { useRoute } from 'vue-router';
-import router from '@/router';
+import { CircleUser, PawPrint } from '@lucide/vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
 const navigateTo = (name: string) => {
   if (route.name !== name) {

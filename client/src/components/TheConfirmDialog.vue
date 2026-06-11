@@ -6,23 +6,26 @@
 </template>
 
 <script setup lang="ts">
+import { Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import { AlertDialog } from '@/components/ui';
-import { Trash2 } from 'lucide-vue-next';
 
-const props = withDefaults(defineProps<{
-  isOpen: boolean;
-  title: string;
-  message: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  variant?: 'default' | 'danger';
-  icon?: string;
-}>(), {
-  confirmLabel: 'Confirm',
-  cancelLabel: 'Cancel',
-  variant: 'default',
-});
+const props = withDefaults(
+  defineProps<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmLabel?: string;
+    cancelLabel?: string;
+    variant?: 'default' | 'danger';
+    icon?: string;
+  }>(),
+  {
+    confirmLabel: 'Confirm',
+    cancelLabel: 'Cancel',
+    variant: 'default',
+  },
+);
 
 const emit = defineEmits<{
   (e: 'confirm'): void;
@@ -30,7 +33,7 @@ const emit = defineEmits<{
 }>();
 
 const variantClass = computed(() =>
-  props.variant === 'danger' ? 'text-destructive' : 'text-primary-foreground'
+  props.variant === 'danger' ? 'text-destructive' : 'text-primary-foreground',
 );
 
 // Map icon string props to Lucide components

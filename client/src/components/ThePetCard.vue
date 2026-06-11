@@ -1,5 +1,6 @@
 <template>
-  <div class="small-pet-card" @click="navigateToPetView">
+  <div class="small-pet-card" role="button" tabindex="0" :aria-label="`View ${pet.name}`" @click="navigateToPetView"
+    @keydown.enter="navigateToPetView" @keydown.space.prevent="navigateToPetView">
     <p v-if="pet.species || pet.breed" class="pet-subtitle">{{ [pet.species, pet.breed].filter(Boolean).join(' · ') }}</p>
     <h5>{{ pet.name }}</h5>
     <p v-if="todayNeedsCount > 0" class="pet-needs-count">{{ todayNeedsCount }} {{ todayNeedsCount === 1 ? 'need' : 'needs' }} today</p>
@@ -9,14 +10,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import dayjs from '@/lib/dayjs';
 import { useUserStore } from '@/store/user';
-import { Pet } from '@/types/pet';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import type { Pet } from '@/types/pet';
 
 const { pet } = defineProps<{
   pet: Pet;
@@ -28,12 +24,12 @@ const userStore = useUserStore();
 const todayNeedsCount = computed(() => {
   if (!pet.needs || pet.needs.length === 0) return 0;
   const today = dayjs().tz(userStore.timezone).format('YYYY-MM-DD');
-  return pet.needs.filter(need => need.dateFor === today).length;
+  return pet.needs.filter((need) => need.dateFor === today).length;
 });
 
 // Navigate to the pet view page (PagePet) when the card is clicked
 function navigateToPetView() {
-  if (pet && pet.id) {
+  if (pet?.id) {
     router.push({ name: 'pet', params: { id: pet.id } });
   } else {
     console.error('Pet ID is missing');
@@ -70,6 +66,11 @@ function navigateToPetView() {
 
 .small-pet-card:active {
   transform: scale(0.97);
+}
+
+.small-pet-card:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
 }
 
 .small-pet-card h5 {

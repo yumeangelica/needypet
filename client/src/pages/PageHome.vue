@@ -52,17 +52,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeMount, computed, Ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { usePetStore } from '@/store/pet';
-import { useAppStore } from '@/store/app';
-import { useUserStore } from '@/store/user';
-import { CirclePlus } from 'lucide-vue-next';
-import ThePetCard from '@/components/ThePetCard.vue';
+import { CirclePlus } from '@lucide/vue';
+import { computed, onBeforeMount, type Ref, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import TheEmptyState from '@/components/TheEmptyState.vue';
-import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
-import { Pet } from '@/types/pet';
 import TheFooter from '@/components/TheFooter.vue';
+import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
+import ThePetCard from '@/components/ThePetCard.vue';
+import { useAppStore } from '@/store/app';
+import { usePetStore } from '@/store/pet';
+import { useUserStore } from '@/store/user';
+import type { Pet } from '@/types/pet';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -77,28 +77,32 @@ const isLoading = ref(true);
 
 const userEmailConfirmed: Ref<boolean | null> = ref(null);
 
-const updatePetLists = async () => {
+const updatePetLists = () => {
   if (petStore.pets.length === 0) {
     return;
   }
-  ownPets.value = await petStore.getOwnerPets();
-  carerPets.value = await petStore.getCarerPets();
+  ownPets.value = petStore.getOwnerPets;
+  carerPets.value = petStore.getCarerPets;
 };
 
 onBeforeMount(async () => {
   await fetchUserEmailConfirmed();
-  await updatePetLists();
+  updatePetLists();
   isLoading.value = false;
 });
 
-watch(() => route.params && petStore.pets, async () => {
-  ownPets.value = await petStore.getOwnerPets();
-  carerPets.value = await petStore.getCarerPets();
-});
+watch(
+  () => route.params && petStore.pets,
+  () => {
+    ownPets.value = petStore.getOwnerPets;
+    carerPets.value = petStore.getCarerPets;
+  },
+);
 
 const fetchUserEmailConfirmed = async () => {
+  if (!userStore.id) return;
   const user = await userStore.getUserById(userStore.id);
-  userEmailConfirmed.value = user.emailConfirmed;
+  userEmailConfirmed.value = user?.emailConfirmed ?? false;
 };
 </script>
 

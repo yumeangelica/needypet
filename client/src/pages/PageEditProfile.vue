@@ -5,20 +5,21 @@
         <form @submit.prevent="submitForm">
           <h3 class="form-header">Edit Profile:</h3>
 
-          <label class="form-label">Username:</label>
+          <label class="form-label" :for="userNameId">Username:</label>
           <div class="form-field">
-            <input class="form-field-input" v-model="editData.userName" type="text" required placeholder="Username" />
+            <input :id="userNameId" class="form-field-input" v-model="editData.userName" type="text" required placeholder="Username" />
           </div>
           <div v-if="errorDetailsObject.userName" class="custom-error-message">{{ errorDetailsObject.userName }}</div>
 
-          <label class="form-label">Email:</label>
+          <label class="form-label" :for="emailId">Email:</label>
           <div class="form-field">
-            <input class="form-field-input" v-model="editData.email" type="email" required placeholder="Email" />
+            <input :id="emailId" class="form-field-input" v-model="editData.email" type="email" required placeholder="Email" />
           </div>
           <div v-if="errorDetailsObject.email" class="custom-error-message">{{ errorDetailsObject.email }}</div>
 
-          <label class="form-label">Timezone:</label>
-          <div class="form-field cursor-pointer" @click="showModal = true">
+          <label :id="timezoneLabelId" class="form-label">Timezone:</label>
+          <div class="form-field cursor-pointer" role="button" tabindex="0" :aria-labelledby="timezoneLabelId" @click="showModal = true"
+            @keydown.enter="showModal = true" @keydown.space.prevent="showModal = true">
             <span class="form-field-input" :class="{ 'text-foreground/50': !editData.timezone }">
               {{ editData.timezone || 'Select Timezone' }}
             </span>
@@ -28,9 +29,10 @@
           <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
             @timezoneSelected="timezone => editData.timezone = timezone" />
 
-          <label class="form-label">Current Password:</label>
+          <label class="form-label" :for="currentPasswordId">Current Password:</label>
           <div class="form-field">
-            <input class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
+            <input :id="currentPasswordId" class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required
+              placeholder="Current Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />
@@ -57,17 +59,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount, computed, Ref } from 'vue';
-import { useUserStore } from '@/store/user';
-import { useRouter, onBeforeRouteLeave } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
-import { User } from '@/types/user';
-import { Eye, EyeOff } from 'lucide-vue-next';
+import { Eye, EyeOff } from '@lucide/vue';
+import { computed, onBeforeMount, type Ref, ref, useId } from 'vue';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
+import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
+import type { User } from '@/types/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
+
+// Unique ids to associate each visible label with its control
+const userNameId = useId();
+const emailId = useId();
+const timezoneLabelId = useId();
+const currentPasswordId = useId();
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -89,7 +97,12 @@ const errorDetailsObject = ref({
 
 const showModal = ref(false);
 
-const originalData = ref({});
+const originalData = ref({
+  userName: '',
+  email: '',
+  timezone: '',
+  currentPassword: '',
+});
 const editData = ref({
   userName: '',
   email: '',
@@ -97,28 +110,37 @@ const editData = ref({
   currentPassword: '',
 });
 
-const user: Ref<User> = ref(null);
+const user: Ref<User | null> = ref(null);
 
 const fetchUser = async () => {
+  if (!userStore.id) return;
   const userData = await userStore.getUserById(userStore.id);
+  if (!userData) return;
   user.value = userData;
-  originalData.value = { ...userData };
+  originalData.value = {
+    userName: userData.userName,
+    email: userData.email ?? '',
+    timezone: userData.timezone ?? '',
+    currentPassword: '',
+  };
 };
 
 onBeforeMount(async () => {
   await fetchUser();
 
+  if (!user.value) return;
+
   editData.value = {
     userName: user.value.userName,
-    email: user.value.email,
-    timezone: user.value.timezone,
+    email: user.value.email ?? '',
+    timezone: user.value.timezone ?? '',
     currentPassword: '',
   };
 });
 
-onBeforeRouteLeave((to, from, next) => {
+onBeforeRouteLeave((_to, _from, next) => {
   if (JSON.stringify(editData.value) !== JSON.stringify(originalData.value)) {
-    editData.value = { ...originalData.value } as { userName: string; email: string; timezone: string; currentPassword: string };
+    editData.value = { ...originalData.value };
   }
   next();
 });
@@ -142,7 +164,9 @@ const submitForm = async () => {
       userName: errorDetails?.userName?.[0] || '',
       email: errorDetails?.email?.[0] || '',
       timezone: errorDetails?.timezone?.[0] || '',
-      currentPassword: errorDetails?.currentPassword?.[0] ? 'Password does not meet the requirements' : '',
+      currentPassword: errorDetails?.currentPassword?.[0]
+        ? 'Password does not meet the requirements'
+        : '',
     };
     errorMessage.value = message;
     setTimeout(() => {

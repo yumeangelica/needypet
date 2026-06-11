@@ -1,5 +1,15 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 
+// Routes that are accessible without authentication. Used both by the auth guard
+// (main.ts) and to hide the app navigation (App.vue) on these pages.
+export const PUBLIC_ROUTE_NAMES = [
+  'landing',
+  'login',
+  'register',
+  'request-password-reset',
+  'confirm',
+] as const;
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',

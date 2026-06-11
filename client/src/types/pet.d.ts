@@ -1,7 +1,6 @@
 import { User } from './user';
-// Definition of the Pet, Need and CareRecord interfaces
 
-type User = User;
+// Definition of the Pet, Need and CareRecord interfaces
 
 type Quantity = {
   value: number;
@@ -64,7 +63,7 @@ interface Pet {
   species?: string;
   breed?: string;
   description?: string;
-  birthday?: Date;
+  birthday?: Date | null;
   owner?: User;
   careTakers?: User[];
   needs?: Need[];
@@ -82,12 +81,4 @@ interface NewPetObject {
   birthday: Date | null;
 }
 
-export {
-  Pet,
-  Need,
-  CareRecord,
-  PetState,
-  QuantityRecord,
-  DurationRecord,
-  NewPetObject,
-};
+export { CareRecord, DurationRecord, Need, NewPetObject, Pet, PetState, QuantityRecord };

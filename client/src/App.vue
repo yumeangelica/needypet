@@ -17,29 +17,23 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue';
-import { useAppStore } from '@/store/app';
 import { useRoute } from 'vue-router';
 import TheHeader from '@/components/TheHeader.vue';
 import TheMobileHeader from '@/components/TheMobileHeader.vue';
 import TheNotification from '@/components/TheNotification.vue';
+import { PUBLIC_ROUTE_NAMES } from '@/router/index';
+import { useAppStore } from '@/store/app';
 
 const appStore = useAppStore();
 const route = useRoute();
 
-const showHeaderNavigation = computed(
-  () =>
-    !appStore.isMobile &&
-    !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(
-      route.name as string
-    )
+// Navigation is hidden on public (auth) pages
+const isPublicRoute = computed(() =>
+  (PUBLIC_ROUTE_NAMES as readonly string[]).includes(route.name as string),
 );
-const showMobileNavigation = computed(
-  () =>
-    appStore.isMobile &&
-    !['login', 'register', 'landing', 'request-password-reset', 'confirm'].includes(
-      route.name as string
-    )
-);
+
+const showHeaderNavigation = computed(() => !appStore.isMobile && !isPublicRoute.value);
+const showMobileNavigation = computed(() => appStore.isMobile && !isPublicRoute.value);
 
 let cleanup: () => void;
 

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useAppStore } from '@/store/app';
 
 // Props for the component
@@ -23,18 +23,9 @@ const updateLogoSrc = async () => {
     : (await import('@/assets/images/needypet_logo_desktop_1024.webp')).default;
 };
 
-onMounted(() => {
-  // Initialize the logo based on current screen size
-  updateLogoSrc();
-
-  // Listen for screen size changes and update the logo
-  const cleanup = appStore.watchScreenSize();
-
-  // Cleanup when the component is unmounted
-  onUnmounted(() => {
-    cleanup();
-  });
-});
+// Swap the logo whenever the screen-size category changes.
+// The global resize listener lives in App.vue, so we only react to isMobile here.
+watch(isMobile, updateLogoSrc, { immediate: true });
 </script>
 
 <style scoped>

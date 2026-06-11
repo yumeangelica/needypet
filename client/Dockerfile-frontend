@@ -1,10 +1,10 @@
-# Stage 1: Build the React/Vue application
-FROM node:20 as builder
+# Stage 1: Build the Vue application with Bun
+FROM oven/bun:1 AS builder
 WORKDIR /usr/src/app
-COPY package*.json ./
-RUN npm install
+COPY package.json bun.lock ./
+RUN bun install
 COPY . .
-RUN npm run build
+RUN bun run build
 
 # Stage 2: Setup Nginx to serve the application
 FROM nginx:latest

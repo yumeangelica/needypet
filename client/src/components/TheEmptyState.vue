@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Component } from 'vue';
-import { PawPrint, CirclePlus } from 'lucide-vue-next';
+import { CirclePlus, PawPrint } from '@lucide/vue';
+import { type Component, computed } from 'vue';
 
 const props = defineProps<{
   icon?: string;
@@ -22,18 +22,18 @@ const props = defineProps<{
   actionIcon?: string;
 }>();
 
-defineEmits<{
-  (e: 'action'): void;
-}>();
+defineEmits<(e: 'action') => void>();
 
 // Map ionicon string names to Lucide components
 const iconMap: Record<string, Component> = {
   'paw-outline': PawPrint,
-  'pawOutline': PawPrint,
+  pawOutline: PawPrint,
   'add-circle-outline': CirclePlus,
-  'addCircleOutline': CirclePlus,
+  addCircleOutline: CirclePlus,
 };
 
-const iconComponent = computed(() => props.icon ? iconMap[props.icon] || PawPrint : null);
-const actionIconComponent = computed(() => props.actionIcon ? iconMap[props.actionIcon] || CirclePlus : null);
+const iconComponent = computed(() => (props.icon ? iconMap[props.icon] || PawPrint : null));
+const actionIconComponent = computed(() =>
+  props.actionIcon ? iconMap[props.actionIcon] || CirclePlus : null,
+);
 </script>

@@ -11,9 +11,7 @@ const props = defineProps<{
   class?: string;
 }>();
 
-const emit = defineEmits<{
-  (e: 'update:checked', value: boolean): void;
-}>();
+const emit = defineEmits<(e: 'update:checked', value: boolean) => void>();
 
 function handleChange(val: boolean) {
   emit('update:checked', val);

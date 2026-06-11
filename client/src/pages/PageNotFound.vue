@@ -16,8 +16,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
 import TheFooter from '@/components/TheFooter.vue';
+import { useAppStore } from '@/store/app';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
