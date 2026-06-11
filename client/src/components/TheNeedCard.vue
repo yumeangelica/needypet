@@ -35,7 +35,7 @@
         <span class="text-sm text-primary-foreground block mb-1">
           {{ need.isActive ? 'Active' : 'Inactive' }}
         </span>
-        <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)" />
+      <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)" />
       </div>
 
       <!-- Delete need button -->
@@ -53,25 +53,25 @@
     <!-- Edit need modal — only rendered when needed -->
     <Dialog v-if="isEditModalOpen" :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit Need" maxWidth="520px">
       <form @submit.prevent="updateNeed">
-        <label class="form-label">Category</label>
-        <input v-model="editForm.category" required type="text" placeholder="Enter need category" class="form-field-item" />
+        <label class="form-label" :for="categoryId">Category</label>
+        <input :id="categoryId" v-model="editForm.category" required type="text" placeholder="Enter need category" class="form-field-item" />
 
-        <label class="form-label">Description</label>
-        <input v-model="editForm.description" required type="text" placeholder="Enter need description" class="form-field-item" />
+        <label class="form-label" :for="descriptionId">Description</label>
+        <input :id="descriptionId" v-model="editForm.description" required type="text" placeholder="Enter need description" class="form-field-item" />
 
         <div v-if="editForm.type === 'quantity'">
-          <label class="form-label">Quantity</label>
-          <input v-model="editForm.value" type="number" placeholder="Enter quantity" required class="form-field-item" />
+          <label class="form-label" :for="valueId">Quantity</label>
+          <input :id="valueId" v-model="editForm.value" type="number" placeholder="Enter quantity" required class="form-field-item" />
 
           <label class="form-label">Select unit</label>
-          <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit"
+          <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit" aria-label="Unit"
             :options="[{ value: 'ml', label: 'ml' }, { value: 'g', label: 'g' }]" />
         </div>
 
         <div v-else>
-          <label class="form-label">Duration</label>
+          <label class="form-label" :for="valueId">Duration</label>
           <div class="flex items-center gap-2">
-            <input v-model="editForm.value" type="number" placeholder="Enter duration" required class="form-field-item" />
+            <input :id="valueId" v-model="editForm.value" type="number" placeholder="Enter duration" required class="form-field-item" />
             <span class="text-sm text-foreground">minute(s)</span>
           </div>
         </div>
@@ -85,30 +85,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, computed, onBeforeMount } from 'vue';
-import { Trash2, EllipsisVertical, CheckCheck, Check, Pencil } from 'lucide-vue-next';
+import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from '@lucide/vue';
+import { computed, inject, onBeforeMount, type Ref, ref, useId } from 'vue';
+import { AlertDialog, Dialog, Select, Switch } from '@/components/ui';
+import { resultMessage } from '@/lib/apiError';
+import dayjs from '@/lib/dayjs';
+import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
-import { Dialog, AlertDialog, Switch, Select } from '@/components/ui';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import { useAppStore } from '@/store/app';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import type { DurationRecord, Need, QuantityRecord } from '@/types/pet';
 
 const petStore = usePetStore();
 const userStore = useUserStore();
 const appStore = useAppStore();
 
 const { need, petId } = defineProps<{
-  need: Need,
-  petId: string
+  need: Need;
+  petId: string;
 }>();
 
 const emit = defineEmits(['needDeleted', 'needUpdated']);
+
+// Unique ids to associate the edit-form labels with their inputs (per card instance)
+const categoryId = useId();
+const descriptionId = useId();
+const valueId = useId();
 
 const isEditModalOpen = ref(false);
 const showDeleteConfirm = ref(false);
@@ -145,7 +146,7 @@ type HandleNeedDeletionType = (needDelete: boolean) => void;
 const showOptions = ref(false);
 
 const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion');
-const isOwner = inject('isOwner');
+const isOwner = inject<Ref<boolean>>('isOwner', ref(false));
 
 const isFuture = computed(() => {
   const needDate = dayjs(need.dateFor).tz(userStore.timezone);
@@ -163,60 +164,61 @@ const isSaving = ref(false);
 
 const addRecord = async (petId: string, need: Need) => {
   if (isSaving.value) return;
+  if (!need.id) return;
   isSaving.value = true;
   const needId = need.id;
-  const isDuration = need.duration ? true : false;
 
-  let recordObject = {
-    note: '',
-  } as QuantityRecord | DurationRecord;
+  let recordObject: QuantityRecord | DurationRecord;
 
-  if (isDuration) {
+  if (need.duration) {
     recordObject = {
-      ...recordObject,
+      note: '',
       duration: {
-        value: need.duration?.value,
-        unit: need.duration?.unit
-      }
+        value: need.duration.value,
+        unit: need.duration.unit,
+      },
+    };
+  } else if (need.quantity) {
+    recordObject = {
+      note: '',
+      quantity: {
+        value: need.quantity.value,
+        unit: need.quantity.unit,
+      },
     };
   } else {
-    recordObject = {
-      ...recordObject,
-      quantity: {
-        value: need.quantity?.value,
-        unit: need.quantity?.unit
-      }
-    };
+    isSaving.value = false;
+    return;
   }
 
-  const updateSuccessful = await petStore.addRecord(petId, needId, recordObject);
-  if (updateSuccessful) {
+  const result = await petStore.addRecord(petId, needId, recordObject);
+  if (result.isSuccess) {
     appStore.addNotification('Need completed! ✓', 'success');
   } else {
-    appStore.addNotification('Failed to add record', 'error');
+    appStore.addNotification(result.message || 'Failed to add record', 'error');
   }
   isSaving.value = false;
 };
 
 const toggleOptions = () => {
-  if (!isOwner) return;
+  if (!isOwner.value) return;
   showOptions.value = !showOptions.value;
 };
 
 const editNeed = () => {
   isEditModalOpen.value = true;
-  editForm.value = { category: need.category, description: need.description, ...editForm.value };
+  editForm.value = { ...editForm.value, category: need.category, description: need.description };
 };
 
-const toggleNeedActive = async (needId) => {
-  if (!needId || !isOwner) return;
+const toggleNeedActive = async (needId?: string) => {
+  if (!needId || !isOwner.value) return;
 
-  const response = await petStore.toggleNeedisActive(petId, needId);
-  if (response) {
+  const result = await petStore.toggleNeedisActive(petId, needId);
+  if (result.isSuccess) {
     emit('needUpdated');
     appStore.addNotification('Need active status toggled successfully', 'success');
   } else {
-    appStore.addNotification('Failed to toggle need active status', 'error');
+    appStore.addNotification(result.message || 'Failed to toggle need active status', 'error');
   }
 };
 
@@ -225,40 +227,46 @@ const closeEditModal = () => {
 };
 
 const updateNeed = async () => {
-  if (!editForm.value.category || !editForm.value.description || !editForm.value.value || !editForm.value.unit) {
+  if (
+    !editForm.value.category ||
+    !editForm.value.description ||
+    !editForm.value.value ||
+    !editForm.value.unit
+  ) {
     appStore.addNotification('Please fill all fields', 'error');
     return;
   }
 
   const needId = need.id;
+  if (!needId) return;
 
   const updatedNeed = {
     category: editForm.value.category,
     description: editForm.value.description,
     [editForm.value.type]: {
       value: editForm.value.value,
-      unit: editForm.value.unit
-    }
+      unit: editForm.value.unit,
+    },
   };
-  const isSuccess = await petStore.updateNeed(petId, needId, updatedNeed);
+  const result = await petStore.updateNeed(petId, needId, updatedNeed);
 
-  if (isSuccess) {
+  if (result.isSuccess) {
     emit('needUpdated');
     appStore.addNotification('Need updated successfully', 'success');
   } else {
-    appStore.addNotification('Failed to update need', 'error');
+    appStore.addNotification(resultMessage(result, 'Failed to update need'), 'error');
   }
   closeEditModal();
 };
 
-const deleteNeed = async (needId: string) => {
+const deleteNeed = async (needId?: string) => {
   if (!needId) return;
 
-  const response = await petStore.deleteNeed(petId, needId);
-  if (response) {
-    handleNeedDeletion(true);
+  const result = await petStore.deleteNeed(petId, needId);
+  if (result.isSuccess) {
+    handleNeedDeletion?.(true);
   } else {
-    appStore.addNotification('Failed to delete need', 'error');
+    appStore.addNotification(result.message || 'Failed to delete need', 'error');
   }
 };
 </script>
