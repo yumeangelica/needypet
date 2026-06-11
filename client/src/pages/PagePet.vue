@@ -7,7 +7,7 @@
 
           <div class="inline-container">
             <h2>{{ pet.name }}</h2>
-            <button v-if="pet.owner.id === userStore.id" class="settings-button" @click="router.push({ name: 'edit-pet' })">
+            <button v-if="pet.owner?.id === userStore.id" class="settings-button" @click="router.push({ name: 'edit-pet' })">
               <Settings class="w-5 h-5" />
             </button>
           </div>
@@ -16,12 +16,12 @@
             <p><strong>Description:</strong> {{ pet.description }}</p>
             <p><strong>Species:</strong> {{ pet.species }}</p>
             <p><strong>Breed:</strong> {{ pet.breed }}</p>
-            <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
-            <p><strong>Owner:</strong> {{ pet.owner.userName }}</p>
-            <p v-if="pet.careTakers.length > 0">
+            <p><strong>Birthday:</strong> {{ pet.birthday ? dayjs(pet.birthday).format('MMM D, YYYY') : '—' }}</p>
+            <p><strong>Owner:</strong> {{ pet.owner?.userName }}</p>
+            <p v-if="pet.careTakers?.length">
               <strong>Care takers:</strong>
               <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">
-                {{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}
+                {{ careTaker.userName }}{{ index !== (pet.careTakers?.length ?? 0) - 1 ? ', ' : '' }}
               </span>
             </p>
           </div>
@@ -29,7 +29,7 @@
           <!-- Need related container -->
           <div class="header-button-container">
             <h3 class="text-center mt-2 mb-0">Needs:</h3>
-            <template v-if="pet.owner.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
+            <template v-if="pet.owner?.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
               <button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
                 <CirclePlus class="inline-block w-4 h-4 mr-1" />
                 Add need
@@ -48,24 +48,24 @@
               <form @submit.prevent="addNewNeed">
                 <h3 class="form-header">Add New Need</h3>
 
-                <label class="form-label">Category:</label>
+                <label class="form-label" :for="categoryId">Category:</label>
                 <div class="form-field">
-                  <input class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine" />
+                  <input :id="categoryId" class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine" />
                 </div>
 
-                <label class="form-label">Description:</label>
+                <label class="form-label" :for="descriptionId">Description:</label>
                 <div class="form-field">
-                  <input class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park" />
+                  <input :id="descriptionId" class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park" />
                 </div>
 
-                <label class="form-label">Date:</label>
+                <label class="form-label" :for="dateId">Date:</label>
                 <div class="form-field">
-                  <input class="form-field-input" readonly :value="currentDate" required />
+                  <input :id="dateId" class="form-field-input" readonly :value="currentDate" required />
                 </div>
 
                 <label class="form-label">Measurement type</label>
                 <div v-show="!selection" class="mt-2">
-                  <RadioGroup v-model="selection">
+                  <RadioGroup v-model="selection" aria-label="Measurement type">
                     <div class="flex gap-4">
                       <RadioGroupItem value="duration" label="Duration" />
                       <RadioGroupItem value="quantity" label="Quantity" />
@@ -74,21 +74,21 @@
                 </div>
 
                 <div v-if="selection === 'quantity'">
-                  <label class="form-label">Value and Unit:</label>
+                  <label class="form-label" :for="valueId">Value and Unit:</label>
                   <div class="flex gap-2 items-center">
                     <div class="form-field flex-1">
-                      <input class="form-field-input w-full min-w-[80px]" v-model="valueOfSelection" required autofocus @input="cleanInput($event)"
-                        inputmode="numeric" placeholder="Enter value" />
+                      <input :id="valueId" class="form-field-input w-full min-w-[80px]" v-model="valueOfSelection" required autofocus
+                        @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value" />
                     </div>
-                    <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="select unit" class="w-28" />
+                    <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="select unit" class="w-28" aria-label="Unit" />
                   </div>
                 </div>
 
                 <div v-if="selection === 'duration'">
-                  <label class="form-label">Duration (minutes):</label>
+                  <label class="form-label" :for="valueId">Duration (minutes):</label>
                   <div class="form-field">
-                    <input class="form-field-input" v-model="valueOfSelection" required autofocus @input="cleanInput($event)" inputmode="numeric"
-                      placeholder="Enter duration in minutes" />
+                    <input :id="valueId" class="form-field-input" v-model="valueOfSelection" required autofocus @input="cleanInput($event)"
+                      inputmode="numeric" placeholder="Enter duration in minutes" />
                   </div>
                 </div>
 
@@ -123,7 +123,7 @@
             <ul v-if="needsByDate[currentDate]">
               <li v-for="need in needsByDate[currentDate]" :key="need.id">
                 <div class="need-cards-container">
-                  <the-need-card :need="need" :petId="pet.id" @needDeleted="handleNeedDeleted" @needUpdated="getPet(pet.id)" />
+                  <the-need-card :need="need" :petId="pet.id ?? ''" @needDeleted="handleNeedDeleted" @needUpdated="pet.id && getPet(pet.id)" />
                 </div>
               </li>
             </ul>
@@ -147,25 +147,19 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, computed, watch, Ref, provide } from 'vue';
-import { useRoute } from 'vue-router';
-import { usePetStore } from '@/store/pet';
-import { useUserStore } from '@/store/user';
-import { Pet, Need } from '@/types/pet';
-
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import { Settings, CirclePlus } from 'lucide-vue-next';
-import { Dialog, RadioGroup, RadioGroupItem, Select } from '@/components/ui';
-import TheNeedCard from '@/components/TheNeedCard.vue';
+import { CirclePlus, Settings } from '@lucide/vue';
+import { computed, onBeforeMount, provide, type Ref, ref, useId, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import TheNeedCard from '@/components/TheNeedCard.vue';
+import { Dialog, RadioGroup, RadioGroupItem, Select } from '@/components/ui';
+import { resultMessage } from '@/lib/apiError';
+import dayjs from '@/lib/dayjs';
+import { useAppStore } from '@/store/app';
+import { usePetStore } from '@/store/pet';
+import { useUserStore } from '@/store/user';
+import type { Need, Pet } from '@/types/pet';
 
 const router = useRouter();
 const appStore = useAppStore();
@@ -188,9 +182,9 @@ const formFieldsErrorDetailsObject = ref({
   quantityUnit: '',
 });
 
-const selection = ref('');
-const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
-const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
+const selection: Ref<'duration' | 'quantity' | ''> = ref('');
+const valueOfSelection: Ref<number | null> = ref(null);
+const unitOfSelection: Ref<'minutes' | 'ml' | 'g' | ''> = ref('');
 const isOwner = ref(false);
 
 const quantityUnits = [
@@ -198,15 +192,20 @@ const quantityUnits = [
   { label: 'g', value: 'g' },
 ];
 
+// Unique ids to associate the need-form labels with their inputs
+const categoryId = useId();
+const descriptionId = useId();
+const dateId = useId();
+const valueId = useId();
+
 const changeDay = (delta: number) => {
   const newDate = dayjs.tz(currentDate.value, userStore.timezone).add(delta, 'days');
   currentDate.value = newDate.format('YYYY-MM-DD');
 };
 
-const needsByDate = ref({});
-
-const needsByDateComputed = computed(() => {
-  if (!pet.value || !pet.value.needs) return [];
+// Needs grouped by date, derived directly from the (reactive) store pet object
+const needsByDate = computed<Record<string, Need[]>>(() => {
+  if (!pet.value?.needs) return {};
   return pet.value.needs.reduce((acc: Record<string, Need[]>, need) => {
     if (!acc[need.dateFor]) {
       acc[need.dateFor] = [];
@@ -237,13 +236,12 @@ const cleanInput = (event: Event) => {
   valueOfSelection.value = Number(value);
 };
 
-async function getPet(id: string) {
-  const fetchedPet = await petStore.getPetById(id);
+function getPet(id: string) {
+  const fetchedPet = petStore.getPetById(id);
   if (fetchedPet) {
     pet.value = fetchedPet;
-    needsByDate.value = needsByDateComputed.value;
   }
-  isOwner.value = await petStore.isOwner(id);
+  isOwner.value = petStore.isOwner(id);
   isLoading.value = false;
 }
 
@@ -262,7 +260,7 @@ const addNewNeed = async () => {
   };
 
   const validateDuration = () => {
-    if (selection.value === 'duration' && valueOfSelection.value > 1440) {
+    if (selection.value === 'duration' && (valueOfSelection.value ?? 0) > 1440) {
       formFieldsErrorDetailsObject.value.durationValue = 'Duration cannot be over 1440 minutes';
       return false;
     }
@@ -286,33 +284,54 @@ const addNewNeed = async () => {
     return;
   }
 
+  if (!pet.value?.id || valueOfSelection.value === null) {
+    appStore.addNotification('Please fill in all fields', 'error');
+    return;
+  }
+
   const needObject: Need = {
     category: category.value,
     description: description.value,
     dateFor: currentDate.value,
-    [selection.value]: {
-      value: valueOfSelection.value,
-      unit: unitOfSelection.value,
-    },
   };
 
+  if (selection.value === 'duration') {
+    needObject.duration = {
+      value: valueOfSelection.value,
+      unit: 'minutes',
+    };
+  }
+
+  if (
+    selection.value === 'quantity' &&
+    (unitOfSelection.value === 'ml' || unitOfSelection.value === 'g')
+  ) {
+    needObject.quantity = {
+      value: valueOfSelection.value,
+      unit: unitOfSelection.value,
+    };
+  }
+
   try {
-    const response = await petStore.addNewNeed(pet.value.id, needObject);
-    if (response) {
+    const result = await petStore.addNewNeed(pet.value.id, needObject);
+    if (result.isSuccess) {
       setOpen(false);
-      await getPet(pet.value.id);
+      getPet(pet.value.id);
     } else {
-      appStore.addNotification('Couldn\'t save the need. Please try again.', 'error');
+      appStore.addNotification(
+        resultMessage(result, "Couldn't save the need. Please try again."),
+        'error',
+      );
     }
   } catch (_error) {
-    appStore.addNotification('Couldn\'t save the need. Please try again.', 'error');
+    appStore.addNotification("Couldn't save the need. Please try again.", 'error');
   }
 };
 
 watch(route, async () => {
   const id = route.params.id as string;
   if (id) {
-    await getPet(id);
+    getPet(id);
   }
 });
 
@@ -325,13 +344,13 @@ watch(selection, (newValue) => {
 onBeforeMount(async () => {
   const id = route.params.id as string;
   if (id) {
-    await getPet(id);
+    getPet(id);
   }
 });
 
-const handleNeedDeleted = async (deleted: boolean) => {
-  if (deleted) {
-    await getPet(pet.value.id);
+const handleNeedDeleted = (deleted: boolean) => {
+  if (deleted && pet.value?.id) {
+    getPet(pet.value.id);
     appStore.addNotification('Need removed', 'success');
   }
 };

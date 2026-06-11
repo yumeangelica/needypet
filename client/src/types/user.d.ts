@@ -1,4 +1,3 @@
-
 type Token = string;
 
 interface User {
@@ -10,11 +9,12 @@ interface User {
 }
 
 interface UserStoreState {
-  token: Token;
-  userName: User['userName'];
-  id: User['id'];
-  timezone: User['timezone'];
-  emailConfirmed: User['emailConfirmed'];
+  token: Token | null;
+  userName: User['userName'] | null;
+  id: User['id'] | null;
+  timezone: string;
+  emailConfirmed: User['emailConfirmed'] | null;
+  email?: User['email'] | null;
 }
 
 interface loginData {
@@ -22,4 +22,4 @@ interface loginData {
   message: string;
 }
 
-export { Token, User, UserStoreState, loginData };
+export { loginData, Token, User, UserStoreState };

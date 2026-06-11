@@ -91,7 +91,7 @@ The following features are planned for future versions of NeedyPet:
 ## Technical Setup
 
 - **Backend Technologies**: MongoDB, Express.js, Node.js, JavaScript, Zod, ESLint
-- **Frontend Technologies**: Vue.js 3 (Composition API), TypeScript, Tailwind CSS, Pinia, Vue Router, Lucide Vue Next, dayjs, Vitest, Cypress, ESLint
+- **Frontend Technologies**: Vue.js 3 (Composition API), TypeScript, Vite, Tailwind CSS, Pinia, Vue Router, Lucide, dayjs, Vitest, Biome, Bun
 - **Frontend API Client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts` (no Axios dependency)
 - **DevOps Tools**: Docker, Nginx
 

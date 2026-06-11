@@ -7,7 +7,8 @@
 
           <!-- Current Password input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
+            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password"
+              aria-label="Current Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />
@@ -20,7 +21,7 @@
           <!-- New Password input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
-              placeholder="New Password" />
+              placeholder="New Password" aria-label="New Password" />
             <button type="button" class="show-password-button" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
               <EyeOff v-else class="w-5 h-5" />
@@ -56,12 +57,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useUserStore } from '@/store/user';
+import { Eye, EyeOff } from '@lucide/vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import { Eye, EyeOff } from 'lucide-vue-next';
 import TheFooter from '@/components/TheFooter.vue';
+import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

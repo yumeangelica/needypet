@@ -39,14 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { Eye, EyeOff, PawPrint } from '@lucide/vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/store/user';
-import { usePetStore } from '@/store/pet';
-import { useAppStore } from '@/store/app';
-import { PawPrint, Eye, EyeOff } from 'lucide-vue-next';
-import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheLogoImage from '@/components/TheLogoImage.vue';
+import { useAppStore } from '@/store/app';
+import { usePetStore } from '@/store/pet';
+import { useUserStore } from '@/store/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

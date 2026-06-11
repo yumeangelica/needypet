@@ -1,14 +1,14 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from '@/router/index';
 import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import router, { PUBLIC_ROUTE_NAMES } from '@/router/index';
+import App from './App.vue';
 
 /* App styles (Tailwind + custom theme) */
 import './app.css';
 
+import { usePetStore } from '@/store/pet';
 // Import the store
 import { useUserStore } from '@/store/user';
-import { usePetStore } from '@/store/pet';
 
 async function initApp() {
   const app = createApp(App).use(router).use(createPinia());
@@ -16,8 +16,8 @@ async function initApp() {
   const userStore = useUserStore();
   const petStore = usePetStore();
 
-  // Define public routes
-  const publicRoutes = ['login', 'register', 'landing', 'confirm', 'request-password-reset'];
+  // Public routes are defined once in the router (PUBLIC_ROUTE_NAMES)
+  const publicRoutes: readonly string[] = PUBLIC_ROUTE_NAMES;
 
   // Initialize user's session from local storage if token exists
   if (!userStore.token) {
@@ -27,7 +27,7 @@ async function initApp() {
   // Validate token and set user's session accordingly
   const isValidToken = await userStore.checkAndValidateToken();
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, _from, next) => {
     if (publicRoutes.includes(to.name as string)) {
       next();
     } else if (userStore.token) {
@@ -54,4 +54,3 @@ async function initApp() {
 }
 
 initApp();
-

@@ -65,13 +65,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeMount } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { PawPrint } from '@lucide/vue';
+import { computed, onBeforeMount, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import TheFooter from '@/components/TheFooter.vue';
+import TheLogoImage from '@/components/TheLogoImage.vue';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
-import { PawPrint } from 'lucide-vue-next';
-import TheLogoImage from '@/components/TheLogoImage.vue';
-import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -107,7 +107,8 @@ onBeforeMount(async () => {
     if (confirmationType.value === 'email') {
       const isConfirmed = await userStore.confirmEmail(urlEmail, urlToken);
       if (isConfirmed) {
-        confirmationMessage.value = 'Your email has been successfully confirmed. You can now log in.';
+        confirmationMessage.value =
+          'Your email has been successfully confirmed. You can now log in.';
         showLoginButton.value = true;
       } else {
         confirmationMessage.value = 'Invalid or expired confirmation link. Please try again.';

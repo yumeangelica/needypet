@@ -59,15 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect, Ref } from 'vue';
-import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
-import { useUserStore } from '@/store/user';
-import { useAppStore } from '@/store/app';
-import { Trash2, LogOut, Settings, CheckCircle2, XCircle } from 'lucide-vue-next';
-import { User } from '@/types/user';
-import TheFooter from '@/components/TheFooter.vue';
+import { CheckCircle2, LogOut, Settings, Trash2, XCircle } from '@lucide/vue';
+import { computed, type Ref, ref, watchEffect } from 'vue';
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
+import TheFooter from '@/components/TheFooter.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
+import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
+import type { User } from '@/types/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -75,7 +75,7 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 
-const user: Ref<User> = ref(null);
+const user: Ref<User | null> = ref(null);
 const showSettings = ref(false);
 const isButtonDisabled = ref(false);
 const showLogoutDialog = ref(false);
@@ -86,7 +86,9 @@ const toggleSettings = () => {
 };
 
 const fetchUser = async () => {
+  if (!userStore.id) return;
   const userData = await userStore.getUserById(userStore.id);
+  if (!userData) return;
   user.value = userData;
 };
 
@@ -116,19 +118,22 @@ const deleteAccount = async () => {
     appStore.addNotification('Your account has been deleted', 'success');
     logout();
   } else {
-    appStore.addNotification(message, 'error');
+    appStore.addNotification(message ?? 'Failed to delete account', 'error');
   }
 };
 
 const resendEmailConfirmation = async () => {
   isButtonDisabled.value = true;
 
-  const isSuccess = await userStore.resendEmailConfirmation();
+  const result = await userStore.resendEmailConfirmation();
 
-  if (isSuccess) {
+  if (result.isSuccess) {
     appStore.addNotification('Please check your email for the confirmation link', 'success');
   } else {
-    appStore.addNotification('Failed to resend email confirmation, please try again later', 'error');
+    appStore.addNotification(
+      result.message || 'Failed to resend email confirmation, please try again later',
+      'error',
+    );
   }
 };
 

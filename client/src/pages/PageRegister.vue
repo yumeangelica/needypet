@@ -61,7 +61,8 @@
           </div>
 
           <!-- Timezone select field -->
-          <div class="auth-field cursor-pointer" @click="showModal = true">
+          <div class="auth-field cursor-pointer" role="button" tabindex="0" aria-label="Select timezone" @click="showModal = true"
+            @keydown.enter="showModal = true" @keydown.space.prevent="showModal = true">
             <span class="auth-field-input" :class="{ 'text-foreground/50': !selectedTimezone }">
               {{ selectedTimezone || 'Select Timezone' }}
             </span>
@@ -85,14 +86,14 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, computed } from 'vue';
-import { useUserStore } from '@/store/user';
+import { Eye, EyeOff, PawPrint } from '@lucide/vue';
+import { computed, type Ref, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
-import { PawPrint, Eye, EyeOff } from 'lucide-vue-next';
-import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheLogoImage from '@/components/TheLogoImage.vue';
+import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
+import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -104,7 +105,6 @@ const email: Ref<string> = ref('');
 const password: Ref<string> = ref('');
 const confirmPassword: Ref<string> = ref('');
 const selectedTimezone: Ref<string> = ref('');
-const errorMessage: Ref<string> = ref('');
 const passwordFieldType: Ref<'password' | 'text'> = ref('password');
 
 const formFieldsErrorDetailsObject = ref({
@@ -131,7 +131,8 @@ const validatePassword = () => {
   passwordValidations.value.uppercase = /[A-Z]/.test(pwd);
   passwordValidations.value.lowercase = /[a-z]/.test(pwd);
   passwordValidations.value.number = /[0-9]/.test(pwd);
-  passwordValidations.value.special = allowedSpecialChars.test(pwd) && !forbiddenSpecialChars.test(pwd);
+  passwordValidations.value.special =
+    allowedSpecialChars.test(pwd) && !forbiddenSpecialChars.test(pwd);
   passwordValidations.value.minLength = pwd.length >= 10;
 };
 
@@ -178,22 +179,26 @@ const createAccount = async () => {
     confirmPassword.value = '';
     selectedTimezone.value = '';
   } else {
-    formFieldsErrorDetailsObject.value = {
+    const fieldErrors = {
       username: errorDetails?.userName?.[0] || '',
       email: errorDetails?.email?.[0] || '',
       newPassword: errorDetails?.newPassword?.[0] || '',
       timezone: errorDetails?.timezone?.[0] || '',
     };
-    errorMessage.value = message ? message : 'An error occurred. Please try again later.';
-    setTimeout(() => {
-      formFieldsErrorDetailsObject.value = {
-        username: '',
-        email: '',
-        newPassword: '',
-        timezone: '',
-      };
-      errorMessage.value = '';
-    }, 3000);
+
+    if (Object.values(fieldErrors).some(Boolean)) {
+      formFieldsErrorDetailsObject.value = fieldErrors;
+      setTimeout(() => {
+        formFieldsErrorDetailsObject.value = {
+          username: '',
+          email: '',
+          newPassword: '',
+          timezone: '',
+        };
+      }, 3000);
+    } else {
+      appStore.addNotification(message, 'error');
+    }
   }
 };
 
