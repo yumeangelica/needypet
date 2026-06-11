@@ -26,14 +26,14 @@ const getAllUserPets = async (request, response, next) => {
       .populate('needs')
       .populate('owner', 'userName')
       .populate('careTakers', 'userName')).map(pet => {
-        // Remove the caretakers list if the user is not the owner
-        if (pet.owner._id.toString() !== user._id.toString()) {
-          // Return only the user in careTakers list
-          pet.careTakers = pet.careTakers.filter(careTaker => careTaker._id.toString() === user._id.toString());
-        }
+      // Remove the caretakers list if the user is not the owner
+      if (pet.owner._id.toString() !== user._id.toString()) {
+        // Return only the user in careTakers list
+        pet.careTakers = pet.careTakers.filter(careTaker => careTaker._id.toString() === user._id.toString());
+      }
 
-        return pet;
-      });
+      return pet;
+    });
 
     response.json(pets);
   } catch (error) {
@@ -128,7 +128,7 @@ const updatePet = async (request, response, next) => {
     }, updateData, { new: true, runValidators: true });
 
     if (!updatedPet) {
-      return response.status(404).json({ error: 'Pet not found' });
+      return response.status(404).json({ message: 'Pet not found' });
     }
 
     response.json(updatedPet);
@@ -153,7 +153,7 @@ const deletePet = async (request, response, next) => {
     }, { runValidators: true });
 
     if (deletedPet === null) {
-      return response.status(404).json({ error: 'Pet not found' });
+      return response.status(404).json({ message: 'Pet not found' });
     }
 
     // Remove pet from owner's pets array
@@ -182,7 +182,7 @@ const addNewNeed = async (request, response, next) => {
     const pet = request.pet;
 
     if (pet.needs.filter(need => need.dateFor.toISOString().split('T')[0] === validateNeed.dateFor.toISOString().split('T')[0]).length >= 10) {
-      return response.status(400).json({ error: 'Maximum number of needs for the day reached' });
+      return response.status(400).json({ message: 'Maximum number of needs for the day reached' });
     }
 
     const newNeedObject = {
@@ -201,11 +201,13 @@ const addNewNeed = async (request, response, next) => {
 
     pet.needs.push(newNeedObject);
 
-    await pet.save();
+    // Validate only modified paths (incl. the new need) so unrelated legacy needs
+    // that no longer match the current schema do not block this save.
+    await pet.save({ validateModifiedOnly: true });
     response.status(201).json(pet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return response.status(400).json({ error: error.flatten() });
+      return response.status(400).json({ message: 'Validation error', errorDetails: error.flatten().fieldErrors });
     }
 
     next(error);
@@ -228,20 +230,20 @@ const addNewRecord = async (request, response, next) => {
     const need = pet.needs.id(request.params.needid);
 
     if (!need) {
-      return response.status(404).json({ error: 'Need not found' });
+      return response.status(404).json({ message: 'Need not found' });
     }
 
     if (need.completed) {
-      return response.status(400).json({ error: 'Need is already completed' });
+      return response.status(400).json({ message: 'Need is already completed' });
     }
 
     if (need.archived) {
-      return response.status(400).json({ error: 'Need is archived' });
+      return response.status(400).json({ message: 'Need is archived' });
     }
 
     const currentDate = checkLocalDateByTimezone(request.user.timezone);
     if (need.dateFor.toISOString().split('T')[0] !== currentDate) {
-      return response.status(400).json({ error: 'Need date is not the same as the current date' });
+      return response.status(400).json({ message: 'Need date is not the same as the current date' });
     }
 
     const newRecordObject = {
@@ -261,11 +263,12 @@ const addNewRecord = async (request, response, next) => {
 
     need.careRecords.push(newRecordObject);
     dailyTaskCompleter(need);
-    await pet.save();
+    // Validate only modified paths so unrelated legacy needs do not block this save.
+    await pet.save({ validateModifiedOnly: true });
     response.status(201).json(pet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return response.status(400).json({ error: error.flatten() });
+      return response.status(400).json({ message: 'Validation error', errorDetails: error.flatten().fieldErrors });
     }
 
     next(error);
@@ -285,13 +288,15 @@ const toggleNeedisActive = async (request, response, next) => {
   const need = pet.needs.id(request.params.needid);
 
   if (!need) {
-    return response.status(404).json({ error: 'Need not found' });
+    return response.status(404).json({ message: 'Need not found' });
   }
 
   need.isActive = !need.isActive;
 
   try {
-    await pet.save();
+    // Validate only the modified path so an unrelated legacy need that no longer
+    // matches the current schema does not block this toggle.
+    await pet.save({ validateModifiedOnly: true });
     response.json(pet);
   } catch (error) {
     next(error);
@@ -304,7 +309,7 @@ const updateNeed = async (request, response, next) => {
   const need = pet.needs.id(request.params.needid);
 
   if (!need) {
-    return response.status(404).json({ error: 'Need not found' });
+    return response.status(404).json({ message: 'Need not found' });
   }
 
   const updateDataObject = {
@@ -337,7 +342,7 @@ const updateNeed = async (request, response, next) => {
     );
 
     if (!updatedPet) {
-      return response.status(404).json({ error: 'Pet\'s need not found' });
+      return response.status(404).json({ message: 'Pet\'s need not found' });
     }
 
     response.status(200).json(updatedPet);
@@ -352,7 +357,7 @@ const deleteNeed = async (request, response, next) => {
   const need = pet.needs.id(request.params.needid);
 
   if (!need) {
-    return response.status(404).json({ error: 'Need not found' });
+    return response.status(404).json({ message: 'Need not found' });
   }
 
   try {
