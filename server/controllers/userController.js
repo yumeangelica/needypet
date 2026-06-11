@@ -104,11 +104,9 @@ const createNewUser = async (request, response, next) => {
     response.status(201).json(user);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('Validation error:', error.flatten());
-      const errorDetails = error.flatten();
       return response.status(422).json({
         message: 'Validation error',
-        errorDetails: errorDetails.fieldErrors,
+        errorDetails: error.flatten().fieldErrors,
       });
     }
 
@@ -145,11 +143,9 @@ const updateUser = async (request, response, next) => {
         passwordStrengthValidation(newPassword); // Validate password strength
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.log('Password strength validation error:', error.flatten());
-          const errorDetails = error.flatten();
           return response.status(422).json({
             message: 'Password strength validation error',
-            errorDetails: errorDetails.fieldErrors,
+            errorDetails: error.flatten().fieldErrors,
           });
         }
 
@@ -173,26 +169,26 @@ const updateUser = async (request, response, next) => {
       });
     }
 
+    const emailChanged = Boolean(email && email !== user.email);
+
     // Update user properties
     if (userName && userName !== user.userName) {
       user.userName = userName;
     }
 
-    if (email && email !== user.email) {
+    if (emailChanged) {
       user.email = email;
-      user.emailConfirmed = false; // Set emailConfirmed to false if email is updated
-      user.generateEmailConfirmToken(); // Generate new email confirmation token
-      console.log('Email confirmation sent to:', user.email);
+      user.emailConfirmed = false;
+      user.generateEmailConfirmToken();
     }
 
     if (timezone && timezone !== user.timezone) {
       user.timezone = timezone;
     }
 
-    await user.save(); // Save updated user to database
+    await user.save();
 
-    if (email && email !== user.email) {
-      // If email is updated, send confirmation email
+    if (emailChanged) {
       await sendConfirmationEmail(user.email, user.emailConfirmToken);
     }
 
@@ -205,11 +201,9 @@ const updateUser = async (request, response, next) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('Validation error:', error.flatten());
-      const errorDetails = error.flatten();
       return response.status(422).json({
         message: 'Validation error',
-        errorDetails: errorDetails.fieldErrors,
+        errorDetails: error.flatten().fieldErrors,
       });
     }
 
