@@ -7,8 +7,8 @@
 
           <div class="inline-container">
             <h2>{{ pet.name }}</h2>
-            <button v-if="pet.owner.id === userStore.id" class="settings-button" @click="router.push({ name: 'edit-pet' })">
-              <Settings class="w-5 h-5" />
+            <button v-if="pet.owner.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
+              <Settings class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
 
@@ -31,7 +31,7 @@
             <h3 class="text-center mt-2 mb-0">Needs:</h3>
             <template v-if="pet.owner.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
               <button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
-                <CirclePlus class="inline-block w-4 h-4 mr-1" />
+                <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
                 Add need
               </button>
               <p v-else>Maximum 10 needs per day</p>

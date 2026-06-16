@@ -47,7 +47,7 @@
             <button type="submit" class="form-button primary">Update Pet</button>
             <button type="button" @click="cancelEdit" class="form-button secondary">Cancel</button>
             <button type="button" class="form-button danger" @click="showDeleteDialog = true">
-              <Trash2 class="inline-block w-4 h-4 mr-1" />
+              <Trash2 class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
               Delete Pet
             </button>
           </div>
@@ -58,7 +58,7 @@
         @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
 
       <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?" confirmLabel="Delete"
-        variant="danger" icon="trashOutline" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
+        variant="danger" :icon="Trash2" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
     </div>
     <TheFooter />
   </div>

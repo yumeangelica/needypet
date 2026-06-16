@@ -5,9 +5,9 @@
         <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="paw-header-container">
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           <h4>Login</h4>
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
         <form @submit.prevent="login">
@@ -17,9 +17,9 @@
 
           <div class="auth-field">
             <input class="auth-field-input" :type="passwordFieldType" v-model="password" placeholder="Enter your password" aria-label="Password" />
-            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
-              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+            <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
+              <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
 

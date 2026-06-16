@@ -3,7 +3,8 @@ const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
 const User = require('../models/userModel');
 const { mongodbUri } = require('../utils/config');
-const { createNewUser } = require('../controllers/userController');
+const { createNewUser, updateUser } = require('../controllers/userController');
+const mailer = require('../utils/mailer');
 
 /**
  * Helper to create a mock response object
@@ -152,6 +153,50 @@ describe('POST /auth/users -testcases', () => {
       assert.strictEqual(response.json.mock.calls[0].arguments[0].message, 'Validation error');
     });
   }
+});
+
+describe('PUT /auth/users/:id (updateUser)', () => {
+  const password = 'testPass123';
+  let user;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    await createNewUser({
+      body: {
+        userName: 'editUser123',
+        email: 'edit@example.com',
+        newPassword: password,
+        timezone: 'Europe/Helsinki',
+      },
+    }, createMockResponse(), mock.fn());
+
+    user = await User.findOne({ userName: 'editUser123' });
+  });
+
+  it('sends a confirmation email when the email changes', async t => {
+    const sendMock = t.mock.method(mailer, 'sendConfirmationEmail', () => Promise.resolve());
+
+    const response = createMockResponse();
+    await updateUser({ user, body: { email: 'changed@example.com', currentPassword: password } }, response, mock.fn());
+
+    assert.strictEqual(response.status.mock.calls[0].arguments[0], 200);
+    assert.strictEqual(sendMock.mock.calls.length, 1);
+
+    const updated = await User.findById(user._id);
+    assert.strictEqual(updated.email, 'changed@example.com');
+    assert.strictEqual(updated.emailConfirmed, false);
+  });
+
+  it('does not send a confirmation email when the email is unchanged', async t => {
+    const sendMock = t.mock.method(mailer, 'sendConfirmationEmail', () => Promise.resolve());
+
+    const response = createMockResponse();
+    await updateUser({ user, body: { email: 'edit@example.com', currentPassword: password } }, response, mock.fn());
+
+    assert.strictEqual(response.status.mock.calls[0].arguments[0], 200);
+    assert.strictEqual(sendMock.mock.calls.length, 0);
+  });
 });
 
 // Cleanup created test users after tests

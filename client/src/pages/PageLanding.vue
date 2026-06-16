@@ -5,9 +5,9 @@
         <TheLogoImage altText="NeedyPet Logo" />
 
         <h4 class="text-center paw-header-container">
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           All your pet's needs, one place
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </h4>
 
         <button @click="router.push({ name: 'login' })" class="action-button primary-action-button">

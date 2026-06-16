@@ -1,19 +1,15 @@
-version: '3.8'
 services:
-  frontend:
+  app:
     build:
-      context: ./client
-      dockerfile: Dockerfile-frontend
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5173:80"  # Running on port 5173, port 80 works as well because of the nginx configuration
-    restart: unless-stopped
-
-  backend:
-    build:
-      context: ./server
-      dockerfile: Dockerfile-backend
-    ports:
-      - "5002:5002"  # Backend port
-    restart: unless-stopped
+      - "5002:5002"
+    # Runtime config and secrets (Mongo URI, JWT secret, mail, ALLOWED_ORIGINS).
+    # Provide them in server/.env.production (git-ignored, not baked into the image).
+    env_file:
+      - ./server/.env.production
     environment:
       NODE_ENV: production
+      PORT: 5002
+    restart: unless-stopped

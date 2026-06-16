@@ -5,9 +5,9 @@
         <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="paw-header-container">
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           <h4>Create account</h4>
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
         <form @submit.prevent="createAccount" style="gap: 0.7rem;">
@@ -31,9 +31,9 @@
           <div class="auth-field">
             <input class="auth-field-input" v-model="password" @input="validatePassword" :type="passwordFieldType" placeholder="Password" required
               id="password" aria-label="Password" />
-            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
-              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+            <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
+              <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
 
@@ -51,9 +51,9 @@
           <div class="auth-field">
             <input class="auth-field-input" v-model="confirmPassword" placeholder="Confirm password" :type="passwordFieldType" required
               id="confirmPassword" aria-label="Confirm Password" />
-            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
-              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+            <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
+              <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
           <div v-if="formFieldsErrorDetailsObject.newPassword" class="custom-error-message">

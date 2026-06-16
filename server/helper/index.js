@@ -63,9 +63,8 @@ const tzIdentifierChecker = timezone => { // Timezone is in format 'Europe/Helsi
  * @returns formatted date in 'YYYY-MM-DD' format
   */
 const checkLocalDateByTimezone = timezone => {
-  console.log('check', Intl.supportedValuesOf('timeZone').includes(timezone));
   if (!Intl.supportedValuesOf('timeZone').includes(timezone)) {
-    return new Error('Invalid timezone');
+    throw new Error('Invalid timezone');
   }
 
   const newDate = dayjs().tz(timezone);

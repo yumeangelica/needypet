@@ -31,9 +31,9 @@
           <label class="form-label">Current Password:</label>
           <div class="form-field">
             <input class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
-            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
-              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+            <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
+              <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
           <div v-if="errorDetailsObject.currentPassword" class="custom-error-message">

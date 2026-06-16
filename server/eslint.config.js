@@ -5,7 +5,7 @@ const xoConfig = xo.default[0];
 
 module.exports = [
   {
-    ignores: ['dist/', 'build/', 'node_modules/', 'package-lock.json'],
+    ignores: ['dist/', 'build/', 'node_modules/', 'package-lock.json', 'server_updates/'],
   },
   ...xo.default,
   {
@@ -16,7 +16,6 @@ module.exports = [
       globals: {
         ...globals.node,
         ...globals.commonjs,
-        ...globals.jest,
       },
     },
     rules: {

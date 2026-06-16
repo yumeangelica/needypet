@@ -1,7 +1,7 @@
 const User = require('../models/userModel');
 const { jwtVerify } = require('jose');
 const { jwtSecretEncoded } = require('../utils/config');
-const { sendConfirmationEmail, sendPasswordResetEmail } = require('../utils/mailer');
+const mailer = require('../utils/mailer');
 const loginValidation = require('../validations/loginValidation');
 const registerValidation = require('../validations/registerValidation');
 const updateUserValidation = require('../validations/updateUserValidation');
@@ -83,7 +83,7 @@ const createNewUser = async (request, response, next) => {
     await user.save();
 
     try {
-      await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+      await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
     } catch (emailError) {
       if (emailError.code === 'EAUTH') {
         return next({
@@ -168,11 +168,12 @@ const updateUser = async (request, response, next) => {
       user.userName = userName;
     }
 
-    if (email && email !== user.email) {
+    const emailChanged = Boolean(email && email !== user.email);
+
+    if (emailChanged) {
       user.email = email;
       user.emailConfirmed = false; // Set emailConfirmed to false if email is updated
       user.generateEmailConfirmToken(); // Generate new email confirmation token
-      console.log('Email confirmation sent to:', user.email);
     }
 
     if (timezone && timezone !== user.timezone) {
@@ -181,8 +182,8 @@ const updateUser = async (request, response, next) => {
 
     await user.save(); // Save updated user to database
 
-    if (email && email !== user.email) { // If email is updated, send confirmation email
-      await sendConfirmationEmail(user.email, user.emailConfirmToken);
+    if (emailChanged) { // If email is updated, send confirmation email
+      await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken);
     }
 
     response.status(200).json({
@@ -291,7 +292,7 @@ const requestPasswordReset = async (request, response, next) => {
 
     user.generatePasswordResetToken(); // Generate password reset token
     await user.save(); // Save updated user to database
-    await sendPasswordResetEmail(user.email, user.passwordResetToken); // Send password reset email to user
+    await mailer.sendPasswordResetEmail(user.email, user.passwordResetToken); // Send password reset email to user
 
     response.status(200).json({ message: 'Password reset link sent to email' });
   } catch (error) {
@@ -320,7 +321,6 @@ const validateUserToken = async (request, response, next) => {
       return response.status(401).json({ message: 'Token invalid' });
     }
 
-    console.log('Token validated:', token);
     response.status(200).json({ token });
   } catch (error) {
     next(error);
@@ -368,7 +368,7 @@ const resendEmailConfirmation = async (request, response, next) => {
   try {
     user.generateEmailConfirmToken(); // Generate new email confirmation token
     await user.save(); // Save updated user to database
-    await sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+    await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
 
     response.status(200).json({ message: 'Confirmation email resent' });
   } catch (error) {

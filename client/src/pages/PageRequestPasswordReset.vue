@@ -5,9 +5,9 @@
         <TheLogoImage altText="NeedyPet logo" />
 
         <div class="paw-header-container">
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           <h4>Forgot Password</h4>
-          <PawPrint class="inline-block w-5 h-5" />
+          <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
         <form @submit.prevent="resetPassword">
