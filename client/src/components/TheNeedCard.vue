@@ -289,7 +289,8 @@ const deleteNeed = async (needId: string) => {
 .card-inactive .complete-button,
 .card-inactive .done-label,
 .card-inactive button {
-  color: #afa8a8;
+  /* Darkened from #afa8a8 to meet WCAG 4.5:1 on the inactive card background */
+  color: #5d5d5d;
 }
 
 .need-card-category {
@@ -311,16 +312,18 @@ const deleteNeed = async (needId: string) => {
 .complete-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   background: var(--color-button-primary);
   border: none;
-  border-radius: 15px;
+  border-radius: var(--radius-md);
   padding: 6px 12px;
   font-family: var(--font-sans);
   font-size: 0.85rem;
   color: var(--color-primary-foreground);
   cursor: pointer;
   min-width: 60px;
+  min-height: 44px;
   transition: opacity 0.2s, transform 0.1s;
 }
 
@@ -351,9 +354,10 @@ const deleteNeed = async (needId: string) => {
   gap: 4px;
   background-color: var(--color-status-done);
   color: var(--color-foreground);
-  border-radius: 15px;
+  border-radius: var(--radius-md);
   text-align: center;
   min-width: 60px;
+  min-height: 44px;
   padding: 6px 12px;
   font-size: 0.85rem;
   justify-content: center;
