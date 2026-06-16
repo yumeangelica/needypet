@@ -58,7 +58,7 @@
         @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
 
       <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?" confirmLabel="Delete"
-        variant="danger" icon="trashOutline" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
+        variant="danger" :icon="Trash2" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
     </div>
     <TheFooter />
   </div>

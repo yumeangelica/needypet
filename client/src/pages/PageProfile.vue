@@ -52,7 +52,7 @@
 
       <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Account"
         message="Are you sure you want to delete your account? This action cannot be undone." confirmLabel="Delete" variant="danger"
-        icon="trashOutline" @confirm="deleteAccount(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
+        :icon="Trash2" @confirm="deleteAccount(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
     </div>
     <TheFooter />
   </div>

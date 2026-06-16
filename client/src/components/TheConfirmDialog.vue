@@ -1,14 +1,13 @@
 <template>
   <AlertDialog :open="isOpen" :title="title" :message="message" :confirmLabel="confirmLabel" :cancelLabel="cancelLabel" :variant="variant"
     @confirm="handleConfirm" @cancel="handleCancel">
-    <component v-if="iconComponent" :is="iconComponent" class="size-10 mb-3" :class="variantClass" />
+    <component v-if="icon" :is="icon" class="size-10 mb-3" :class="variantClass" aria-hidden="true" />
   </AlertDialog>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, type Component } from 'vue';
 import { AlertDialog } from '@/components/ui';
-import { Trash2 } from 'lucide-vue-next';
 
 const props = withDefaults(defineProps<{
   isOpen: boolean;
@@ -17,7 +16,7 @@ const props = withDefaults(defineProps<{
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: 'default' | 'danger';
-  icon?: string;
+  icon?: Component;
 }>(), {
   confirmLabel: 'Confirm',
   cancelLabel: 'Cancel',
@@ -32,13 +31,6 @@ const emit = defineEmits<{
 const variantClass = computed(() =>
   props.variant === 'danger' ? 'text-destructive' : 'text-primary-foreground'
 );
-
-// Map icon string props to Lucide components
-const iconComponent = computed(() => {
-  if (!props.icon) return null;
-  if (props.icon === 'trashOutline' || props.icon === 'trash-outline') return Trash2;
-  return null;
-});
 
 const handleConfirm = () => emit('confirm');
 const handleCancel = () => emit('cancel');
