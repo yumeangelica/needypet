@@ -17,9 +17,9 @@
           <TheLogoImage altText="NeedyPet logo" />
 
           <div class="paw-header-container">
-            <PawPrint class="inline-block w-5 h-5" />
+            <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
             <h4>Reset Password</h4>
-            <PawPrint class="inline-block w-5 h-5" />
+            <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           </div>
 
           <div class="custom-valid-message text-center">{{ validMessage }}</div>

@@ -16,7 +16,7 @@
             <div class="title-and-button-container">
               <h2 class="section-title">My pets</h2>
               <button @click="router.push({ name: 'add-pet' })" class="custom-button">
-                <CirclePlus class="inline-block w-4 h-4 mr-1" />
+                <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
                 Add Pet
               </button>
             </div>
@@ -38,8 +38,8 @@
           <div class="title-and-button-container">
             <h2 class="section-title">My pets</h2>
           </div>
-          <TheEmptyState icon="pawOutline" title="No pets yet" message="Add your first pet to get started!" actionLabel="Add Pet"
-            actionIcon="addCircleOutline" @action="router.push({ name: 'add-pet' })" />
+          <TheEmptyState :icon="PawPrint" title="No pets yet" message="Add your first pet to get started!" actionLabel="Add Pet"
+            :actionIcon="CirclePlus" @action="router.push({ name: 'add-pet' })" />
         </div>
       </div>
 
@@ -57,7 +57,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { usePetStore } from '@/store/pet';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
-import { CirclePlus } from 'lucide-vue-next';
+import { CirclePlus, PawPrint } from 'lucide-vue-next';
 import ThePetCard from '@/components/ThePetCard.vue';
 import TheEmptyState from '@/components/TheEmptyState.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';

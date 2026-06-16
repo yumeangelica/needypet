@@ -5,8 +5,8 @@
 
         <div class="inline-container">
           <h3 class="form-header mb-0">{{ user.userName }}</h3>
-          <button class="settings-button" @click="toggleSettings">
-            <Settings class="w-5 h-5" />
+          <button class="settings-button" aria-label="Settings" @click="toggleSettings">
+            <Settings class="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -15,8 +15,8 @@
           <div class="email-confirmed">
             <p>
               <strong>Email verified</strong>
-              <CheckCircle2 v-if="user.emailConfirmed" class="inline-block w-5 h-5 ml-1.5 align-middle text-green-500" />
-              <XCircle v-else class="inline-block w-5 h-5 ml-1.5 align-middle text-red-500" />
+              <CheckCircle2 v-if="user.emailConfirmed" class="inline-block w-5 h-5 ml-1.5 align-middle text-green-500" role="img" aria-label="Verified" />
+              <XCircle v-else class="inline-block w-5 h-5 ml-1.5 align-middle text-red-500" role="img" aria-label="Not verified" />
             </p>
             <button v-if="!user.emailConfirmed" class="custom-button text-sm px-2.5 py-1" :disabled="isButtonDisabled"
               @click="resendEmailConfirmation">
@@ -28,7 +28,7 @@
 
         <div class="profile-actions">
           <button class="custom-button" @click="showLogoutDialog = true">
-            <LogOut class="inline-block w-4 h-4 mr-1" />
+            <LogOut class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
             Logout
           </button>
           <button v-show="showSettings" class="custom-button" @click="router.push({ name: 'edit-profile' })">
@@ -38,7 +38,7 @@
             Change password
           </button>
           <button v-show="showSettings" class="custom-button" @click="showDeleteDialog = true">
-            <Trash2 class="inline-block w-4 h-4 mr-1" />
+            <Trash2 class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
             Delete Account
           </button>
         </div>

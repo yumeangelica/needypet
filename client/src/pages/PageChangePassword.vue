@@ -8,9 +8,9 @@
           <!-- Current Password input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
-            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
-              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+            <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
+              <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
           <div v-if="errorDetailsObject.currentPassword" class="custom-error-message">
@@ -21,9 +21,9 @@
           <div class="auth-field">
             <input class="auth-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
               placeholder="New Password" />
-            <button type="button" class="show-password-button" @click="togglePasswordVisibility">
-              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+            <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
+              <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
+              <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
           <div v-if="errorDetailsObject.newPassword" class="custom-error-message">

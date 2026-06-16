@@ -1,39 +1,27 @@
 <template>
   <div class="flex flex-col items-center justify-center py-10 px-5 text-center">
-    <component v-if="iconComponent" :is="iconComponent" class="size-16 text-card-border mb-4 opacity-70" />
+    <component v-if="icon" :is="icon" class="size-16 text-card-border mb-4 opacity-70" aria-hidden="true" />
     <h3 class="m-0 mb-2 text-lg">{{ title }}</h3>
     <p class="m-0 mb-5 opacity-80 max-w-[300px]">{{ message }}</p>
     <button v-if="actionLabel" class="custom-button" @click="$emit('action')">
-      <component v-if="actionIconComponent" :is="actionIconComponent" class="size-5" />
+      <component v-if="actionIcon" :is="actionIcon" class="size-5" aria-hidden="true" />
       {{ actionLabel }}
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, type Component } from 'vue';
-import { PawPrint, CirclePlus } from 'lucide-vue-next';
+import { type Component } from 'vue';
 
-const props = defineProps<{
-  icon?: string;
+defineProps<{
+  icon?: Component;
   title: string;
   message: string;
   actionLabel?: string;
-  actionIcon?: string;
+  actionIcon?: Component;
 }>();
 
 defineEmits<{
   (e: 'action'): void;
 }>();
-
-// Map ionicon string names to Lucide components
-const iconMap: Record<string, Component> = {
-  'paw-outline': PawPrint,
-  'pawOutline': PawPrint,
-  'add-circle-outline': CirclePlus,
-  'addCircleOutline': CirclePlus,
-};
-
-const iconComponent = computed(() => props.icon ? iconMap[props.icon] || PawPrint : null);
-const actionIconComponent = computed(() => props.actionIcon ? iconMap[props.actionIcon] || CirclePlus : null);
 </script>

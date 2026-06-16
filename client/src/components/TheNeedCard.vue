@@ -8,26 +8,26 @@
 
     <div class="flex justify-center items-center gap-2">
       <button class="complete-button" v-if="!need.completed && isToday" :disabled="isSaving" @click="addRecord(petId, need)">
-        <Check class="size-4" />Complete
+        <Check class="size-4" aria-hidden="true" />Complete
       </button>
       <div class="done-label" v-if="need.completed">
-        <CheckCheck class="size-4" />
+        <CheckCheck class="size-4" aria-hidden="true" />
         Done
       </div>
 
-      <button v-if="isOwner"
+      <button v-if="isOwner" aria-label="Need options"
         class="bg-transparent border-none cursor-pointer text-primary-foreground p-1 rounded-full transition-colors hover:bg-black/10 active:bg-black/15"
         @click="toggleOptions">
-        <EllipsisVertical class="size-5" />
+        <EllipsisVertical class="size-5" aria-hidden="true" />
       </button>
     </div>
 
     <!-- Toggleable buttons -->
     <div v-if="isOwner" class="options-container">
       <!-- Edit need button -->
-      <button v-if="isToday || isFuture" @click="editNeed"
+      <button v-if="isToday || isFuture" @click="editNeed" aria-label="Edit need"
         class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-black/10 active:bg-black/15">
-        <Pencil class="size-5" />
+        <Pencil class="size-5" aria-hidden="true" />
       </button>
 
       <!-- isActive toggle -->
@@ -39,9 +39,9 @@
       </div>
 
       <!-- Delete need button -->
-      <button @click="showDeleteConfirm = true"
+      <button @click="showDeleteConfirm = true" aria-label="Delete need"
         class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-red-500/15 active:bg-red-500/25">
-        <Trash2 class="size-5" />
+        <Trash2 class="size-5" aria-hidden="true" />
       </button>
     </div>
 
