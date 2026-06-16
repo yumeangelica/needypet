@@ -6,8 +6,8 @@ NeedyPet is designed to streamline pet care management within households and pet
 
 ## Application User Roles
 
-- **Pet Owner**: Primary user responsible for creating and managing pet profiles, setting up care schedules, and assigning caretakers. Pet owners have full control over their pets' profiles and care activities.
-- **Pet Carer**: Secondary users who can view assigned pets and are responsible for completing care activities as per the owner's setup. Carers can mark activities as complete but cannot modify the details or statuses beyond that.
+- **Pet Owner**: Primary user responsible for creating and managing pet profiles and setting up care schedules. Pet owners have full control over their pets' profiles and care activities.
+- **Pet Carer**: Secondary users who can view assigned pets and complete care activities as per the owner's setup. Carer permissions are supported in the backend and partially surfaced in the frontend; a full caretaker management flow is planned.
 
 ## Functional Requirements
 
@@ -19,7 +19,7 @@ NeedyPet is designed to streamline pet care management within households and pet
 2. **Pet Profile Management**:
    - **Adding/Editing Pets**: Owners can add new pets, edit pet information, or delete pet profiles.
    - **Pet Details**: Profiles include the pet’s name, species, breed, birthday, and a detailed description.
-   - **Assign Carers**: Owners assign carers to pets. Carers can complete activities but cannot modify pet details or toggle activity statuses.
+   - **Carer Access**: Pets can have carers in the backend data model. Carers can complete activities but cannot modify pet details or toggle activity statuses. Frontend caretaker assignment and invitation flows are planned.
 
 3. **Care Activities (Needs/Tasks)**:
    - **Activity Details**:
@@ -32,19 +32,20 @@ NeedyPet is designed to streamline pet care management within households and pet
      - Carers can only mark activities as completed.
 
 4. **Notifications and Reminders**:
-   - **Reminders**: Automated reminders for upcoming or overdue activities to ensure all pet needs are met timely.
-   - **Alerts**: Notifications for significant activities within the account, such as impending activity deadlines or system updates.
+   - **Current Notifications**: The frontend shows in-app success, error, and informational notifications for user actions.
+   - **Planned Reminders**: Automated reminders for upcoming or overdue activities are planned for a future version.
 
 5. **Activity History and Reporting**:
    - **History Access**: Users can access a full history of all activities related to pet care, filtered by pet or date.
 
 ## Technical Requirements
 
-- **Back-end**: Utilizes MongoDB for data storage, Express.js, and Node.js for server-side logic. Zod is used for request validation. Secure password hashing with bcryptjs is used for data protection.
-- **Front-end**: Developed with Vue.js 3 (Composition API), TypeScript, Tailwind CSS, Pinia, and Vue Router for responsive and state-driven UI across different devices and platforms.
-- **HTTP Communication**: Frontend-backend communication uses the browser-native `fetch` API through an internal service wrapper (`apiClient`) without an Axios dependency.
+- **Back-end**: Utilizes MongoDB with Mongoose for data storage, Express 5 and Node.js for server-side logic, Zod for request validation, jose for JWT-based authentication, bcryptjs for password hashing, Nodemailer for account emails, node-cron for scheduled need rollover, and Helmet for secure HTTP defaults.
+- **Front-end**: Developed with Vue 3 (Composition API), Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, and dayjs for responsive and state-driven UI across different devices and platforms.
+- **HTTP Communication**: Frontend-backend communication uses the browser-native `fetch` API through an internal service wrapper (`apiClient`).
 - **Email Services**: Nodemailer is used for account email verification and password resets.
-- **Security**: Implements industry-standard security measures including JWT-based authentication (jose) and GDPR-compliant data handling practices.
+- **Testing and Quality**: Backend tests use the Node.js test runner and Supertest. Frontend tests use Vitest and Cypress. ESLint is used in both workspaces.
+- **Security**: Implements JWT-based authentication, password hashing, input validation, secure HTTP headers, and GDPR-compliant data handling practices.
 
 ## Compliance and Standards
 

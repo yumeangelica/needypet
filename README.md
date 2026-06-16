@@ -18,7 +18,7 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
   - **Profile Management**: Users can update their profile information including username, email, timezone, and password, and can delete their accounts.
   - **Roles and Permissions**:
     - **Pet Owners**: Can add, update, delete pets and manage detailed pet profiles including care needs.
-    - **Carers** (Backend Only): Can complete needs but cannot modify pet ownership details or toggle need statuses. Frontend support for carer roles is planned.
+    - **Carers**: Can view shared pets and complete needs but cannot modify pet ownership details or toggle need statuses. Frontend caretaker management is planned.
 
 - **Pet Management**:
   - Owner users can manage pet details such as name, birthday, species, breed, and specific care needs.
@@ -86,14 +86,50 @@ The following features are planned for future versions of NeedyPet:
 
 #### Note
 
-  - Functions not yet implemented in the frontend are operational in the backend and marked for future integration. These include full carer capabilities, detailed in source code comments.
+  - Functions not yet implemented in the frontend are operational in the backend and marked for future integration. These include full caretaker management capabilities, detailed in source code comments.
 
 ## Technical Setup
 
-- **Backend Technologies**: MongoDB, Express.js, Node.js, JavaScript, Zod, ESLint
-- **Frontend Technologies**: Vue.js 3 (Composition API), TypeScript, Tailwind CSS, Pinia, Vue Router, Lucide Vue Next, dayjs, Vitest, Cypress, ESLint
-- **Frontend API Client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts` (no Axios dependency)
-- **DevOps Tools**: Docker, Nginx
+- **Runtime and package management**: Bun, with separate client and server packages.
+- **Backend technologies**: Node.js, Express 5, MongoDB with Mongoose, JavaScript, Zod, jose, bcryptjs, Nodemailer, node-cron, Helmet, ESLint, Node.js test runner, and Supertest.
+- **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, Cypress, and ESLint.
+- **Frontend API client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts`.
+
+## Development
+
+Install dependencies separately in the client and server folders:
+
+```bash
+cd client
+bun install
+
+cd ../server
+bun install
+```
+
+Run the application locally with the backend and frontend in separate terminals:
+
+```bash
+cd server
+bun run dev
+```
+
+```bash
+cd client
+bun run dev
+```
+
+Useful verification commands:
+
+```bash
+cd server
+bun run lint
+bun run test
+
+cd ../client
+bun run lint
+bun run test:unit
+```
 
 ## Credits
 
