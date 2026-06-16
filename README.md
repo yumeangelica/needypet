@@ -129,7 +129,7 @@ bun run test
 
 cd ../client
 bun run lint
-bun run test:unit
+bunx vitest run
 ```
 
 ## Credits
