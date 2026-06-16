@@ -1,5 +1,8 @@
 <template>
   <div class="min-h-screen flex flex-col">
+    <!-- Skip to content link (first focusable element) -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
     <!-- Desktop header -->
     <TheHeader v-if="showHeaderNavigation" />
 

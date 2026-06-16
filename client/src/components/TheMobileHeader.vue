@@ -2,7 +2,8 @@
   <nav class="fixed bottom-0 inset-x-0 z-50 bg-primary border-t border-card-border flex items-center justify-around h-16 md:hidden safe-area-bottom">
     <button
       class="flex flex-col items-center gap-1 py-2 px-3 bg-transparent border-none cursor-pointer transition-colors rounded-lg active:bg-white/25"
-      :class="route.name === 'home' ? 'text-primary-foreground' : 'text-primary-foreground/80'" @click.prevent="navigateTo('home')">
+      :class="route.name === 'home' ? 'text-primary-foreground' : 'text-primary-foreground/80'"
+      :aria-current="route.name === 'home' ? 'page' : undefined" @click.prevent="navigateTo('home')">
       <div class="paw-header-container">
         <PawPrint class="size-5" aria-hidden="true" />
       </div>
@@ -10,7 +11,8 @@
     </button>
     <button
       class="flex flex-col items-center gap-1 py-2 px-3 bg-transparent border-none cursor-pointer transition-colors rounded-lg active:bg-white/25"
-      :class="route.name === 'profile' ? 'text-primary-foreground' : 'text-primary-foreground/80'" @click.prevent="navigateTo('profile')">
+      :class="route.name === 'profile' ? 'text-primary-foreground' : 'text-primary-foreground/80'"
+      :aria-current="route.name === 'profile' ? 'page' : undefined" @click.prevent="navigateTo('profile')">
       <CircleUser class="icon-strong size-5" aria-hidden="true" />
       <span class="text-xs font-sans">Profile</span>
     </button>

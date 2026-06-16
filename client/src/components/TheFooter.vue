@@ -1,7 +1,7 @@
 <template>
-  <div class="app-footer copyright mt-auto" :class="{ mobile: isMobile }">
+  <footer class="app-footer copyright mt-auto" :class="{ mobile: isMobile }">
     &copy; 2020 - {{ year }} yumeangelica.github.io. All Rights Reserved.
-  </div>
+  </footer>
 
 </template>
 

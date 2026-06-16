@@ -134,6 +134,32 @@ li {
 }
 
 /* ============================================
+   Skip to content link (keyboard accessibility)
+   ============================================ */
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 40001;
+  padding: 10px 16px;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 6px var(--color-shadow-pink);
+}
+
+.skip-link:focus {
+  left: 8px;
+  top: 8px;
+}
+
+/* Programmatic focus target (skip link) should not show an outline */
+[role="main"]:focus {
+  outline: none;
+}
+
+/* ============================================
    Layout wrappers
    ============================================ */
 
