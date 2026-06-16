@@ -1,7 +1,9 @@
 <template>
-  <div class="notification-container" :class="{ 'with-header': hasDesktopHeader }">
-    <div v-for="notification in sortedNotifications" :key="notification.id" :class="['notification', notification.type]">
-      {{ notification.type }}: {{ notification.message }}
+  <div class="notification-container" :class="{ 'with-header': hasDesktopHeader }" role="region" aria-label="Notifications">
+    <div v-for="notification in sortedNotifications" :key="notification.id" :class="['notification', notification.type]"
+      :role="notification.type === 'error' ? 'alert' : 'status'"
+      :aria-live="notification.type === 'error' ? 'assertive' : 'polite'">
+      {{ notification.message }}
     </div>
   </div>
 </template>
