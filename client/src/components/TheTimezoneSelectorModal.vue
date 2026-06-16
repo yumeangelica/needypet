@@ -1,13 +1,16 @@
 <template>
-  <Dialog :open="isOpen" @update:open="(v) => { if (!v) closeModal(); }" title="Select Timezone">
+  <Dialog :open="isOpen" @update:open="(v) => { if (!v) closeModal(); }" title="Select Timezone"
+    description="Search and select your timezone">
     <div class="mb-4">
-      <input ref="inputField" v-model="searchQuery" placeholder="Search for timezone..."
-        class="w-full p-3 text-sm rounded-xl bg-auth-input-bg border border-card-border outline-none font-sans text-foreground" />
+      <input ref="inputField" v-model="searchQuery" placeholder="Search for timezone..." aria-label="Search for timezone"
+        class="w-full p-3 text-sm rounded-xl bg-auth-input-bg border border-card-border outline-none font-sans text-foreground focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2" />
     </div>
     <ul class="max-h-[400px] overflow-y-auto">
-      <li v-for="(zone, index) in filteredTimezones" :key="index" @click="selectTimezone(zone)"
-        class="px-3 py-2 rounded-lg cursor-pointer transition-all hover:bg-card text-sm font-sans text-foreground">
-        {{ zone }}
+      <li v-for="(zone, index) in filteredTimezones" :key="index">
+        <button type="button" @click="selectTimezone(zone)"
+          class="w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-card text-sm font-sans text-foreground focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2">
+          {{ zone }}
+        </button>
       </li>
     </ul>
   </Dialog>

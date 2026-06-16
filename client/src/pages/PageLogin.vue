@@ -1,12 +1,12 @@
 <template>
   <div class="page-root">
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="login-register-container">
         <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h4>Login</h4>
+          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Login</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 

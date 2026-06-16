@@ -1,8 +1,9 @@
 <template>
   <div class="page-root">
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <!-- Email confirmation -->
       <div v-if="confirmationType === 'email'">
+        <h1 class="sr-only">Email confirmation</h1>
         <div class="confirmation-container">
           <div class="confirmation-message">{{ confirmationMessage }}</div>
           <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
@@ -18,11 +19,11 @@
 
           <div class="paw-header-container">
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-            <h4>Reset Password</h4>
+            <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Reset Password</h1>
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           </div>
 
-          <div class="custom-valid-message text-center">{{ validMessage }}</div>
+          <div v-if="validMessage" class="custom-valid-message text-center" role="status">{{ validMessage }}</div>
 
           <form @submit.prevent="resetPassword">
             <div class="auth-field">
@@ -31,7 +32,8 @@
 
             <div class="auth-field">
               <input class="auth-field-input" type="password" v-model="confirmPassword" placeholder="Confirm new password"
-                aria-label="Confirm Password" />
+                aria-label="Confirm Password" :aria-invalid="errorMessage ? true : undefined"
+                :aria-describedby="errorMessage ? 'confirm-reset-error' : undefined" />
             </div>
 
             <div class="flex flex-col gap-2">
@@ -39,13 +41,14 @@
               <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
             </div>
 
-            <div v-if="errorMessage" class="custom-error-message">
+            <div v-if="errorMessage" id="confirm-reset-error" class="custom-error-message" role="alert">
               {{ errorMessage }}
             </div>
           </form>
         </div>
 
         <div v-else class="confirmation-container">
+          <h1 class="sr-only">Password reset</h1>
           <div class="confirmation-message">{{ confirmationMessage }}</div>
           <button @click="goToLogin" class="action-button primary-action-button">Go to Login</button>
         </div>
@@ -53,6 +56,7 @@
 
       <!-- Invalid confirmation link -->
       <div v-else class="confirmation-container">
+        <h1 class="sr-only">Confirmation</h1>
         <div class="confirmation-message">{{ confirmationMessage }}</div>
         <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
           Go to Login

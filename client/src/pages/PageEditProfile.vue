@@ -1,45 +1,58 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
         <form @submit.prevent="submitForm">
-          <h3 class="form-header">Edit Profile:</h3>
+          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Edit Profile:</h1>
 
-          <label class="form-label">Username:</label>
+          <label class="form-label" for="editprofile-username">Username:</label>
           <div class="form-field">
-            <input class="form-field-input" v-model="editData.userName" type="text" required placeholder="Username" />
+            <input id="editprofile-username" class="form-field-input" v-model="editData.userName" type="text" required placeholder="Username"
+              :aria-invalid="errorDetailsObject.userName ? true : undefined"
+              :aria-describedby="errorDetailsObject.userName ? 'editprofile-username-error' : undefined" />
           </div>
-          <div v-if="errorDetailsObject.userName" class="custom-error-message">{{ errorDetailsObject.userName }}</div>
+          <div v-if="errorDetailsObject.userName" id="editprofile-username-error" class="custom-error-message" role="alert">
+            {{ errorDetailsObject.userName }}
+          </div>
 
-          <label class="form-label">Email:</label>
+          <label class="form-label" for="editprofile-email">Email:</label>
           <div class="form-field">
-            <input class="form-field-input" v-model="editData.email" type="email" required placeholder="Email" />
+            <input id="editprofile-email" class="form-field-input" v-model="editData.email" type="email" required placeholder="Email"
+              :aria-invalid="errorDetailsObject.email ? true : undefined"
+              :aria-describedby="errorDetailsObject.email ? 'editprofile-email-error' : undefined" />
           </div>
-          <div v-if="errorDetailsObject.email" class="custom-error-message">{{ errorDetailsObject.email }}</div>
+          <div v-if="errorDetailsObject.email" id="editprofile-email-error" class="custom-error-message" role="alert">{{ errorDetailsObject.email }}</div>
 
           <label class="form-label">Timezone:</label>
-          <div class="form-field cursor-pointer" @click="showModal = true">
-            <span class="form-field-input" :class="{ 'text-foreground/50': !editData.timezone }">
+          <div class="form-field cursor-pointer" role="button" tabindex="0" aria-haspopup="dialog"
+            :aria-label="`Select timezone, current: ${editData.timezone || 'none'}`"
+            :aria-describedby="errorDetailsObject.timezone ? 'editprofile-timezone-error' : undefined" @click="showModal = true"
+            @keydown.enter.prevent="showModal = true" @keydown.space.prevent="showModal = true">
+            <span class="form-field-input" :class="{ 'text-foreground/70': !editData.timezone }">
               {{ editData.timezone || 'Select Timezone' }}
             </span>
           </div>
-          <div v-if="errorDetailsObject.timezone" class="custom-error-message">{{ errorDetailsObject.timezone }}</div>
+          <div v-if="errorDetailsObject.timezone" id="editprofile-timezone-error" class="custom-error-message" role="alert">
+            {{ errorDetailsObject.timezone }}
+          </div>
 
           <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
             @timezoneSelected="timezone => editData.timezone = timezone" />
 
-          <label class="form-label">Current Password:</label>
+          <label class="form-label" for="editprofile-current-password">Current Password:</label>
           <div class="form-field">
-            <input class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
+            <input id="editprofile-current-password" class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required
+              placeholder="Current Password" :aria-invalid="errorDetailsObject.currentPassword ? true : undefined"
+              :aria-describedby="errorDetailsObject.currentPassword ? 'editprofile-current-password-error' : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
               <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
-          <div v-if="errorDetailsObject.currentPassword" class="custom-error-message">
+          <div v-if="errorDetailsObject.currentPassword" id="editprofile-current-password-error" class="custom-error-message" role="alert">
             {{ errorDetailsObject.currentPassword }}
           </div>
-          <span class="custom-error-message" v-if="showPasswordNotification">Please enter your current password</span>
+          <span class="custom-error-message" v-if="showPasswordNotification" role="alert">Please enter your current password</span>
 
           <div class="form-button-group">
             <button class="form-button primary" type="submit">Save Changes</button>

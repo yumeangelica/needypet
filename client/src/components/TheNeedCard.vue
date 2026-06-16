@@ -35,7 +35,8 @@
         <span class="text-sm text-primary-foreground block mb-1">
           {{ need.isActive ? 'Active' : 'Inactive' }}
         </span>
-        <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)" />
+        <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)"
+          :aria-label="`Toggle need active (currently ${need.isActive ? 'active' : 'inactive'})`" />
       </div>
 
       <!-- Delete need button -->
@@ -53,25 +54,29 @@
     <!-- Edit need modal — only rendered when needed -->
     <Dialog v-if="isEditModalOpen" :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit Need" maxWidth="520px">
       <form @submit.prevent="updateNeed">
-        <label class="form-label">Category</label>
-        <input v-model="editForm.category" required type="text" placeholder="Enter need category" class="form-field-item" />
+        <label class="form-label" :for="`need-${need.id}-category`">Category</label>
+        <input :id="`need-${need.id}-category`" v-model="editForm.category" required type="text" placeholder="Enter need category"
+          class="form-field-item" />
 
-        <label class="form-label">Description</label>
-        <input v-model="editForm.description" required type="text" placeholder="Enter need description" class="form-field-item" />
+        <label class="form-label" :for="`need-${need.id}-description`">Description</label>
+        <input :id="`need-${need.id}-description`" v-model="editForm.description" required type="text" placeholder="Enter need description"
+          class="form-field-item" />
 
         <div v-if="editForm.type === 'quantity'">
-          <label class="form-label">Quantity</label>
-          <input v-model="editForm.value" type="number" placeholder="Enter quantity" required class="form-field-item" />
+          <label class="form-label" :for="`need-${need.id}-quantity-value`">Quantity</label>
+          <input :id="`need-${need.id}-quantity-value`" v-model="editForm.value" type="number" placeholder="Enter quantity" required
+            class="form-field-item" />
 
           <label class="form-label">Select unit</label>
-          <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit"
+          <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit" aria-label="Select unit"
             :options="[{ value: 'ml', label: 'ml' }, { value: 'g', label: 'g' }]" />
         </div>
 
         <div v-else>
-          <label class="form-label">Duration</label>
+          <label class="form-label" :for="`need-${need.id}-duration-value`">Duration</label>
           <div class="flex items-center gap-2">
-            <input v-model="editForm.value" type="number" placeholder="Enter duration" required class="form-field-item" />
+            <input :id="`need-${need.id}-duration-value`" v-model="editForm.value" type="number" placeholder="Enter duration" required
+              class="form-field-item" />
             <span class="text-sm text-foreground">minute(s)</span>
           </div>
         </div>
@@ -284,7 +289,8 @@ const deleteNeed = async (needId: string) => {
 .card-inactive .complete-button,
 .card-inactive .done-label,
 .card-inactive button {
-  color: #afa8a8;
+  /* Darkened from #afa8a8 to meet WCAG 4.5:1 on the inactive card background */
+  color: #5d5d5d;
 }
 
 .need-card-category {
@@ -306,16 +312,18 @@ const deleteNeed = async (needId: string) => {
 .complete-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   background: var(--color-button-primary);
   border: none;
-  border-radius: 15px;
+  border-radius: var(--radius-md);
   padding: 6px 12px;
   font-family: var(--font-sans);
   font-size: 0.85rem;
   color: var(--color-primary-foreground);
   cursor: pointer;
   min-width: 60px;
+  min-height: 44px;
   transition: opacity 0.2s, transform 0.1s;
 }
 
@@ -346,9 +354,10 @@ const deleteNeed = async (needId: string) => {
   gap: 4px;
   background-color: var(--color-status-done);
   color: var(--color-foreground);
-  border-radius: 15px;
+  border-radius: var(--radius-md);
   text-align: center;
   min-width: 60px;
+  min-height: 44px;
   padding: 6px 12px;
   font-size: 0.85rem;
   justify-content: center;

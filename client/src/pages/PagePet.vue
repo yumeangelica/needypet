@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div v-if="$route.matched.length === 1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div v-if="$route.matched.length === 1" id="main-content" role="main" tabindex="-1"
+      :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <TheLoadingSpinner v-if="isLoading" message="Loading pet..." />
       <div v-else-if="pet" class="pet-container">
         <div class="full-pet-card">
 
           <div class="inline-container">
-            <h2>{{ pet.name }}</h2>
+            <h1 class="text-[1.4rem] max-[568px]:text-[1.2rem]">{{ pet.name }}</h1>
             <button v-if="pet.owner.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
               <Settings class="w-5 h-5" aria-hidden="true" />
             </button>
@@ -48,24 +49,24 @@
               <form @submit.prevent="addNewNeed">
                 <h3 class="form-header">Add New Need</h3>
 
-                <label class="form-label">Category:</label>
+                <label class="form-label" for="need-category">Category:</label>
                 <div class="form-field">
-                  <input class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine" />
+                  <input id="need-category" class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine" />
                 </div>
 
-                <label class="form-label">Description:</label>
+                <label class="form-label" for="need-description">Description:</label>
                 <div class="form-field">
-                  <input class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park" />
+                  <input id="need-description" class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park" />
                 </div>
 
-                <label class="form-label">Date:</label>
+                <label class="form-label" for="need-date">Date:</label>
                 <div class="form-field">
-                  <input class="form-field-input" readonly :value="currentDate" required />
+                  <input id="need-date" class="form-field-input" readonly :value="currentDate" required />
                 </div>
 
-                <label class="form-label">Measurement type</label>
+                <label class="form-label" id="need-measurement-label">Measurement type</label>
                 <div v-show="!selection" class="mt-2">
-                  <RadioGroup v-model="selection">
+                  <RadioGroup v-model="selection" aria-labelledby="need-measurement-label">
                     <div class="flex gap-4">
                       <RadioGroupItem value="duration" label="Duration" />
                       <RadioGroupItem value="quantity" label="Quantity" />
@@ -74,21 +75,21 @@
                 </div>
 
                 <div v-if="selection === 'quantity'">
-                  <label class="form-label">Value and Unit:</label>
+                  <label class="form-label" for="need-quantity-value">Value and Unit:</label>
                   <div class="flex gap-2 items-center">
                     <div class="form-field flex-1">
-                      <input class="form-field-input w-full min-w-[80px]" v-model="valueOfSelection" required autofocus @input="cleanInput($event)"
-                        inputmode="numeric" placeholder="Enter value" />
+                      <input id="need-quantity-value" class="form-field-input w-full min-w-[80px]" v-model="valueOfSelection" required autofocus
+                        @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value" />
                     </div>
-                    <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="select unit" class="w-28" />
+                    <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="select unit" class="w-28" aria-label="Select unit" />
                   </div>
                 </div>
 
                 <div v-if="selection === 'duration'">
-                  <label class="form-label">Duration (minutes):</label>
+                  <label class="form-label" for="need-duration-value">Duration (minutes):</label>
                   <div class="form-field">
-                    <input class="form-field-input" v-model="valueOfSelection" required autofocus @input="cleanInput($event)" inputmode="numeric"
-                      placeholder="Enter duration in minutes" />
+                    <input id="need-duration-value" class="form-field-input" v-model="valueOfSelection" required autofocus @input="cleanInput($event)"
+                      inputmode="numeric" placeholder="Enter duration in minutes" />
                   </div>
                 </div>
 
@@ -100,13 +101,13 @@
                   </button>
                 </div>
 
-                <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message">
+                <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.selection }}
                 </div>
-                <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message">
+                <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.durationValue }}
                 </div>
-                <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message">
+                <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.quantityUnit }}
                 </div>
               </form>
@@ -127,7 +128,7 @@
                 </div>
               </li>
             </ul>
-            <p v-else style="text-align: center;">All clear for today! 🎉</p>
+            <p v-else class="text-center">All clear for today! 🎉</p>
           </div>
 
         </div>

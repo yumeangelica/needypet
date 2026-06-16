@@ -1,36 +1,40 @@
 <template>
   <div class="page-root">
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="login-register-container" style="overflow-y: auto; max-height: 90vh;">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div class="login-register-container overflow-y-auto max-h-[90vh]">
         <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h4>Create account</h4>
+          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Create account</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
-        <form @submit.prevent="createAccount" style="gap: 0.7rem;">
+        <form @submit.prevent="createAccount">
           <!-- Username input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="username" type="text" placeholder="Username" required aria-label="Username" />
+            <input class="auth-field-input" v-model="username" type="text" placeholder="Username" required aria-label="Username"
+              :aria-invalid="formFieldsErrorDetailsObject.username ? true : undefined"
+              :aria-describedby="formFieldsErrorDetailsObject.username ? 'reg-username-error' : undefined" />
           </div>
-          <div v-if="formFieldsErrorDetailsObject.username" class="custom-error-message">
+          <div v-if="formFieldsErrorDetailsObject.username" id="reg-username-error" class="custom-error-message" role="alert">
             {{ formFieldsErrorDetailsObject.username }}
           </div>
 
           <!-- Email input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="email" placeholder="Email" type="email" required aria-label="Email" />
+            <input class="auth-field-input" v-model="email" placeholder="Email" type="email" required aria-label="Email"
+              :aria-invalid="formFieldsErrorDetailsObject.email ? true : undefined"
+              :aria-describedby="formFieldsErrorDetailsObject.email ? 'reg-email-error' : undefined" />
           </div>
-          <div v-if="formFieldsErrorDetailsObject.email" class="custom-error-message">
+          <div v-if="formFieldsErrorDetailsObject.email" id="reg-email-error" class="custom-error-message" role="alert">
             {{ formFieldsErrorDetailsObject.email }}
           </div>
 
           <!-- Password input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="password" @input="validatePassword" :type="passwordFieldType" placeholder="Password" required
-              id="password" aria-label="Password" />
+              id="password" aria-label="Password" aria-describedby="reg-password-requirements" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
               <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
@@ -38,7 +42,7 @@
           </div>
 
           <div class="strong-password-note">
-            <ul>
+            <ul id="reg-password-requirements" aria-live="polite">
               <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
               <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
               <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
@@ -50,23 +54,27 @@
           <!-- Confirm password input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="confirmPassword" placeholder="Confirm password" :type="passwordFieldType" required
-              id="confirmPassword" aria-label="Confirm Password" />
+              id="confirmPassword" aria-label="Confirm Password" :aria-invalid="formFieldsErrorDetailsObject.newPassword ? true : undefined"
+              :aria-describedby="formFieldsErrorDetailsObject.newPassword ? 'reg-password-error' : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
               <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
-          <div v-if="formFieldsErrorDetailsObject.newPassword" class="custom-error-message">
+          <div v-if="formFieldsErrorDetailsObject.newPassword" id="reg-password-error" class="custom-error-message" role="alert">
             {{ formFieldsErrorDetailsObject.newPassword }}
           </div>
 
           <!-- Timezone select field -->
-          <div class="auth-field cursor-pointer" @click="showModal = true">
-            <span class="auth-field-input" :class="{ 'text-foreground/50': !selectedTimezone }">
+          <div class="auth-field cursor-pointer" role="button" tabindex="0" aria-haspopup="dialog"
+            :aria-label="`Select timezone, current: ${selectedTimezone || 'none'}`"
+            :aria-describedby="formFieldsErrorDetailsObject.timezone ? 'reg-timezone-error' : undefined" @click="showModal = true"
+            @keydown.enter.prevent="showModal = true" @keydown.space.prevent="showModal = true">
+            <span class="auth-field-input" :class="{ 'text-foreground/70': !selectedTimezone }">
               {{ selectedTimezone || 'Select Timezone' }}
             </span>
           </div>
-          <div v-if="formFieldsErrorDetailsObject.timezone" class="custom-error-message">
+          <div v-if="formFieldsErrorDetailsObject.timezone" id="reg-timezone-error" class="custom-error-message" role="alert">
             {{ formFieldsErrorDetailsObject.timezone }}
           </div>
 

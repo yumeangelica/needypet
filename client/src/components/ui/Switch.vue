@@ -9,6 +9,7 @@ defineOptions({
 const props = defineProps<{
   checked?: boolean;
   class?: string;
+  ariaLabel?: string;
 }>();
 
 const emit = defineEmits<{
@@ -21,7 +22,7 @@ function handleChange(val: boolean) {
 </script>
 
 <template>
-  <SwitchRoot :model-value="checked" @update:model-value="handleChange" :class="cn(
+  <SwitchRoot :model-value="checked" @update:model-value="handleChange" :aria-label="ariaLabel" :class="cn(
     'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors',
     'focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2',
     checked ? 'bg-primary-foreground' : 'bg-muted',

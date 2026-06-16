@@ -1,41 +1,41 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
-        <h3 class="form-header">Add new pet:</h3>
+        <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Add new pet:</h1>
         <form @submit.prevent="submitPet">
           <div>
-            <label class="form-label">Name:</label>
+            <label class="form-label" for="addpet-name">Name:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Name" v-model="newPetObject.name" required placeholder="Pet's name" />
+              <input id="addpet-name" class="form-field-input" v-model="newPetObject.name" required placeholder="Pet's name" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Breed:</label>
+            <label class="form-label" for="addpet-breed">Breed:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Breed" v-model="newPetObject.breed" placeholder="Pet's breed" />
+              <input id="addpet-breed" class="form-field-input" v-model="newPetObject.breed" placeholder="Pet's breed" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Species:</label>
+            <label class="form-label" for="addpet-species">Species:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Species" v-model="newPetObject.species" placeholder="Pet's species" />
+              <input id="addpet-species" class="form-field-input" v-model="newPetObject.species" placeholder="Pet's species" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Description:</label>
+            <label class="form-label" for="addpet-description">Description:</label>
             <div class="form-field">
-              <textarea class="form-field-input" aria-label="Description" v-model="newPetObject.description" placeholder="About the pet"></textarea>
+              <textarea id="addpet-description" class="form-field-input" v-model="newPetObject.description" placeholder="About the pet"></textarea>
             </div>
           </div>
 
           <div>
-            <label class="form-label">Birthday:</label>
+            <label class="form-label" for="addpet-birthday">Birthday:</label>
             <div class="form-field">
-              <input class="form-field-input" type="date" aria-label="Birthday" :value="birthdayInputValue" @change="dateSelected($event)"
+              <input id="addpet-birthday" class="form-field-input" type="date" :value="birthdayInputValue" @change="dateSelected($event)"
                 :max="todayString" />
             </div>
           </div>
