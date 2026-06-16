@@ -35,7 +35,8 @@
         <span class="text-sm text-primary-foreground block mb-1">
           {{ need.isActive ? 'Active' : 'Inactive' }}
         </span>
-        <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)" />
+        <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)"
+          :aria-label="`Toggle need active (currently ${need.isActive ? 'active' : 'inactive'})`" />
       </div>
 
       <!-- Delete need button -->
