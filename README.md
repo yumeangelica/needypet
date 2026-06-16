@@ -18,7 +18,7 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
   - **Profile Management**: Users can update their profile information including username, email, timezone, and password, and can delete their accounts.
   - **Roles and Permissions**:
     - **Pet Owners**: Can add, update, delete pets and manage detailed pet profiles including care needs.
-    - **Carers**: Can view shared pets and complete needs but cannot modify pet ownership details or toggle need statuses. Frontend caretaker management is planned.
+    - **Carers**: Can view shared pets and complete needs but cannot modify pet ownership details or toggle the active/inactive status of needs. Frontend caretaker management is planned.
 
 - **Pet Management**:
   - Owner users can manage pet details such as name, birthday, species, breed, and specific care needs.
@@ -38,8 +38,9 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
 - **Activity History**:
   - Logs of all care activities (completed, missed, or pending) provide comprehensive monitoring of pet care.
 
-- **Responsive Design**:
+- **Responsive and Accessible Design**:
   - The application features a fully responsive layout with dedicated desktop and mobile navigation, optimized for various screen sizes including desktops, tablets, and smartphones.
+  - Accessibility is a first-class concern: keyboard-operable controls, a skip-to-content link, semantic landmarks and headings, associated form labels with announced validation errors, screen-reader live regions for notifications, improved color contrast targeting WCAG AA, and respect for the `prefers-reduced-motion` setting.
 
 - **Security and Data Integrity**:
   - Robust error handling and authentication mechanisms ensure data integrity and privacy.
@@ -128,6 +129,7 @@ bun run test
 
 cd ../client
 bun run lint
+bun run test:unit
 ```
 
 ## Credits
