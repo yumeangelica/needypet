@@ -6,41 +6,42 @@
           <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Edit Pet</h1>
 
           <div>
-            <label class="form-label">Name:</label>
+            <label class="form-label" for="editpet-name">Name:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Name" v-model="existingPetObject.name" required placeholder="Enter pet's name" />
+              <input id="editpet-name" class="form-field-input" v-model="existingPetObject.name" required placeholder="Enter pet's name" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Breed:</label>
+            <label class="form-label" for="editpet-breed">Breed:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Breed" v-model="existingPetObject.breed" placeholder="Enter pet's breed" />
+              <input id="editpet-breed" class="form-field-input" v-model="existingPetObject.breed" placeholder="Enter pet's breed" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Species:</label>
+            <label class="form-label" for="editpet-species">Species:</label>
             <div class="form-field">
-              <input class="form-field-input" aria-label="Species" v-model="existingPetObject.species" placeholder="Enter pet's species" />
+              <input id="editpet-species" class="form-field-input" v-model="existingPetObject.species" placeholder="Enter pet's species" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">Description</label>
+            <label class="form-label" for="editpet-description">Description</label>
             <div class="form-field">
-              <textarea class="form-field-input" aria-label="Description" v-model="existingPetObject.description"
+              <textarea id="editpet-description" class="form-field-input" v-model="existingPetObject.description"
                 placeholder="About the pet"></textarea>
             </div>
           </div>
 
           <div>
-            <label class="form-label">Birthday</label>
+            <label class="form-label" for="editpet-birthday">Birthday</label>
             <div class="form-field">
-              <input class="form-field-input" type="date" aria-label="Birthday" :value="birthdayInputValue" @change="dateSelected($event)"
-                :max="todayString" />
+              <input id="editpet-birthday" class="form-field-input" type="date" :value="birthdayInputValue" @change="dateSelected($event)"
+                :max="todayString" :aria-invalid="dateErrorMessage ? true : undefined"
+                :aria-describedby="dateErrorMessage ? 'editpet-birthday-error' : undefined" />
             </div>
-            <p class="custom-error-message" v-if="dateErrorMessage">{{ dateErrorMessage }}</p>
+            <p id="editpet-birthday-error" class="custom-error-message" v-if="dateErrorMessage" role="alert">{{ dateErrorMessage }}</p>
           </div>
 
           <div class="form-button-group">

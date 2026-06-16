@@ -53,25 +53,29 @@
     <!-- Edit need modal — only rendered when needed -->
     <Dialog v-if="isEditModalOpen" :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit Need" maxWidth="520px">
       <form @submit.prevent="updateNeed">
-        <label class="form-label">Category</label>
-        <input v-model="editForm.category" required type="text" placeholder="Enter need category" class="form-field-item" />
+        <label class="form-label" :for="`need-${need.id}-category`">Category</label>
+        <input :id="`need-${need.id}-category`" v-model="editForm.category" required type="text" placeholder="Enter need category"
+          class="form-field-item" />
 
-        <label class="form-label">Description</label>
-        <input v-model="editForm.description" required type="text" placeholder="Enter need description" class="form-field-item" />
+        <label class="form-label" :for="`need-${need.id}-description`">Description</label>
+        <input :id="`need-${need.id}-description`" v-model="editForm.description" required type="text" placeholder="Enter need description"
+          class="form-field-item" />
 
         <div v-if="editForm.type === 'quantity'">
-          <label class="form-label">Quantity</label>
-          <input v-model="editForm.value" type="number" placeholder="Enter quantity" required class="form-field-item" />
+          <label class="form-label" :for="`need-${need.id}-quantity-value`">Quantity</label>
+          <input :id="`need-${need.id}-quantity-value`" v-model="editForm.value" type="number" placeholder="Enter quantity" required
+            class="form-field-item" />
 
           <label class="form-label">Select unit</label>
-          <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit"
+          <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit" aria-label="Select unit"
             :options="[{ value: 'ml', label: 'ml' }, { value: 'g', label: 'g' }]" />
         </div>
 
         <div v-else>
-          <label class="form-label">Duration</label>
+          <label class="form-label" :for="`need-${need.id}-duration-value`">Duration</label>
           <div class="flex items-center gap-2">
-            <input v-model="editForm.value" type="number" placeholder="Enter duration" required class="form-field-item" />
+            <input :id="`need-${need.id}-duration-value`" v-model="editForm.value" type="number" placeholder="Enter duration" required
+              class="form-field-item" />
             <span class="text-sm text-foreground">minute(s)</span>
           </div>
         </div>

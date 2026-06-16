@@ -23,7 +23,7 @@
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           </div>
 
-          <div class="custom-valid-message text-center">{{ validMessage }}</div>
+          <div v-if="validMessage" class="custom-valid-message text-center" role="status">{{ validMessage }}</div>
 
           <form @submit.prevent="resetPassword">
             <div class="auth-field">
@@ -32,7 +32,8 @@
 
             <div class="auth-field">
               <input class="auth-field-input" type="password" v-model="confirmPassword" placeholder="Confirm new password"
-                aria-label="Confirm Password" />
+                aria-label="Confirm Password" :aria-invalid="errorMessage ? true : undefined"
+                :aria-describedby="errorMessage ? 'confirm-reset-error' : undefined" />
             </div>
 
             <div class="flex flex-col gap-2">
@@ -40,7 +41,7 @@
               <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
             </div>
 
-            <div v-if="errorMessage" class="custom-error-message">
+            <div v-if="errorMessage" id="confirm-reset-error" class="custom-error-message" role="alert">
               {{ errorMessage }}
             </div>
           </form>

@@ -10,6 +10,7 @@ defineProps<{
   modelValue?: string;
   placeholder?: string;
   options: { value: string; label: string }[];
+  ariaLabel?: string;
 }>();
 
 const emit = defineEmits<{
@@ -19,7 +20,7 @@ const emit = defineEmits<{
 
 <template>
   <SelectRoot :model-value="modelValue" @update:model-value="(v) => emit('update:modelValue', v)">
-    <SelectTrigger
+    <SelectTrigger :aria-label="ariaLabel"
       class="inline-flex items-center justify-between rounded-lg bg-auth-input-bg px-4 py-2.5 text-sm text-foreground gap-2 cursor-pointer border-none outline-none w-full font-sans transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2">
       <SelectValue :placeholder="placeholder || 'Select...'" />
       <ChevronDown class="size-4 text-primary-foreground" />

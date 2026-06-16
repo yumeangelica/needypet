@@ -7,31 +7,34 @@
 
           <!-- Current Password input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password" />
+            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password"
+              aria-label="Current Password" :aria-invalid="errorDetailsObject.currentPassword ? true : undefined"
+              :aria-describedby="errorDetailsObject.currentPassword ? 'changepw-current-error' : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
               <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
-          <div v-if="errorDetailsObject.currentPassword" class="custom-error-message">
+          <div v-if="errorDetailsObject.currentPassword" id="changepw-current-error" class="custom-error-message" role="alert">
             {{ errorDetailsObject.currentPassword }}
           </div>
 
           <!-- New Password input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
-              placeholder="New Password" />
+              placeholder="New Password" aria-label="New Password" aria-describedby="changepw-requirements"
+              :aria-invalid="errorDetailsObject.newPassword ? true : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
               <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
-          <div v-if="errorDetailsObject.newPassword" class="custom-error-message">
+          <div v-if="errorDetailsObject.newPassword" class="custom-error-message" role="alert">
             {{ errorDetailsObject.newPassword }}
           </div>
 
           <div class="strong-password-note">
-            <ul>
+            <ul id="changepw-requirements" aria-live="polite">
               <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
               <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
               <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
@@ -45,7 +48,7 @@
             <button type="button" class="form-button secondary" @click="router.push({ name: 'profile' })">Cancel</button>
           </div>
 
-          <div v-if="errorMessage" class="custom-error-message">
+          <div v-if="errorMessage" class="custom-error-message" role="alert">
             {{ errorMessage }}
           </div>
         </form>
