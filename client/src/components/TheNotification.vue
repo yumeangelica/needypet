@@ -41,7 +41,7 @@ defineProps<{
   background-color: #fff;
   padding: 15px;
   margin-bottom: 10px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-left: 10px solid transparent;
   /* base width/style for accent bar */

@@ -99,7 +99,7 @@ function navigateToPetView() {
 }
 
 .pet-subtitle {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--color-text-default);
   opacity: 0.7;
   text-align: center;
@@ -108,7 +108,7 @@ function navigateToPetView() {
 }
 
 .pet-needs-count {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--color-text-default);
   opacity: 0.6;
   text-align: center;

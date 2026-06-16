@@ -24,7 +24,7 @@ const year = new Date().getFullYear();
   margin-top: auto;
   /* push to bottom within flex column container */
   padding-top: 30px;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   text-align: center;
 }
 
@@ -35,7 +35,7 @@ const year = new Date().getFullYear();
 
 @media (max-width: 568px) {
   .copyright {
-    font-size: 0.55rem;
+    font-size: 0.7rem;
   }
 }
 </style>
