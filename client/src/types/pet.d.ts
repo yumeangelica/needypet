@@ -1,8 +1,6 @@
 import { User } from './user';
 // Definition of the Pet, Need and CareRecord interfaces
 
-type User = User;
-
 type Quantity = {
   value: number;
   unit: 'ml' | 'g';

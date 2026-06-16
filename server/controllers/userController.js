@@ -168,11 +168,12 @@ const updateUser = async (request, response, next) => {
       user.userName = userName;
     }
 
-    if (email && email !== user.email) {
+    const emailChanged = Boolean(email && email !== user.email);
+
+    if (emailChanged) {
       user.email = email;
       user.emailConfirmed = false; // Set emailConfirmed to false if email is updated
       user.generateEmailConfirmToken(); // Generate new email confirmation token
-      console.log('Email confirmation sent to:', user.email);
     }
 
     if (timezone && timezone !== user.timezone) {
@@ -181,7 +182,7 @@ const updateUser = async (request, response, next) => {
 
     await user.save(); // Save updated user to database
 
-    if (email && email !== user.email) { // If email is updated, send confirmation email
+    if (emailChanged) { // If email is updated, send confirmation email
       await sendConfirmationEmail(user.email, user.emailConfirmToken);
     }
 

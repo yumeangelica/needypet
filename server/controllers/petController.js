@@ -37,7 +37,6 @@ const getAllUserPets = async (request, response, next) => {
 
     response.json(pets);
   } catch (error) {
-    console.log('error getting user pets');
     next(error);
   }
 };
@@ -66,11 +65,11 @@ const addNewPet = async (request, response, next) => {
 
   let careTaker;
 
-  if (request.body.careTaker && request.body.careTaker !== owner) {
+  if (request.body.careTaker && request.body.careTaker !== owner._id.toString()) {
     careTaker = await User.findById(request.body.careTaker); // Find care taker by id
 
     if (!careTaker) {
-      return 'no user';
+      return response.status(404).json({ message: 'Caretaker not found' });
     }
 
     if (!newPetObject.careTakers.includes(careTaker._id)) { // If care taker is not in care takers array
@@ -133,7 +132,6 @@ const updatePet = async (request, response, next) => {
 
     response.json(updatedPet);
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
