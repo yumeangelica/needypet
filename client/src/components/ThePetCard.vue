@@ -1,9 +1,9 @@
 <template>
-  <div class="small-pet-card" @click="navigateToPetView">
+  <button type="button" class="small-pet-card" :aria-label="cardLabel" @click="navigateToPetView">
     <p v-if="pet.species || pet.breed" class="pet-subtitle">{{ [pet.species, pet.breed].filter(Boolean).join(' · ') }}</p>
     <h5>{{ pet.name }}</h5>
     <p v-if="todayNeedsCount > 0" class="pet-needs-count">{{ todayNeedsCount }} {{ todayNeedsCount === 1 ? 'need' : 'needs' }} today</p>
-  </div>
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -29,6 +29,12 @@ const todayNeedsCount = computed(() => {
   if (!pet.needs || pet.needs.length === 0) return 0;
   const today = dayjs().tz(userStore.timezone).format('YYYY-MM-DD');
   return pet.needs.filter(need => need.dateFor === today).length;
+});
+
+const cardLabel = computed(() => {
+  const count = todayNeedsCount.value;
+  const needsText = count > 0 ? `, ${count} ${count === 1 ? 'need' : 'needs'} today` : '';
+  return `View ${pet.name}${needsText}`;
 });
 
 // Navigate to the pet view page (PagePet) when the card is clicked
@@ -60,6 +66,17 @@ function navigateToPetView() {
   cursor: pointer;
   transition: transform 0.3s ease;
   box-sizing: border-box;
+  /* Button reset (rendered as a button for keyboard accessibility) */
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  text-align: center;
+  color: inherit;
+}
+
+.small-pet-card:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
 }
 
 @media (hover: hover) {
