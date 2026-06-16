@@ -320,7 +320,6 @@ const validateUserToken = async (request, response, next) => {
       return response.status(401).json({ message: 'Token invalid' });
     }
 
-    console.log('Token validated:', token);
     response.status(200).json({ token });
   } catch (error) {
     next(error);

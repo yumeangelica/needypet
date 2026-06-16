@@ -14,7 +14,6 @@ const passwordStrengthValidator = (request, response, next) => {
 
   try {
     passwordStrengthValidation(newPassword);
-    console.log('Password is strong');
     next();
   } catch (error) {
     console.log('error', error);

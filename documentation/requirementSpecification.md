@@ -44,7 +44,7 @@ NeedyPet is designed to streamline pet care management within households and pet
 - **Front-end**: Developed with Vue 3 (Composition API), Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, and dayjs for responsive and state-driven UI across different devices and platforms.
 - **HTTP Communication**: Frontend-backend communication uses the browser-native `fetch` API through an internal service wrapper (`apiClient`).
 - **Email Services**: Nodemailer is used for account email verification and password resets.
-- **Testing and Quality**: Backend tests use the Node.js test runner and Supertest. Frontend tests use Vitest and Cypress. ESLint is used in both workspaces.
+- **Testing and Quality**: Backend tests use the Node.js test runner and Supertest. Frontend tests use Vitest. ESLint is used in both workspaces.
 - **Security**: Implements JWT-based authentication, password hashing, input validation, secure HTTP headers, and GDPR-compliant data handling practices.
 
 ## Compliance and Standards

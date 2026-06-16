@@ -92,7 +92,7 @@ The following features are planned for future versions of NeedyPet:
 
 - **Runtime and package management**: Bun, with separate client and server packages.
 - **Backend technologies**: Node.js, Express 5, MongoDB with Mongoose, JavaScript, Zod, jose, bcryptjs, Nodemailer, node-cron, Helmet, ESLint, Node.js test runner, and Supertest.
-- **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, Cypress, and ESLint.
+- **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, and ESLint.
 - **Frontend API client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts`.
 
 ## Development
@@ -128,7 +128,6 @@ bun run test
 
 cd ../client
 bun run lint
-bun run test:unit
 ```
 
 ## Credits
