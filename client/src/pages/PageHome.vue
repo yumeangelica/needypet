@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <h1 class="sr-only">Home</h1>
 
       <div v-if="userEmailConfirmed === false">
         <div class="confirmation-message">

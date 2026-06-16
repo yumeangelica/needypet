@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
         <form @submit.prevent="submitForm">
-          <h3 class="form-header">Edit Profile:</h3>
+          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Edit Profile:</h1>
 
           <label class="form-label">Username:</label>
           <div class="form-field">

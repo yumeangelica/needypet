@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div v-if="user" class="form-container">
 
         <div class="inline-container">
-          <h3 class="form-header mb-0">{{ user.userName }}</h3>
+          <h1 class="form-header mb-0 text-[1.3rem] max-[568px]:text-[1.1rem]">{{ user.userName }}</h1>
           <button class="settings-button" aria-label="Settings" @click="toggleSettings">
             <Settings class="w-5 h-5" aria-hidden="true" />
           </button>

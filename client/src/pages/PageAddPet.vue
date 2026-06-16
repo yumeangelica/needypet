@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
-        <h3 class="form-header">Add new pet:</h3>
+        <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Add new pet:</h1>
         <form @submit.prevent="submitPet">
           <div>
             <label class="form-label">Name:</label>

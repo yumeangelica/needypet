@@ -1,7 +1,8 @@
 <template>
   <div class="page-root">
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="login-register-container">
+        <h1 class="sr-only">NeedyPet</h1>
         <TheLogoImage altText="NeedyPet Logo" />
 
         <h4 class="text-center paw-header-container">

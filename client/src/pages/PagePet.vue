@@ -1,12 +1,13 @@
 <template>
   <div>
-    <div v-if="$route.matched.length === 1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div v-if="$route.matched.length === 1" id="main-content" role="main" tabindex="-1"
+      :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <TheLoadingSpinner v-if="isLoading" message="Loading pet..." />
       <div v-else-if="pet" class="pet-container">
         <div class="full-pet-card">
 
           <div class="inline-container">
-            <h2>{{ pet.name }}</h2>
+            <h1 class="text-[1.4rem] max-[568px]:text-[1.2rem]">{{ pet.name }}</h1>
             <button v-if="pet.owner.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
               <Settings class="w-5 h-5" aria-hidden="true" />
             </button>

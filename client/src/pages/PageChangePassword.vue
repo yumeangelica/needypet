@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
         <form @submit.prevent="submitForm">
-          <h3>Change Password:</h3>
+          <h1 class="text-[1.3rem] max-[568px]:text-[1.1rem]">Change Password:</h1>
 
           <!-- Current Password input field -->
           <div class="auth-field">

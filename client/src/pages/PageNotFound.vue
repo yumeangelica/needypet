@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <h1 class="text-center">Oops! This page doesn't exist.</h1>
       <p class="text-center">Looks like you wandered off the trail. 🐾</p>
       <div class="text-center mt-5">

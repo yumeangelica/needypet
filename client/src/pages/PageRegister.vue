@@ -1,16 +1,16 @@
 <template>
   <div class="page-root">
-    <div :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="login-register-container" style="overflow-y: auto; max-height: 90vh;">
+    <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
+      <div class="login-register-container overflow-y-auto max-h-[90vh]">
         <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h4>Create account</h4>
+          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Create account</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
-        <form @submit.prevent="createAccount" style="gap: 0.7rem;">
+        <form @submit.prevent="createAccount">
           <!-- Username input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="username" type="text" placeholder="Username" required aria-label="Username" />
