@@ -35,7 +35,7 @@ async function request<T = unknown>(opts: RequestOptions): Promise<ApiResponse<T
   const url = `${baseURL}${opts.url}`;
 
   const fetchOpts: RequestInit = {
-    method: opts.method,
+    method: opts.method.toUpperCase(),
     headers: opts.headers || {},
   };
 

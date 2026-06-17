@@ -11,7 +11,11 @@ const mongodbUri = process.env.NODE_ENV === 'production' ? process.env.PRODUCTIO
 const backendPort = process.env.PORT || 3000; // Port for backend server
 const jwtSecret = process.env.JWT_SECRET;
 const jwtSecretEncoded = new TextEncoder().encode(jwtSecret); // Encoded secret for jose
-const allowedOrigins = process.env.ALLOWED_ORIGINS;
+// Supports a single origin or a comma-separated list in ALLOWED_ORIGINS.
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 const emailService = process.env.EMAIL_SERVICE;

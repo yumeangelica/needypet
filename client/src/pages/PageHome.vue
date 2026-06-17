@@ -99,7 +99,9 @@ watch(() => route.params && petStore.pets, async () => {
 
 const fetchUserEmailConfirmed = async () => {
   const user = await userStore.getUserById(userStore.id);
-  userEmailConfirmed.value = user.emailConfirmed;
+  if (user) {
+    userEmailConfirmed.value = user.emailConfirmed;
+  }
 };
 </script>
 

@@ -340,6 +340,11 @@ export const useUserStore = defineStore('user', {
             message: response.data.message || 'Login successful',
           };
         }
+        // Any non-200 success status is treated as a failed login.
+        return {
+          isSuccess: false,
+          message: response.data.message || 'Login failed',
+        };
       } catch (error) {
         const status = error.response?.status;
         const data = error.response?.data;
@@ -347,16 +352,24 @@ export const useUserStore = defineStore('user', {
         if (status === 401) {
           return {
             isSuccess: false,
-            message: data.message || 'Invalid credentials',
+            message: data?.message || 'Invalid credentials',
           };
         }
 
         if (status === 422) {
           return {
             isSuccess: false,
-            message: data.message || 'Validation error',
+            message: data?.message || 'Validation error',
           };
         }
+
+        // Network/CORS errors have no response; still return a result object
+        // so callers can safely destructure it.
+        console.error('Error during login:', status);
+        return {
+          isSuccess: false,
+          message: data?.message || 'Login failed. Please try again.',
+        };
       }
     },
     /**
@@ -366,7 +379,7 @@ export const useUserStore = defineStore('user', {
       this.token = localStorage.getItem('token') || null;
       this.userName = localStorage.getItem('userName') || null;
       this.id = localStorage.getItem('id') || null;
-      this.timezone = localStorage.getItem('timezone') || null;
+      this.timezone = localStorage.getItem('timezone') || 'UTC';
       this.emailConfirmed =
         localStorage.getItem('emailConfirmed') === 'true' || false;
     },

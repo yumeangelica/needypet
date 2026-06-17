@@ -337,7 +337,7 @@ export const usePetStore = defineStore('pet', {
      * @param needObject
      * @returns
      */
-    async addNewNeed(petId: string, needObject: object): Promise<boolean> {
+    async addNewNeed(petId: string, needObject: object): Promise<boolean | string> {
       const userStore = useUserStore();
       const token = userStore.token;
 
@@ -372,11 +372,16 @@ export const usePetStore = defineStore('pet', {
         })
 
         .catch((error) => {
+          const data = error.response?.data as
+            | { message?: string }
+            | undefined;
           console.error(
             'Error during adding new need:',
-            error.response?.status
+            error.response?.status,
+            error.response?.data
           );
-          return false;
+          // Surface the backend validation message when available.
+          return data?.message ?? false;
         });
 
       return response;

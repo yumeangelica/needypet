@@ -26,7 +26,7 @@ const sendMail = (to, subject, html) => {
 
 const sendConfirmationEmail = async (recipientEmail, emailConfirmationToken) => {
   // URL for email confirmation
-  const confirmationUrl = `${config.allowedOrigins}/confirm?confirmationType=email&email=${encodeURIComponent(recipientEmail)}&token=${emailConfirmationToken}`;
+  const confirmationUrl = `${config.allowedOrigins[0]}/confirm?confirmationType=email&email=${encodeURIComponent(recipientEmail)}&token=${emailConfirmationToken}`;
 
   const message = `
   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -51,7 +51,7 @@ const sendConfirmationEmail = async (recipientEmail, emailConfirmationToken) => 
 };
 
 const sendPasswordResetEmail = async (recipientEmail, passwordResetToken) => {
-  const resetPasswordUrl = `${config.allowedOrigins}/confirm?confirmationType=password&email=${encodeURIComponent(recipientEmail)}&token=${passwordResetToken}`;
+  const resetPasswordUrl = `${config.allowedOrigins[0]}/confirm?confirmationType=password&email=${encodeURIComponent(recipientEmail)}&token=${passwordResetToken}`;
 
   const message = `
   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">

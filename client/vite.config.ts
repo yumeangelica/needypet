@@ -9,6 +9,11 @@ export default defineConfig({
     vue(),
     tailwindcss(),
   ],
+  server: {
+    // Pin the dev port so the origin matches the server's ALLOWED_ORIGINS.
+    port: 5173,
+    strictPort: true,
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

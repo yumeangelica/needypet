@@ -129,7 +129,7 @@ userSchema.methods.verifyEmailConfirmToken = function (token) {
  * @returns true if user can resend verification email
  */
 userSchema.methods.canResendVerificationEmail = function () {
-  return (this.emailConfirmTokenExpires === null && this.emailConfirmTokenExpires === null) || (this.emailConfirmTokenExpires !== null && Date.now() > this.emailConfirmTokenExpires.getTime());
+  return (this.emailConfirmToken === null && this.emailConfirmTokenExpires === null) || (this.emailConfirmTokenExpires !== null && Date.now() > this.emailConfirmTokenExpires.getTime());
 };
 
 /**
