@@ -124,7 +124,7 @@ const petSchema = new mongoose.Schema({
         unit: { // For measurement unit
           type: String,
           maxlength: 20,
-          emit: ['ml', 'g'],
+          enum: ['ml', 'g'],
         },
       },
       duration: {
@@ -134,7 +134,7 @@ const petSchema = new mongoose.Schema({
         },
         unit: {
           type: String,
-          emit: 'minutes',
+          enum: ['minutes'],
         },
       },
       timezone: { // Format 'Europe/Helsinki', will indicate where the record was created

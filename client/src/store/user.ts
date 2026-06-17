@@ -366,7 +366,7 @@ export const useUserStore = defineStore('user', {
       this.token = localStorage.getItem('token') || null;
       this.userName = localStorage.getItem('userName') || null;
       this.id = localStorage.getItem('id') || null;
-      this.timezone = localStorage.getItem('timezone') || null;
+      this.timezone = localStorage.getItem('timezone') || 'UTC';
       this.emailConfirmed =
         localStorage.getItem('emailConfirmed') === 'true' || false;
     },

@@ -287,26 +287,28 @@ const addNewNeed = async () => {
     return;
   }
 
+  // Duration has no unit picker in the form, so the unit is always 'minutes'.
+  const unit = selection.value === 'duration' ? 'minutes' : unitOfSelection.value;
+
   const needObject: Need = {
     category: category.value,
     description: description.value,
     dateFor: currentDate.value,
     [selection.value]: {
       value: valueOfSelection.value,
-      unit: unitOfSelection.value,
+      unit,
     },
   };
 
-  try {
-    const response = await petStore.addNewNeed(pet.value.id, needObject);
-    if (response) {
-      setOpen(false);
-      await getPet(pet.value.id);
-    } else {
-      appStore.addNotification('Couldn\'t save the need. Please try again.', 'error');
-    }
-  } catch (_error) {
-    appStore.addNotification('Couldn\'t save the need. Please try again.', 'error');
+  const response = await petStore.addNewNeed(pet.value.id, needObject);
+  if (response === true) {
+    setOpen(false);
+    await getPet(pet.value.id);
+  } else {
+    const message = typeof response === 'string'
+      ? response
+      : 'Couldn\'t save the need. Please try again.';
+    appStore.addNotification(message, 'error');
   }
 };
 
