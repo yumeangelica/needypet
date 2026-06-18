@@ -3,11 +3,18 @@
 
 const baseURL: string = import.meta.env.VITE_APP_BACKEND_URL;
 
-interface ApiError extends Error {
+export interface ApiError extends Error {
   response?: {
     status: number;
     data: Record<string, unknown>;
   };
+}
+
+/**
+ * @description Narrow an unknown caught value to an ApiError thrown by the client.
+ */
+export function isApiError(error: unknown): error is ApiError {
+  return error instanceof Error && 'response' in error;
 }
 
 interface RequestOptions {

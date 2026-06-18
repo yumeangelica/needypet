@@ -1,5 +1,6 @@
 // @ts-check
 import { acceptHMRUpdate, defineStore } from 'pinia';
+import { type ApiResult, getErrorDetails, getErrorMessage, getErrorStatus } from '@/lib/apiError';
 import { apiClient } from '@/services';
 import type { CareRecord, Need, Pet, PetState } from '@/types/pet';
 import { useUserStore } from './user';
@@ -44,7 +45,7 @@ export const usePetStore = defineStore('pet', {
           return false;
         })
         .catch((error) => {
-          console.error('Error during pets fetching:', error.response?.status);
+          console.error('Error during pets fetching:', getErrorStatus(error));
           return false;
         });
 
@@ -55,7 +56,7 @@ export const usePetStore = defineStore('pet', {
      * @param newPetObject
      * @returns
      */
-    async addNewPet(newPetObject): Promise<boolean> {
+    async addNewPet(newPetObject): Promise<ApiResult> {
       const userStore = useUserStore();
 
       const headers = {
@@ -67,19 +68,24 @@ export const usePetStore = defineStore('pet', {
         const response = await apiClient.post(`${servicePath}/pets`, newPetObject, { headers });
         if (response.status === 201) {
           await this.getAllPets(); // Fetch all pets again to update the state
-          return true;
+          return { isSuccess: true };
         }
       } catch (error) {
-        console.error('Error during adding new pet:', error.response?.status);
-        return false;
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Error adding pet'),
+          errorDetails: getErrorDetails(error),
+        };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Delete a pet by Id
      * @param petId
      * @returns
      */
-    async deletePet(petId: string): Promise<boolean> {
+    async deletePet(petId: string): Promise<ApiResult> {
       const userStore = useUserStore();
 
       const headers = {
@@ -91,12 +97,17 @@ export const usePetStore = defineStore('pet', {
         const response = await apiClient.delete(`${servicePath}/pets/${petId}`, { headers });
         if (response.status === 204) {
           await this.getAllPets(); // Fetch all pets again to update the state
-          return true;
+          return { isSuccess: true };
         }
       } catch (error) {
-        console.error('Error during deleting pet:', error.response?.status);
-        return false;
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Error deleting pet'),
+          errorDetails: getErrorDetails(error),
+        };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Update the pet by Id
@@ -104,7 +115,7 @@ export const usePetStore = defineStore('pet', {
      * @param petData
      * @returns
      */
-    async updatePet(petId, petData) {
+    async updatePet(petId, petData): Promise<ApiResult> {
       const userStore = useUserStore();
       const headers = {
         'Content-Type': 'application/json',
@@ -118,12 +129,17 @@ export const usePetStore = defineStore('pet', {
             state.pets = state.pets.filter((pet) => pet.id !== petId);
           });
           await this.getAllPets(); // Fetch all pets again to update the state
-          return true;
+          return { isSuccess: true };
         }
       } catch (error) {
-        console.error('Error during updating pet:', error.response?.status);
-        return false;
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Error updating pet'),
+          errorDetails: getErrorDetails(error),
+        };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Toggle the status isActive of the need
@@ -131,12 +147,12 @@ export const usePetStore = defineStore('pet', {
      * @param needId
      * @returns
      */
-    async toggleNeedisActive(petId: string, needId: string): Promise<boolean> {
+    async toggleNeedisActive(petId: string, needId: string): Promise<ApiResult> {
       const userStore = useUserStore();
       const token = userStore.token;
 
       if (!token) {
-        return false;
+        return { isSuccess: false };
       }
 
       const headers = {
@@ -161,12 +177,17 @@ export const usePetStore = defineStore('pet', {
               }
             }
           });
-          return true;
+          return { isSuccess: true };
         }
       } catch (error) {
-        console.error('Error during toggling need status:', error.response?.status);
-        return false;
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Failed to toggle need active status'),
+          errorDetails: getErrorDetails(error),
+        };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Update the pet's need by Id
@@ -175,12 +196,12 @@ export const usePetStore = defineStore('pet', {
      * @param updatedNeed
      * @returns
      */
-    async updateNeed(petId: string, needId: string, updatedNeed: object) {
+    async updateNeed(petId: string, needId: string, updatedNeed: object): Promise<ApiResult> {
       const userStore = useUserStore();
       const token = userStore.token;
 
       if (!token) {
-        return false;
+        return { isSuccess: false };
       }
 
       const headers = {
@@ -208,14 +229,17 @@ export const usePetStore = defineStore('pet', {
               }
             }
           });
-          return true;
+          return { isSuccess: true };
         }
       } catch (error) {
-        console.error('Error during updating need:', error.response?.status);
-        return false;
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Failed to update need'),
+          errorDetails: getErrorDetails(error),
+        };
       }
 
-      return false;
+      return { isSuccess: false };
     },
     /**
      * @description Delete a need from the pet by Id
@@ -223,13 +247,13 @@ export const usePetStore = defineStore('pet', {
      * @param needId
      * @returns
      */
-    async deleteNeed(petId: string, needId: string): Promise<boolean> {
+    async deleteNeed(petId: string, needId: string): Promise<ApiResult> {
       const userStore = useUserStore();
 
       const token = userStore.token;
 
       if (!token) {
-        return false;
+        return { isSuccess: false };
       }
 
       const headers = {
@@ -251,12 +275,17 @@ export const usePetStore = defineStore('pet', {
               pet.needs = pet.needs.filter((need) => need.id !== needId);
             }
           });
-          return true;
+          return { isSuccess: true };
         }
       } catch (error) {
-        console.error('Error during deleting need:', error.response?.status);
-        return false;
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Failed to delete need'),
+          errorDetails: getErrorDetails(error),
+        };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Add a record for the need
@@ -264,12 +293,12 @@ export const usePetStore = defineStore('pet', {
      * @param recordObject
      * @returns
      */
-    async addRecord(petId: string, needId: string, recordObject: CareRecord): Promise<boolean> {
+    async addRecord(petId: string, needId: string, recordObject: CareRecord): Promise<ApiResult> {
       const userStore = useUserStore();
       const token = userStore.token;
 
       if (!token) {
-        return false;
+        return { isSuccess: false };
       }
 
       const headers = {
@@ -277,39 +306,40 @@ export const usePetStore = defineStore('pet', {
         Authorization: `bearer ${token}`,
       };
 
-      const response = apiClient({
-        method: 'post',
-        url: `${servicePath}/pets/${petId}/needs/${needId}/newrecord`,
-        headers,
-        data: recordObject,
-      })
-        .then((response) => {
-          if (response.status === 201) {
-            this.$patch((state: PetState) => {
-              const pet = state.pets.find((pet) => pet.id === petId);
-              if (pet) {
-                const need = pet.needs.find((need) => need.id === needId);
-                if (need) {
-                  // Ensure careRecords exists, push the new record, and mark the need as completed
-                  if (!need.careRecords) {
-                    need.careRecords = [];
-                  }
-                  need.careRecords.push(recordObject as CareRecord);
-                  need.completed = true;
-                }
-              }
-            });
-            return true;
-          }
-          return false;
-        })
-        .catch((error) => {
-          if (error) {
-            return false;
-          }
+      try {
+        const response = await apiClient({
+          method: 'post',
+          url: `${servicePath}/pets/${petId}/needs/${needId}/newrecord`,
+          headers,
+          data: recordObject,
         });
 
-      return response;
+        if (response.status === 201) {
+          this.$patch((state: PetState) => {
+            const pet = state.pets.find((pet) => pet.id === petId);
+            if (pet) {
+              const need = pet.needs.find((need) => need.id === needId);
+              if (need) {
+                // Ensure careRecords exists, push the new record, and mark the need as completed
+                if (!need.careRecords) {
+                  need.careRecords = [];
+                }
+                need.careRecords.push(recordObject as CareRecord);
+                need.completed = true;
+              }
+            }
+          });
+          return { isSuccess: true };
+        }
+      } catch (error) {
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Failed to add record'),
+          errorDetails: getErrorDetails(error),
+        };
+      }
+
+      return { isSuccess: false };
     },
     /**
      * @description Add new need for the pet
@@ -317,12 +347,12 @@ export const usePetStore = defineStore('pet', {
      * @param needObject
      * @returns
      */
-    async addNewNeed(petId: string, needObject: object): Promise<boolean | string> {
+    async addNewNeed(petId: string, needObject: object): Promise<ApiResult> {
       const userStore = useUserStore();
       const token = userStore.token;
 
       if (!token) {
-        return false;
+        return { isSuccess: false };
       }
 
       const headers = {
@@ -331,15 +361,17 @@ export const usePetStore = defineStore('pet', {
         Authorization: `bearer ${token}`,
       };
 
-      const response = apiClient<{ needs: Need[] }>({
-        method: 'post',
-        url: `${servicePath}/pets/${petId}/newneed`,
-        headers,
-        data: {
-          need: needObject,
-        },
-      })
-        .then((response) => {
+      try {
+        const response = await apiClient<{ needs: Need[] }>({
+          method: 'post',
+          url: `${servicePath}/pets/${petId}/newneed`,
+          headers,
+          data: {
+            need: needObject,
+          },
+        });
+
+        if (response.status === 201) {
           this.$patch((state) => {
             const pet = state.pets.find((pet: Pet) => pet.id === petId);
             if (pet) {
@@ -347,21 +379,17 @@ export const usePetStore = defineStore('pet', {
               pet.needs.push(newNeed);
             }
           });
-          return response.status === 201;
-        })
+          return { isSuccess: true };
+        }
+      } catch (error) {
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, "Couldn't save the need. Please try again."),
+          errorDetails: getErrorDetails(error),
+        };
+      }
 
-        .catch((error) => {
-          const data = error.response?.data as { message?: string } | undefined;
-          console.error(
-            'Error during adding new need:',
-            error.response?.status,
-            error.response?.data,
-          );
-          // Surface the backend validation message when available.
-          return data?.message ?? false;
-        });
-
-      return response;
+      return { isSuccess: false };
     },
   },
   getters: {

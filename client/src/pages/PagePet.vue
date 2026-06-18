@@ -158,6 +158,7 @@ import TheFooter from '@/components/TheFooter.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
 import TheNeedCard from '@/components/TheNeedCard.vue';
 import { Dialog, RadioGroup, RadioGroupItem, Select } from '@/components/ui';
+import { resultMessage } from '@/lib/apiError';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -298,14 +299,15 @@ const addNewNeed = async () => {
     },
   };
 
-  const response = await petStore.addNewNeed(pet.value.id, needObject);
-  if (response === true) {
+  const result = await petStore.addNewNeed(pet.value.id, needObject);
+  if (result.isSuccess) {
     setOpen(false);
     await getPet(pet.value.id);
   } else {
-    const message =
-      typeof response === 'string' ? response : "Couldn't save the need. Please try again.";
-    appStore.addNotification(message, 'error');
+    appStore.addNotification(
+      resultMessage(result, "Couldn't save the need. Please try again."),
+      'error',
+    );
   }
 };
 

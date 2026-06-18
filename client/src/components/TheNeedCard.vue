@@ -96,6 +96,7 @@ import utc from 'dayjs/plugin/utc';
 import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from 'lucide-vue-next';
 import { computed, inject, onBeforeMount, ref } from 'vue';
 import { AlertDialog, Dialog, Select, Switch } from '@/components/ui';
+import { resultMessage } from '@/lib/apiError';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -194,11 +195,11 @@ const addRecord = async (petId: string, need: Need) => {
     };
   }
 
-  const updateSuccessful = await petStore.addRecord(petId, needId, recordObject);
-  if (updateSuccessful) {
+  const result = await petStore.addRecord(petId, needId, recordObject);
+  if (result.isSuccess) {
     appStore.addNotification('Need completed! ✓', 'success');
   } else {
-    appStore.addNotification('Failed to add record', 'error');
+    appStore.addNotification(resultMessage(result, 'Failed to add record'), 'error');
   }
   isSaving.value = false;
 };
@@ -216,12 +217,12 @@ const editNeed = () => {
 const toggleNeedActive = async (needId) => {
   if (!needId || !isOwner) return;
 
-  const response = await petStore.toggleNeedisActive(petId, needId);
-  if (response) {
+  const result = await petStore.toggleNeedisActive(petId, needId);
+  if (result.isSuccess) {
     emit('needUpdated');
     appStore.addNotification('Need active status toggled successfully', 'success');
   } else {
-    appStore.addNotification('Failed to toggle need active status', 'error');
+    appStore.addNotification(resultMessage(result, 'Failed to toggle need active status'), 'error');
   }
 };
 
@@ -250,13 +251,13 @@ const updateNeed = async () => {
       unit: editForm.value.unit,
     },
   };
-  const isSuccess = await petStore.updateNeed(petId, needId, updatedNeed);
+  const result = await petStore.updateNeed(petId, needId, updatedNeed);
 
-  if (isSuccess) {
+  if (result.isSuccess) {
     emit('needUpdated');
     appStore.addNotification('Need updated successfully', 'success');
   } else {
-    appStore.addNotification('Failed to update need', 'error');
+    appStore.addNotification(resultMessage(result, 'Failed to update need'), 'error');
   }
   closeEditModal();
 };
@@ -264,11 +265,11 @@ const updateNeed = async () => {
 const deleteNeed = async (needId: string) => {
   if (!needId) return;
 
-  const response = await petStore.deleteNeed(petId, needId);
-  if (response) {
+  const result = await petStore.deleteNeed(petId, needId);
+  if (result.isSuccess) {
     handleNeedDeletion(true);
   } else {
-    appStore.addNotification('Failed to delete need', 'error');
+    appStore.addNotification(resultMessage(result, 'Failed to delete need'), 'error');
   }
 };
 </script>

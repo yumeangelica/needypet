@@ -55,6 +55,7 @@
 import { computed, type Ref, ref } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import { resultMessage } from '@/lib/apiError';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -122,8 +123,8 @@ const submitPet = async () => {
     return;
   }
 
-  const response = await petStore.addNewPet(newPetObject.value);
-  if (response) {
+  const result = await petStore.addNewPet(newPetObject.value);
+  if (result.isSuccess) {
     newPetObject.value = {
       name: '',
       breed: '',
@@ -134,7 +135,10 @@ const submitPet = async () => {
     router.push({ name: 'home' });
     appStore.addNotification('Pet added successfully', 'success');
   } else {
-    appStore.addNotification('Failed to add pet, please try again later', 'error');
+    appStore.addNotification(
+      resultMessage(result, 'Failed to add pet, please try again later'),
+      'error',
+    );
   }
 };
 </script>

@@ -123,13 +123,13 @@ const deleteAccount = async () => {
 const resendEmailConfirmation = async () => {
   isButtonDisabled.value = true;
 
-  const isSuccess = await userStore.resendEmailConfirmation();
+  const result = await userStore.resendEmailConfirmation();
 
-  if (isSuccess) {
+  if (result.isSuccess) {
     appStore.addNotification('Please check your email for the confirmation link', 'success');
   } else {
     appStore.addNotification(
-      'Failed to resend email confirmation, please try again later',
+      result.message || 'Failed to resend email confirmation, please try again later',
       'error',
     );
   }

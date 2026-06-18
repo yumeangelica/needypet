@@ -1,5 +1,6 @@
 // @ts-check
 import { acceptHMRUpdate, defineStore } from 'pinia';
+import { type ApiResult, getErrorMessage, getErrorStatus } from '@/lib/apiError';
 import { apiClient } from '@/services';
 import type { loginData, User, UserStoreState } from '@/types/user';
 
@@ -114,13 +115,7 @@ export const useUserStore = defineStore('user', {
      * @param timezone
      * @returns
      */
-    async createAccount({
-      userName,
-      email,
-      newPassword,
-      timezone,
-      // biome-ignore lint/suspicious/noExplicitAny: errorDetails mirrors the backend's open-ended validation payload
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    async createAccount({ userName, email, newPassword, timezone }): Promise<ApiResult> {
       try {
         const response = await apiClient.post(`${servicePath}/users`, {
           userName,
@@ -155,13 +150,7 @@ export const useUserStore = defineStore('user', {
      * @param currentPassword
      * @returns
      */
-    async updateUserProfile({
-      userName,
-      email,
-      timezone,
-      currentPassword,
-      // biome-ignore lint/suspicious/noExplicitAny: errorDetails mirrors the backend's open-ended validation payload
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    async updateUserProfile({ userName, email, timezone, currentPassword }): Promise<ApiResult> {
       try {
         const response = await apiClient.put<UpdateUserResponse>(
           `${servicePath}/users/${this.id}`,
@@ -215,11 +204,7 @@ export const useUserStore = defineStore('user', {
      * @param newPassword
      * @returns
      */
-    async changePassword({
-      currentPassword,
-      newPassword,
-      // biome-ignore lint/suspicious/noExplicitAny: errorDetails mirrors the backend's open-ended validation payload
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    async changePassword({ currentPassword, newPassword }): Promise<ApiResult> {
       try {
         const response = await apiClient.put<MessageResponse>(
           `${servicePath}/users/${this.id}`,
@@ -263,7 +248,7 @@ export const useUserStore = defineStore('user', {
      * @description Delete the user account
      * @returns
      */
-    async deleteAccount(): Promise<{ isSuccess: boolean; message?: string }> {
+    async deleteAccount(): Promise<ApiResult> {
       try {
         const response = await apiClient.delete(`${servicePath}/users/${this.id}`, {
           headers: {
@@ -427,30 +412,47 @@ export const useUserStore = defineStore('user', {
      * @description Resend the email confirmation
      * @returns
      */
-    async resendEmailConfirmation(): Promise<boolean> {
+    async resendEmailConfirmation(): Promise<ApiResult> {
       if (!this.token) {
-        return false;
+        return { isSuccess: false };
       }
-      const response = await apiClient({
-        method: 'post',
-        url: `${servicePath}/resend-email-confirmation`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-        .then((response) => {
-          return response.status === 200;
-        })
-        .catch((error) => {
-          // Only report the result; the calling page owns the notification so
-          // a failure shows a single error toast, not one here and one there.
-          console.error('Error during email confirmation resend:', error.response?.status);
 
-          return false;
+      try {
+        const response = await apiClient({
+          method: 'post',
+          url: `${servicePath}/resend-email-confirmation`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.token}`,
+          },
         });
 
-      return response;
+        if (response.status === 200) {
+          return { isSuccess: true };
+        }
+      } catch (error) {
+        // Only report the result; the calling page owns the notification so a
+        // failure shows a single error toast, not one here and one there.
+        const status = getErrorStatus(error);
+        console.error('Error during email confirmation resend:', status);
+
+        if (status === 535) {
+          return {
+            isSuccess: false,
+            message: getErrorMessage(
+              error,
+              'Email server authentication failed. Please contact support.',
+            ),
+          };
+        }
+
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Unable to resend email confirmation. Please try again.'),
+        };
+      }
+
+      return { isSuccess: false };
     },
     /**
      * @description Request a password reset

@@ -139,8 +139,8 @@ const updatePet = async () => {
     birthday: existingPetObject.value.birthday,
   };
 
-  const success = await petStore.updatePet(existingPetObject.value.id, petData);
-  if (success) {
+  const result = await petStore.updatePet(existingPetObject.value.id, petData);
+  if (result.isSuccess) {
     router.push({ name: 'pet', params: { id: petData.id } });
   } else {
     console.error('Failed to update pet');
@@ -149,8 +149,8 @@ const updatePet = async () => {
 
 const deletePet = async () => {
   if (existingPetObject.value && existingPetObject.value.id) {
-    const success = await petStore.deletePet(existingPetObject.value.id);
-    if (success) {
+    const result = await petStore.deletePet(existingPetObject.value.id);
+    if (result.isSuccess) {
       router.push({ name: 'home' });
     } else {
       console.error('Failed to delete pet');
