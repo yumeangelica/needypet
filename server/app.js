@@ -33,22 +33,24 @@ app.use(cors(corsOptions));
 app.use(corsHeaders);
 
 // Helmet
-app.use(helmet({
-  referrerPolicy: { policy: 'no-referrer' },
-  noSniff: true,
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ['\'self\''],
-      scriptSrc: ['\'self\'', '\'unsafe-inline\''],
-      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'fonts.googleapis.com'],
-      fontSrc: ['\'self\'', 'fonts.gstatic.com'],
-      imgSrc: ['\'self\'', 'data:'],
-      connectSrc: ['\'self\'', ...allowedOrigins],
-      objectSrc: ['\'none\''],
-      upgradeInsecureRequests: [],
+app.use(
+  helmet({
+    referrerPolicy: { policy: 'no-referrer' },
+    noSniff: true,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+        fontSrc: ["'self'", 'fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:'],
+        connectSrc: ["'self'", ...allowedOrigins],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
     },
-  },
-}));
+  }),
+);
 
 if (!isTesting) {
   // Run every hour

@@ -12,7 +12,7 @@ const server = app.listen(backendPort, () => {
  * signals (SIGTERM/SIGINT), so in-flight requests can finish before exit.
  * @param {string} signal
  */
-const gracefulShutdown = async signal => {
+const gracefulShutdown = async (signal) => {
   console.log(`${signal} received, shutting down gracefully`);
 
   // Force exit if the graceful shutdown hangs
@@ -23,7 +23,7 @@ const gracefulShutdown = async signal => {
 
   try {
     await new Promise((resolve, reject) => {
-      server.close(error => (error ? reject(error) : resolve()));
+      server.close((error) => (error ? reject(error) : resolve()));
     });
     await mongoose.connection.close();
     console.log('HTTP server and MongoDB connection closed');
@@ -36,4 +36,3 @@ const gracefulShutdown = async signal => {
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
