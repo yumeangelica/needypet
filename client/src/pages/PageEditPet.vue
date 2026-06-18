@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { Trash2 } from 'lucide-vue-next';
+import { Trash2 } from '@lucide/vue';
 import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';

@@ -148,10 +148,10 @@
 </template>
 
 <script setup lang="ts">
+import { CirclePlus, Settings } from '@lucide/vue';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { CirclePlus, Settings } from 'lucide-vue-next';
 import { computed, onBeforeMount, provide, type Ref, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';

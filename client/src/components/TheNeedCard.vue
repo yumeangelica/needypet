@@ -90,10 +90,10 @@
 </template>
 
 <script setup lang="ts">
+import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from '@lucide/vue';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from 'lucide-vue-next';
 import { computed, inject, onBeforeMount, ref } from 'vue';
 import { AlertDialog, Dialog, Select, Switch } from '@/components/ui';
 import { resultMessage } from '@/lib/apiError';

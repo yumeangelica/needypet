@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { PawPrint } from 'lucide-vue-next';
+import { PawPrint } from '@lucide/vue';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';

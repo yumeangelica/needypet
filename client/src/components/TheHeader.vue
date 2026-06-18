@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { CircleUser, PawPrint } from 'lucide-vue-next';
+import { CircleUser, PawPrint } from '@lucide/vue';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';

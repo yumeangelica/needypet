@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { Eye, EyeOff } from 'lucide-vue-next';
+import { Eye, EyeOff } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';

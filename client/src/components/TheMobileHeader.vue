@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { CircleUser, PawPrint } from 'lucide-vue-next';
+import { CircleUser, PawPrint } from '@lucide/vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 

@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { CheckCircle2, LogOut, Settings, Trash2, XCircle } from 'lucide-vue-next';
+import { CheckCircle2, LogOut, Settings, Trash2, XCircle } from '@lucide/vue';
 import { computed, type Ref, ref, watchEffect } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';

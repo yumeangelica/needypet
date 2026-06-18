@@ -12,10 +12,10 @@
     "lint:fix": "biome check --write src"
   },
   "dependencies": {
+    "@lucide/vue": "^1.20.0",
     "@tailwindcss/vite": "^4.3.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.21",
-    "lucide-vue-next": "^0.577.0",
     "pinia": "^3.0.4",
     "reka-ui": "^2.9.10",
     "tailwind-merge": "^3.6.0",

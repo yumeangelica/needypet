@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { Eye, EyeOff } from 'lucide-vue-next';
+import { Eye, EyeOff } from '@lucide/vue';
 import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';

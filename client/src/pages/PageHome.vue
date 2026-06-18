@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { CirclePlus, PawPrint } from 'lucide-vue-next';
+import { CirclePlus, PawPrint } from '@lucide/vue';
 import { computed, onBeforeMount, type Ref, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheEmptyState from '@/components/TheEmptyState.vue';
