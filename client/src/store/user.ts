@@ -2,7 +2,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { apiClient } from '@/services';
 import { UserStoreState, User, loginData } from '@/types/user';
-import { useAppStore } from '@/store/app';
 
 const servicePath = '/auth';
 
@@ -451,7 +450,6 @@ export const useUserStore = defineStore('user', {
       if (!this.token) {
         return false;
       }
-      const appStore = useAppStore();
       const response = await apiClient({
         method: 'post',
         url: `${servicePath}/resend-email-confirmation`,
@@ -464,20 +462,9 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          const status = error.response?.status;
-          console.error('Error during email confirmation resend:', status);
-
-          if (status === 535) {
-            appStore.addNotification(
-              'Email server authentication failed. Please contact support.',
-              'error'
-            );
-          } else {
-            appStore.addNotification(
-              'Unable to resend email confirmation. Please contact support.',
-              'error'
-            );
-          }
+          // Only report the result; the calling page owns the notification so
+          // a failure shows a single error toast, not one here and one there.
+          console.error('Error during email confirmation resend:', error.response?.status);
 
           return false;
         });
