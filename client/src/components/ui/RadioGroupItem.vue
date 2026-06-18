@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RadioGroupItem, RadioGroupIndicator } from 'reka-ui';
+import { RadioGroupIndicator, RadioGroupItem } from 'reka-ui';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{

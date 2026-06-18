@@ -10,8 +10,8 @@ describe('apiClient', () => {
         new Response(JSON.stringify({ ok: true }), {
           status: 200,
           headers: { 'content-type': 'application/json' },
-        })
-      )
+        }),
+      ),
     );
   });
 
@@ -26,7 +26,7 @@ describe('apiClient', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
-      expect.objectContaining({ method: 'PATCH' })
+      expect.objectContaining({ method: 'PATCH' }),
     );
   });
 });

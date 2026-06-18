@@ -1,6 +1,16 @@
 <script setup lang="ts">
-import { SelectRoot, SelectTrigger, SelectValue, SelectPortal, SelectContent, SelectViewport, SelectItem, SelectItemText, SelectItemIndicator } from 'reka-ui';
-import { ChevronDown, Check } from 'lucide-vue-next';
+import { Check, ChevronDown } from '@lucide/vue';
+import {
+  SelectContent,
+  SelectItem,
+  SelectItemIndicator,
+  SelectItemText,
+  SelectPortal,
+  SelectRoot,
+  SelectTrigger,
+  SelectValue,
+  SelectViewport,
+} from 'reka-ui';
 
 defineOptions({
   name: 'UiSelect',
@@ -13,9 +23,7 @@ defineProps<{
   ariaLabel?: string;
 }>();
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
-}>();
+const emit = defineEmits<(e: 'update:modelValue', value: string) => void>();
 </script>
 
 <template>

@@ -148,22 +148,21 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, computed, watch, Ref, provide } from 'vue';
-import { useRoute } from 'vue-router';
-import { usePetStore } from '@/store/pet';
-import { useUserStore } from '@/store/user';
-import { Pet, Need } from '@/types/pet';
-
+import { CirclePlus, Settings } from '@lucide/vue';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import { Settings, CirclePlus } from 'lucide-vue-next';
-import { Dialog, RadioGroup, RadioGroupItem, Select } from '@/components/ui';
-import TheNeedCard from '@/components/TheNeedCard.vue';
+import utc from 'dayjs/plugin/utc';
+import { computed, onBeforeMount, provide, type Ref, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
+import TheNeedCard from '@/components/TheNeedCard.vue';
+import { Dialog, RadioGroup, RadioGroupItem, Select } from '@/components/ui';
+import { resultMessage } from '@/lib/apiError';
+import { useAppStore } from '@/store/app';
+import { usePetStore } from '@/store/pet';
+import { useUserStore } from '@/store/user';
+import type { Need, Pet } from '@/types/pet';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -300,15 +299,15 @@ const addNewNeed = async () => {
     },
   };
 
-  const response = await petStore.addNewNeed(pet.value.id, needObject);
-  if (response === true) {
+  const result = await petStore.addNewNeed(pet.value.id, needObject);
+  if (result.isSuccess) {
     setOpen(false);
     await getPet(pet.value.id);
   } else {
-    const message = typeof response === 'string'
-      ? response
-      : 'Couldn\'t save the need. Please try again.';
-    appStore.addNotification(message, 'error');
+    appStore.addNotification(
+      resultMessage(result, "Couldn't save the need. Please try again."),
+      'error',
+    );
   }
 };
 

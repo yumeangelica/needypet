@@ -66,14 +66,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onBeforeMount, Ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { usePetStore } from '@/store/pet';
-import { useAppStore } from '@/store/app';
-import { Pet } from '@/types/pet';
-import { Trash2 } from 'lucide-vue-next';
-import TheFooter from '@/components/TheFooter.vue';
+import { Trash2 } from '@lucide/vue';
+import { computed, onBeforeMount, type Ref, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
+import TheFooter from '@/components/TheFooter.vue';
+import { useAppStore } from '@/store/app';
+import { usePetStore } from '@/store/pet';
+import type { Pet } from '@/types/pet';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -139,8 +139,8 @@ const updatePet = async () => {
     birthday: existingPetObject.value.birthday,
   };
 
-  const success = await petStore.updatePet(existingPetObject.value.id, petData);
-  if (success) {
+  const result = await petStore.updatePet(existingPetObject.value.id, petData);
+  if (result.isSuccess) {
     router.push({ name: 'pet', params: { id: petData.id } });
   } else {
     console.error('Failed to update pet');
@@ -149,8 +149,8 @@ const updatePet = async () => {
 
 const deletePet = async () => {
   if (existingPetObject.value && existingPetObject.value.id) {
-    const success = await petStore.deletePet(existingPetObject.value.id);
-    if (success) {
+    const result = await petStore.deletePet(existingPetObject.value.id);
+    if (result.isSuccess) {
       router.push({ name: 'home' });
     } else {
       console.error('Failed to delete pet');

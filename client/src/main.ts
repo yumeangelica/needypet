@@ -1,14 +1,14 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from '@/router/index';
 import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import router from '@/router/index';
+import App from './App.vue';
 
 /* App styles (Tailwind + custom theme) */
 import './app.css';
 
+import { usePetStore } from '@/store/pet';
 // Import the store
 import { useUserStore } from '@/store/user';
-import { usePetStore } from '@/store/pet';
 
 async function initApp() {
   const app = createApp(App).use(router).use(createPinia());
@@ -54,4 +54,3 @@ async function initApp() {
 }
 
 initApp();
-

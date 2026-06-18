@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { type Component } from 'vue';
+import type { Component } from 'vue';
 
 defineProps<{
   icon?: Component;
@@ -21,7 +21,5 @@ defineProps<{
   actionIcon?: Component;
 }>();
 
-defineEmits<{
-  (e: 'action'): void;
-}>();
+defineEmits<(e: 'action') => void>();
 </script>

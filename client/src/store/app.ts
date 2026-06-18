@@ -33,11 +33,7 @@ export const useAppStore = defineStore('app', {
       const data = Intl.supportedValuesOf('timeZone');
       return data;
     },
-    addNotification(
-      message: string,
-      type: 'success' | 'error' | 'info',
-      duration = 5000
-    ) {
+    addNotification(message: string, type: 'success' | 'error' | 'info', duration = 5000) {
       const id = Date.now();
       const newNotification: Notification = {
         id,
@@ -48,10 +44,8 @@ export const useAppStore = defineStore('app', {
       // If new is same as last, don't add
       if (
         this.notifications.length &&
-        this.notifications[this.notifications.length - 1].message ===
-          newNotification.message &&
-        this.notifications[this.notifications.length - 1].type ===
-          newNotification.type
+        this.notifications[this.notifications.length - 1].message === newNotification.message &&
+        this.notifications[this.notifications.length - 1].type === newNotification.type
       ) {
         return;
       }

@@ -93,14 +93,14 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, computed } from 'vue';
-import { useUserStore } from '@/store/user';
+import { Eye, EyeOff, PawPrint } from '@lucide/vue';
+import { computed, type Ref, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
-import { PawPrint, Eye, EyeOff } from 'lucide-vue-next';
-import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheLogoImage from '@/components/TheLogoImage.vue';
+import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
+import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -139,7 +139,8 @@ const validatePassword = () => {
   passwordValidations.value.uppercase = /[A-Z]/.test(pwd);
   passwordValidations.value.lowercase = /[a-z]/.test(pwd);
   passwordValidations.value.number = /[0-9]/.test(pwd);
-  passwordValidations.value.special = allowedSpecialChars.test(pwd) && !forbiddenSpecialChars.test(pwd);
+  passwordValidations.value.special =
+    allowedSpecialChars.test(pwd) && !forbiddenSpecialChars.test(pwd);
   passwordValidations.value.minLength = pwd.length >= 10;
 };
 

@@ -6,22 +6,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Component } from 'vue';
+import { type Component, computed } from 'vue';
 import { AlertDialog } from '@/components/ui';
 
-const props = withDefaults(defineProps<{
-  isOpen: boolean;
-  title: string;
-  message: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  variant?: 'default' | 'danger';
-  icon?: Component;
-}>(), {
-  confirmLabel: 'Confirm',
-  cancelLabel: 'Cancel',
-  variant: 'default',
-});
+const props = withDefaults(
+  defineProps<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmLabel?: string;
+    cancelLabel?: string;
+    variant?: 'default' | 'danger';
+    icon?: Component;
+  }>(),
+  {
+    confirmLabel: 'Confirm',
+    cancelLabel: 'Cancel',
+    variant: 'default',
+  },
+);
 
 const emit = defineEmits<{
   (e: 'confirm'): void;
@@ -29,7 +32,7 @@ const emit = defineEmits<{
 }>();
 
 const variantClass = computed(() =>
-  props.variant === 'danger' ? 'text-destructive' : 'text-primary-foreground'
+  props.variant === 'danger' ? 'text-destructive' : 'text-primary-foreground',
 );
 
 const handleConfirm = () => emit('confirm');

@@ -1,39 +1,54 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from 'vue';
-import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle, DialogDescription, DialogClose } from 'reka-ui';
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+} from 'reka-ui';
+import { onBeforeUnmount, ref, watch } from 'vue';
 
 defineOptions({
   name: 'UiDialog',
 });
 
-const props = withDefaults(defineProps<{
-  open: boolean;
-  title?: string;
-  description?: string;
-  maxWidth?: string;
-}>(), {
-  maxWidth: '800px',
-});
+const props = withDefaults(
+  defineProps<{
+    open: boolean;
+    title?: string;
+    description?: string;
+    maxWidth?: string;
+  }>(),
+  {
+    maxWidth: '800px',
+  },
+);
 
-const emit = defineEmits<{
-  (e: 'update:open', value: boolean): void;
-}>();
+const emit = defineEmits<(e: 'update:open', value: boolean) => void>();
 
 const internalOpen = ref(props.open);
 const shouldRender = ref(props.open);
 let closeTimer: ReturnType<typeof setTimeout> | null = null;
 
-watch(() => props.open, (val) => {
-  internalOpen.value = val;
-  if (val) {
-    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
-    shouldRender.value = true;
-  } else {
-    closeTimer = setTimeout(() => {
-      shouldRender.value = false;
-    }, 200);
-  }
-});
+watch(
+  () => props.open,
+  (val) => {
+    internalOpen.value = val;
+    if (val) {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      shouldRender.value = true;
+    } else {
+      closeTimer = setTimeout(() => {
+        shouldRender.value = false;
+      }, 200);
+    }
+  },
+);
 
 onBeforeUnmount(() => {
   if (closeTimer) clearTimeout(closeTimer);

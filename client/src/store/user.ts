@@ -1,8 +1,8 @@
 // @ts-check
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
+import { type ApiResult, getErrorMessage, getErrorStatus } from '@/lib/apiError';
 import { apiClient } from '@/services';
-import { UserStoreState, User, loginData } from '@/types/user';
-import { useAppStore } from '@/store/app';
+import type { loginData, User, UserStoreState } from '@/types/user';
 
 const servicePath = '/auth';
 
@@ -28,10 +28,7 @@ interface LoginResponse {
  * @param key
  * @param value
  */
-const setLocalStorageItem = async (
-  key: string,
-  value: string
-): Promise<void> => {
+const setLocalStorageItem = async (key: string, value: string): Promise<void> => {
   localStorage.setItem(key, value);
 };
 
@@ -46,7 +43,7 @@ const setAuthData = async (
   userName: string,
   id: string,
   timezone: string,
-  emailConfirmed: boolean
+  emailConfirmed: boolean,
 ): Promise<void> => {
   const userStore = useUserStore(); // Get the user store
   await setLocalStorageItem('token', token);
@@ -118,13 +115,7 @@ export const useUserStore = defineStore('user', {
      * @param timezone
      * @returns
      */
-    async createAccount({
-      userName,
-      email,
-      newPassword,
-      timezone,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    async createAccount({ userName, email, newPassword, timezone }): Promise<ApiResult> {
       try {
         const response = await apiClient.post(`${servicePath}/users`, {
           userName,
@@ -159,13 +150,7 @@ export const useUserStore = defineStore('user', {
      * @param currentPassword
      * @returns
      */
-    async updateUserProfile({
-      userName,
-      email,
-      timezone,
-      currentPassword,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    async updateUserProfile({ userName, email, timezone, currentPassword }): Promise<ApiResult> {
       try {
         const response = await apiClient.put<UpdateUserResponse>(
           `${servicePath}/users/${this.id}`,
@@ -174,7 +159,7 @@ export const useUserStore = defineStore('user', {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
-          }
+          },
         );
 
         if (response.status === 200) {
@@ -219,11 +204,7 @@ export const useUserStore = defineStore('user', {
      * @param newPassword
      * @returns
      */
-    async changePassword({
-      currentPassword,
-      newPassword,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }): Promise<{ isSuccess: boolean; message: string; errorDetails?: any }> {
+    async changePassword({ currentPassword, newPassword }): Promise<ApiResult> {
       try {
         const response = await apiClient.put<MessageResponse>(
           `${servicePath}/users/${this.id}`,
@@ -232,7 +213,7 @@ export const useUserStore = defineStore('user', {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
-          }
+          },
         );
 
         if (response.status === 200) {
@@ -267,16 +248,13 @@ export const useUserStore = defineStore('user', {
      * @description Delete the user account
      * @returns
      */
-    async deleteAccount(): Promise<{ isSuccess: boolean; message?: string }> {
+    async deleteAccount(): Promise<ApiResult> {
       try {
-        const response = await apiClient.delete(
-          `${servicePath}/users/${this.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          }
-        );
+        const response = await apiClient.delete(`${servicePath}/users/${this.id}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
 
         if (response.status === 204) {
           return {
@@ -328,13 +306,7 @@ export const useUserStore = defineStore('user', {
 
         if (response.status === 200) {
           const { token, user } = response.data;
-          await setAuthData(
-            token,
-            user.userName,
-            user.id,
-            user.timezone,
-            user.emailConfirmed
-          );
+          await setAuthData(token, user.userName, user.id, user.timezone, user.emailConfirmed);
           return {
             isSuccess: true,
             message: response.data.message || 'Login successful',
@@ -380,8 +352,7 @@ export const useUserStore = defineStore('user', {
       this.userName = localStorage.getItem('userName') || null;
       this.id = localStorage.getItem('id') || null;
       this.timezone = localStorage.getItem('timezone') || 'UTC';
-      this.emailConfirmed =
-        localStorage.getItem('emailConfirmed') === 'true' || false;
+      this.emailConfirmed = localStorage.getItem('emailConfirmed') === 'true' || false;
     },
     /**
      * @description Check if the token is valid
@@ -403,10 +374,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during token validation:',
-            error.response?.status
-          );
+          console.error('Error during token validation:', error.response?.status);
           return false;
         });
 
@@ -434,10 +402,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during email confirmation:',
-            error.response?.status
-          );
+          console.error('Error during email confirmation:', error.response?.status);
           return false;
         });
 
@@ -447,42 +412,47 @@ export const useUserStore = defineStore('user', {
      * @description Resend the email confirmation
      * @returns
      */
-    async resendEmailConfirmation(): Promise<boolean> {
+    async resendEmailConfirmation(): Promise<ApiResult> {
       if (!this.token) {
-        return false;
+        return { isSuccess: false };
       }
-      const appStore = useAppStore();
-      const response = await apiClient({
-        method: 'post',
-        url: `${servicePath}/resend-email-confirmation`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-        .then((response) => {
-          return response.status === 200;
-        })
-        .catch((error) => {
-          const status = error.response?.status;
-          console.error('Error during email confirmation resend:', status);
 
-          if (status === 535) {
-            appStore.addNotification(
-              'Email server authentication failed. Please contact support.',
-              'error'
-            );
-          } else {
-            appStore.addNotification(
-              'Unable to resend email confirmation. Please contact support.',
-              'error'
-            );
-          }
-
-          return false;
+      try {
+        const response = await apiClient({
+          method: 'post',
+          url: `${servicePath}/resend-email-confirmation`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.token}`,
+          },
         });
 
-      return response;
+        if (response.status === 200) {
+          return { isSuccess: true };
+        }
+      } catch (error) {
+        // Only report the result; the calling page owns the notification so a
+        // failure shows a single error toast, not one here and one there.
+        const status = getErrorStatus(error);
+        console.error('Error during email confirmation resend:', status);
+
+        if (status === 535) {
+          return {
+            isSuccess: false,
+            message: getErrorMessage(
+              error,
+              'Email server authentication failed. Please contact support.',
+            ),
+          };
+        }
+
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Unable to resend email confirmation. Please try again.'),
+        };
+      }
+
+      return { isSuccess: false };
     },
     /**
      * @description Request a password reset
@@ -504,10 +474,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during password reset request:',
-            error.response?.status
-          );
+          console.error('Error during password reset request:', error.response?.status);
           return false;
         });
 
@@ -519,10 +486,7 @@ export const useUserStore = defineStore('user', {
      * @param token
      * @returns
      */
-    async verifyPasswordResetToken(
-      email: string,
-      token: string
-    ): Promise<boolean> {
+    async verifyPasswordResetToken(email: string, token: string): Promise<boolean> {
       const response = apiClient({
         method: 'post',
         url: `${servicePath}/verify-password-reset-token`,
@@ -538,10 +502,7 @@ export const useUserStore = defineStore('user', {
           return response.status === 200;
         })
         .catch((error) => {
-          console.error(
-            'Error during password reset token verification:',
-            error.response?.status
-          );
+          console.error('Error during password reset token verification:', error.response?.status);
           return false;
         });
 
@@ -554,11 +515,7 @@ export const useUserStore = defineStore('user', {
      * @param newPassword
      * @returns
      */
-    async passwordReset(
-      email: string,
-      token: string,
-      newPassword: string
-    ): Promise<boolean> {
+    async passwordReset(email: string, token: string, newPassword: string): Promise<boolean> {
       const response = apiClient({
         method: 'post',
         url: `${servicePath}/password-reset`,

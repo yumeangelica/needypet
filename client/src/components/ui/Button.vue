@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue';
+import { computed, type HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
 
 defineOptions({
   name: 'UiButton',
 });
 
-const props = withDefaults(defineProps<{
-  class?: HTMLAttributes['class'];
-  variant?: 'default' | 'destructive' | 'outline' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
-  as?: string;
-}>(), {
-  variant: 'default',
-  size: 'default',
-  as: 'button',
-});
+const props = withDefaults(
+  defineProps<{
+    class?: HTMLAttributes['class'];
+    variant?: 'default' | 'destructive' | 'outline' | 'ghost' | 'link';
+    size?: 'default' | 'sm' | 'lg' | 'icon';
+    as?: string;
+  }>(),
+  {
+    variant: 'default',
+    size: 'default',
+    as: 'button',
+  },
+);
 
 const variantClasses = {
   default: 'bg-button-primary text-primary-foreground hover:opacity-85',
@@ -38,7 +41,7 @@ const classes = computed(() =>
     variantClasses[props.variant],
     sizeClasses[props.size],
     props.class,
-  )
+  ),
 );
 </script>
 

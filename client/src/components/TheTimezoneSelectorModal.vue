@@ -17,14 +17,14 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, computed, onBeforeMount, nextTick, watch } from 'vue';
-import { useAppStore } from '@/store/app';
+import { computed, nextTick, onBeforeMount, ref, watch } from 'vue';
 import { Dialog } from '@/components/ui';
+import { useAppStore } from '@/store/app';
 
 const appStore = useAppStore();
 
 const { isOpen } = defineProps({
-  isOpen: Boolean
+  isOpen: Boolean,
 });
 
 const timezones = ref<string[]>([]);
@@ -39,7 +39,9 @@ const searchQuery = ref('');
 const inputField = ref<HTMLInputElement | null>(null);
 
 const filteredTimezones = computed(() => {
-  return timezones.value.filter(zone => zone.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  return timezones.value.filter((zone) =>
+    zone.toLowerCase().includes(searchQuery.value.toLowerCase()),
+  );
 });
 
 const closeModal = () => {
@@ -59,11 +61,12 @@ const focusInput = async () => {
   }
 };
 
-watch(() => isOpen,
+watch(
+  () => isOpen,
   (newVal) => {
     if (newVal) {
       focusInput();
     }
-  }
+  },
 );
 </script>
