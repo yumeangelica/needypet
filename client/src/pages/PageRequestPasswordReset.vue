@@ -27,13 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { PawPrint } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import TheFooter from '@/components/TheFooter.vue';
+import TheLogoImage from '@/components/TheLogoImage.vue';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
-import { PawPrint } from 'lucide-vue-next';
-import TheLogoImage from '@/components/TheLogoImage.vue';
-import TheFooter from '@/components/TheFooter.vue';
 
 const appStore = useAppStore();
 const userStore = useUserStore();

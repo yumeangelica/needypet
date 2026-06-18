@@ -70,14 +70,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount, computed, Ref } from 'vue';
-import { useUserStore } from '@/store/user';
-import { useRouter, onBeforeRouteLeave } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
-import { User } from '@/types/user';
 import { Eye, EyeOff } from 'lucide-vue-next';
+import { computed, onBeforeMount, type Ref, ref } from 'vue';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
+import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
+import type { User } from '@/types/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -131,7 +131,12 @@ onBeforeMount(async () => {
 
 onBeforeRouteLeave((to, from, next) => {
   if (JSON.stringify(editData.value) !== JSON.stringify(originalData.value)) {
-    editData.value = { ...originalData.value } as { userName: string; email: string; timezone: string; currentPassword: string };
+    editData.value = { ...originalData.value } as {
+      userName: string;
+      email: string;
+      timezone: string;
+      currentPassword: string;
+    };
   }
   next();
 });
@@ -155,7 +160,9 @@ const submitForm = async () => {
       userName: errorDetails?.userName?.[0] || '',
       email: errorDetails?.email?.[0] || '',
       timezone: errorDetails?.timezone?.[0] || '',
-      currentPassword: errorDetails?.currentPassword?.[0] ? 'Password does not meet the requirements' : '',
+      currentPassword: errorDetails?.currentPassword?.[0]
+        ? 'Password does not meet the requirements'
+        : '',
     };
     errorMessage.value = message;
     setTimeout(() => {

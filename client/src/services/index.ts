@@ -69,24 +69,42 @@ export const apiClient = Object.assign(
   // Callable form: apiClient({ method, url, headers, data })
   <T = unknown>(opts: RequestOptions): Promise<ApiResponse<T>> => request<T>(opts),
   {
-    get<T = unknown>(url: string, config?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    get<T = unknown>(
+      url: string,
+      config?: { headers?: Record<string, string> },
+    ): Promise<ApiResponse<T>> {
       return request<T>({ method: 'get', url, headers: config?.headers });
     },
 
-    post<T = unknown>(url: string, data?: unknown, config?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    post<T = unknown>(
+      url: string,
+      data?: unknown,
+      config?: { headers?: Record<string, string> },
+    ): Promise<ApiResponse<T>> {
       return request<T>({ method: 'post', url, headers: config?.headers, data });
     },
 
-    put<T = unknown>(url: string, data?: unknown, config?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    put<T = unknown>(
+      url: string,
+      data?: unknown,
+      config?: { headers?: Record<string, string> },
+    ): Promise<ApiResponse<T>> {
       return request<T>({ method: 'put', url, headers: config?.headers, data });
     },
 
-    patch<T = unknown>(url: string, data?: unknown, config?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    patch<T = unknown>(
+      url: string,
+      data?: unknown,
+      config?: { headers?: Record<string, string> },
+    ): Promise<ApiResponse<T>> {
       return request<T>({ method: 'patch', url, headers: config?.headers, data });
     },
 
-    delete<T = unknown>(url: string, config?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    delete<T = unknown>(
+      url: string,
+      config?: { headers?: Record<string, string> },
+    ): Promise<ApiResponse<T>> {
       return request<T>({ method: 'delete', url, headers: config?.headers });
     },
-  }
+  },
 );

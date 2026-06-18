@@ -24,10 +24,10 @@
 </template>
 
 <script setup lang="ts">
+import { CircleUser, PawPrint } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { PawPrint, CircleUser } from 'lucide-vue-next';
+import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
-import { useRouter, useRoute } from 'vue-router';
 
 const userStore = useUserStore();
 const router = useRouter();

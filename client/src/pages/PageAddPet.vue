@@ -52,13 +52,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, Ref } from 'vue';
+import { computed, type Ref, ref } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import TheFooter from '@/components/TheFooter.vue';
+import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { useAppStore } from '@/store/app';
-import { NewPetObject } from '@/types/pet';
-import TheFooter from '@/components/TheFooter.vue';
+import type { NewPetObject } from '@/types/pet';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

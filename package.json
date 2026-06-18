@@ -3,6 +3,9 @@
   "description": "Pet care management app",
   "main": "index.js",
   "scripts": {
+    "dev": "concurrently -k -n client,server -c magenta,cyan \"bun run dev:client\" \"bun run dev:server\"",
+    "dev:client": "cd client && bun run dev",
+    "dev:server": "cd server && npm run dev",
     "frontend-patch-push": "./version-push.sh patch frontend",
     "frontend-minor-push": "./version-push.sh minor frontend",
     "frontend-major-push": "./version-push.sh major frontend",
@@ -15,5 +18,8 @@
   },
   "keywords": [],
   "author": "yumeangelica",
-  "license": "SEE LICENSE IN LICENSE"
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
 }

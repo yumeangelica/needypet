@@ -59,12 +59,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useUserStore } from '@/store/user';
-import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
 import { Eye, EyeOff } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

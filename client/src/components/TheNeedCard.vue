@@ -90,16 +90,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, computed, onBeforeMount } from 'vue';
-import { Trash2, EllipsisVertical, CheckCheck, Check, Pencil } from 'lucide-vue-next';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from 'lucide-vue-next';
+import { computed, inject, onBeforeMount, ref } from 'vue';
+import { AlertDialog, Dialog, Select, Switch } from '@/components/ui';
+import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
-import { Need, QuantityRecord, DurationRecord } from '@/types/pet';
-import { Dialog, AlertDialog, Switch, Select } from '@/components/ui';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import { useAppStore } from '@/store/app';
+import type { DurationRecord, Need, QuantityRecord } from '@/types/pet';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -109,8 +109,8 @@ const userStore = useUserStore();
 const appStore = useAppStore();
 
 const { need, petId } = defineProps<{
-  need: Need,
-  petId: string
+  need: Need;
+  petId: string;
 }>();
 
 const emit = defineEmits(['needDeleted', 'needUpdated']);
@@ -181,16 +181,16 @@ const addRecord = async (petId: string, need: Need) => {
       ...recordObject,
       duration: {
         value: need.duration?.value,
-        unit: need.duration?.unit
-      }
+        unit: need.duration?.unit,
+      },
     };
   } else {
     recordObject = {
       ...recordObject,
       quantity: {
         value: need.quantity?.value,
-        unit: need.quantity?.unit
-      }
+        unit: need.quantity?.unit,
+      },
     };
   }
 
@@ -230,7 +230,12 @@ const closeEditModal = () => {
 };
 
 const updateNeed = async () => {
-  if (!editForm.value.category || !editForm.value.description || !editForm.value.value || !editForm.value.unit) {
+  if (
+    !editForm.value.category ||
+    !editForm.value.description ||
+    !editForm.value.value ||
+    !editForm.value.unit
+  ) {
     appStore.addNotification('Please fill all fields', 'error');
     return;
   }
@@ -242,8 +247,8 @@ const updateNeed = async () => {
     description: editForm.value.description,
     [editForm.value.type]: {
       value: editForm.value.value,
-      unit: editForm.value.unit
-    }
+      unit: editForm.value.unit,
+    },
   };
   const isSuccess = await petStore.updateNeed(petId, needId, updatedNeed);
 

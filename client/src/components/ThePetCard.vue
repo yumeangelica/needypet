@@ -7,13 +7,13 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
-import { Pet } from '@/types/pet';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
+import type { Pet } from '@/types/pet';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -28,7 +28,7 @@ const userStore = useUserStore();
 const todayNeedsCount = computed(() => {
   if (!pet.needs || pet.needs.length === 0) return 0;
   const today = dayjs().tz(userStore.timezone).format('YYYY-MM-DD');
-  return pet.needs.filter(need => need.dateFor === today).length;
+  return pet.needs.filter((need) => need.dateFor === today).length;
 });
 
 const cardLabel = computed(() => {

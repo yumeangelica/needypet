@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the API client used by the pet store.
 vi.mock('@/services', () => ({
@@ -18,7 +18,7 @@ const seedPetWithNeed = (store: ReturnType<typeof usePetStore>) => {
       id: 'pet-1',
       needs: [{ id: 'need-1', isActive: true }],
     },
-  // The store is loosely typed for pets; cast keeps the test focused on toggle logic.
+    // The store is loosely typed for pets; cast keeps the test focused on toggle logic.
   ] as unknown as typeof store.pets;
 };
 

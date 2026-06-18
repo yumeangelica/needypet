@@ -24,12 +24,12 @@
 </template>
 
 <script setup lang="ts">
+import { PawPrint } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAppStore } from '@/store/app';
-import { PawPrint } from 'lucide-vue-next';
-import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheLogoImage from '@/components/TheLogoImage.vue';
+import { useAppStore } from '@/store/app';
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);

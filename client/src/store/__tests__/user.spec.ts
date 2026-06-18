@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the API client used by the user store.
 vi.mock('@/services', () => ({
@@ -7,8 +7,8 @@ vi.mock('@/services', () => ({
 }));
 
 import { apiClient } from '@/services';
-import { useUserStore } from '@/store/user';
 import { useAppStore } from '@/store/app';
+import { useUserStore } from '@/store/user';
 
 const mockedApiClient = vi.mocked(apiClient);
 

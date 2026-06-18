@@ -1,4 +1,3 @@
-
 type Token = string;
 
 interface User {
@@ -22,4 +21,4 @@ interface loginData {
   message: string;
 }
 
-export { Token, User, UserStoreState, loginData };
+export { loginData, Token, User, UserStoreState };

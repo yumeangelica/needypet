@@ -1,8 +1,8 @@
 // @ts-check
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import { apiClient } from '@/services';
+import type { CareRecord, Need, Pet, PetState } from '@/types/pet';
 import { useUserStore } from './user';
-import { PetState, Pet, CareRecord, Need } from '@/types/pet';
 
 const servicePath = '/api';
 
@@ -64,11 +64,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await apiClient.post(
-          `${servicePath}/pets`,
-          newPetObject,
-          { headers }
-        );
+        const response = await apiClient.post(`${servicePath}/pets`, newPetObject, { headers });
         if (response.status === 201) {
           await this.getAllPets(); // Fetch all pets again to update the state
           return true;
@@ -92,10 +88,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await apiClient.delete(
-          `${servicePath}/pets/${petId}`,
-          { headers }
-        );
+        const response = await apiClient.delete(`${servicePath}/pets/${petId}`, { headers });
         if (response.status === 204) {
           await this.getAllPets(); // Fetch all pets again to update the state
           return true;
@@ -119,11 +112,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await apiClient.put(
-          `${servicePath}/pets/${petId}`,
-          petData,
-          { headers }
-        );
+        const response = await apiClient.put(`${servicePath}/pets/${petId}`, petData, { headers });
         if (response.status === 200) {
           this.$patch((state) => {
             state.pets = state.pets.filter((pet) => pet.id !== petId);
@@ -175,10 +164,7 @@ export const usePetStore = defineStore('pet', {
           return true;
         }
       } catch (error) {
-        console.error(
-          'Error during toggling need status:',
-          error.response?.status
-        );
+        console.error('Error during toggling need status:', error.response?.status);
         return false;
       }
     },
@@ -216,9 +202,7 @@ export const usePetStore = defineStore('pet', {
               .find((pet) => pet.id === petId)
               ?.needs.find((need) => need.id === needId);
             if (stateNeed) {
-              const responseNeed = response.data.needs.find(
-                (need) => need.id === needId
-              );
+              const responseNeed = response.data.needs.find((need) => need.id === needId);
               if (responseNeed) {
                 Object.assign(stateNeed, responseNeed);
               }
@@ -280,11 +264,7 @@ export const usePetStore = defineStore('pet', {
      * @param recordObject
      * @returns
      */
-    async addRecord(
-      petId: string,
-      needId: string,
-      recordObject: CareRecord
-    ): Promise<boolean> {
+    async addRecord(petId: string, needId: string, recordObject: CareRecord): Promise<boolean> {
       const userStore = useUserStore();
       const token = userStore.token;
 
@@ -363,8 +343,7 @@ export const usePetStore = defineStore('pet', {
           this.$patch((state) => {
             const pet = state.pets.find((pet: Pet) => pet.id === petId);
             if (pet) {
-              const newNeed =
-                response.data.needs[response.data.needs.length - 1];
+              const newNeed = response.data.needs[response.data.needs.length - 1];
               pet.needs.push(newNeed);
             }
           });
@@ -372,13 +351,11 @@ export const usePetStore = defineStore('pet', {
         })
 
         .catch((error) => {
-          const data = error.response?.data as
-            | { message?: string }
-            | undefined;
+          const data = error.response?.data as { message?: string } | undefined;
           console.error(
             'Error during adding new need:',
             error.response?.status,
-            error.response?.data
+            error.response?.data,
           );
           // Surface the backend validation message when available.
           return data?.message ?? false;
@@ -401,17 +378,17 @@ export const usePetStore = defineStore('pet', {
     // Gets the pet by id from the state and returns it
     getPetById:
       (state) =>
-        async (id: string): Promise<Pet | undefined> => {
-          return state.pets.find((pet) => pet.id === id);
-        },
+      async (id: string): Promise<Pet | undefined> => {
+        return state.pets.find((pet) => pet.id === id);
+      },
     // Checks if the user is the owner of the pet
     isOwner:
       (state) =>
-        async (petId: string): Promise<boolean> => {
-          const userStore = useUserStore();
-          const pet = state.pets.find((pet) => pet.id === petId);
-          return pet?.owner?.id === userStore.id;
-        },
+      async (petId: string): Promise<boolean> => {
+        const userStore = useUserStore();
+        const pet = state.pets.find((pet) => pet.id === petId);
+        return pet?.owner?.id === userStore.id;
+      },
   },
 });
 
