@@ -4,7 +4,7 @@
  * @param {*} response
  */
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' });
+  response.status(404).json({ message: 'Unknown endpoint' });
 };
 
 module.exports = unknownEndpoint;
