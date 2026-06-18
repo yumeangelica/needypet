@@ -5,7 +5,7 @@
  * @param {*} response
  * @param {*} next
  * @returns
-*/
+ */
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (error, request, response, next) => {
   console.error(error);
@@ -49,7 +49,12 @@ const errorHandler = (error, request, response, next) => {
     case 'ValidationError':
       // Expose per-field messages in the same { field: [messages] } shape the
       // frontend and the controllers' zod responses use.
-      errorResponse.errorDetails = Object.fromEntries(Object.entries(error.errors).map(([field, fieldError]) => [field, [fieldError.message]]));
+      errorResponse.errorDetails = Object.fromEntries(
+        Object.entries(error.errors).map(([field, fieldError]) => [
+          field,
+          [fieldError.message],
+        ]),
+      );
       return response.status(422).json(errorResponse);
     case 'MongoServerError':
       if (error.code === 11000) {
@@ -64,7 +69,8 @@ const errorHandler = (error, request, response, next) => {
       return response.status(422).json(errorResponse);
 
     case 'SMTPAuthenticationError': // Specific SMTP authentication error
-      errorResponse.message = 'Email authentication failed. Please contact support.';
+      errorResponse.message =
+        'Email authentication failed. Please contact support.';
       return response.status(535).json(errorResponse);
 
     case 'SMTPError':
@@ -74,7 +80,8 @@ const errorHandler = (error, request, response, next) => {
     default:
       // Catch jose errors by error code as fallback
       if (error.code && error.code.startsWith('ERR_JWT')) {
-        errorResponse.message = error.code === 'ERR_JWT_EXPIRED' ? 'Token Expired' : 'Invalid token';
+        errorResponse.message =
+          error.code === 'ERR_JWT_EXPIRED' ? 'Token Expired' : 'Invalid token';
         return response.status(401).json(errorResponse);
       }
 

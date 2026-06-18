@@ -22,7 +22,10 @@ const requestLogger = (request, response, next) => {
 
     // Log query and body in development mode
     if (isDevelopment) {
-      logParts.push(`Query: ${JSON.stringify(request.query)}`, `Body: ${JSON.stringify(request.body)}`);
+      logParts.push(
+        `Query: ${JSON.stringify(request.query)}`,
+        `Body: ${JSON.stringify(request.body)}`,
+      );
     }
 
     console.log(logParts.join(' '));

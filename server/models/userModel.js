@@ -40,11 +40,14 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: {
     type: Date,
   },
-  pets: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Pet',
-  }],
-  timezone: { // Format 'Europe/Helsinki'
+  pets: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Pet',
+    },
+  ],
+  timezone: {
+    // Format 'Europe/Helsinki'
     type: String,
     required: true,
     validate: {
@@ -108,7 +111,7 @@ userSchema.methods.generateEmailConfirmToken = function () {
   }
 
   const expiresInHours = 2;
-  const expirationDate = new Date(Date.now() + (expiresInHours * 60 * 60 * 1000));
+  const expirationDate = new Date(Date.now() + expiresInHours * 60 * 60 * 1000);
   const token = crypto.randomBytes(20).toString('hex');
 
   this.emailConfirmToken = token;
@@ -121,7 +124,10 @@ userSchema.methods.generateEmailConfirmToken = function () {
  * @returns true if token is valid
  */
 userSchema.methods.verifyEmailConfirmToken = function (token) {
-  return this.emailConfirmToken === token && this.emailConfirmTokenExpires.getTime() > Date.now();
+  return (
+    this.emailConfirmToken === token &&
+    this.emailConfirmTokenExpires.getTime() > Date.now()
+  );
 };
 
 /**
@@ -129,7 +135,12 @@ userSchema.methods.verifyEmailConfirmToken = function (token) {
  * @returns true if user can resend verification email
  */
 userSchema.methods.canResendVerificationEmail = function () {
-  return (this.emailConfirmToken === null && this.emailConfirmTokenExpires === null) || (this.emailConfirmTokenExpires !== null && Date.now() > this.emailConfirmTokenExpires.getTime());
+  return (
+    (this.emailConfirmToken === null &&
+      this.emailConfirmTokenExpires === null) ||
+    (this.emailConfirmTokenExpires !== null &&
+      Date.now() > this.emailConfirmTokenExpires.getTime())
+  );
 };
 
 /**
@@ -137,7 +148,7 @@ userSchema.methods.canResendVerificationEmail = function () {
  */
 userSchema.methods.generatePasswordResetToken = function () {
   const expiresInHours = 2;
-  const expirationDate = new Date(Date.now() + (expiresInHours * 60 * 60 * 1000));
+  const expirationDate = new Date(Date.now() + expiresInHours * 60 * 60 * 1000);
   const token = crypto.randomBytes(20).toString('hex');
 
   this.passwordResetToken = token;
@@ -150,7 +161,10 @@ userSchema.methods.generatePasswordResetToken = function () {
  * @returns true if token is valid
  */
 userSchema.methods.verifyPasswordResetToken = function (token) {
-  return this.passwordResetToken === token && this.passwordResetExpires.getTime() > Date.now();
+  return (
+    this.passwordResetToken === token &&
+    this.passwordResetExpires.getTime() > Date.now()
+  );
 };
 
 /**
@@ -158,7 +172,11 @@ userSchema.methods.verifyPasswordResetToken = function (token) {
  * @returns true if user can resend password reset email
  */
 userSchema.methods.canResendPasswordReset = function () {
-  return (this.passwordResetToken === null && this.passwordResetExpires === null) || (this.passwordResetExpires !== null && Date.now() > this.passwordResetExpires.getTime());
+  return (
+    (this.passwordResetToken === null && this.passwordResetExpires === null) ||
+    (this.passwordResetExpires !== null &&
+      Date.now() > this.passwordResetExpires.getTime())
+  );
 };
 
 const User = mongoose.model('User', userSchema);

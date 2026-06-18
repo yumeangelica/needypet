@@ -22,14 +22,18 @@ const getAllUserPets = async (request, response, next) => {
   try {
     const user = request.user; // User obj is attached to the request object by getUserHandler middleware
 
-    const pets = (await Pet.find({ $or: [{ owner: user._id }, { careTakers: user._id }] }) // Find all pets that the user is the owner or care taker
-      .populate('needs')
-      .populate('owner', 'userName')
-      .populate('careTakers', 'userName')).map(pet => {
+    const pets = (
+      await Pet.find({ $or: [{ owner: user._id }, { careTakers: user._id }] }) // Find all pets that the user is the owner or care taker
+        .populate('needs')
+        .populate('owner', 'userName')
+        .populate('careTakers', 'userName')
+    ).map((pet) => {
       // Remove the caretakers list if the user is not the owner
       if (pet.owner._id.toString() !== user._id.toString()) {
         // Return only the user in careTakers list
-        pet.careTakers = pet.careTakers.filter(careTaker => careTaker._id.toString() === user._id.toString());
+        pet.careTakers = pet.careTakers.filter(
+          (careTaker) => careTaker._id.toString() === user._id.toString(),
+        );
       }
 
       return pet;
@@ -65,14 +69,18 @@ const addNewPet = async (request, response, next) => {
 
   let careTaker;
 
-  if (request.body.careTaker && request.body.careTaker !== owner._id.toString()) {
+  if (
+    request.body.careTaker &&
+    request.body.careTaker !== owner._id.toString()
+  ) {
     careTaker = await User.findById(request.body.careTaker); // Find care taker by id
 
     if (!careTaker) {
       return response.status(404).json({ message: 'Caretaker not found' });
     }
 
-    if (!newPetObject.careTakers.includes(careTaker._id)) { // If care taker is not in care takers array
+    if (!newPetObject.careTakers.includes(careTaker._id)) {
+      // If care taker is not in care takers array
       newPetObject.careTakers.push(careTaker._id);
     }
   }
@@ -100,10 +108,11 @@ const addNewPet = async (request, response, next) => {
  * @returns
  */
 const updatePet = async (request, response, next) => {
-  const { name, species, breed, description, birthday, careTakers } = request.body;
+  const { name, species, breed, description, birthday, careTakers } =
+    request.body;
 
   // eslint-disable-next-line prefer-const
-  let updateData = {
+  const updateData = {
     name: name ? name : request.pet.name,
     species: species ? species : request.pet.species,
     breed: breed ? breed : request.pet.breed,
@@ -121,10 +130,15 @@ const updatePet = async (request, response, next) => {
   }
 
   try {
-    const updatedPet = await Pet.findOneAndUpdate({ // Finds pet by id, validates by owner and updates it
-      _id: request.pet._id,
-      owner: request.user._id,
-    }, updateData, { new: true, runValidators: true });
+    const updatedPet = await Pet.findOneAndUpdate(
+      {
+        // Finds pet by id, validates by owner and updates it
+        _id: request.pet._id,
+        owner: request.user._id,
+      },
+      updateData,
+      { new: true, runValidators: true },
+    );
 
     if (!updatedPet) {
       return response.status(404).json({ message: 'Pet not found' });
@@ -145,10 +159,13 @@ const updatePet = async (request, response, next) => {
  */
 const deletePet = async (request, response, next) => {
   try {
-    const deletedPet = await Pet.findOneAndDelete({
-      _id: request.pet._id,
-      owner: request.user._id,
-    }, { runValidators: true });
+    const deletedPet = await Pet.findOneAndDelete(
+      {
+        _id: request.pet._id,
+        owner: request.user._id,
+      },
+      { runValidators: true },
+    );
 
     if (deletedPet === null) {
       return response.status(404).json({ message: 'Pet not found' });
@@ -175,12 +192,22 @@ const deletePet = async (request, response, next) => {
  */
 const addNewNeed = async (request, response, next) => {
   try {
-    request.body.need.dateFor = new Date(request.body.need.dateFor.slice(0, 10));
+    request.body.need.dateFor = new Date(
+      request.body.need.dateFor.slice(0, 10),
+    );
     const validateNeed = needValidation(request.body.need);
     const pet = request.pet;
 
-    if (pet.needs.filter(need => need.dateFor.toISOString().split('T')[0] === validateNeed.dateFor.toISOString().split('T')[0]).length >= 10) {
-      return response.status(400).json({ message: 'Maximum number of needs for the day reached' });
+    if (
+      pet.needs.filter(
+        (need) =>
+          need.dateFor.toISOString().split('T')[0] ===
+          validateNeed.dateFor.toISOString().split('T')[0],
+      ).length >= 10
+    ) {
+      return response
+        .status(400)
+        .json({ message: 'Maximum number of needs for the day reached' });
     }
 
     const newNeedObject = {
@@ -205,7 +232,10 @@ const addNewNeed = async (request, response, next) => {
     response.status(201).json(pet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return response.status(400).json({ message: 'Validation error', errorDetails: error.flatten().fieldErrors });
+      return response.status(400).json({
+        message: 'Validation error',
+        errorDetails: error.flatten().fieldErrors,
+      });
     }
 
     next(error);
@@ -232,7 +262,9 @@ const addNewRecord = async (request, response, next) => {
     }
 
     if (need.completed) {
-      return response.status(400).json({ message: 'Need is already completed' });
+      return response
+        .status(400)
+        .json({ message: 'Need is already completed' });
     }
 
     if (need.archived) {
@@ -241,7 +273,9 @@ const addNewRecord = async (request, response, next) => {
 
     const currentDate = checkLocalDateByTimezone(request.user.timezone);
     if (need.dateFor.toISOString().split('T')[0] !== currentDate) {
-      return response.status(400).json({ message: 'Need date is not the same as the current date' });
+      return response
+        .status(400)
+        .json({ message: 'Need date is not the same as the current date' });
     }
 
     const newRecordObject = {
@@ -266,7 +300,10 @@ const addNewRecord = async (request, response, next) => {
     response.status(201).json(pet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return response.status(400).json({ message: 'Validation error', errorDetails: error.flatten().fieldErrors });
+      return response.status(400).json({
+        message: 'Validation error',
+        errorDetails: error.flatten().fieldErrors,
+      });
     }
 
     next(error);
@@ -312,7 +349,9 @@ const updateNeed = async (request, response, next) => {
 
   const updateDataObject = {
     category: request.body.category ? request.body.category : need.category,
-    description: request.body.description ? request.body.description : need.description,
+    description: request.body.description
+      ? request.body.description
+      : need.description,
     dateFor: need.dateFor,
     isActive: need.isActive,
     archived: need.archived,
@@ -340,7 +379,7 @@ const updateNeed = async (request, response, next) => {
     );
 
     if (!updatedPet) {
-      return response.status(404).json({ message: 'Pet\'s need not found' });
+      return response.status(404).json({ message: "Pet's need not found" });
     }
 
     response.status(200).json(updatedPet);

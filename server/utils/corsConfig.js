@@ -22,7 +22,10 @@ const corsHeaders = (request, response, next) => {
   }
 
   response.header('Access-Control-Allow-Methods', allowedMethods);
-  response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  response.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+  );
 
   next();
 };
