@@ -135,4 +135,29 @@ describe('dailyTaskCompleter', () => {
     dailyTaskCompleter(need);
     assert.strictEqual(need.completed, false);
   });
+
+  it('does not throw when a duration need has a record lacking the duration measure', () => {
+    const need = {
+      completed: false,
+      duration: { value: 40 },
+      // A record with no duration field at all (e.g. a stray quantity record).
+      careRecords: [{ note: 'no measure' }, { quantity: { value: 5 } }],
+    };
+    assert.doesNotThrow(() => dailyTaskCompleter(need));
+    assert.strictEqual(need.completed, false);
+  });
+
+  it('ignores records missing the active measure when summing duration', () => {
+    const need = {
+      completed: false,
+      duration: { value: 40 },
+      careRecords: [
+        { duration: { value: 30 } },
+        { note: 'no measure' }, // skipped, contributes 0
+        { duration: { value: 10 } },
+      ],
+    };
+    dailyTaskCompleter(need);
+    assert.strictEqual(need.completed, true);
+  });
 });
