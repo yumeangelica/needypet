@@ -5,16 +5,7 @@
   "scripts": {
     "dev": "concurrently -k -n client,server -c magenta,cyan \"bun run dev:client\" \"bun run dev:server\"",
     "dev:client": "cd client && bun run dev",
-    "dev:server": "cd server && bun run dev",
-    "frontend-patch-push": "./version-push.sh patch frontend",
-    "frontend-minor-push": "./version-push.sh minor frontend",
-    "frontend-major-push": "./version-push.sh major frontend",
-    "backend-patch-push": "./version-push.sh patch backend",
-    "backend-minor-push": "./version-push.sh minor backend",
-    "backend-major-push": "./version-push.sh major backend",
-    "both-patch-push": "./version-push.sh patch both",
-    "both-minor-push": "./version-push.sh minor both",
-    "both-major-push": "./version-push.sh major both"
+    "dev:server": "cd server && bun run dev"
   },
   "keywords": [],
   "author": "yumeangelica",

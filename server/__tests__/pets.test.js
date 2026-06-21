@@ -86,6 +86,30 @@ describe('POST /api/pets', () => {
     assert.ok(response.body.id, 'created pet should have an id');
   });
 
+  it("adds the pet to an initial caretaker's pets array", async () => {
+    const owner = await registerAndLogin();
+    const carer = await registerAndLogin({
+      userName: 'carerUser',
+      email: 'carer@example.com',
+    });
+
+    const pet = await createPet(owner.token, {
+      name: 'Milo',
+      careTaker: carer.id,
+    });
+
+    assert.deepStrictEqual(
+      pet.careTakers.map((careTaker) => careTaker.toString()),
+      [carer.id],
+    );
+
+    const carerUser = await User.findById(carer.id);
+    assert.deepStrictEqual(
+      carerUser.pets.map((petId) => petId.toString()),
+      [pet.id],
+    );
+  });
+
   it('returns 401 without a token', async () => {
     const response = await api.post('/api/pets').send({ name: 'Milo' });
     assert.strictEqual(response.status, 401);
@@ -105,6 +129,68 @@ describe('PUT /api/pets/:id', () => {
     assert.strictEqual(response.status, 200);
     assert.strictEqual(response.body.name, 'Milo Updated');
     assert.strictEqual(response.body.species, 'Dog');
+  });
+
+  it("adds the pet to a new caretaker's pets array", async () => {
+    const owner = await registerAndLogin();
+    const carer = await registerAndLogin({
+      userName: 'carerUser',
+      email: 'carer@example.com',
+    });
+    const pet = await createPet(owner.token, { name: 'Milo' });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [carer.id] });
+
+    assert.strictEqual(response.status, 200);
+    assert.deepStrictEqual(
+      response.body.careTakers.map((careTaker) => careTaker.toString()),
+      [carer.id],
+    );
+
+    const carerUser = await User.findById(carer.id);
+    assert.deepStrictEqual(
+      carerUser.pets.map((petId) => petId.toString()),
+      [pet.id],
+    );
+  });
+
+  it("removes the pet from a dropped caretaker's pets array", async () => {
+    const owner = await registerAndLogin();
+    const carer = await registerAndLogin({
+      userName: 'carerUser',
+      email: 'carer@example.com',
+    });
+    const pet = await createPet(owner.token, { name: 'Milo' });
+
+    // First assign the caretaker, then drop them with an empty list.
+    await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [carer.id] });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [] });
+
+    assert.strictEqual(response.status, 200);
+    assert.deepStrictEqual(response.body.careTakers, []);
+
+    const carerUser = await User.findById(carer.id);
+    assert.deepStrictEqual(
+      carerUser.pets.map((petId) => petId.toString()),
+      [],
+    );
+
+    // The owner still keeps the pet in their own pets array.
+    const ownerUser = await User.findById(owner.id);
+    assert.deepStrictEqual(
+      ownerUser.pets.map((petId) => petId.toString()),
+      [pet.id],
+    );
   });
 
   it('returns 401 when a non-owner tries to update', async () => {

@@ -1,4 +1,7 @@
 import { mount } from '@vue/test-utils';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -41,6 +44,10 @@ import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 
 const mockedApiClient = vi.mocked(apiClient);
+const testTimezone = 'Europe/Helsinki';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const rewireSubMethods = () => {
   // biome-ignore lint/suspicious/noExplicitAny: same callable-intersection workaround
@@ -58,7 +65,8 @@ const resetMock = () => {
   rewireSubMethods();
 };
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => dayjs().tz(testTimezone).format('YYYY-MM-DD');
+const futureDay = () => dayjs().tz(testTimezone).add(1, 'day').format('YYYY-MM-DD');
 
 const makeDurationNeed = (overrides = {}) => ({
   id: 'need-1',
@@ -86,7 +94,7 @@ describe('TheNeedCard — rendering', () => {
 
     const userStore = useUserStore();
     userStore.token = 'tok-abc';
-    userStore.timezone = 'Europe/Helsinki';
+    userStore.timezone = testTimezone;
   });
 
   it('renders the category and description', () => {
@@ -129,12 +137,9 @@ describe('TheNeedCard — rendering', () => {
   });
 
   it('does not show the Complete button for a future need', () => {
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 1);
-
     const wrapper = mount(TheNeedCard, {
       props: {
-        need: makeDurationNeed({ dateFor: futureDate.toISOString().slice(0, 10) }),
+        need: makeDurationNeed({ dateFor: futureDay() }),
         petId: 'pet-1',
       },
       global: globalProvide(),
@@ -178,7 +183,7 @@ describe('TheNeedCard — addRecord (Complete button)', () => {
 
     const userStore = useUserStore();
     userStore.token = 'tok-abc';
-    userStore.timezone = 'Europe/Helsinki';
+    userStore.timezone = testTimezone;
 
     const petStore = usePetStore();
     petStore.pets = [
@@ -187,7 +192,12 @@ describe('TheNeedCard — addRecord (Complete button)', () => {
   });
 
   it('calls addRecord when the Complete button is clicked', async () => {
-    mockedApiClient.mockResolvedValueOnce({ status: 201, data: {} });
+    mockedApiClient.mockResolvedValueOnce({
+      status: 201,
+      data: {
+        needs: [{ id: 'need-1', completed: true, careRecords: [] }],
+      },
+    });
 
     const wrapper = mount(TheNeedCard, {
       props: { need: makeDurationNeed(), petId: 'pet-1' },
@@ -210,7 +220,7 @@ describe('TheNeedCard — emits', () => {
 
     const userStore = useUserStore();
     userStore.token = 'tok-abc';
-    userStore.timezone = 'Europe/Helsinki';
+    userStore.timezone = testTimezone;
 
     const petStore = usePetStore();
     petStore.pets = [

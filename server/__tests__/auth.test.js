@@ -3,8 +3,9 @@ const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
 const { mongodbUri } = require('../utils/config');
 const User = require('../models/userModel');
+const Pet = require('../models/petModel');
 const mailer = require('../utils/mailer');
-const { api, registerAndLogin } = require('./helpers');
+const { api, registerAndLogin, createPet } = require('./helpers');
 
 before(async () => {
   await mongoose.connect(mongodbUri);
@@ -12,11 +13,13 @@ before(async () => {
 
 after(async () => {
   await User.deleteMany({});
+  await Pet.deleteMany({});
   await mongoose.connection.close();
 });
 
 beforeEach(async () => {
   await User.deleteMany({});
+  await Pet.deleteMany({});
   // Email is sent during registration; stub it so tests never hit SMTP.
   mock.method(mailer, 'sendConfirmationEmail', () => Promise.resolve());
   mock.method(mailer, 'sendPasswordResetEmail', () => Promise.resolve());
@@ -95,6 +98,19 @@ describe('POST /auth/users (duplicates)', () => {
     assert.strictEqual(response.body.passwordResetToken, undefined);
     assert.strictEqual(response.body.passwordResetExpires, undefined);
   });
+
+  it('returns password strength errors in the standard array shape', async () => {
+    const response = await api.post('/auth/users').send({
+      userName: 'weakUser',
+      email: 'weak@example.com',
+      newPassword: 'weak',
+      timezone: 'Europe/Helsinki',
+    });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(Array.isArray(response.body.errorDetails?.newPassword));
+    assert.match(response.body.errorDetails.newPassword[0], /password/i);
+  });
 });
 
 describe('GET /auth/users/:id', () => {
@@ -118,8 +134,9 @@ describe('GET /auth/users/:id', () => {
 });
 
 describe('DELETE /auth/users/:id', () => {
-  it('deletes the account and returns 204', async () => {
+  it('deletes the account and owned pets, then returns 204', async () => {
     const { token, id } = await registerAndLogin();
+    const pet = await createPet(token);
 
     const response = await api
       .delete(`/auth/users/${id}`)
@@ -129,6 +146,40 @@ describe('DELETE /auth/users/:id', () => {
 
     const deleted = await User.findById(id);
     assert.strictEqual(deleted, null);
+
+    const deletedPet = await Pet.findById(pet.id);
+    assert.strictEqual(deletedPet, null);
+  });
+
+  it('keeps pets owned by another user when deleting a caretaker account', async () => {
+    const owner = await registerAndLogin();
+    const caretaker = await registerAndLogin({
+      userName: 'caretakerUser',
+      email: 'caretaker@example.com',
+    });
+    const pet = await createPet(owner.token);
+
+    await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [caretaker.id] });
+
+    const response = await api
+      .delete(`/auth/users/${caretaker.id}`)
+      .set('Authorization', `Bearer ${caretaker.token}`);
+
+    assert.strictEqual(response.status, 204);
+
+    const deletedCaretaker = await User.findById(caretaker.id);
+    assert.strictEqual(deletedCaretaker, null);
+
+    const ownerPet = await Pet.findById(pet.id);
+    assert.ok(ownerPet, 'pet owned by another user should not be deleted');
+    assert.strictEqual(ownerPet.owner.toString(), owner.id);
+    assert.deepStrictEqual(
+      ownerPet.careTakers.map((careTaker) => careTaker.toString()),
+      [],
+    );
   });
 });
 

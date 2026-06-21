@@ -452,7 +452,7 @@ describe('pet store - addRecord', () => {
     resetMock();
   });
 
-  it('pushes record to local state and marks completed on 201', async () => {
+  it('uses the server returned need state on 201', async () => {
     const userStore = useUserStore();
     userStore.token = 'tok-abc';
 
@@ -464,7 +464,18 @@ describe('pet store - addRecord', () => {
       duration: { value: 30, unit: 'minutes' },
       timezone: 'Europe/Helsinki',
     };
-    mockedApiClient.mockResolvedValueOnce({ status: 201, data: {} });
+    mockedApiClient.mockResolvedValueOnce({
+      status: 201,
+      data: {
+        needs: [
+          {
+            id: 'need-1',
+            completed: false,
+            careRecords: [record],
+          },
+        ],
+      },
+    });
 
     const result = await petStore.addRecord(
       'pet-1',
@@ -473,7 +484,8 @@ describe('pet store - addRecord', () => {
     );
 
     expect(result.isSuccess).toBe(true);
-    expect(petStore.pets[0].needs?.[0].completed).toBe(true);
+    expect(petStore.pets[0].needs?.[0].completed).toBe(false);
+    expect(petStore.pets[0].needs?.[0].careRecords).toEqual([record]);
     const callArg = mockedApiClient.mock.calls[0][0];
     expect(callArg.method).toBe('post');
     expect(callArg.url).toBe('/api/pets/pet-1/needs/need-1/newrecord');

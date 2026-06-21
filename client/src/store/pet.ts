@@ -304,7 +304,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await apiClient({
+        const response = await apiClient<{ needs: Need[] }>({
           method: 'post',
           url: `${servicePath}/pets/${petId}/needs/${needId}/newrecord`,
           headers,
@@ -317,12 +317,16 @@ export const usePetStore = defineStore('pet', {
             if (pet) {
               const need = pet.needs?.find((need) => need.id === needId);
               if (need) {
-                // Ensure careRecords exists, push the new record, and mark the need as completed
+                const responseNeed = response.data.needs?.find((need) => need.id === needId);
+                if (responseNeed) {
+                  Object.assign(need, responseNeed);
+                  return;
+                }
+
                 if (!need.careRecords) {
                   need.careRecords = [];
                 }
                 need.careRecords.push(recordObject as CareRecord);
-                need.completed = true;
               }
             }
           });
