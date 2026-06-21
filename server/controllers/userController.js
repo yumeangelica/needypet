@@ -119,10 +119,12 @@ const updateUser = async (request, response, next) => {
         passwordStrengthValidation(newPassword); // Validate password strength
       } catch (error) {
         if (error instanceof z.ZodError) {
-          const errorDetails = error.flatten();
+          // The schema validates a bare string, so the message is on the issue
+          // itself (flatten().fieldErrors would be empty here). Use an array to
+          // match the { field: [messages] } shape the client reads via [0].
           return response.status(422).json({
             message: 'Password strength validation error',
-            errorDetails: errorDetails.fieldErrors,
+            errorDetails: { newPassword: [error.issues[0].message] },
           });
         }
 
@@ -270,7 +272,7 @@ const requestPasswordReset = async (request, response, next) => {
         .json({ message: 'Password reset link sent to email' });
     }
 
-    if (!user.canResendVerificationEmail()) {
+    if (!user.canResendPasswordReset()) {
       return response
         .status(200)
         .json({ message: 'Password reset link sent to email' });
@@ -397,6 +399,22 @@ const passwordReset = async (request, response, next) => {
     if (!user || !user.verifyPasswordResetToken(token)) {
       // If user not found or token is invalid
       return response.status(401).json({ message: 'Invalid token' });
+    }
+
+    try {
+      passwordStrengthValidation(newPassword); // Validate password strength
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // The schema validates a bare string, so the message is on the issue
+        // itself (flatten().fieldErrors would be empty here). Use an array to
+        // match the { field: [messages] } shape the client reads via [0].
+        return response.status(422).json({
+          message: 'Password strength validation error',
+          errorDetails: { newPassword: [error.issues[0].message] },
+        });
+      }
+
+      return next(error);
     }
 
     await user.setPassword(newPassword); // Set new password

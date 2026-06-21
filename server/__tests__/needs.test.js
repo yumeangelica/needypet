@@ -159,6 +159,23 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
 
     assert.strictEqual(response.status, 401);
   });
+
+  it('preserves the existing measure when only category/description change', async () => {
+    const { token } = await registerAndLogin();
+    // createPetWithNeed defaults to a duration need (40 minutes).
+    const { petId, needId } = await createPetWithNeed(token);
+
+    const response = await api
+      .put(`/api/pets/${petId}/needs/${needId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ category: 'Renamed walk' });
+
+    assert.strictEqual(response.status, 200);
+    const updated = response.body.needs.find((need) => need.id === needId);
+    assert.strictEqual(updated.category, 'Renamed walk');
+    // The duration must survive an update that omits any measure.
+    assert.strictEqual(updated.duration.value, 40);
+  });
 });
 
 describe('DELETE /api/pets/:id/needs/:needid', () => {
@@ -239,5 +256,42 @@ describe('POST /api/pets/:id/needs/:needid/newrecord', () => {
       .send({ note: 'Ghost record', duration: { value: 10, unit: 'minutes' } });
 
     assert.strictEqual(response.status, 404);
+  });
+
+  it("uses the owner's timezone so a carer in another timezone can record", async () => {
+    const ownerTz = 'Asia/Tokyo';
+    const carerTz = 'America/New_York';
+
+    const owner = await registerAndLogin({ timezone: ownerTz });
+    const carer = await registerAndLogin({
+      userName: 'carerUser',
+      email: 'carer@example.com',
+      timezone: carerTz,
+    });
+
+    // Need is for the owner's local "today".
+    const { petId, needId } = await createPetWithNeed(owner.token, {
+      dateFor: localToday(ownerTz),
+      duration: { value: 30, unit: 'minutes' },
+    });
+
+    // Add the carer to the pet.
+    await api
+      .put(`/api/pets/${petId}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [carer.id] });
+
+    // The carer (different timezone) records against the owner's-today need.
+    // The date check is judged by the owner's timezone, so this is allowed.
+    const response = await api
+      .post(`/api/pets/${petId}/needs/${needId}/newrecord`)
+      .set('Authorization', `Bearer ${carer.token}`)
+      .send({ note: 'Carer walk', duration: { value: 30, unit: 'minutes' } });
+
+    assert.strictEqual(response.status, 201);
+    const need = response.body.needs.find((n) => n.id === needId);
+    assert.strictEqual(need.careRecords.length, 1);
+    // The record is still stamped in the carer's own timezone.
+    assert.strictEqual(need.careRecords[0].timezone, carerTz);
   });
 });

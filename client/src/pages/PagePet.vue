@@ -66,7 +66,9 @@
 
                 <label class="form-label" id="need-measurement-label">Measurement type</label>
                 <div v-show="!selection" class="mt-2">
-                  <RadioGroup v-model="selection" aria-labelledby="need-measurement-label">
+                  <RadioGroup v-model="selection" aria-labelledby="need-measurement-label"
+                    :aria-invalid="formFieldsErrorDetailsObject.selection ? true : undefined"
+                    :aria-describedby="formFieldsErrorDetailsObject.selection ? 'need-selection-error' : undefined">
                     <div class="flex gap-4">
                       <RadioGroupItem value="duration" label="Duration" />
                       <RadioGroupItem value="quantity" label="Quantity" />
@@ -79,7 +81,9 @@
                   <div class="flex gap-2 items-center">
                     <div class="form-field flex-1">
                       <input id="need-quantity-value" class="form-field-input w-full min-w-[80px]" v-model="valueOfSelection" required autofocus
-                        @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value" />
+                        @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value"
+                        :aria-invalid="formFieldsErrorDetailsObject.quantityUnit ? true : undefined"
+                        :aria-describedby="formFieldsErrorDetailsObject.quantityUnit ? 'need-quantity-error' : undefined" />
                     </div>
                     <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="select unit" class="w-28" aria-label="Select unit" />
                   </div>
@@ -89,7 +93,9 @@
                   <label class="form-label" for="need-duration-value">Duration (minutes):</label>
                   <div class="form-field">
                     <input id="need-duration-value" class="form-field-input" v-model="valueOfSelection" required autofocus @input="cleanInput($event)"
-                      inputmode="numeric" placeholder="Enter duration in minutes" />
+                      inputmode="numeric" placeholder="Enter duration in minutes"
+                      :aria-invalid="formFieldsErrorDetailsObject.durationValue ? true : undefined"
+                      :aria-describedby="formFieldsErrorDetailsObject.durationValue ? 'need-duration-error' : undefined" />
                   </div>
                 </div>
 
@@ -101,13 +107,13 @@
                   </button>
                 </div>
 
-                <div v-if="formFieldsErrorDetailsObject.selection" class="custom-error-message" role="alert">
+                <div v-if="formFieldsErrorDetailsObject.selection" id="need-selection-error" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.selection }}
                 </div>
-                <div v-if="formFieldsErrorDetailsObject.durationValue" class="custom-error-message" role="alert">
+                <div v-if="formFieldsErrorDetailsObject.durationValue" id="need-duration-error" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.durationValue }}
                 </div>
-                <div v-if="formFieldsErrorDetailsObject.quantityUnit" class="custom-error-message" role="alert">
+                <div v-if="formFieldsErrorDetailsObject.quantityUnit" id="need-quantity-error" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.quantityUnit }}
                 </div>
               </form>

@@ -271,7 +271,15 @@ const addNewRecord = async (request, response, next) => {
       return response.status(400).json({ message: 'Need is archived' });
     }
 
-    const currentDate = checkLocalDateByTimezone(request.user.timezone);
+    // The need's "day" is defined by the pet owner's timezone (who created it),
+    // not the acting caretaker's — otherwise a carer in a different timezone
+    // could be wrongly blocked from or allowed to record against it. The pet's
+    // owner is a raw ObjectId here (getPetHandler does not populate it), so fetch
+    // the owner's timezone, falling back to the caretaker's if unavailable.
+    const owner = await User.findById(pet.owner).select('timezone');
+    const referenceTimezone = owner?.timezone || request.user.timezone;
+
+    const currentDate = checkLocalDateByTimezone(referenceTimezone);
     if (need.dateFor.toISOString().split('T')[0] !== currentDate) {
       return response
         .status(400)
@@ -280,6 +288,8 @@ const addNewRecord = async (request, response, next) => {
 
     const newRecordObject = {
       careTaker: request.user._id,
+      // The record is stamped in the acting caretaker's timezone (accurate audit
+      // of when/where it was logged), independent of the owner's timezone above.
       date: new Date(dayjs().tz(request.user.timezone).format()),
       note: validateRecord.note,
       timezone: request.user.timezone,
@@ -369,6 +379,13 @@ const updateNeed = async (request, response, next) => {
       value: request.body.duration.value,
       unit: request.body.duration.unit,
     };
+  } else if (need.quantity?.value) {
+    // No measure in the request body: carry over the existing one so a
+    // category/description-only update does not wipe the need's measure.
+    // (quantity/duration are always-present nested objects, so check .value.)
+    updateDataObject.quantity = need.quantity;
+  } else if (need.duration?.value) {
+    updateDataObject.duration = need.duration;
   }
 
   try {

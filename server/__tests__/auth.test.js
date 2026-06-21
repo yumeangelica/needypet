@@ -78,6 +78,23 @@ describe('POST /auth/users (duplicates)', () => {
 
     assert.strictEqual(response.status, 400);
   });
+
+  it('does not expose sensitive fields in the response body', async () => {
+    const response = await api.post('/auth/users').send({
+      userName: 'safeUser',
+      email: 'safe@example.com',
+      newPassword: 'TestPass123!',
+      timezone: 'Europe/Helsinki',
+    });
+
+    assert.strictEqual(response.status, 201);
+    // Security-sensitive fields must never be serialized in API responses.
+    assert.strictEqual(response.body.passwordHash, undefined);
+    assert.strictEqual(response.body.emailConfirmToken, undefined);
+    assert.strictEqual(response.body.emailConfirmTokenExpires, undefined);
+    assert.strictEqual(response.body.passwordResetToken, undefined);
+    assert.strictEqual(response.body.passwordResetExpires, undefined);
+  });
 });
 
 describe('GET /auth/users/:id', () => {
@@ -165,19 +182,26 @@ describe('Email confirmation flow', () => {
 });
 
 describe('Password reset flow', () => {
-  // requestPasswordReset only issues a token when the user can resend a
-  // verification email, which is true once the email has been confirmed.
-  const confirmEmail = async (email) => {
+  it('issues a reset token even when the email is still unconfirmed', async () => {
+    // requestPasswordReset gates on canResendPasswordReset(), which inspects the
+    // password reset token — not the email confirmation token. A freshly
+    // registered (unconfirmed) user with no pending reset token should still get one.
+    const { email } = await registerAndLogin();
+
+    const response = await api
+      .post('/auth/request-password-reset')
+      .send({ email });
+    assert.strictEqual(response.status, 200);
+
     const user = await User.findOne({ email });
-    user.emailConfirmed = true;
-    user.emailConfirmToken = null;
-    user.emailConfirmTokenExpires = null;
-    await user.save();
-  };
+    assert.ok(
+      user.passwordResetToken,
+      'a reset token should be issued without confirming the email first',
+    );
+  });
 
   it('runs the full request -> verify -> reset flow', async () => {
     const { email, userName } = await registerAndLogin();
-    await confirmEmail(email);
 
     // 1. Request reset — server generates and stores a token.
     const requestResponse = await api
@@ -221,15 +245,67 @@ describe('Password reset flow', () => {
     assert.strictEqual(response.status, 200);
   });
 
+  it('rejects a weak new password with 422 and keeps the token', async () => {
+    const { email } = await registerAndLogin();
+
+    await api.post('/auth/request-password-reset').send({ email });
+    const token = (await User.findOne({ email })).passwordResetToken;
+
+    const response = await api
+      .post('/auth/password-reset')
+      .send({ email, token, newPassword: 'weak' });
+
+    assert.strictEqual(response.status, 422);
+    // The client reads errorDetails.newPassword[0], so it must be a non-empty
+    // array carrying the strength message.
+    assert.ok(
+      Array.isArray(response.body.errorDetails?.newPassword),
+      'newPassword errors should be an array',
+    );
+    assert.match(
+      response.body.errorDetails.newPassword[0],
+      /strength|10 char/i,
+    );
+
+    // The token must not be consumed when the reset is rejected.
+    const afterReject = await User.findOne({ email });
+    assert.strictEqual(afterReject.passwordResetToken, token);
+  });
+
   it('returns 401 when verifying an invalid reset token', async () => {
     const { email } = await registerAndLogin();
-    await confirmEmail(email);
 
     const response = await api
       .post('/auth/verify-password-reset-token')
       .send({ email, token: 'invalid-token' });
 
     assert.strictEqual(response.status, 401);
+  });
+
+  it('does not issue a new token while an unexpired reset token already exists', async () => {
+    const { email } = await registerAndLogin();
+
+    // First request issues a token.
+    await api.post('/auth/request-password-reset').send({ email });
+    const firstToken = (await User.findOne({ email })).passwordResetToken;
+    assert.ok(
+      firstToken,
+      'a reset token should be issued on the first request',
+    );
+
+    // Second request while the first token is still valid must not replace it
+    // (canResendPasswordReset() returns false), so reset links stay throttled.
+    const secondResponse = await api
+      .post('/auth/request-password-reset')
+      .send({ email });
+    assert.strictEqual(secondResponse.status, 200);
+
+    const secondToken = (await User.findOne({ email })).passwordResetToken;
+    assert.strictEqual(
+      secondToken,
+      firstToken,
+      'the existing reset token should be left unchanged',
+    );
   });
 });
 

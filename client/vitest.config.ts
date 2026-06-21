@@ -12,5 +12,21 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+      // Report on every source file, not only those imported by a test.
+      all: true,
+      include: ['src/**/*.{ts,vue}'],
+      exclude: [
+        'src/**/*.spec.ts',
+        'src/**/__tests__/**',
+        'src/**/*.d.ts',
+        'src/main.ts',
+        'src/router/**',
+        'src/types/**',
+        '**/*.config.*',
+      ],
+      reporter: ['text', 'html'],
+    },
   },
 });

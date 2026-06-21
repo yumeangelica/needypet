@@ -15,8 +15,11 @@ The backend API for NeedyPet, a pet care management application. See the [root R
 
 ## Environment variables
 
-The server reads configuration from environment files (gitignored). The required
-variables depend on `NODE_ENV` (`development`, `production`, or `testing`):
+The server reads configuration from environment files (gitignored). Copy
+[`.env.example`](.env.example) to `.env.development` and/or `.env.production` and
+fill in the values. The required variables depend on `NODE_ENV` (`development`,
+`production`, or `testing`); the server fails fast on startup if `JWT_SECRET` or
+the mode-appropriate MongoDB URI is missing.
 
 | Variable                  | Description                                          |
 | ------------------------- | ---------------------------------------------------- |
@@ -47,6 +50,10 @@ npm run dev        # start the server with nodemon (NODE_ENV=development)
 | `npm start`       | Start the server in production mode.                      |
 | `npm run dev`     | Start the server with nodemon in development mode.        |
 | `npm test`        | Run the test suite (`node --test`) against the test DB.   |
+| `npm run test:coverage` | Run the test suite with Node's built-in coverage report. |
+
+> The test suite (and its coverage variant) connect to `TEST_MONGODB_URI`, so a
+> reachable MongoDB instance is required to run them.
 
 ## API overview
 
@@ -81,6 +88,22 @@ All `/api` routes require a valid bearer token.
 | DELETE | `/pets/:id/needs/:needid`                 | Delete a need.                    |
 | PATCH  | `/pets/:id/needs/:needid/togglestatus`    | Toggle a need's active status.    |
 | POST   | `/pets/:id/needs/:needid/newrecord`       | Add a care record to a need.     |
+
+## Security notes and known limitations
+
+This is a portfolio snapshot. A few intentional trade-offs are worth calling out
+for anyone reviewing or extending it:
+
+- **Token storage.** Email-confirmation and password-reset tokens are stored in
+  the database in plaintext (not hashed). They are short-lived (2 hours), but a
+  database compromise would expose any pending tokens.
+- **Content Security Policy.** The CSP allows `unsafe-inline` for styles/scripts
+  to accommodate the bundled SPA output. This weakens the protection CSP would
+  otherwise provide against injected inline content.
+- **Rate limiting.** The authentication routes are rate limited, with a stricter
+  limit on the email-sending endpoints (`request-password-reset`,
+  `resend-email-confirmation`). The limiter is disabled under `NODE_ENV=testing`
+  so the test suite is not throttled.
 
 ## Project structure
 

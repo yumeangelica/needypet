@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const { SignJWT } = require('jose');
 const config = require('../utils/config');
 const helper = require('../helper');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -64,6 +64,12 @@ userSchema.set('toJSON', {
     delete returnedObject.__v;
     // The passwordHash should not be revealed
     delete returnedObject.passwordHash;
+    // Security tokens must never be exposed in API responses. The flows that use
+    // them read from the database document, not its JSON, so stripping is safe.
+    delete returnedObject.emailConfirmToken;
+    delete returnedObject.emailConfirmTokenExpires;
+    delete returnedObject.passwordResetToken;
+    delete returnedObject.passwordResetExpires;
   },
 });
 
@@ -135,11 +141,15 @@ userSchema.methods.verifyEmailConfirmToken = function (token) {
  * @returns true if user can resend verification email
  */
 userSchema.methods.canResendVerificationEmail = function () {
+  // No pending token (unset fields are undefined, cleared fields are null).
+  if (!this.emailConfirmToken) {
+    return true;
+  }
+
+  // A token exists; allow resending only once it has expired.
   return (
-    (this.emailConfirmToken === null &&
-      this.emailConfirmTokenExpires === null) ||
-    (this.emailConfirmTokenExpires !== null &&
-      Date.now() > this.emailConfirmTokenExpires.getTime())
+    !!this.emailConfirmTokenExpires &&
+    Date.now() > this.emailConfirmTokenExpires.getTime()
   );
 };
 
@@ -172,10 +182,15 @@ userSchema.methods.verifyPasswordResetToken = function (token) {
  * @returns true if user can resend password reset email
  */
 userSchema.methods.canResendPasswordReset = function () {
+  // No pending token (unset fields are undefined, cleared fields are null).
+  if (!this.passwordResetToken) {
+    return true;
+  }
+
+  // A token exists; allow resending only once it has expired.
   return (
-    (this.passwordResetToken === null && this.passwordResetExpires === null) ||
-    (this.passwordResetExpires !== null &&
-      Date.now() > this.passwordResetExpires.getTime())
+    !!this.passwordResetExpires &&
+    Date.now() > this.passwordResetExpires.getTime()
   );
 };
 

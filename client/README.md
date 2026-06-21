@@ -16,7 +16,7 @@ The frontend for NeedyPet, a pet care management application. See the [root READ
 
 ## Environment variables
 
-Create a `.env.development` and `.env.production` (both gitignored):
+Copy [`.env.example`](.env.example) to `.env.development` and `.env.production` (both gitignored) and fill in the values:
 
 | Variable                  | Description                                  |
 | ------------------------- | -------------------------------------------- |
@@ -37,6 +37,7 @@ bun run dev        # start the Vite dev server
 | `bun run build`       | Type-safe production build; output is copied to the server's `dist`. |
 | `bun run preview`     | Preview the production build locally.                  |
 | `bun run test:unit`   | Run unit tests with Vitest.                            |
+| `bun run test:coverage` | Run unit tests with a v8 coverage report.            |
 | `bun run typecheck`   | Type-check the project with `vue-tsc`.                 |
 | `bun run lint`        | Lint with Biome.                                       |
 | `bun run lint:fix`    | Lint and apply safe fixes with Biome.                  |
@@ -54,3 +55,12 @@ src/
 ├── store/         Pinia stores
 └── types/         Shared TypeScript types
 ```
+
+## Styling
+
+The project uses Tailwind CSS v4 with a CSS-first setup. The styling boundary is:
+
+1. **Global, reusable styles and all design tokens** live in [`src/app.css`](src/app.css) — the Tailwind `@theme` block (colors, radii, fonts) plus shared classes such as `.form-*`, `.auth-*`, and `.custom-button`.
+2. **Component-private layout and visuals** stay in that component's `<style scoped>` block.
+3. Prefer the `var(--color-*)` design tokens over hardcoded values inside scoped blocks.
+4. Avoid `:deep()`; if a child component needs styling, pass a class or prop instead.
