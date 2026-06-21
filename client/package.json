@@ -14,12 +14,12 @@
     "lint:fix": "biome check --write src"
   },
   "dependencies": {
-    "@lucide/vue": "^1.20.0",
+    "@lucide/vue": "^1.21.0",
     "@tailwindcss/vite": "^4.3.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.21",
     "pinia": "^3.0.4",
-    "reka-ui": "^2.9.10",
+    "reka-ui": "^2.10.0",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.1",
     "vue": "^3.5.38",
@@ -38,6 +38,10 @@
     "vite": "^8.0.16",
     "vitest": "^4.1.9",
     "vue-tsc": "^3.3.5"
+  },
+  "overrides": {
+    "undici": "^7.28.0",
+    "esbuild": "^0.28.1"
   },
   "description": "NeedyPet Vue client"
 }
