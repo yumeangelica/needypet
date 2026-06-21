@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Pet = require('../models/petModel');
 const { jwtVerify } = require('jose');
 const { jwtSecretEncoded } = require('../utils/config');
 const mailer = require('../utils/mailer');
@@ -202,6 +203,20 @@ const updateUser = async (request, response, next) => {
 const deleteUser = async (request, response, next) => {
   try {
     const user = request.user; // User is attached to the request object by getUserHandler middleware
+    const ownedPetIds = await Pet.find({ owner: user._id }).distinct('_id');
+
+    if (ownedPetIds.length > 0) {
+      await User.updateMany(
+        { pets: { $in: ownedPetIds } },
+        { $pull: { pets: { $in: ownedPetIds } } },
+      );
+      await Pet.deleteMany({ _id: { $in: ownedPetIds } });
+    }
+
+    await Pet.updateMany(
+      { careTakers: user._id },
+      { $pull: { careTakers: user._id } },
+    );
     await User.findByIdAndDelete(user.id);
 
     response.status(204).json({ message: 'User deleted successfully' });
