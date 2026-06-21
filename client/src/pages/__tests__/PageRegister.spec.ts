@@ -168,6 +168,11 @@ describe('PageRegister', () => {
 
     expect(wrapper.find('#reg-username-error').exists()).toBe(true);
     expect(wrapper.find('#reg-username-error').text()).toContain('Username too short');
+
+    // The invalid input is programmatically linked to its error message.
+    const usernameInput = wrapper.find('input[aria-label="Username"]');
+    expect(usernameInput.attributes('aria-invalid')).toBe('true');
+    expect(usernameInput.attributes('aria-describedby')).toBe('reg-username-error');
   });
 
   it('navigates back to landing on the Back button', async () => {
