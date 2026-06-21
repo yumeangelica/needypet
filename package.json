@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently -k -n client,server -c magenta,cyan \"bun run dev:client\" \"bun run dev:server\"",
     "dev:client": "cd client && bun run dev",
-    "dev:server": "cd server && npm run dev",
+    "dev:server": "cd server && bun run dev",
     "frontend-patch-push": "./version-push.sh patch frontend",
     "frontend-minor-push": "./version-push.sh minor frontend",
     "frontend-major-push": "./version-push.sh major frontend",

@@ -6,6 +6,10 @@
 
 NeedyPet simplifies pet care coordination within households and pet care facilities. This user-friendly application empowers family members and pet caretakers to collaboratively manage pet health and activities. It ensures everyone is informed about the pets' daily needs and care activities, preventing common issues like overfeeding or missed medication, thus enhancing pet care through technology.
 
+## Portfolio Archive Status
+
+This repository is a polished portfolio snapshot of the original Vue/Vite, Express, and MongoDB implementation. It is intentionally kept on this stack as evidence of the work completed here. Future product work should happen in a new repository, where the domain can be rebuilt with Nuxt 4, Bun, and Postgres without mixing migration code into this archive.
+
 ## Features
 
 - **User Registration and Authentication**:
@@ -92,8 +96,8 @@ The following features are planned for future versions of NeedyPet:
 ## Technical Setup
 
 - **Runtime and package management**: Bun, with separate client and server packages.
-- **Backend technologies**: Node.js, Express 5, MongoDB with Mongoose, JavaScript, Zod, jose, bcryptjs, Nodemailer, node-cron, Helmet, ESLint, Node.js test runner, and Supertest.
-- **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, and ESLint.
+- **Backend technologies**: Node.js, Express 5, MongoDB with Mongoose, JavaScript, Zod, jose, bcryptjs, Nodemailer, node-cron, Helmet, Biome, Node.js test runner, and Supertest.
+- **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, and Biome.
 - **Frontend API client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts`.
 
 ## Development
@@ -129,6 +133,7 @@ bun run test
 
 cd ../client
 bun run lint
+bun run typecheck
 bunx vitest run
 ```
 

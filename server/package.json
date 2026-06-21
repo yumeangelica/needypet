@@ -1,11 +1,11 @@
 {
   "name": "needypet-server",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "pet care management app",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
-    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "dev": "cross-env NODE_ENV=development node --watch index.js",
     "test": "cross-env NODE_ENV=testing node --test --test-concurrency=1 __tests__/*.test.js",
     "test:coverage": "cross-env NODE_ENV=testing node --test --test-concurrency=1 --experimental-test-coverage __tests__/*.test.js",
     "lint": "biome check .",
@@ -26,14 +26,10 @@
     "mongoose": "^9.7.1",
     "node-cron": "^4.4.1",
     "nodemailer": "^9.0.1",
-    "path-to-regexp": "^8.4.2",
-    "qs": "^6.15.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
-    "form-data": "^4.0.6",
-    "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
   }
 }
