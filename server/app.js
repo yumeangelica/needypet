@@ -9,13 +9,17 @@ const requestLogger = require('./middlewares/requestLoggerMiddleware');
 const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const dbReady = require('./middlewares/dbReadyMiddleware');
+const {
+  authLimiter,
+  emailLimiter,
+} = require('./middlewares/rateLimitMiddleware');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 const { updatePetNeedstoNextDays } = require('./helper');
 const { corsHeaders, corsOptions } = require('./utils/corsConfig');
 const helmet = require('helmet');
 const { isTesting, isProduction, allowedOrigins } = require('./utils/config');
-const path = require('path');
+const path = require('node:path');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
@@ -58,7 +62,10 @@ if (!isTesting) {
 }
 
 // Routes
-app.use('/auth', dbReady, usersRoutes);
+// Stricter limit on the email-sending endpoints, then a general auth limiter.
+app.use('/auth/request-password-reset', emailLimiter);
+app.use('/auth/resend-email-confirmation', emailLimiter);
+app.use('/auth', authLimiter, dbReady, usersRoutes);
 app.use('/api', dbReady, authenticateToken, getUserHandler, petsRoutes);
 
 if (isProduction) {
