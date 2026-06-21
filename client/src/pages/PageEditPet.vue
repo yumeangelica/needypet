@@ -67,19 +67,27 @@
 
 <script setup lang="ts">
 import { Trash2 } from '@lucide/vue';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
 import TheFooter from '@/components/TheFooter.vue';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
+import { useUserStore } from '@/store/user';
 import type { Pet } from '@/types/pet';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 const router = useRouter();
 const route = useRoute();
 const petStore = usePetStore();
+const userStore = useUserStore();
 
 const showUpdateDialog = ref(false);
 const showDeleteDialog = ref(false);
@@ -93,15 +101,11 @@ const existingPetObject: Ref<Pet> = ref({
   birthday: undefined,
 });
 
-const todayString = computed(() => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
-});
+const todayString = computed(() => dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
 
 const birthdayInputValue = computed(() => {
   if (!existingPetObject.value.birthday) return '';
-  const d = new Date(existingPetObject.value.birthday);
-  return d.toISOString().split('T')[0];
+  return dayjs(existingPetObject.value.birthday).tz(userStore.timezone).format('YYYY-MM-DD');
 });
 
 onBeforeMount(() => {
@@ -113,12 +117,13 @@ onBeforeMount(() => {
 const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.value) {
-    const currentDate = new Date();
-    const selectedDate = new Date(`${target.value}T00:00:00`);
-    if (selectedDate <= currentDate) {
+    // The picked value is a calendar day in the user's timezone; compare at day
+    // granularity so a user near midnight is not wrongly blocked from "today".
+    const selectedDay = dayjs.tz(target.value, userStore.timezone);
+    const today = dayjs().tz(userStore.timezone);
+    if (!selectedDay.isAfter(today, 'day')) {
       dateErrorMessage.value = '';
-      existingPetObject.value.birthday = selectedDate;
-      existingPetObject.value.birthday.setHours(0, 0, 0, 0);
+      existingPetObject.value.birthday = new Date(`${target.value}T00:00:00`);
     } else {
       dateErrorMessage.value = 'Please select a date in the past or today';
     }

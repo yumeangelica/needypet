@@ -52,6 +52,9 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { computed, type Ref, ref } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
@@ -60,6 +63,9 @@ import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 import type { NewPetObject } from '@/types/pet';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
@@ -78,27 +84,23 @@ const newPetObject: Ref<NewPetObject> = ref({
   birthday: null as Date | null,
 });
 
-const todayString = computed(() => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
-});
+const todayString = computed(() => dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
 
 const birthdayInputValue = computed(() => {
   if (!newPetObject.value.birthday) return '';
-  const d = new Date(newPetObject.value.birthday);
-  return d.toISOString().split('T')[0];
+  return dayjs(newPetObject.value.birthday).tz(userStore.timezone).format('YYYY-MM-DD');
 });
 
 const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.value) {
-    const selectedDateTime = new Date(`${target.value}T00:00:00`);
-    selectedDateTime.setHours(0, 0, 0, 0);
-    const currentDateTime = new Date();
-    currentDateTime.setHours(0, 0, 0, 0);
+    // The picked value is a calendar day in the user's timezone; compare at day
+    // granularity so a user near midnight is not wrongly blocked from "today".
+    const selectedDay = dayjs.tz(target.value, userStore.timezone);
+    const today = dayjs().tz(userStore.timezone);
 
-    if (selectedDateTime <= currentDateTime) {
-      newPetObject.value.birthday = selectedDateTime;
+    if (!selectedDay.isAfter(today, 'day')) {
+      newPetObject.value.birthday = new Date(`${target.value}T00:00:00`);
     }
   }
 };
