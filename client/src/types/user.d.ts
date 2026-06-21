@@ -9,11 +9,11 @@ interface User {
 }
 
 interface UserStoreState {
-  token: Token;
-  userName: User['userName'];
-  id: User['id'];
+  token: Token | null;
+  userName: User['userName'] | null;
+  id: User['id'] | null;
   timezone: User['timezone'];
-  emailConfirmed: User['emailConfirmed'];
+  emailConfirmed: User['emailConfirmed'] | null;
 }
 
 interface loginData {

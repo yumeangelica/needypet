@@ -101,6 +101,7 @@ watch(
 );
 
 const fetchUserEmailConfirmed = async () => {
+  if (!userStore.id) return;
   const user = await userStore.getUserById(userStore.id);
   if (user) {
     userEmailConfirmed.value = user.emailConfirmed;

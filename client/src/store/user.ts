@@ -1,6 +1,6 @@
 // @ts-check
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { type ApiResult, getErrorMessage, getErrorStatus } from '@/lib/apiError';
+import { type ApiResult, getErrorDetails, getErrorMessage, getErrorStatus } from '@/lib/apiError';
 import { apiClient } from '@/services';
 import type { loginData, User, UserStoreState } from '@/types/user';
 
@@ -100,10 +100,7 @@ export const useUserStore = defineStore('user', {
           }
           return null;
         })
-        .catch((error) => {
-          console.error('Error during get user by id:', error.response?.status);
-          return null;
-        });
+        .catch(() => null);
 
       return response;
     },
@@ -115,7 +112,17 @@ export const useUserStore = defineStore('user', {
      * @param timezone
      * @returns
      */
-    async createAccount({ userName, email, newPassword, timezone }): Promise<ApiResult> {
+    async createAccount({
+      userName,
+      email,
+      newPassword,
+      timezone,
+    }: {
+      userName: string;
+      email: string;
+      newPassword: string;
+      timezone: string;
+    }): Promise<ApiResult> {
       try {
         const response = await apiClient.post(`${servicePath}/users`, {
           userName,
@@ -133,14 +140,14 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error) {
-          return {
-            isSuccess: false,
-            message: error.response.data.message,
-            errorDetails: error.response.data.errorDetails,
-          };
-        }
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Error creating account'),
+          errorDetails: getErrorDetails(error),
+        };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Update the user profile
@@ -150,7 +157,17 @@ export const useUserStore = defineStore('user', {
      * @param currentPassword
      * @returns
      */
-    async updateUserProfile({ userName, email, timezone, currentPassword }): Promise<ApiResult> {
+    async updateUserProfile({
+      userName,
+      email,
+      timezone,
+      currentPassword,
+    }: {
+      userName: string;
+      email: string;
+      timezone: string;
+      currentPassword: string;
+    }): Promise<ApiResult> {
       try {
         const response = await apiClient.put<UpdateUserResponse>(
           `${servicePath}/users/${this.id}`,
@@ -165,7 +182,6 @@ export const useUserStore = defineStore('user', {
         if (response.status === 200) {
           this.$patch({
             userName: response.data.userName,
-            email: response.data.email,
             timezone: response.data.timezone,
           });
           await setLocalStorageItem('userName', response.data.userName);
@@ -177,26 +193,30 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error.response?.status === 401) {
+        const status = getErrorStatus(error);
+
+        if (status === 401) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Unauthorized',
+            message: getErrorMessage(error, 'Unauthorized'),
           };
         }
 
-        if (error.response?.status === 422) {
+        if (status === 422) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Validation error',
-            errorDetails: error.response.data.errorDetails,
+            message: getErrorMessage(error, 'Validation error'),
+            errorDetails: getErrorDetails(error),
           };
         }
 
         return {
           isSuccess: false,
-          message: error.response.data.message || 'Error updating user profile',
+          message: getErrorMessage(error, 'Error updating user profile'),
         };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Change the user password
@@ -204,7 +224,13 @@ export const useUserStore = defineStore('user', {
      * @param newPassword
      * @returns
      */
-    async changePassword({ currentPassword, newPassword }): Promise<ApiResult> {
+    async changePassword({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+    }): Promise<ApiResult> {
       try {
         const response = await apiClient.put<MessageResponse>(
           `${servicePath}/users/${this.id}`,
@@ -223,26 +249,30 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error.response?.status === 401) {
+        const status = getErrorStatus(error);
+
+        if (status === 401) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Unauthorized',
+            message: getErrorMessage(error, 'Unauthorized'),
           };
         }
 
-        if (error.response?.status === 422) {
+        if (status === 422) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Validation error',
-            errorDetails: error.response.data.errorDetails,
+            message: getErrorMessage(error, 'Validation error'),
+            errorDetails: getErrorDetails(error),
           };
         }
 
         return {
           isSuccess: false,
-          message: error.response.data.message || 'Error changing password',
+          message: getErrorMessage(error, 'Error changing password'),
         };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Delete the user account
@@ -262,18 +292,20 @@ export const useUserStore = defineStore('user', {
           };
         }
       } catch (error) {
-        if (error.response?.status === 401) {
+        if (getErrorStatus(error) === 401) {
           return {
             isSuccess: false,
-            message: error.response.data.message || 'Unauthorized',
+            message: getErrorMessage(error, 'Unauthorized'),
           };
         }
 
         return {
           isSuccess: false,
-          message: error.response.data.message || 'Error deleting user account',
+          message: getErrorMessage(error, 'Error deleting user account'),
         };
       }
+
+      return { isSuccess: false };
     },
     /**
      * @description Logout the user
@@ -306,7 +338,13 @@ export const useUserStore = defineStore('user', {
 
         if (response.status === 200) {
           const { token, user } = response.data;
-          await setAuthData(token, user.userName, user.id, user.timezone, user.emailConfirmed);
+          await setAuthData(
+            token,
+            user.userName,
+            user.id,
+            user.timezone ?? 'UTC',
+            user.emailConfirmed,
+          );
           return {
             isSuccess: true,
             message: response.data.message || 'Login successful',
@@ -318,29 +356,27 @@ export const useUserStore = defineStore('user', {
           message: response.data.message || 'Login failed',
         };
       } catch (error) {
-        const status = error.response?.status;
-        const data = error.response?.data;
+        const status = getErrorStatus(error);
 
         if (status === 401) {
           return {
             isSuccess: false,
-            message: data?.message || 'Invalid credentials',
+            message: getErrorMessage(error, 'Invalid credentials'),
           };
         }
 
         if (status === 422) {
           return {
             isSuccess: false,
-            message: data?.message || 'Validation error',
+            message: getErrorMessage(error, 'Validation error'),
           };
         }
 
         // Network/CORS errors have no response; still return a result object
         // so callers can safely destructure it.
-        console.error('Error during login:', status);
         return {
           isSuccess: false,
-          message: data?.message || 'Login failed. Please try again.',
+          message: getErrorMessage(error, 'Login failed. Please try again.'),
         };
       }
     },
@@ -373,10 +409,7 @@ export const useUserStore = defineStore('user', {
         .then((response) => {
           return response.status === 200;
         })
-        .catch((error) => {
-          console.error('Error during token validation:', error.response?.status);
-          return false;
-        });
+        .catch(() => false);
 
       return response;
     },
@@ -401,10 +434,7 @@ export const useUserStore = defineStore('user', {
         .then((response) => {
           return response.status === 200;
         })
-        .catch((error) => {
-          console.error('Error during email confirmation:', error.response?.status);
-          return false;
-        });
+        .catch(() => false);
 
       return response;
     },
@@ -434,7 +464,6 @@ export const useUserStore = defineStore('user', {
         // Only report the result; the calling page owns the notification so a
         // failure shows a single error toast, not one here and one there.
         const status = getErrorStatus(error);
-        console.error('Error during email confirmation resend:', status);
 
         if (status === 535) {
           return {
@@ -473,10 +502,7 @@ export const useUserStore = defineStore('user', {
         .then((response) => {
           return response.status === 200;
         })
-        .catch((error) => {
-          console.error('Error during password reset request:', error.response?.status);
-          return false;
-        });
+        .catch(() => false);
 
       return response;
     },
@@ -501,10 +527,7 @@ export const useUserStore = defineStore('user', {
         .then((response) => {
           return response.status === 200;
         })
-        .catch((error) => {
-          console.error('Error during password reset token verification:', error.response?.status);
-          return false;
-        });
+        .catch(() => false);
 
       return response;
     },
@@ -531,10 +554,7 @@ export const useUserStore = defineStore('user', {
         .then((response) => {
           return response.status === 200;
         })
-        .catch((error) => {
-          console.error('Error during password reset:', error.response?.status);
-          return false;
-        });
+        .catch(() => false);
 
       return response;
     },

@@ -8,7 +8,7 @@
 
           <div class="inline-container">
             <h1 class="text-[1.4rem] max-[568px]:text-[1.2rem]">{{ pet.name }}</h1>
-            <button v-if="pet.owner.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
+            <button v-if="pet.owner?.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
               <Settings class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
@@ -18,8 +18,8 @@
             <p><strong>Species:</strong> {{ pet.species }}</p>
             <p><strong>Breed:</strong> {{ pet.breed }}</p>
             <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
-            <p><strong>Owner:</strong> {{ pet.owner.userName }}</p>
-            <p v-if="pet.careTakers.length > 0">
+            <p><strong>Owner:</strong> {{ pet.owner?.userName }}</p>
+            <p v-if="pet.careTakers && pet.careTakers.length > 0">
               <strong>Care takers:</strong>
               <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">
                 {{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}
@@ -30,7 +30,7 @@
           <!-- Need related container -->
           <div class="header-button-container">
             <h3 class="text-center mt-2 mb-0">Needs:</h3>
-            <template v-if="pet.owner.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
+            <template v-if="pet.owner?.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
               <button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
                 <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
                 Add need
@@ -124,7 +124,7 @@
             <ul v-if="needsByDate[currentDate]">
               <li v-for="need in needsByDate[currentDate]" :key="need.id">
                 <div class="need-cards-container">
-                  <the-need-card :need="need" :petId="pet.id" @needDeleted="handleNeedDeleted" @needUpdated="getPet(pet.id)" />
+                  <the-need-card :need="need" :petId="currentPetId" @needDeleted="handleNeedDeleted" @needUpdated="getPet(currentPetId)" />
                 </div>
               </li>
             </ul>
@@ -189,8 +189,12 @@ const formFieldsErrorDetailsObject = ref({
 });
 
 const selection = ref('');
-const valueOfSelection: Ref<Need['duration']['value'] | Need['quantity']['value']> = ref(null);
-const unitOfSelection: Ref<Need['duration']['unit'] | Need['quantity']['unit'] | ''> = ref('');
+const valueOfSelection: Ref<
+  NonNullable<Need['duration']>['value'] | NonNullable<Need['quantity']>['value'] | null
+> = ref(null);
+const unitOfSelection: Ref<
+  NonNullable<Need['duration']>['unit'] | NonNullable<Need['quantity']>['unit'] | ''
+> = ref('');
 const isOwner = ref(false);
 
 const quantityUnits = [
@@ -203,10 +207,13 @@ const changeDay = (delta: number) => {
   currentDate.value = newDate.format('YYYY-MM-DD');
 };
 
-const needsByDate = ref({});
+const needsByDate = ref<Record<string, Need[]>>({});
 
-const needsByDateComputed = computed(() => {
-  if (!pet.value || !pet.value.needs) return [];
+// The needs list only renders for a loaded pet, which always has an id.
+const currentPetId = computed(() => pet.value?.id ?? '');
+
+const needsByDateComputed = computed<Record<string, Need[]>>(() => {
+  if (!pet.value?.needs) return {};
   return pet.value.needs.reduce((acc: Record<string, Need[]>, need) => {
     if (!acc[need.dateFor]) {
       acc[need.dateFor] = [];
@@ -248,6 +255,11 @@ async function getPet(id: string) {
 }
 
 const addNewNeed = async () => {
+  const petId = pet.value?.id;
+  if (!petId) {
+    return;
+  }
+
   if (!category.value || !description.value) {
     appStore.addNotification('Please fill in all fields', 'error');
     return;
@@ -262,7 +274,7 @@ const addNewNeed = async () => {
   };
 
   const validateDuration = () => {
-    if (selection.value === 'duration' && valueOfSelection.value > 1440) {
+    if (selection.value === 'duration' && (valueOfSelection.value ?? 0) > 1440) {
       formFieldsErrorDetailsObject.value.durationValue = 'Duration cannot be over 1440 minutes';
       return false;
     }
@@ -299,10 +311,10 @@ const addNewNeed = async () => {
     },
   };
 
-  const result = await petStore.addNewNeed(pet.value.id, needObject);
+  const result = await petStore.addNewNeed(petId, needObject);
   if (result.isSuccess) {
     setOpen(false);
-    await getPet(pet.value.id);
+    await getPet(petId);
   } else {
     appStore.addNotification(
       resultMessage(result, "Couldn't save the need. Please try again."),
@@ -332,7 +344,7 @@ onBeforeMount(async () => {
 });
 
 const handleNeedDeleted = async (deleted: boolean) => {
-  if (deleted) {
+  if (deleted && pet.value?.id) {
     await getPet(pet.value.id);
     appStore.addNotification('Need removed', 'success');
   }

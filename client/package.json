@@ -8,6 +8,7 @@
     "build": "rm -rf dist && rm -rf ../server/dist && vite build && cp -r dist ../server",
     "preview": "vite preview",
     "test:unit": "vitest",
+    "typecheck": "vue-tsc --noEmit",
     "lint": "biome check src",
     "lint:fix": "biome check --write src"
   },

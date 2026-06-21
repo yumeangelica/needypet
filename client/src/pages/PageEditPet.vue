@@ -90,7 +90,7 @@ const existingPetObject: Ref<Pet> = ref({
   breed: '',
   species: '',
   description: '',
-  birthday: null as Date | null,
+  birthday: undefined,
 });
 
 const todayString = computed(() => {
@@ -105,7 +105,7 @@ const birthdayInputValue = computed(() => {
 });
 
 onBeforeMount(() => {
-  if (!existingPetObject.value || !existingPetObject.value.id) {
+  if (!existingPetObject.value?.id) {
     loadPetData();
   }
 });
@@ -114,7 +114,7 @@ const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.value) {
     const currentDate = new Date();
-    const selectedDate = new Date(target.value + 'T00:00:00');
+    const selectedDate = new Date(`${target.value}T00:00:00`);
     if (selectedDate <= currentDate) {
       dateErrorMessage.value = '';
       existingPetObject.value.birthday = selectedDate;
@@ -130,8 +130,11 @@ const confirmUpdatePet = () => {
 };
 
 const updatePet = async () => {
+  const petId = existingPetObject.value.id;
+  if (!petId) return;
+
   const petData = {
-    id: existingPetObject.value.id,
+    id: petId,
     name: existingPetObject.value.name,
     species: existingPetObject.value.species,
     breed: existingPetObject.value.breed,
@@ -139,21 +142,17 @@ const updatePet = async () => {
     birthday: existingPetObject.value.birthday,
   };
 
-  const result = await petStore.updatePet(existingPetObject.value.id, petData);
+  const result = await petStore.updatePet(petId, petData);
   if (result.isSuccess) {
     router.push({ name: 'pet', params: { id: petData.id } });
-  } else {
-    console.error('Failed to update pet');
   }
 };
 
 const deletePet = async () => {
-  if (existingPetObject.value && existingPetObject.value.id) {
+  if (existingPetObject.value?.id) {
     const result = await petStore.deletePet(existingPetObject.value.id);
     if (result.isSuccess) {
       router.push({ name: 'home' });
-    } else {
-      console.error('Failed to delete pet');
     }
   }
 };

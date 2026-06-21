@@ -75,7 +75,7 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 
-const user: Ref<User> = ref(null);
+const user: Ref<User | null> = ref(null);
 const showSettings = ref(false);
 const isButtonDisabled = ref(false);
 const showLogoutDialog = ref(false);
@@ -86,6 +86,7 @@ const toggleSettings = () => {
 };
 
 const fetchUser = async () => {
+  if (!userStore.id) return;
   const userData = await userStore.getUserById(userStore.id);
   user.value = userData;
 };
@@ -116,7 +117,7 @@ const deleteAccount = async () => {
     appStore.addNotification('Your account has been deleted', 'success');
     logout();
   } else {
-    appStore.addNotification(message, 'error');
+    appStore.addNotification(message ?? 'Error deleting account', 'error');
   }
 };
 

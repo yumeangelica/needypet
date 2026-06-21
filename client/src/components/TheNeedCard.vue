@@ -169,28 +169,28 @@ const isSaving = ref(false);
 
 const addRecord = async (petId: string, need: Need) => {
   if (isSaving.value) return;
-  isSaving.value = true;
   const needId = need.id;
-  const isDuration = need.duration ? true : false;
+  if (!needId) return;
+  isSaving.value = true;
 
   let recordObject = {
     note: '',
   } as QuantityRecord | DurationRecord;
 
-  if (isDuration) {
+  if (need.duration) {
     recordObject = {
       ...recordObject,
       duration: {
-        value: need.duration?.value,
-        unit: need.duration?.unit,
+        value: need.duration.value,
+        unit: need.duration.unit,
       },
     };
-  } else {
+  } else if (need.quantity) {
     recordObject = {
       ...recordObject,
       quantity: {
-        value: need.quantity?.value,
-        unit: need.quantity?.unit,
+        value: need.quantity.value,
+        unit: need.quantity.unit,
       },
     };
   }
@@ -211,10 +211,10 @@ const toggleOptions = () => {
 
 const editNeed = () => {
   isEditModalOpen.value = true;
-  editForm.value = { category: need.category, description: need.description, ...editForm.value };
+  editForm.value = { ...editForm.value, category: need.category, description: need.description };
 };
 
-const toggleNeedActive = async (needId) => {
+const toggleNeedActive = async (needId: string | undefined) => {
   if (!needId || !isOwner) return;
 
   const result = await petStore.toggleNeedisActive(petId, needId);
@@ -242,6 +242,7 @@ const updateNeed = async () => {
   }
 
   const needId = need.id;
+  if (!needId) return;
 
   const updatedNeed = {
     category: editForm.value.category,
@@ -262,12 +263,12 @@ const updateNeed = async () => {
   closeEditModal();
 };
 
-const deleteNeed = async (needId: string) => {
+const deleteNeed = async (needId: string | undefined) => {
   if (!needId) return;
 
   const result = await petStore.deleteNeed(petId, needId);
   if (result.isSuccess) {
-    handleNeedDeletion(true);
+    handleNeedDeletion?.(true);
   } else {
     appStore.addNotification(resultMessage(result, 'Failed to delete need'), 'error');
   }

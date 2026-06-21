@@ -118,7 +118,7 @@ const submitForm = async () => {
       currentPassword: errorDetails?.currentPassword?.[0] || '',
       newPassword: errorDetails?.newPassword?.[0] || '',
     };
-    errorMessage.value = message;
+    errorMessage.value = message ?? '';
     setTimeout(() => {
       errorMessage.value = '';
       errorDetailsObject.value = {
