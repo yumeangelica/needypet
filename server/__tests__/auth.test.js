@@ -98,6 +98,19 @@ describe('POST /auth/users (duplicates)', () => {
     assert.strictEqual(response.body.passwordResetToken, undefined);
     assert.strictEqual(response.body.passwordResetExpires, undefined);
   });
+
+  it('returns password strength errors in the standard array shape', async () => {
+    const response = await api.post('/auth/users').send({
+      userName: 'weakUser',
+      email: 'weak@example.com',
+      newPassword: 'weak',
+      timezone: 'Europe/Helsinki',
+    });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(Array.isArray(response.body.errorDetails?.newPassword));
+    assert.match(response.body.errorDetails.newPassword[0], /password/i);
+  });
 });
 
 describe('GET /auth/users/:id', () => {

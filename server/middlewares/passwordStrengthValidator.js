@@ -20,7 +20,7 @@ const passwordStrengthValidator = (request, response, next) => {
       return response.status(422).json({
         message: 'Validation error',
         errorDetails: {
-          newPassword: error.issues[0].message,
+          newPassword: [error.issues[0].message],
         },
       });
     }
