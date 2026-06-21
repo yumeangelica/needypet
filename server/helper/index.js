@@ -208,7 +208,6 @@ const updatePetNeedstoNextDays = async () => {
       });
       if (needsUpdated) {
         await pet.save(); // eslint-disable-line no-await-in-loop
-        console.log(`${pet.name}'s needs updated`);
       }
     }
   } catch (error) {

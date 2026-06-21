@@ -7,10 +7,10 @@ const { isDevelopment } = require('../utils/config');
  * @param {*} next
  */
 const requestLogger = (request, response, next) => {
-  const start = new Date();
+  const start = Date.now();
 
   response.on('finish', () => {
-    const duration = new Date() - start;
+    const duration = Date.now() - start;
     const logParts = [
       new Date().toISOString(),
       request.method,

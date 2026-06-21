@@ -16,7 +16,6 @@ const passwordStrengthValidator = (request, response, next) => {
     passwordStrengthValidation(newPassword);
     next();
   } catch (error) {
-    console.log('error', error);
     if (error instanceof z.ZodError) {
       return response.status(422).json({
         message: 'Validation error',
