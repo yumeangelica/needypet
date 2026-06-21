@@ -30,6 +30,27 @@ const emailService = process.env.EMAIL_SERVICE;
 const emailPort = process.env.EMAIL_PORT;
 const emailFrom = process.env.EMAIL_FROM;
 
+// Fail fast on missing required configuration instead of surfacing cryptic
+// runtime errors later (e.g. JWT signing or the DB connection failing).
+const missing = [];
+if (!jwtSecret) {
+  missing.push('JWT_SECRET');
+}
+if (!mongodbUri) {
+  missing.push(
+    isProduction
+      ? 'PRODUCTION_MONGODB_URI'
+      : isDevelopment
+        ? 'DEVELOPMENT_MONGODB_URI'
+        : 'TEST_MONGODB_URI',
+  );
+}
+if (missing.length > 0) {
+  throw new Error(
+    `Missing required environment variable(s): ${missing.join(', ')}`,
+  );
+}
+
 module.exports = {
   isDevelopment,
   isProduction,
