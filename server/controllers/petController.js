@@ -94,6 +94,14 @@ const addNewPet = async (request, response, next) => {
       await owner.save();
     }
 
+    if (careTaker) {
+      // Keep the caretaker's pets array in sync with the pet's careTakers.
+      await User.updateMany(
+        { _id: careTaker._id },
+        { $addToSet: { pets: pet._id } },
+      );
+    }
+
     response.status(201).json(pet);
   } catch (error) {
     next(error);
@@ -121,14 +129,6 @@ const updatePet = async (request, response, next) => {
     careTakers: careTakers ? careTakers : request.pet.careTakers,
   };
 
-  if (careTakers) {
-    // Add pet id to care takers pets array
-    await User.updateMany(
-      { _id: { $in: careTakers } },
-      { $addToSet: { pets: request.pet._id } },
-    );
-  }
-
   try {
     const updatedPet = await Pet.findOneAndUpdate(
       {
@@ -142,6 +142,25 @@ const updatePet = async (request, response, next) => {
 
     if (!updatedPet) {
       return response.status(404).json({ message: 'Pet not found' });
+    }
+
+    // Keep the User <-> Pet caretaker references in sync only after the pet
+    // update succeeds (so a non-owner 404 does not mutate user arrays).
+    if (careTakers) {
+      // Add pet id to the new care takers' pets array.
+      await User.updateMany(
+        { _id: { $in: careTakers } },
+        { $addToSet: { pets: request.pet._id } },
+      );
+      // Remove pet id from users who are no longer care takers. The owner is
+      // excluded so their own pets reference (managed separately) is preserved.
+      await User.updateMany(
+        {
+          pets: request.pet._id,
+          _id: { $nin: [...careTakers, request.user._id] },
+        },
+        { $pull: { pets: request.pet._id } },
+      );
     }
 
     response.json(updatedPet);
