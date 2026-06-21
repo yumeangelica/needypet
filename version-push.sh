@@ -5,7 +5,7 @@ update_version_and_push() {
   local dir=$1
   local version_type=$2
   cd $dir || { echo "Directory $dir not found"; exit 1; }
-  npm --no-git-tag-version version $version_type || { echo "npm version $version_type failed"; exit 1; }
+  bun pm version "$version_type" --no-git-tag-version || { echo "bun pm version $version_type failed"; exit 1; }
   git add package.json
   cd - || exit
 }
