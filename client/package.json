@@ -8,6 +8,7 @@
     "build": "rm -rf dist && rm -rf ../server/dist && vite build && cp -r dist ../server",
     "preview": "vite preview",
     "test:unit": "vitest",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "vue-tsc --noEmit",
     "lint": "biome check src",
     "lint:fix": "biome check --write src"
@@ -28,13 +29,14 @@
     "@biomejs/biome": "^2.5.0",
     "@types/node": "^25.9.3",
     "@vitejs/plugin-vue": "^6.0.7",
+    "@vitest/coverage-v8": "^4.1.9",
     "@vue/test-utils": "^2.4.11",
     "jsdom": "^29.1.1",
     "rollup-plugin-visualizer": "^7.0.1",
     "terser": "^5.46.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
-    "vitest": "^4.0.18",
+    "vitest": "^4.1.9",
     "vue-tsc": "^3.3.5"
   },
   "description": "NeedyPet Vue client"

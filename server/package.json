@@ -7,6 +7,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "test": "cross-env NODE_ENV=testing node --test --test-concurrency=1 __tests__/*.test.js",
+    "test:coverage": "cross-env NODE_ENV=testing node --test --test-concurrency=1 --experimental-test-coverage __tests__/*.test.js",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
   },
