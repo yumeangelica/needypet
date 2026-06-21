@@ -39,18 +39,18 @@ the mode-appropriate MongoDB URI is missing.
 ## Getting started
 
 ```bash
-npm install        # install dependencies
-npm run dev        # start the server with nodemon (NODE_ENV=development)
+bun install        # install dependencies
+bun run dev        # start the server with Node's watch mode (NODE_ENV=development)
 ```
 
 ## Scripts
 
 | Script            | Description                                               |
 | ----------------- | -------------------------------------------------------- |
-| `npm start`       | Start the server in production mode.                      |
-| `npm run dev`     | Start the server with nodemon in development mode.        |
-| `npm test`        | Run the test suite (`node --test`) against the test DB.   |
-| `npm run test:coverage` | Run the test suite with Node's built-in coverage report. |
+| `bun run start`   | Start the server in production mode.                      |
+| `bun run dev`     | Start the server with Node's watch mode in development.   |
+| `bun run test`    | Run the test suite (`node --test`) against the test DB.   |
+| `bun run test:coverage` | Run the test suite with Node's built-in coverage report. |
 
 > The test suite (and its coverage variant) connect to `TEST_MONGODB_URI`, so a
 > reachable MongoDB instance is required to run them.
@@ -97,13 +97,15 @@ for anyone reviewing or extending it:
 - **Token storage.** Email-confirmation and password-reset tokens are stored in
   the database in plaintext (not hashed). They are short-lived (2 hours), but a
   database compromise would expose any pending tokens.
-- **Content Security Policy.** The CSP allows `unsafe-inline` for styles/scripts
-  to accommodate the bundled SPA output. This weakens the protection CSP would
-  otherwise provide against injected inline content.
+- **Content Security Policy.** The CSP keeps scripts on `self`; inline styles are
+  still allowed to accommodate component and bundled SPA styling.
 - **Rate limiting.** The authentication routes are rate limited, with a stricter
   limit on the email-sending endpoints (`request-password-reset`,
   `resend-email-confirmation`). The limiter is disabled under `NODE_ENV=testing`
   so the test suite is not throttled.
+- **Transactional email.** Test runs skip real outbound email. In development and
+  production, mail delivery errors are returned to the caller instead of being
+  swallowed silently.
 
 ## Project structure
 

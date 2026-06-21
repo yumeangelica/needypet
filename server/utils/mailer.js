@@ -3,14 +3,29 @@ const config = require('./config');
 
 // Create Transporter For Email Service
 const transporter = nodemailer.createTransport({
-  host: config.emailService,
+  service: config.emailService,
   port: config.emailPort,
-  secure: false, // True for 465, false for other ports
+  secure: config.emailPort === 465,
   auth: {
     user: config.emailUser, // App email address
     pass: config.emailPass, // App email password
   },
 });
+
+const buildAppUrl = (params) => {
+  const appOrigin = config.allowedOrigins[0];
+
+  if (!appOrigin) {
+    throw new Error('Missing ALLOWED_ORIGINS for account email links');
+  }
+
+  const url = new URL('/confirm', appOrigin);
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
+
+  return url.toString();
+};
 
 // Function to send email
 const sendMail = (to, subject, html) => {
@@ -28,8 +43,16 @@ const sendConfirmationEmail = async (
   recipientEmail,
   emailConfirmationToken,
 ) => {
+  if (config.isTesting) {
+    return;
+  }
+
   // URL for email confirmation
-  const confirmationUrl = `${config.allowedOrigins[0]}/confirm?confirmationType=email&email=${encodeURIComponent(recipientEmail)}&token=${emailConfirmationToken}`;
+  const confirmationUrl = buildAppUrl({
+    confirmationType: 'email',
+    email: recipientEmail,
+    token: emailConfirmationToken,
+  });
 
   const message = `
   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -46,22 +69,23 @@ const sendConfirmationEmail = async (
   </div>
 `;
 
-  try {
-    await sendMail(
-      recipientEmail,
-      'Please Confirm Your NeedyPet Email Address',
-      message,
-    );
-  } catch (error) {
-    console.error(
-      'Error sending confirmation email to email: ',
-      `${recipientEmail} Error: ${error}`,
-    );
-  }
+  await sendMail(
+    recipientEmail,
+    'Please Confirm Your NeedyPet Email Address',
+    message,
+  );
 };
 
 const sendPasswordResetEmail = async (recipientEmail, passwordResetToken) => {
-  const resetPasswordUrl = `${config.allowedOrigins[0]}/confirm?confirmationType=password&email=${encodeURIComponent(recipientEmail)}&token=${passwordResetToken}`;
+  if (config.isTesting) {
+    return;
+  }
+
+  const resetPasswordUrl = buildAppUrl({
+    confirmationType: 'password',
+    email: recipientEmail,
+    token: passwordResetToken,
+  });
 
   const message = `
   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -75,14 +99,7 @@ const sendPasswordResetEmail = async (recipientEmail, passwordResetToken) => {
     <p style="font-size: 12px; color: #999;">Needypet - Your Pet Care Management App</p>
   </div>`;
 
-  try {
-    await sendMail(recipientEmail, 'Reset Your NeedyPet Password', message);
-  } catch (error) {
-    console.error(
-      'Error sending password reset email to email: ',
-      `${recipientEmail} Error: ${error}`,
-    );
-  }
+  await sendMail(recipientEmail, 'Reset Your NeedyPet Password', message);
 };
 
 module.exports = {

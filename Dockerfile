@@ -7,8 +7,8 @@
 # same origin it is served from. Override with --build-arg to target another API.
 FROM oven/bun:1 AS client-build
 WORKDIR /app/client
-COPY client/package.json ./
-RUN bun install
+COPY client/package.json client/bun.lock ./
+RUN bun install --frozen-lockfile
 COPY client/ ./
 ARG VITE_APP_BACKEND_URL=""
 ENV VITE_APP_BACKEND_URL=$VITE_APP_BACKEND_URL
@@ -17,8 +17,8 @@ RUN bun run build
 # Stage 2: install the server and serve the API + built SPA with Bun.
 FROM oven/bun:1 AS server
 WORKDIR /app/server
-COPY server/package.json ./
-RUN bun install --production
+COPY server/package.json server/bun.lock ./
+RUN bun install --production --frozen-lockfile
 COPY server/ ./
 COPY --from=client-build /app/client/dist ./dist
 ENV NODE_ENV=production

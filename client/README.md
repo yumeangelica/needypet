@@ -20,7 +20,7 @@ Copy [`.env.example`](.env.example) to `.env.development` and `.env.production` 
 
 | Variable                  | Description                                  |
 | ------------------------- | -------------------------------------------- |
-| `VITE_APP_BACKEND_URL`    | Base URL of the NeedyPet API (e.g. `/api`).  |
+| `VITE_APP_BACKEND_URL`    | Base origin of the NeedyPet server; leave empty for same-origin builds. |
 
 ## Getting started
 

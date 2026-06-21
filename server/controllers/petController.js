@@ -137,7 +137,7 @@ const updatePet = async (request, response, next) => {
         owner: request.user._id,
       },
       updateData,
-      { new: true, runValidators: true },
+      { returnDocument: 'after', runValidators: true },
     );
 
     if (!updatedPet) {
@@ -392,7 +392,7 @@ const updateNeed = async (request, response, next) => {
     const updatedPet = await Pet.findOneAndUpdate(
       { _id: request.pet._id, owner: request.user._id, 'needs._id': need._id },
       { $set: { 'needs.$': { ...updateDataObject, _id: need._id } } },
-      { runValidators: true, new: true },
+      { runValidators: true, returnDocument: 'after' },
     );
 
     if (!updatedPet) {

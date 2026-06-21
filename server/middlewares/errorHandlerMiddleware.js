@@ -1,3 +1,30 @@
+const handledClientErrorNames = new Set([
+  'CastError',
+  'BadRequest',
+  'Unauthorized',
+  'TokenExpiredError',
+  'JWTExpired',
+  'JsonWebTokenError',
+  'JWSSignatureVerificationFailed',
+  'JWTClaimValidationFailed',
+  'JWTInvalid',
+  'JWSInvalid',
+  'Forbidden',
+  'NotFound',
+  'User not found',
+  'Pet not found',
+  'ValidationError',
+  'ZodError',
+]);
+
+const handledOperationalCodes = new Set([
+  'EAUTH',
+  'ECONNECTION',
+  'ESOCKET',
+  'ETIMEDOUT',
+  'EMESSAGE',
+]);
+
 /**
  * @description Error handler middleware
  * @param {*} error
@@ -8,10 +35,18 @@
  */
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (error, request, response, next) => {
-  console.error(error);
-
   const statusCode = error.status || 500;
   const message = error.message || 'An unexpected error occurred';
+
+  if (
+    statusCode >= 500 &&
+    !handledClientErrorNames.has(error.name) &&
+    !handledOperationalCodes.has(error.code) &&
+    !error.code?.startsWith('ERR_JWT') &&
+    !error.code?.startsWith('ERR_JWS')
+  ) {
+    console.error(error);
+  }
 
   const errorResponse = {
     message,
@@ -78,6 +113,19 @@ const errorHandler = (error, request, response, next) => {
       return response.status(535).json(errorResponse);
 
     default:
+      if (error.code === 'EAUTH') {
+        errorResponse.message =
+          'Email authentication failed. Please contact support.';
+        return response.status(535).json(errorResponse);
+      }
+
+      if (
+        ['ECONNECTION', 'ESOCKET', 'ETIMEDOUT', 'EMESSAGE'].includes(error.code)
+      ) {
+        errorResponse.message = 'Unable to send email. Please try again later.';
+        return response.status(535).json(errorResponse);
+      }
+
       // Catch jose errors by error code as fallback
       if (error.code && error.code.startsWith('ERR_JWT')) {
         errorResponse.message =

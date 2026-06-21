@@ -21,7 +21,6 @@ const getUserHandler = async (request, response, next) => {
 
     next();
   } catch (error) {
-    console.error('Error getting user:', error);
     return next(error);
   }
 };
