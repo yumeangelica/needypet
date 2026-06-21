@@ -55,7 +55,7 @@ const sendConfirmationEmail = async (
   } catch (error) {
     console.error(
       'Error sending confirmation email to email: ',
-      recipientEmail + ' Error: ' + error,
+      `${recipientEmail} Error: ${error}`,
     );
   }
 };
@@ -80,7 +80,7 @@ const sendPasswordResetEmail = async (recipientEmail, passwordResetToken) => {
   } catch (error) {
     console.error(
       'Error sending password reset email to email: ',
-      recipientEmail + ' Error: ' + error,
+      `${recipientEmail} Error: ${error}`,
     );
   }
 };
