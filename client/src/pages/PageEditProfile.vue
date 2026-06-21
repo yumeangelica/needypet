@@ -110,9 +110,10 @@ const editData = ref({
   currentPassword: '',
 });
 
-const user: Ref<User> = ref(null);
+const user: Ref<User | null> = ref(null);
 
 const fetchUser = async () => {
+  if (!userStore.id) return;
   const userData = await userStore.getUserById(userStore.id);
   user.value = userData;
   originalData.value = { ...userData };
@@ -121,10 +122,12 @@ const fetchUser = async () => {
 onBeforeMount(async () => {
   await fetchUser();
 
+  if (!user.value) return;
+
   editData.value = {
     userName: user.value.userName,
-    email: user.value.email,
-    timezone: user.value.timezone,
+    email: user.value.email ?? '',
+    timezone: user.value.timezone ?? '',
     currentPassword: '',
   };
 });
@@ -164,7 +167,7 @@ const submitForm = async () => {
         ? 'Password does not meet the requirements'
         : '',
     };
-    errorMessage.value = message;
+    errorMessage.value = message ?? '';
     setTimeout(() => {
       errorMessage.value = '';
       errorDetailsObject.value = {

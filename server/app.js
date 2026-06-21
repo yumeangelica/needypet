@@ -19,7 +19,7 @@ const path = require('path');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
-if (process.env.NODE_ENV !== 'test') {
+if (!isTesting) {
   app.use(requestLogger); // Request logger
 }
 

@@ -92,7 +92,7 @@ const birthdayInputValue = computed(() => {
 const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.value) {
-    const selectedDateTime = new Date(target.value + 'T00:00:00');
+    const selectedDateTime = new Date(`${target.value}T00:00:00`);
     selectedDateTime.setHours(0, 0, 0, 0);
     const currentDateTime = new Date();
     currentDateTime.setHours(0, 0, 0, 0);

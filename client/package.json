@@ -1,13 +1,14 @@
 {
   "name": "needypet-client",
   "private": true,
-  "version": "2.3.0",
+  "version": "2.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && rm -rf ../server/dist && vite build && cp -r dist ../server",
     "preview": "vite preview",
     "test:unit": "vitest",
+    "typecheck": "vue-tsc --noEmit",
     "lint": "biome check src",
     "lint:fix": "biome check --write src"
   },

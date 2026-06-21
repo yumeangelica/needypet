@@ -1,8 +1,8 @@
 // @ts-check
 import { acceptHMRUpdate, defineStore } from 'pinia';
-import { type ApiResult, getErrorDetails, getErrorMessage, getErrorStatus } from '@/lib/apiError';
+import { type ApiResult, getErrorDetails, getErrorMessage } from '@/lib/apiError';
 import { apiClient } from '@/services';
-import type { CareRecord, Need, Pet, PetState } from '@/types/pet';
+import type { CareRecord, Need, NewPetObject, Pet, PetState } from '@/types/pet';
 import { useUserStore } from './user';
 
 const servicePath = '/api';
@@ -44,10 +44,7 @@ export const usePetStore = defineStore('pet', {
           }
           return false;
         })
-        .catch((error) => {
-          console.error('Error during pets fetching:', getErrorStatus(error));
-          return false;
-        });
+        .catch(() => false);
 
       return response;
     },
@@ -56,7 +53,7 @@ export const usePetStore = defineStore('pet', {
      * @param newPetObject
      * @returns
      */
-    async addNewPet(newPetObject): Promise<ApiResult> {
+    async addNewPet(newPetObject: NewPetObject): Promise<ApiResult> {
       const userStore = useUserStore();
 
       const headers = {
@@ -115,7 +112,7 @@ export const usePetStore = defineStore('pet', {
      * @param petData
      * @returns
      */
-    async updatePet(petId, petData): Promise<ApiResult> {
+    async updatePet(petId: string, petData: Pet): Promise<ApiResult> {
       const userStore = useUserStore();
       const headers = {
         'Content-Type': 'application/json',
@@ -171,7 +168,7 @@ export const usePetStore = defineStore('pet', {
           this.$patch((state) => {
             const pet = state.pets.find((pet) => pet.id === petId);
             if (pet) {
-              const need = pet.needs.find((need) => need.id === needId);
+              const need = pet.needs?.find((need) => need.id === needId);
               if (need) {
                 need.isActive = !need.isActive;
               }
@@ -221,7 +218,7 @@ export const usePetStore = defineStore('pet', {
           this.$patch((state) => {
             const stateNeed = state.pets
               .find((pet) => pet.id === petId)
-              ?.needs.find((need) => need.id === needId);
+              ?.needs?.find((need) => need.id === needId);
             if (stateNeed) {
               const responseNeed = response.data.needs.find((need) => need.id === needId);
               if (responseNeed) {
@@ -272,7 +269,7 @@ export const usePetStore = defineStore('pet', {
           this.$patch((state) => {
             const pet = state.pets.find((pet) => pet.id === petId);
             if (pet) {
-              pet.needs = pet.needs.filter((need) => need.id !== needId);
+              pet.needs = pet.needs?.filter((need) => need.id !== needId);
             }
           });
           return { isSuccess: true };
@@ -318,7 +315,7 @@ export const usePetStore = defineStore('pet', {
           this.$patch((state: PetState) => {
             const pet = state.pets.find((pet) => pet.id === petId);
             if (pet) {
-              const need = pet.needs.find((need) => need.id === needId);
+              const need = pet.needs?.find((need) => need.id === needId);
               if (need) {
                 // Ensure careRecords exists, push the new record, and mark the need as completed
                 if (!need.careRecords) {
@@ -376,7 +373,7 @@ export const usePetStore = defineStore('pet', {
             const pet = state.pets.find((pet: Pet) => pet.id === petId);
             if (pet) {
               const newNeed = response.data.needs[response.data.needs.length - 1];
-              pet.needs.push(newNeed);
+              pet.needs = [...(pet.needs ?? []), newNeed];
             }
           });
           return { isSuccess: true };
@@ -396,12 +393,12 @@ export const usePetStore = defineStore('pet', {
     // Gets the owner's pets from the state and returns them
     getOwnerPets: (state) => async (): Promise<Pet[]> => {
       const userStore = useUserStore();
-      return state.pets.filter((pet) => pet.owner.id === userStore.id);
+      return state.pets.filter((pet) => pet.owner?.id === userStore.id);
     },
     // Gets the carer's pets from the state and returns them
     getCarerPets: (state) => async (): Promise<Pet[]> => {
       const userStore = useUserStore();
-      return state.pets.filter((pet) => pet.owner.id !== userStore.id);
+      return state.pets.filter((pet) => pet.owner?.id !== userStore.id);
     },
     // Gets the pet by id from the state and returns it
     getPetById:

@@ -180,7 +180,7 @@ const createAccount = async () => {
 
   if (isSuccess) {
     router.push({ name: 'login', replace: true });
-    appStore.addNotification(message, 'success');
+    appStore.addNotification(message ?? 'Account created successfully', 'success');
     username.value = '';
     email.value = '';
     password.value = '';

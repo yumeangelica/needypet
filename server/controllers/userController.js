@@ -23,28 +23,6 @@ const getUserById = async (request, response, next) => {
   }
 };
 
-// This will be in use in the future version, not yet implemented
-/**
- * @description Gets the user by username and returns id and username - Will be used for pet owner and pet care taker
- * @param {*} request
- * @param {*} response
- * @param {*} next
- * @returns
- */
-const getUserByName = async (request, response, next) => {
-  try {
-    const userName = request.params.userName;
-    const user = await User.findOne({ userName });
-    if (!user) {
-      return response.status(404).json({ message: 'User not found' });
-    }
-
-    response.status(200).json({ id: user._id, userName: user.userName });
-  } catch (error) {
-    next(error);
-  }
-};
-
 /**
  * @description Creates a new user
  * @param {*} request
@@ -101,7 +79,6 @@ const createNewUser = async (request, response, next) => {
     response.status(201).json(user);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('Validation error:', error.flatten());
       const errorDetails = error.flatten();
       return response.status(422).json({
         message: 'Validation error',
@@ -142,7 +119,6 @@ const updateUser = async (request, response, next) => {
         passwordStrengthValidation(newPassword); // Validate password strength
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.log('Password strength validation error:', error.flatten());
           const errorDetails = error.flatten();
           return response.status(422).json({
             message: 'Password strength validation error',
@@ -203,7 +179,6 @@ const updateUser = async (request, response, next) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('Validation error:', error.flatten());
       const errorDetails = error.flatten();
       return response.status(422).json({
         message: 'Validation error',
@@ -270,7 +245,6 @@ const loginUser = async (request, response, next) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('Validation error:', error.flatten());
       return response.status(422).json({
         message: 'Validation error',
       });
@@ -438,7 +412,6 @@ const passwordReset = async (request, response, next) => {
 
 module.exports = {
   getUserById,
-  getUserByName,
   createNewUser,
   updateUser,
   deleteUser,

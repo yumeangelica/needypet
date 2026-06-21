@@ -39,11 +39,8 @@ const cardLabel = computed(() => {
 
 // Navigate to the pet view page (PagePet) when the card is clicked
 function navigateToPetView() {
-  if (pet && pet.id) {
-    router.push({ name: 'pet', params: { id: pet.id } });
-  } else {
-    console.error('Pet ID is missing');
-  }
+  if (!pet?.id) return;
+  router.push({ name: 'pet', params: { id: pet.id } });
 }
 </script>
 

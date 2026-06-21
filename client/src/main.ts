@@ -27,7 +27,7 @@ async function initApp() {
   // Validate token and set user's session accordingly
   const isValidToken = await userStore.checkAndValidateToken();
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, _from, next) => {
     if (publicRoutes.includes(to.name as string)) {
       next();
     } else if (userStore.token) {
