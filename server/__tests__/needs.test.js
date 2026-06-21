@@ -108,6 +108,55 @@ describe('POST /api/pets/:id/newneed', () => {
 
     assert.strictEqual(response.status, 401);
   });
+
+  it('returns 401 when an assigned caretaker tries to add a need', async () => {
+    const owner = await registerAndLogin();
+    const carer = await registerAndLogin({
+      userName: 'carerUser',
+      email: 'carer@example.com',
+    });
+    const pet = await createPet(owner.token);
+
+    await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [carer.id] });
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${carer.token}`)
+      .send({
+        need: {
+          category: 'Walk',
+          description: 'Evening walk',
+          dateFor: today(),
+          duration: { value: 30, unit: 'minutes' },
+        },
+      });
+
+    assert.strictEqual(response.status, 401);
+  });
+
+  it("stores a full datetime as the owner's local calendar day", async () => {
+    const owner = await registerAndLogin({ timezone: 'Asia/Tokyo' });
+    const pet = await createPet(owner.token);
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({
+        need: {
+          category: 'Feeding',
+          description: 'Late meal',
+          dateFor: '2026-06-21T16:30:00.000Z',
+          quantity: { value: 100, unit: 'g' },
+        },
+      });
+
+    assert.strictEqual(response.status, 201);
+    const added = response.body.needs[response.body.needs.length - 1];
+    assert.strictEqual(added.dateFor, '2026-06-22');
+  });
 });
 
 describe('PUT /api/pets/:id/needs/:needid', () => {

@@ -157,6 +157,39 @@ describe('PUT /api/pets/:id', () => {
     );
   });
 
+  it('returns 404 when updating caretakers to a missing user id', async () => {
+    const owner = await registerAndLogin();
+    const pet = await createPet(owner.token, { name: 'Milo' });
+    const missingUserId = new mongoose.Types.ObjectId().toString();
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [missingUserId] });
+
+    assert.strictEqual(response.status, 404);
+    assert.strictEqual(response.body.message, 'Caretaker not found');
+
+    const savedPet = await Pet.findById(pet.id);
+    assert.deepStrictEqual(
+      savedPet.careTakers.map((careTaker) => careTaker.toString()),
+      [],
+    );
+  });
+
+  it('returns 400 when updating caretakers to an invalid id', async () => {
+    const owner = await registerAndLogin();
+    const pet = await createPet(owner.token, { name: 'Milo' });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: ['not-a-user-id'] });
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Caretaker ids must be valid');
+  });
+
   it("removes the pet from a dropped caretaker's pets array", async () => {
     const owner = await registerAndLogin();
     const carer = await registerAndLogin({

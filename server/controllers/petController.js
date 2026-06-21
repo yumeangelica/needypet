@@ -3,12 +3,42 @@ const User = require('../models/userModel');
 const { dailyTaskCompleter, checkLocalDateByTimezone } = require('../helper');
 const needValidation = require('../validations/needValidation');
 const recordValidation = require('../validations/recordValidation');
+const mongoose = require('mongoose');
 const z = require('zod');
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const dateOnlyRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+const invalidDate = () => new Date(Number.NaN);
+
+const normalizeNeedDateForStorage = (dateFor, ownerTimezone) => {
+  if (!(dateFor instanceof Date) && typeof dateFor !== 'string') {
+    return invalidDate();
+  }
+
+  try {
+    const parsedDate = dateOnlyRegex.test(dateFor)
+      ? dayjs.tz(dateFor, ownerTimezone)
+      : dayjs(dateFor).tz(ownerTimezone);
+
+    if (!parsedDate.isValid()) {
+      return invalidDate();
+    }
+
+    const [year, month, day] = parsedDate
+      .format('YYYY-MM-DD')
+      .split('-')
+      .map(Number);
+
+    return new Date(Date.UTC(year, month - 1, day));
+  } catch (_error) {
+    return invalidDate();
+  }
+};
 
 /**
  * @description Gets all pets for the user.
@@ -119,14 +149,45 @@ const updatePet = async (request, response, next) => {
   const { name, species, breed, description, birthday, careTakers } =
     request.body;
 
-  // eslint-disable-next-line prefer-const
+  let normalizedCareTakers = request.pet.careTakers;
+
+  if (careTakers !== undefined) {
+    if (!Array.isArray(careTakers)) {
+      return response
+        .status(400)
+        .json({ message: 'Caretakers must be an array' });
+    }
+
+    normalizedCareTakers = [
+      ...new Set(careTakers.map((careTaker) => String(careTaker))),
+    ];
+
+    if (
+      normalizedCareTakers.some(
+        (careTaker) => !mongoose.Types.ObjectId.isValid(careTaker),
+      )
+    ) {
+      return response
+        .status(400)
+        .json({ message: 'Caretaker ids must be valid' });
+    }
+
+    const existingCareTakers = await User.find({
+      _id: { $in: normalizedCareTakers },
+    }).select('_id');
+
+    if (existingCareTakers.length !== normalizedCareTakers.length) {
+      return response.status(404).json({ message: 'Caretaker not found' });
+    }
+  }
+
   const updateData = {
     name: name ? name : request.pet.name,
     species: species ? species : request.pet.species,
     breed: breed ? breed : request.pet.breed,
     description: description ? description : request.pet.description,
     birthday: birthday ? birthday : request.pet.birthday,
-    careTakers: careTakers ? careTakers : request.pet.careTakers,
+    careTakers: normalizedCareTakers,
   };
 
   try {
@@ -146,10 +207,10 @@ const updatePet = async (request, response, next) => {
 
     // Keep the User <-> Pet caretaker references in sync only after the pet
     // update succeeds (so a non-owner 404 does not mutate user arrays).
-    if (careTakers) {
+    if (careTakers !== undefined) {
       // Add pet id to the new care takers' pets array.
       await User.updateMany(
-        { _id: { $in: careTakers } },
+        { _id: { $in: normalizedCareTakers } },
         { $addToSet: { pets: request.pet._id } },
       );
       // Remove pet id from users who are no longer care takers. The owner is
@@ -157,7 +218,7 @@ const updatePet = async (request, response, next) => {
       await User.updateMany(
         {
           pets: request.pet._id,
-          _id: { $nin: [...careTakers, request.user._id] },
+          _id: { $nin: [...normalizedCareTakers, request.user._id] },
         },
         { $pull: { pets: request.pet._id } },
       );
@@ -211,8 +272,9 @@ const deletePet = async (request, response, next) => {
  */
 const addNewNeed = async (request, response, next) => {
   try {
-    request.body.need.dateFor = new Date(
-      request.body.need.dateFor.slice(0, 10),
+    request.body.need.dateFor = normalizeNeedDateForStorage(
+      request.body.need.dateFor,
+      request.user.timezone,
     );
     const validateNeed = needValidation(request.body.need);
     const pet = request.pet;
