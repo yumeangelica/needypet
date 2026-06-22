@@ -5,7 +5,7 @@
       <div v-if="confirmationType === 'email'">
         <h1 class="sr-only">Email confirmation</h1>
         <div class="confirmation-container">
-          <div class="confirmation-message">{{ confirmationMessage }}</div>
+          <div class="confirmation-text">{{ confirmationMessage }}</div>
           <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
             Go to Login
           </button>
@@ -60,7 +60,7 @@
 
         <div v-else class="confirmation-container">
           <h1 class="sr-only">Password reset</h1>
-          <div class="confirmation-message">{{ confirmationMessage }}</div>
+          <div class="confirmation-text">{{ confirmationMessage }}</div>
           <button @click="goToLogin" class="action-button primary-action-button">Go to Login</button>
         </div>
       </div>
@@ -68,7 +68,7 @@
       <!-- Invalid confirmation link -->
       <div v-else class="confirmation-container">
         <h1 class="sr-only">Confirmation</h1>
-        <div class="confirmation-message">{{ confirmationMessage }}</div>
+        <div class="confirmation-text">{{ confirmationMessage }}</div>
         <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
           Go to Login
         </button>
@@ -207,14 +207,14 @@ const goToLogin = () => {
 <style scoped>
 .confirmation-container {
   padding: 20px;
-  border-radius: 50px;
+  border-radius: var(--radius-3xl);
   background-color: var(--color-auth-bg);
   border: 1px solid var(--color-button-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-.confirmation-message {
+.confirmation-text {
   margin-bottom: 20px;
   font-size: 1rem;
   color: var(--color-foreground);
@@ -225,7 +225,7 @@ const goToLogin = () => {
     margin-top: 10vh;
   }
 
-  .confirmation-message {
+  .confirmation-text {
     font-size: 0.85rem;
   }
 }

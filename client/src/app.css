@@ -1,17 +1,3 @@
-/* Strong icon style for header icons */
-.icon-strong,
-.icon-strong svg,
-.icon-strong .lucide {
-  color: var(--color-primary-foreground) !important;
-  stroke-width: 2.2;
-}
-/* Lucide PawPrint default color globally */
-.paw-header-container svg,
-.paw-header-container .lucide,
-.paw-header-container .lucide-paw-print {
-  color: var(--color-primary-foreground) !important;
-  fill: var(--color-primary-foreground) !important;
-}
 @import "tailwindcss";
 
 /* ============================================
@@ -50,11 +36,6 @@
 
   /* Shadow */
   --color-shadow-pink: rgba(178, 110, 150, 0.3);
-  --color-drop-shadow-pink: rgba(178, 110, 150, 0.3);
-
-  /* Legacy color aliases (used by ThePetCard) */
-  --color-card-background-lilac: rgb(254, 239, 249);
-  --color-text-default: #705E76;
 
   /* Font family */
   --font-sans: 'Krona One', 'Arial', sans-serif;
@@ -106,6 +87,22 @@ body {
 
 h1, h2, h3, h4, h5, h6, a {
   color: var(--color-primary-foreground);
+}
+
+/* Strong icon style for header icons */
+.icon-strong,
+.icon-strong svg,
+.icon-strong .lucide {
+  color: var(--color-primary-foreground) !important;
+  stroke-width: 2.2;
+}
+
+/* Lucide PawPrint default color globally */
+.paw-header-container svg,
+.paw-header-container .lucide,
+.paw-header-container .lucide-paw-print {
+  color: var(--color-primary-foreground) !important;
+  fill: var(--color-primary-foreground) !important;
 }
 
 h1 { font-size: 1.5rem; }
@@ -376,9 +373,7 @@ li {
 }
 
 /* form-field-input: the actual input/textarea inside .form-field */
-.form-field-input,
-input.form-field-input,
-textarea.form-field-input {
+.form-field-input {
   width: 100%;
   padding: 10px 16px;
   background: var(--color-auth-input-bg);
@@ -392,17 +387,13 @@ textarea.form-field-input {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.form-field-input::placeholder,
-input.form-field-input::placeholder,
-textarea.form-field-input::placeholder {
+.form-field-input::placeholder {
   color: var(--color-foreground);
   font-style: italic;
   opacity: 0.7;
 }
 
-.form-field-input:focus,
-input.form-field-input:focus,
-textarea.form-field-input:focus {
+.form-field-input:focus {
   border-color: var(--color-card-border);
   box-shadow: 0 0 0 3px rgba(178, 110, 150, 0.15);
 }
@@ -709,31 +700,11 @@ textarea.form-field-item {
 }
 
 /* ============================================
-   Timezone label
-   ============================================ */
-
-.custom-timezone-label {
-  font-size: 0.80rem;
-}
-
-/* ============================================
-   Date picker wrapper
-   ============================================ */
-
-.datetime-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-/* ============================================
    Number input spinner removal
    ============================================ */
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -766,7 +737,6 @@ input[type=number]::-webkit-outer-spin-button {
   .form-button,
   .custom-error-message,
   .custom-valid-message,
-  .custom-timezone-label,
   .form-field-item,
   .form-field-input,
   .auth-field,
