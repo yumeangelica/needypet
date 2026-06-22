@@ -388,9 +388,9 @@ provide('handleNeedDeletion', handleNeedDeleted);
 
 .full-pet-card {
   background-color: var(--color-card);
-  border-radius: 40px;
+  border-radius: var(--radius-2xl);
   border: 2px solid var(--color-card-border);
-  box-shadow: 4px 4px 10px var(--color-shadow);
+  box-shadow: 4px 4px 10px var(--color-shadow-pink);
   padding: 20px;
   width: 95%;
   max-width: 800px;
@@ -412,13 +412,6 @@ provide('handleNeedDeletion', handleNeedDeleted);
   justify-content: center;
   gap: 15px;
   margin: 15px 0;
-}
-
-.form-label {
-  font-size: 0.85rem;
-  margin-bottom: 3px;
-  margin-top: 6px;
-  display: block;
 }
 
 @media (min-width: 568px) {

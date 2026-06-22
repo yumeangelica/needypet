@@ -277,7 +277,7 @@ const deleteNeed = async (needId: string | undefined) => {
 
 <style scoped>
 .need-card {
-  border-radius: 40px;
+  border-radius: var(--radius-2xl);
   background: var(--color-need-bg);
   width: 100%;
   max-width: 350px;

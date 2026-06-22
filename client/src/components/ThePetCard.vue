@@ -51,14 +51,14 @@ function navigateToPetView() {
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  border-radius: 40px;
+  border-radius: var(--radius-2xl);
   padding: 15px;
   margin: 8px;
-  box-shadow: 4px 4px 10px var(--color-drop-shadow-pink);
+  box-shadow: 4px 4px 10px var(--color-shadow-pink);
   min-width: 140px;
   height: 180px;
   width: 180px;
-  background-color: var(--color-card-background-lilac);
+  background-color: var(--color-card);
   border: 2px solid var(--color-card-border);
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -97,7 +97,7 @@ function navigateToPetView() {
 
 .pet-subtitle {
   font-size: 0.75rem;
-  color: var(--color-text-default);
+  color: var(--color-foreground);
   opacity: 0.7;
   text-align: center;
   margin: 0;
@@ -106,7 +106,7 @@ function navigateToPetView() {
 
 .pet-needs-count {
   font-size: 0.75rem;
-  color: var(--color-text-default);
+  color: var(--color-foreground);
   opacity: 0.6;
   text-align: center;
   margin: 4px 0 0 0;
