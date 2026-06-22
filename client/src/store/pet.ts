@@ -16,12 +16,12 @@ export const usePetStore = defineStore('pet', {
      * @description Get all user's pets from the server
      * @returns
      */
-    async getAllPets(): Promise<boolean> {
+    async getAllPets(): Promise<ApiResult> {
       const userStore = useUserStore();
       const token = userStore.token;
 
       if (!token) {
-        return false;
+        return { isSuccess: false };
       }
 
       // Headers for the request
@@ -30,23 +30,28 @@ export const usePetStore = defineStore('pet', {
         Authorization: `bearer ${token}`,
       };
 
-      const response = apiClient<Pet[]>({
-        method: 'get',
-        url: `${servicePath}/pets`,
-        headers,
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            this.$patch((state) => {
-              state.pets = response.data;
-            });
-            return true;
-          }
-          return false;
-        })
-        .catch(() => false);
+      try {
+        const response = await apiClient<Pet[]>({
+          method: 'get',
+          url: `${servicePath}/pets`,
+          headers,
+        });
 
-      return response;
+        if (response.status === 200) {
+          this.$patch((state) => {
+            state.pets = response.data;
+          });
+          return { isSuccess: true };
+        }
+      } catch (error) {
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Error fetching pets'),
+          errorDetails: getErrorDetails(error),
+        };
+      }
+
+      return { isSuccess: false };
     },
     /**
      * @description Add a new pet to the server
@@ -158,7 +163,7 @@ export const usePetStore = defineStore('pet', {
       };
 
       try {
-        const response = await apiClient({
+        const response = await apiClient<{ needs: Need[] }>({
           method: 'patch',
           url: `${servicePath}/pets/${petId}/needs/${needId}/togglestatus`,
           headers,
@@ -170,7 +175,10 @@ export const usePetStore = defineStore('pet', {
             if (pet) {
               const need = pet.needs?.find((need) => need.id === needId);
               if (need) {
-                need.isActive = !need.isActive;
+                const responseNeed = response.data.needs.find((need) => need.id === needId);
+                if (responseNeed) {
+                  Object.assign(need, responseNeed);
+                }
               }
             }
           });

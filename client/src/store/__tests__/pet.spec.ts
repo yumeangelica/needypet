@@ -68,14 +68,17 @@ describe('pet store - toggleNeedisActive', () => {
     resetMock();
   });
 
-  it('toggles local isActive and succeeds on a 200 response', async () => {
+  it('uses the server-returned isActive state on a 200 response', async () => {
     const userStore = useUserStore();
     userStore.token = 'test-token';
 
     const petStore = usePetStore();
     seedPetWithNeed(petStore);
 
-    mockedApiClient.mockResolvedValueOnce({ status: 200, data: {} });
+    mockedApiClient.mockResolvedValueOnce({
+      status: 200,
+      data: { needs: [{ id: 'need-1', isActive: false }] },
+    });
 
     const result = await petStore.toggleNeedisActive('pet-1', 'need-1');
 
@@ -149,13 +152,10 @@ describe('pet store - addNewNeed', () => {
     seedPetWithNeed(petStore);
 
     const newNeed = { id: 'need-2', category: 'Walk', isActive: true };
-    // addNewNeed calls getAllPets after success; stub both calls
-    mockedApiClient
-      .mockResolvedValueOnce({
-        status: 201,
-        data: { needs: [{ id: 'need-1', isActive: true }, newNeed] },
-      })
-      .mockResolvedValueOnce({ status: 200, data: [petStore.pets[0]] });
+    mockedApiClient.mockResolvedValueOnce({
+      status: 201,
+      data: { needs: [{ id: 'need-1', isActive: true }, newNeed] },
+    });
 
     const result = await petStore.addNewNeed('pet-1', { category: 'Walk' });
 
@@ -198,12 +198,12 @@ describe('pet store - getAllPets', () => {
 
     const result = await petStore.getAllPets();
 
-    expect(result).toBe(true);
+    expect(result.isSuccess).toBe(true);
     expect(petStore.pets).toHaveLength(2);
     expect(petStore.pets[0].name).toBe('Milo');
   });
 
-  it('returns false without calling API when token is missing', async () => {
+  it('returns an unsuccessful result without calling API when token is missing', async () => {
     const userStore = useUserStore();
     userStore.token = null;
 
@@ -211,11 +211,11 @@ describe('pet store - getAllPets', () => {
 
     const result = await petStore.getAllPets();
 
-    expect(result).toBe(false);
+    expect(result.isSuccess).toBe(false);
     expect(mockedApiClient).not.toHaveBeenCalled();
   });
 
-  it('returns false on a network error', async () => {
+  it('returns an unsuccessful result on a network error', async () => {
     const userStore = useUserStore();
     userStore.token = 'tok-abc';
 
@@ -225,7 +225,8 @@ describe('pet store - getAllPets', () => {
 
     const result = await petStore.getAllPets();
 
-    expect(result).toBe(false);
+    expect(result.isSuccess).toBe(false);
+    expect(result.message).toBe('Error fetching pets');
   });
 });
 
