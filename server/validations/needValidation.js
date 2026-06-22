@@ -51,9 +51,9 @@ const frequencySchema = z.object({
   periodicity: periodicitySchema,
 });
 
-const quantityValueSchema = z.number({
-  message: 'Quantity value must be a number',
-});
+const quantityValueSchema = z
+  .number({ message: 'Quantity value must be a number' })
+  .min(1, { message: 'Quantity must be at least 1' });
 
 const quantityUnitSchema = z.enum(['ml', 'g'], {
   message: 'Quantity unit must be ml or g',

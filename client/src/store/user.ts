@@ -398,20 +398,21 @@ export const useUserStore = defineStore('user', {
         return false;
       }
 
-      const response = apiClient({
-        method: 'post',
-        url: `${servicePath}/validatetoken`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-        .then((response) => {
-          return response.status === 200;
-        })
-        .catch(() => false);
+      try {
+        const response = await apiClient({
+          method: 'post',
+          url: `${servicePath}/validatetoken`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
 
-      return response;
+        return response.status === 200;
+      } catch (_error) {
+        await this.logout();
+        return false;
+      }
     },
     /**
      * @description Confirm the user's email
@@ -538,25 +539,33 @@ export const useUserStore = defineStore('user', {
      * @param newPassword
      * @returns
      */
-    async passwordReset(email: string, token: string, newPassword: string): Promise<boolean> {
-      const response = apiClient({
-        method: 'post',
-        url: `${servicePath}/password-reset`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: {
-          email,
-          token,
-          newPassword,
-        },
-      })
-        .then((response) => {
-          return response.status === 200;
-        })
-        .catch(() => false);
+    async passwordReset(email: string, token: string, newPassword: string): Promise<ApiResult> {
+      try {
+        const response = await apiClient({
+          method: 'post',
+          url: `${servicePath}/password-reset`,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: {
+            email,
+            token,
+            newPassword,
+          },
+        });
 
-      return response;
+        if (response.status === 200) {
+          return { isSuccess: true };
+        }
+      } catch (error) {
+        return {
+          isSuccess: false,
+          message: getErrorMessage(error, 'Failed to reset password. Try to send a new reset link'),
+          errorDetails: getErrorDetails(error),
+        };
+      }
+
+      return { isSuccess: false };
     },
   },
   getters: {

@@ -110,6 +110,28 @@ describe('needValidation', () => {
       }),
     );
   });
+
+  it('rejects a zero quantity value', () => {
+    assert.throws(() =>
+      needValidation({
+        category: 'Feeding',
+        description: 'Meal',
+        dateFor: new Date('2026-06-09'),
+        quantity: { value: 0, unit: 'g' },
+      }),
+    );
+  });
+
+  it('rejects a negative quantity value', () => {
+    assert.throws(() =>
+      needValidation({
+        category: 'Feeding',
+        description: 'Meal',
+        dateFor: new Date('2026-06-09'),
+        quantity: { value: -1, unit: 'ml' },
+      }),
+    );
+  });
 });
 
 describe('recordValidation', () => {
@@ -140,6 +162,18 @@ describe('recordValidation', () => {
   it('rejects a record with an invalid duration unit', () => {
     assert.throws(() =>
       recordValidation({ duration: { value: 30, unit: 'hours' } }),
+    );
+  });
+
+  it('rejects a zero quantity record', () => {
+    assert.throws(() =>
+      recordValidation({ note: '', quantity: { value: 0, unit: 'ml' } }),
+    );
+  });
+
+  it('rejects a negative duration record', () => {
+    assert.throws(() =>
+      recordValidation({ note: '', duration: { value: -1, unit: 'minutes' } }),
     );
   });
 });

@@ -460,19 +460,33 @@ const updateNeed = async (request, response, next) => {
       value: request.body.duration.value,
       unit: request.body.duration.unit,
     };
-  } else if (need.quantity?.value) {
+  } else if (need.quantity?.value != null || need.quantity?.unit) {
     // No measure in the request body: carry over the existing one so a
     // category/description-only update does not wipe the need's measure.
-    // (quantity/duration are always-present nested objects, so check .value.)
-    updateDataObject.quantity = need.quantity;
-  } else if (need.duration?.value) {
-    updateDataObject.duration = need.duration;
+    updateDataObject.quantity = {
+      value: need.quantity.value,
+      unit: need.quantity.unit,
+    };
+  } else if (need.duration?.value != null || need.duration?.unit) {
+    updateDataObject.duration = {
+      value: need.duration.value,
+      unit: need.duration.unit,
+    };
   }
 
   try {
+    const validateNeed = needValidation(updateDataObject);
     const updatedPet = await Pet.findOneAndUpdate(
       { _id: request.pet._id, owner: request.user._id, 'needs._id': need._id },
-      { $set: { 'needs.$': { ...updateDataObject, _id: need._id } } },
+      {
+        $set: {
+          'needs.$': {
+            ...validateNeed,
+            careRecords: need.careRecords,
+            _id: need._id,
+          },
+        },
+      },
       { runValidators: true, returnDocument: 'after' },
     );
 
@@ -482,6 +496,13 @@ const updateNeed = async (request, response, next) => {
 
     response.status(200).json(updatedPet);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return response.status(400).json({
+        message: 'Validation error',
+        errorDetails: error.flatten().fieldErrors,
+      });
+    }
+
     next(error);
   }
 };

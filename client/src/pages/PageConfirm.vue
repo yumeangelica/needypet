@@ -27,7 +27,18 @@
 
           <form @submit.prevent="resetPassword">
             <div class="auth-field">
-              <input class="auth-field-input" type="password" v-model="newPassword" placeholder="Enter new password" aria-label="New Password" />
+              <input class="auth-field-input" type="password" v-model="newPassword" @input="validatePassword" placeholder="Enter new password"
+                aria-label="New Password" aria-describedby="confirm-reset-requirements" :aria-invalid="errorMessage ? true : undefined" />
+            </div>
+
+            <div class="strong-password-note">
+              <ul id="confirm-reset-requirements" aria-live="polite">
+                <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
+                <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
+                <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
+                <li :class="{ 'valid': passwordValidations.special }">At least one special character (!@#$%^&amp;*)</li>
+                <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
+              </ul>
             </div>
 
             <div class="auth-field">
@@ -74,6 +85,8 @@ import { computed, onBeforeMount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
 import TheLogoImage from '@/components/TheLogoImage.vue';
+import { resultMessage } from '@/lib/apiError';
+import { isPasswordValid, validatePasswordRules } from '@/lib/passwordRules';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
 
@@ -88,6 +101,13 @@ const newPassword = ref('');
 const confirmPassword = ref('');
 const validMessage = ref('');
 const errorMessage = ref('');
+const passwordValidations = ref({
+  uppercase: false,
+  lowercase: false,
+  number: false,
+  special: false,
+  minLength: false,
+});
 const confirmationMessage = ref<string>('');
 const showLoginButton = ref<boolean>(false);
 const showForm = ref<boolean>(false);
@@ -135,17 +155,31 @@ onBeforeMount(async () => {
   }
 });
 
+const validatePassword = () => {
+  passwordValidations.value = validatePasswordRules(newPassword.value);
+};
+
 const resetPassword = async () => {
+  errorMessage.value = '';
+
+  if (!isPasswordValid(passwordValidations.value)) {
+    errorMessage.value = 'Password does not meet the requirements.';
+    return;
+  }
+
   if (newPassword.value !== confirmPassword.value) {
     errorMessage.value = 'Passwords do not match';
     return;
   }
 
   try {
-    const response = await userStore.passwordReset(email.value, token.value, newPassword.value);
+    const result = await userStore.passwordReset(email.value, token.value, newPassword.value);
 
-    if (!response) {
-      errorMessage.value = 'Failed to reset password. Try to send a new reset link';
+    if (!result.isSuccess) {
+      errorMessage.value = resultMessage(
+        result,
+        'Failed to reset password. Try to send a new reset link',
+      );
       return;
     }
 

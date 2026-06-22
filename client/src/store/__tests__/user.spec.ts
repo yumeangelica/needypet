@@ -431,6 +431,7 @@ describe('user store - checkAndValidateToken', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     resetMock();
+    localStorage.clear();
   });
 
   it('returns true on a valid token', async () => {
@@ -457,12 +458,21 @@ describe('user store - checkAndValidateToken', () => {
   it('returns false on a network error', async () => {
     const userStore = useUserStore();
     userStore.token = 'tok-abc';
+    userStore.userName = 'testUser';
+    userStore.id = 'user-1';
+    localStorage.setItem('token', 'tok-abc');
+    localStorage.setItem('userName', 'testUser');
+    localStorage.setItem('id', 'user-1');
 
     mockedApiClient.mockRejectedValueOnce(new Error('network error'));
 
     const result = await userStore.checkAndValidateToken();
 
     expect(result).toBe(false);
+    expect(userStore.token).toBeNull();
+    expect(userStore.userName).toBeNull();
+    expect(userStore.id).toBeNull();
+    expect(localStorage.getItem('token')).toBeNull();
   });
 });
 
@@ -547,14 +557,14 @@ describe('user store - requestPasswordReset / verifyPasswordResetToken / passwor
     expect(result).toBe(false);
   });
 
-  it('passwordReset returns true on 200', async () => {
+  it('passwordReset returns success on 200', async () => {
     const userStore = useUserStore();
 
     mockedApiClient.mockResolvedValueOnce({ status: 200, data: {} });
 
     const result = await userStore.passwordReset('a@b.com', 'tok-xyz', 'NewPass123!');
 
-    expect(result).toBe(true);
+    expect(result.isSuccess).toBe(true);
     const callArg = mockedApiClient.mock.calls[0][0];
     expect(callArg.url).toBe('/auth/password-reset');
     expect(callArg.data).toEqual({
@@ -564,14 +574,25 @@ describe('user store - requestPasswordReset / verifyPasswordResetToken / passwor
     });
   });
 
-  it('passwordReset returns false on error', async () => {
+  it('passwordReset returns error details on validation error', async () => {
     const userStore = useUserStore();
 
-    mockedApiClient.mockRejectedValueOnce(apiError(401));
+    mockedApiClient.mockRejectedValueOnce(
+      apiError(422, {
+        message: 'Password strength validation error',
+        errorDetails: {
+          newPassword: ['Password does not meet the strength requirements.'],
+        },
+      }),
+    );
 
-    const result = await userStore.passwordReset('a@b.com', 'bad', 'NewPass123!');
+    const result = await userStore.passwordReset('a@b.com', 'bad', 'weak');
 
-    expect(result).toBe(false);
+    expect(result.isSuccess).toBe(false);
+    expect(result.message).toBe('Password strength validation error');
+    expect(result.errorDetails?.newPassword?.[0]).toBe(
+      'Password does not meet the strength requirements.',
+    );
   });
 });
 

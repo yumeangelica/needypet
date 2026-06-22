@@ -38,7 +38,7 @@
               <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
               <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
               <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-              <li :class="{ 'valid': passwordValidations.special }">At least one special character</li>
+              <li :class="{ 'valid': passwordValidations.special }">At least one special character (!@#$%^&amp;*)</li>
               <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
             </ul>
           </div>
@@ -63,6 +63,7 @@ import { Eye, EyeOff } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import { validatePasswordRules } from '@/lib/passwordRules';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
 
@@ -91,12 +92,7 @@ const passwordValidations = ref({
 });
 
 const validatePassword = () => {
-  const pwd = newPassword.value;
-  passwordValidations.value.uppercase = /[A-Z]/.test(pwd);
-  passwordValidations.value.lowercase = /[a-z]/.test(pwd);
-  passwordValidations.value.number = /[0-9]/.test(pwd);
-  passwordValidations.value.special = /[!@#$%^&*]/.test(pwd);
-  passwordValidations.value.minLength = pwd.length >= 10;
+  passwordValidations.value = validatePasswordRules(newPassword.value);
 };
 
 const togglePasswordVisibility = () => {
