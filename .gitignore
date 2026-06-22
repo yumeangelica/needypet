@@ -13,6 +13,7 @@ node_modules
 requests
 
 stats.html
+*.tsbuildinfo
 
 # For future database updates
 server_updates/

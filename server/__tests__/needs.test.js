@@ -85,6 +85,44 @@ describe('POST /api/pets/:id/newneed', () => {
     );
   });
 
+  it('returns 400 when quantity value is zero', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Feeding',
+          description: 'Morning meal',
+          dateFor: today(),
+          quantity: { value: 0, unit: 'g' },
+        },
+      });
+
+    assert.strictEqual(response.status, 400);
+  });
+
+  it('returns 400 when duration value is negative', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Walk',
+          description: 'Morning walk',
+          dateFor: today(),
+          duration: { value: -1, unit: 'minutes' },
+        },
+      });
+
+    assert.strictEqual(response.status, 400);
+  });
+
   it('returns 401 when a non-owner tries to add a need', async () => {
     const owner = await registerAndLogin();
     const pet = await createPet(owner.token);
@@ -225,6 +263,38 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
     // The duration must survive an update that omits any measure.
     assert.strictEqual(updated.duration.value, 40);
   });
+
+  it('returns 400 when updating a need to zero quantity', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token);
+
+    const response = await api
+      .put(`/api/pets/${petId}/needs/${needId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        category: 'Updated meal',
+        description: 'Too little food',
+        quantity: { value: 0, unit: 'g' },
+      });
+
+    assert.strictEqual(response.status, 400);
+  });
+
+  it('returns 400 when updating a need to negative duration', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token);
+
+    const response = await api
+      .put(`/api/pets/${petId}/needs/${needId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        category: 'Updated walk',
+        description: 'Impossible walk',
+        duration: { value: -1, unit: 'minutes' },
+      });
+
+    assert.strictEqual(response.status, 400);
+  });
 });
 
 describe('DELETE /api/pets/:id/needs/:needid', () => {
@@ -305,6 +375,40 @@ describe('POST /api/pets/:id/needs/:needid/newrecord', () => {
       .send({ note: 'Ghost record', duration: { value: 10, unit: 'minutes' } });
 
     assert.strictEqual(response.status, 404);
+  });
+
+  it('returns 400 when adding a zero quantity record', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token, {
+      dateFor: localToday(),
+      duration: undefined,
+      quantity: { value: 40, unit: 'g' },
+    });
+
+    const response = await api
+      .post(`/api/pets/${petId}/needs/${needId}/newrecord`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ note: 'No food', quantity: { value: 0, unit: 'g' } });
+
+    assert.strictEqual(response.status, 400);
+  });
+
+  it('returns 400 when adding a negative duration record', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token, {
+      dateFor: localToday(),
+      duration: { value: 40, unit: 'minutes' },
+    });
+
+    const response = await api
+      .post(`/api/pets/${petId}/needs/${needId}/newrecord`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        note: 'Impossible walk',
+        duration: { value: -1, unit: 'minutes' },
+      });
+
+    assert.strictEqual(response.status, 400);
   });
 
   it("uses the owner's timezone so a carer in another timezone can record", async () => {

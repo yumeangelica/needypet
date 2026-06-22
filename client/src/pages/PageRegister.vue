@@ -46,7 +46,7 @@
               <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
               <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
               <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-              <li :class="{ 'valid': passwordValidations.special }">At least one special character (@$!%*?&amp;.-_)</li>
+              <li :class="{ 'valid': passwordValidations.special }">At least one special character (!@#$%^&amp;*)</li>
               <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
             </ul>
           </div>
@@ -99,6 +99,7 @@ import { useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
 import TheLogoImage from '@/components/TheLogoImage.vue';
 import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
+import { isPasswordValid, validatePasswordRules } from '@/lib/passwordRules';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
 
@@ -131,17 +132,7 @@ const passwordValidations = ref({
 });
 
 const validatePassword = () => {
-  const pwd = password.value;
-
-  const allowedSpecialChars = /[@$!%*?&.\-_]/;
-  const forbiddenSpecialChars = /[^a-zA-Z0-9@$!%*?&.\-_]/;
-
-  passwordValidations.value.uppercase = /[A-Z]/.test(pwd);
-  passwordValidations.value.lowercase = /[a-z]/.test(pwd);
-  passwordValidations.value.number = /[0-9]/.test(pwd);
-  passwordValidations.value.special =
-    allowedSpecialChars.test(pwd) && !forbiddenSpecialChars.test(pwd);
-  passwordValidations.value.minLength = pwd.length >= 10;
+  passwordValidations.value = validatePasswordRules(password.value);
 };
 
 const togglePasswordVisibility = () => {
@@ -149,13 +140,7 @@ const togglePasswordVisibility = () => {
 };
 
 const createAccount = async () => {
-  if (
-    !passwordValidations.value.uppercase ||
-    !passwordValidations.value.lowercase ||
-    !passwordValidations.value.number ||
-    !passwordValidations.value.special ||
-    !passwordValidations.value.minLength
-  ) {
+  if (!isPasswordValid(passwordValidations.value)) {
     formFieldsErrorDetailsObject.value.newPassword = 'Password does not meet the requirements.';
     setTimeout(() => {
       formFieldsErrorDetailsObject.value.newPassword = '';

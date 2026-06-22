@@ -129,6 +129,7 @@ const resendEmailConfirmation = async () => {
   if (result.isSuccess) {
     appStore.addNotification('Please check your email for the confirmation link', 'success');
   } else {
+    isButtonDisabled.value = false;
     appStore.addNotification(
       result.message || 'Failed to resend email confirmation, please try again later',
       'error',

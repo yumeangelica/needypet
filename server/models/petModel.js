@@ -89,6 +89,7 @@ const petSchema = new mongoose.Schema({
       quantity: {
         value: {
           type: Number,
+          min: 1,
         },
         unit: {
           // For measurement unit
@@ -100,6 +101,7 @@ const petSchema = new mongoose.Schema({
       duration: {
         value: {
           type: Number,
+          min: 1,
           max: 1440, // 24 hours
         },
         unit: {
@@ -129,6 +131,7 @@ const petSchema = new mongoose.Schema({
           quantity: {
             value: {
               type: Number,
+              min: 1,
             },
             unit: {
               // For measurement unit
@@ -140,6 +143,7 @@ const petSchema = new mongoose.Schema({
           duration: {
             value: {
               type: Number,
+              min: 1,
               max: 1440, // 24 hours
             },
             unit: {
