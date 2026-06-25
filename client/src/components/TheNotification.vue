@@ -26,37 +26,53 @@ defineProps<{
 <style scoped>
 .notification-container {
   position: fixed;
-  top: 10px;
-  right: 10px;
-  width: min(300px, calc(100vw - 20px));
+  top: calc(10px + env(safe-area-inset-top, 0px));
+  right: 12px;
+  width: min(340px, calc(100vw - 24px));
   z-index: 30000;
+  pointer-events: none;
 }
 
 .notification-container.with-header {
   /* Offset when desktop header is present */
-  top: 70px;
+  top: calc(var(--header-height) + 10px);
 }
 
 .notification {
   background-color: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
   border-radius: var(--radius-md);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   border-left: 10px solid transparent;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  pointer-events: auto;
   /* base width/style for accent bar */
 }
 
 /* Accents */
 .notification.success {
-  border-left-color: #4caf50;
+  border-left-color: var(--color-status-success);
 }
 
 .notification.error {
-  border-left-color: #f44336;
+  border-left-color: var(--color-status-error);
 }
 
 .notification.info {
-  border-left-color: #2196f3;
+  border-left-color: var(--color-status-info);
+}
+
+@media (max-width: 568px) {
+  .notification-container {
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+
+  .notification {
+    padding: 12px 14px;
+  }
 }
 </style>

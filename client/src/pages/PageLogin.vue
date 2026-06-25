@@ -1,16 +1,16 @@
 <template>
   <div class="page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="login-register-container">
+      <div class="login-register-container auth-card auth-form-card">
         <TheLogoImage altText="NeedyPet Logo" />
 
-        <div class="paw-header-container">
+        <div class="auth-card-header paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Login</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
-        <form @submit.prevent="login">
+        <form class="auth-form" @submit.prevent="login">
           <div class="auth-field">
             <input class="auth-field-input" type="text" v-model="userName" placeholder="Enter your username" aria-label="Username" />
           </div>
@@ -23,12 +23,12 @@
             </button>
           </div>
 
-          <div class="flex flex-col gap-2">
-            <button type="submit" class="action-button primary-action-button">Log In</button>
-            <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
+          <div class="auth-action-row">
+            <button type="submit" class="action-button primary-action-button auth-action-button">Log In</button>
+            <button type="button" @click="goBack" class="action-button secondary-action-button auth-action-button">← Back</button>
           </div>
 
-          <button type="button" @click="router.push({ name: 'request-password-reset' })" class="action-button secondary-action-button mt-2">
+          <button type="button" @click="router.push({ name: 'request-password-reset' })" class="auth-secondary-link">
             Forgot Password
           </button>
         </form>

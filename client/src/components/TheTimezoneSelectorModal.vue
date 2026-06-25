@@ -5,10 +5,10 @@
       <input ref="inputField" v-model="searchQuery" placeholder="Search for timezone..." aria-label="Search for timezone"
         class="w-full p-3 text-sm rounded-xl bg-auth-input-bg border border-card-border outline-none font-sans text-foreground focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2" />
     </div>
-    <ul class="max-h-[400px] overflow-y-auto">
-      <li v-for="(zone, index) in filteredTimezones" :key="index">
+    <ul class="timezone-list max-h-[400px] overflow-y-auto">
+      <li v-for="zone in filteredTimezones" :key="zone">
         <button type="button" @click="selectTimezone(zone)"
-          class="w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-card text-sm font-sans text-foreground focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2">
+          class="w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-card text-sm leading-snug font-sans text-foreground break-words focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2">
           {{ zone }}
         </button>
       </li>
@@ -23,9 +23,9 @@ import { useAppStore } from '@/store/app';
 
 const appStore = useAppStore();
 
-const { isOpen } = defineProps({
-  isOpen: Boolean,
-});
+const { isOpen } = defineProps<{
+  isOpen: boolean;
+}>();
 
 const timezones = ref<string[]>([]);
 
@@ -70,3 +70,9 @@ watch(
   },
 );
 </script>
+
+<style scoped>
+.timezone-list {
+  max-height: min(400px, calc(100svh - 14rem));
+}
+</style>

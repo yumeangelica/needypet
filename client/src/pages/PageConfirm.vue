@@ -206,23 +206,26 @@ const goToLogin = () => {
 
 <style scoped>
 .confirmation-container {
-  padding: 20px;
+  padding: var(--space-card);
   border-radius: var(--radius-3xl);
   background-color: var(--color-auth-bg);
   border: 1px solid var(--color-button-primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .confirmation-text {
   margin-bottom: 20px;
   font-size: 1rem;
+  line-height: 1.45;
   color: var(--color-foreground);
 }
 
 @media (max-width: 568px) {
   .confirmation-container {
     margin-top: 10vh;
+    border-radius: var(--radius-2xl);
   }
 
   .confirmation-text {

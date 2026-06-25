@@ -105,7 +105,7 @@ const dateSelected = (event: Event) => {
   }
 };
 
-onBeforeRouteLeave((to, from, next) => {
+onBeforeRouteLeave(() => {
   newPetObject.value = {
     name: '',
     breed: '',
@@ -113,7 +113,7 @@ onBeforeRouteLeave((to, from, next) => {
     description: '',
     birthday: null,
   };
-  next();
+  return true;
 });
 
 const submitPet = async () => {

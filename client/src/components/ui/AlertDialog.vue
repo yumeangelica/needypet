@@ -72,9 +72,9 @@ function handleConfirm() {
       <DialogContent
         class="alert-content fixed z-50 w-[95%] max-w-[400px] rounded-3xl bg-card border border-card-border shadow-lg p-8 flex flex-col items-center text-center">
         <DialogTitle v-if="title" class="text-lg font-sans text-primary-foreground mb-2">{{ title }}</DialogTitle>
-        <DialogDescription v-if="message" class="text-sm opacity-85 max-w-xs mb-6">{{ message }}</DialogDescription>
+        <DialogDescription v-if="message" class="text-sm opacity-85 max-w-xs mb-6 leading-relaxed">{{ message }}</DialogDescription>
         <slot />
-        <div class="flex gap-3 justify-center w-full">
+        <div class="alert-actions flex gap-3 justify-center w-full">
           <button class="form-button secondary" @click="handleCancel">{{ cancelLabel }}</button>
           <button class="form-button" :class="variant === 'danger' ? 'danger' : 'primary'" @click="handleConfirm">{{ confirmLabel }}</button>
         </div>
@@ -95,8 +95,15 @@ function handleConfirm() {
 .alert-content {
   left: 50%;
   top: 50%;
+  max-height: calc(100svh - 2rem);
+  overflow-y: auto;
+  overflow-wrap: anywhere;
   transform: translate(-50%, -50%) scale(1);
   animation: alert-content-show 200ms ease-out;
+}
+
+.alert-actions {
+  flex-wrap: wrap;
 }
 
 .alert-content[data-state='closed'] {
@@ -144,6 +151,14 @@ function handleConfirm() {
   to {
     opacity: 0;
     transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+
+@media (max-width: 568px) {
+  .alert-content {
+    width: calc(100vw - 1.5rem);
+    padding: 1.25rem;
+    border-radius: var(--radius-2xl);
   }
 }
 </style>
