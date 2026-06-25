@@ -219,7 +219,7 @@ const deleteUser = async (request, response, next) => {
     );
     await User.findByIdAndDelete(user.id);
 
-    response.status(204).json({ message: 'User deleted successfully' });
+    response.status(204).end();
   } catch (error) {
     next(error);
   }

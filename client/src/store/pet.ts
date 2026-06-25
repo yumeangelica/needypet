@@ -27,7 +27,7 @@ export const usePetStore = defineStore('pet', {
       // Headers for the request
       const headers = {
         'Content-Type': 'application/json',
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       };
 
       try {
@@ -308,7 +308,7 @@ export const usePetStore = defineStore('pet', {
 
       const headers = {
         'Content-Type': 'application/json',
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       };
 
       try {
@@ -367,7 +367,7 @@ export const usePetStore = defineStore('pet', {
       const headers = {
         // Headers for the request
         'Content-Type': 'application/json',
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       };
 
       try {

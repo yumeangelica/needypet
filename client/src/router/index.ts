@@ -79,9 +79,9 @@ const router = createRouter({
 });
 
 // Save the current path to the session storage
-router.beforeEach((to, _, next) => {
+router.beforeEach((to) => {
   sessionStorage.setItem('currentPath', to.fullPath);
-  next();
+  return true;
 });
 
 export default router;

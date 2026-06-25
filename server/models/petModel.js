@@ -156,11 +156,13 @@ const petSchema = new mongoose.Schema({
             type: String,
             required: true,
             default: 'UTC',
-            validator(timezone) {
-              const timezones = Intl.supportedValuesOf('timeZone');
-              return timezones.includes(timezone);
+            validate: {
+              validator(timezone) {
+                const timezones = Intl.supportedValuesOf('timeZone');
+                return timezones.includes(timezone);
+              },
+              message: 'Invalid timezone',
             },
-            message: 'Invalid timezone',
           },
         },
       ],

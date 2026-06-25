@@ -132,7 +132,7 @@ onBeforeMount(async () => {
   };
 });
 
-onBeforeRouteLeave((to, from, next) => {
+onBeforeRouteLeave(() => {
   if (JSON.stringify(editData.value) !== JSON.stringify(originalData.value)) {
     editData.value = { ...originalData.value } as {
       userName: string;
@@ -141,7 +141,7 @@ onBeforeRouteLeave((to, from, next) => {
       currentPassword: string;
     };
   }
-  next();
+  return true;
 });
 
 const submitForm = async () => {
