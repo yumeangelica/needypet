@@ -115,23 +115,27 @@ const fetchUserEmailConfirmed = async () => {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0;
+  gap: var(--space-stack);
+  margin: 10px 0 var(--space-stack);
+  text-align: center;
 }
 
 .pets-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  width: 100%;
+  padding: clamp(0.5rem, 2vw, 1rem);
+  box-sizing: border-box;
 }
 
 .cards-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: clamp(0.75rem, 3vw, 1.25rem);
   justify-content: center;
-  margin: 8px 0;
+  margin: 8px 0 0;
   max-width: 100%;
 }
 
@@ -139,5 +143,6 @@ const fetchUserEmailConfirmed = async () => {
   margin: 0;
   font-size: 1.3rem;
   padding: 6px 0;
+  line-height: 1.25;
 }
 </style>

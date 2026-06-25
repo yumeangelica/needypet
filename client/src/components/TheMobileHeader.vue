@@ -1,7 +1,7 @@
 <template>
-  <nav class="fixed bottom-0 inset-x-0 z-50 bg-primary border-t border-card-border flex items-center justify-around h-16 md:hidden safe-area-bottom">
+  <nav class="mobile-nav fixed bottom-0 inset-x-0 z-50 bg-primary border-t border-card-border flex items-center justify-around md:hidden">
     <button
-      class="flex flex-col items-center gap-1 py-2 px-3 bg-transparent border-none cursor-pointer transition-colors rounded-lg active:bg-white/25"
+      class="mobile-nav-button flex flex-col items-center gap-1 py-2 px-3 bg-transparent border-none cursor-pointer transition-colors rounded-lg active:bg-white/25 focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2"
       :class="route.name === 'home' ? 'text-primary-foreground' : 'text-primary-foreground/80'"
       :aria-current="route.name === 'home' ? 'page' : undefined" @click.prevent="navigateTo('home')">
       <div class="paw-header-container">
@@ -10,7 +10,7 @@
       <span class="text-xs font-sans">Home</span>
     </button>
     <button
-      class="flex flex-col items-center gap-1 py-2 px-3 bg-transparent border-none cursor-pointer transition-colors rounded-lg active:bg-white/25"
+      class="mobile-nav-button flex flex-col items-center gap-1 py-2 px-3 bg-transparent border-none cursor-pointer transition-colors rounded-lg active:bg-white/25 focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2"
       :class="route.name === 'profile' ? 'text-primary-foreground' : 'text-primary-foreground/80'"
       :aria-current="route.name === 'profile' ? 'page' : undefined" @click.prevent="navigateTo('profile')">
       <CircleUser class="icon-strong size-5" aria-hidden="true" />
@@ -34,7 +34,21 @@ const navigateTo = (name: string) => {
 </script>
 
 <style scoped>
-.safe-area-bottom {
+.mobile-nav {
+  height: var(--mobile-nav-reserve);
   padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+}
+
+.mobile-nav-button {
+  flex: 1 1 0;
+  max-width: 220px;
+  min-height: 48px;
+}
+
+@media (hover: hover) {
+  .mobile-nav-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
 }
 </style>

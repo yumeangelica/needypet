@@ -1,7 +1,7 @@
 <template>
   <div class="page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="login-register-container">
+      <div class="login-register-container landing-card">
         <h1 class="sr-only">NeedyPet</h1>
         <TheLogoImage altText="NeedyPet Logo" />
 
@@ -11,10 +11,10 @@
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </h4>
 
-        <button @click="router.push({ name: 'login' })" class="action-button primary-action-button">
+        <button @click="router.push({ name: 'login' })" class="action-button primary-action-button landing-action-button">
           Login
         </button>
-        <button @click="router.push({ name: 'register' })" class="action-button secondary-action-button">
+        <button @click="router.push({ name: 'register' })" class="action-button secondary-action-button landing-action-button">
           Create Account
         </button>
       </div>

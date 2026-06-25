@@ -24,26 +24,28 @@
 
     <!-- Toggleable buttons -->
     <div v-if="isOwner" class="options-container">
-      <!-- Edit need button -->
-      <button v-if="isToday || isFuture" @click="editNeed" aria-label="Edit need"
-        class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-black/10 active:bg-black/15">
-        <Pencil class="size-5" aria-hidden="true" />
-      </button>
+      <div class="options-content">
+        <!-- Edit need button -->
+        <button v-if="isToday || isFuture" @click="editNeed" aria-label="Edit need"
+          class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-black/10 active:bg-black/15">
+          <Pencil class="size-5" aria-hidden="true" />
+        </button>
 
-      <!-- isActive toggle -->
-      <div v-if="isToday || isFuture" class="flex flex-col items-center">
-        <span class="text-sm text-primary-foreground block mb-1">
-          {{ need.isActive ? 'Active' : 'Inactive' }}
-        </span>
-        <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)"
-          :aria-label="`Toggle need active (currently ${need.isActive ? 'active' : 'inactive'})`" />
+        <!-- isActive toggle -->
+        <div v-if="isToday || isFuture" class="flex flex-col items-center">
+          <span class="text-sm text-primary-foreground block mb-1">
+            {{ need.isActive ? 'Active' : 'Inactive' }}
+          </span>
+          <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)"
+            :aria-label="`Toggle need active (currently ${need.isActive ? 'active' : 'inactive'})`" />
+        </div>
+
+        <!-- Delete need button -->
+        <button @click="showDeleteConfirm = true" aria-label="Delete need"
+          class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-red-500/15 active:bg-red-500/25">
+          <Trash2 class="size-5" aria-hidden="true" />
+        </button>
       </div>
-
-      <!-- Delete need button -->
-      <button @click="showDeleteConfirm = true" aria-label="Delete need"
-        class="bg-transparent border-none cursor-pointer text-primary-foreground p-1.5 rounded-full transition-colors hover:bg-red-500/15 active:bg-red-500/25">
-        <Trash2 class="size-5" aria-hidden="true" />
-      </button>
     </div>
 
     <!-- Delete confirmation dialog — only rendered when needed -->
@@ -56,16 +58,16 @@
       <form @submit.prevent="updateNeed">
         <label class="form-label" :for="`need-${need.id}-category`">Category</label>
         <input :id="`need-${need.id}-category`" v-model="editForm.category" required type="text" placeholder="Enter need category"
-          class="form-field-item" />
+          class="form-field-input mb-1" />
 
         <label class="form-label" :for="`need-${need.id}-description`">Description</label>
         <input :id="`need-${need.id}-description`" v-model="editForm.description" required type="text" placeholder="Enter need description"
-          class="form-field-item" />
+          class="form-field-input mb-1" />
 
         <div v-if="editForm.type === 'quantity'">
           <label class="form-label" :for="`need-${need.id}-quantity-value`">Quantity</label>
           <input :id="`need-${need.id}-quantity-value`" v-model="editForm.value" type="number" placeholder="Enter quantity" required
-            class="form-field-item" />
+            class="form-field-input mb-1" />
 
           <label class="form-label">Select unit</label>
           <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit" aria-label="Select unit"
@@ -76,7 +78,7 @@
           <label class="form-label" :for="`need-${need.id}-duration-value`">Duration</label>
           <div class="flex items-center gap-2">
             <input :id="`need-${need.id}-duration-value`" v-model="editForm.value" type="number" placeholder="Enter duration" required
-              class="form-field-item" />
+              class="form-field-input mb-1" />
             <span class="text-sm text-foreground">minute(s)</span>
           </div>
         </div>
@@ -94,6 +96,7 @@ import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from '@lucide/vue
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import type { Ref } from 'vue';
 import { computed, inject, onBeforeMount, ref } from 'vue';
 import { AlertDialog, Dialog, Select, Switch } from '@/components/ui';
 import { resultMessage } from '@/lib/apiError';
@@ -151,7 +154,7 @@ type HandleNeedDeletionType = (needDelete: boolean) => void;
 const showOptions = ref(false);
 
 const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion');
-const isOwner = inject('isOwner');
+const isOwner = inject<Ref<boolean>>('isOwner');
 
 const isFuture = computed(() => {
   const needDate = dayjs(need.dateFor).tz(userStore.timezone);
@@ -205,7 +208,7 @@ const addRecord = async (petId: string, need: Need) => {
 };
 
 const toggleOptions = () => {
-  if (!isOwner) return;
+  if (!isOwner?.value) return;
   showOptions.value = !showOptions.value;
 };
 
@@ -215,7 +218,7 @@ const editNeed = () => {
 };
 
 const toggleNeedActive = async (needId: string | undefined) => {
-  if (!needId || !isOwner) return;
+  if (!needId || !isOwner?.value) return;
 
   const result = await petStore.toggleNeedisActive(petId, needId);
   if (result.isSuccess) {
@@ -280,9 +283,14 @@ const deleteNeed = async (needId: string | undefined) => {
   border-radius: var(--radius-2xl);
   background: var(--color-need-bg);
   width: 100%;
-  max-width: 350px;
-  margin: 4px 0;
-  padding: 10px;
+  /* Grows from the comfortable phone size up to a wider card on tablets/desktop;
+     width:100% still shrinks it below the floor on narrow screens. */
+  max-width: min(100%, clamp(350px, 45vw, 420px));
+  margin: 0;
+  padding: clamp(0.75rem, 2vw, 1rem);
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+  overflow-wrap: anywhere;
 }
 
 .card-inactive {
@@ -303,17 +311,20 @@ const deleteNeed = async (needId: string | undefined) => {
 .need-card-category {
   font-size: 1.1rem;
   font-weight: 700;
-  margin-top: 10px;
+  margin: 4px 0 0;
+  line-height: 1.25;
 }
 
 .need-card-description {
-  margin-top: 6px;
+  margin: 6px 0 0;
   font-size: 0.9rem;
+  line-height: 1.35;
   opacity: 0.85;
 }
 
 .need-card-field {
-  margin-top: 10px;
+  margin: 10px 0;
+  line-height: 1.35;
 }
 
 .complete-button {
@@ -327,6 +338,7 @@ const deleteNeed = async (needId: string | undefined) => {
   padding: 6px 12px;
   font-family: var(--font-sans);
   font-size: 0.85rem;
+  line-height: 1.2;
   color: var(--color-primary-foreground);
   cursor: pointer;
   min-width: 60px;
@@ -367,26 +379,37 @@ const deleteNeed = async (needId: string | undefined) => {
   min-height: 44px;
   padding: 6px 12px;
   font-size: 0.85rem;
+  line-height: 1.2;
   justify-content: center;
 }
 
+/* Expand/collapse via grid row tracks: content-driven, no magic height
+   so longer option labels are never clipped on small screens. */
 .options-container {
-  gap: 20px;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.3s ease, opacity 0.3s ease;
+}
+
+.options-content {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: clamp(0.75rem, 4vw, 1.25rem);
+  min-height: 0;
   overflow: hidden;
-  height: 0;
-  opacity: 0;
-  transition: height 0.3s ease, opacity 0.3s ease;
 }
 
 .is-expanded .options-container {
-  height: 50px;
+  grid-template-rows: 1fr;
   opacity: 1;
 }
 
 @media (max-width: 568px) {
+  .need-card {
+    border-radius: var(--radius-xl);
+  }
 
   .complete-button,
   .done-label {

@@ -1,16 +1,16 @@
 <template>
   <div class="page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="login-register-container overflow-y-auto max-h-[90vh]">
+      <div class="login-register-container auth-card auth-form-card auth-register-card overflow-y-auto max-h-[90vh]">
         <TheLogoImage altText="NeedyPet Logo" />
 
-        <div class="paw-header-container">
+        <div class="auth-card-header paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Create account</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
-        <form @submit.prevent="createAccount">
+        <form class="auth-form auth-register-form" @submit.prevent="createAccount">
           <!-- Username input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="username" type="text" placeholder="Username" required aria-label="Username"
@@ -81,9 +81,9 @@
           <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
             @timezoneSelected="timezone => selectedTimezone = timezone" />
 
-          <div class="flex flex-col gap-2">
-            <button type="submit" class="action-button primary-action-button">Create Account</button>
-            <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
+          <div class="auth-action-row">
+            <button type="submit" class="action-button primary-action-button auth-action-button">Create Account</button>
+            <button type="button" @click="goBack" class="action-button secondary-action-button auth-action-button">← Back</button>
           </div>
         </form>
       </div>

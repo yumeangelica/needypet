@@ -367,35 +367,37 @@ provide('handleNeedDeletion', handleNeedDeleted);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-stack);
   width: 100%;
   max-width: 100%;
 }
 
 .header-button-container {
-  margin-bottom: 8px;
+  margin-bottom: var(--space-stack);
+  text-align: center;
 }
 
 .date-navigation {
   margin-top: 4px;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-stack);
 }
 
 .pet-container {
-  margin-top: 20px;
-  gap: 12px;
+  margin-top: clamp(0.5rem, 3vh, 1.25rem);
+  gap: clamp(0.75rem, 3vw, 1.25rem);
 }
 
 .full-pet-card {
   background-color: var(--color-card);
   border-radius: var(--radius-2xl);
   border: 2px solid var(--color-card-border);
-  box-shadow: 4px 4px 10px var(--color-shadow-pink);
-  padding: 20px;
-  width: 95%;
-  max-width: 800px;
+  box-shadow: var(--shadow-card);
+  padding: var(--space-card);
+  width: 100%;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   box-sizing: border-box;
+  overflow-wrap: anywhere;
 }
 
 .pet-info {
@@ -404,30 +406,37 @@ provide('handleNeedDeletion', handleNeedDeleted);
 
 .pet-info p {
   margin: 4px 0;
+  line-height: 1.45;
 }
 
 .need-cards-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px;
-  margin: 15px 0;
+  gap: clamp(0.75rem, 3vw, 1rem);
+  margin: var(--space-stack) 0;
+}
+
+ul {
+  width: 100%;
+  margin: 0;
 }
 
 @media (min-width: 568px) {
   .date-navigation {
     display: grid;
-    grid-template-columns: 140px 1fr 140px;
+    grid-template-columns: minmax(120px, 140px) minmax(0, 1fr) minmax(120px, 140px);
     align-items: center;
     width: 100%;
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 auto;
     gap: 10px;
   }
 
   .date-navigation .custom-button {
-    min-width: 140px;
-    padding: 8px 30px;
+    min-width: 0;
+    width: 100%;
+    padding: 8px 18px;
   }
 
   .date-navigation h4 {
@@ -435,6 +444,21 @@ provide('handleNeedDeletion', handleNeedDeleted);
     text-align: center;
     font-weight: bold;
     grid-column: 2;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 568px) {
+  .full-pet-card {
+    border-radius: var(--radius-xl);
+  }
+
+  .date-navigation .custom-button {
+    width: min(100%, 220px);
+  }
+
+  .date-navigation h4 {
+    margin: 0;
   }
 }
 </style>

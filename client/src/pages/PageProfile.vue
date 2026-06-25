@@ -31,13 +31,13 @@
             <LogOut class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
             Logout
           </button>
-          <button v-show="showSettings" class="custom-button" @click="router.push({ name: 'edit-profile' })">
+          <button v-if="showSettings" class="custom-button" @click="router.push({ name: 'edit-profile' })">
             Edit Profile
           </button>
-          <button v-show="showSettings" class="custom-button" @click="router.push({ name: 'change-password' })">
+          <button v-if="showSettings" class="custom-button" @click="router.push({ name: 'change-password' })">
             Change password
           </button>
-          <button v-show="showSettings" class="custom-button" @click="showDeleteDialog = true">
+          <button v-if="showSettings" class="custom-button" @click="showDeleteDialog = true">
             <Trash2 class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
             Delete Account
           </button>
@@ -145,15 +145,19 @@ onBeforeRouteLeave(() => {
 <style scoped>
 .profile-info {
   margin: 4px 0 8px;
+  overflow-wrap: anywhere;
 }
 
 .profile-info p {
   margin: 4px 0;
+  line-height: 1.45;
 }
 
 .email-confirmed {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>

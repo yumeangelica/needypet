@@ -16,25 +16,27 @@ const year = new Date().getFullYear();
 
 <style scoped>
 .app-footer {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-stack);
 }
 
 .copyright {
   margin-top: auto;
   /* push to bottom within flex column container */
-  padding-top: 30px;
-  font-size: 0.72rem;
+  padding-top: clamp(1.5rem, 4vw, 2rem);
+  font-size: 0.8rem;
+  line-height: 1.4;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .copyright.mobile {
   /* Mobile: add space so it sits above the bottom tab bar */
-  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 12px);
+  padding-bottom: calc(var(--mobile-nav-reserve) + var(--space-stack));
 }
 
 @media (max-width: 568px) {
   .copyright {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 }
 </style>
