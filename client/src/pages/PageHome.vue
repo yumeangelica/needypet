@@ -5,20 +5,20 @@
 
       <div v-if="userEmailConfirmed === false">
         <div class="confirmation-message">
-          <p>Please verify your email to get started. Check your inbox for a confirmation link.</p>
+          <p>Let's confirm your email so you can start caring for your pets! 🐾 Check your inbox for the confirmation link.</p>
         </div>
       </div>
 
       <div v-else-if="userEmailConfirmed === true">
-        <TheLoadingSpinner v-if="isLoading" message="Loading your pets..." />
+        <TheLoadingSpinner v-if="isLoading" message="Fetching your furry friends..." />
 
         <div v-else-if="ownPets.length > 0 || carerPets.length > 0" class="pets-container">
           <div v-if="ownPets.length > 0">
             <div class="title-and-button-container">
-              <h2 class="section-title">My pets</h2>
-              <button @click="router.push({ name: 'add-pet' })" class="custom-button">
+              <h2 class="section-title">My Furry Friends</h2>
+              <button @click="router.push({ name: 'add-pet' })" aria-label="Add pet" class="custom-button">
                 <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
-                Add Pet
+                Welcome a Pet
               </button>
             </div>
 
@@ -28,7 +28,7 @@
           </div>
 
           <div v-if="carerPets.length > 0">
-            <h2 class="section-title">Shared With Me</h2>
+            <h2 class="section-title">Pets I Help Care For</h2>
             <div class="cards-container">
               <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
             </div>
@@ -37,14 +37,14 @@
 
         <div v-else>
           <div class="title-and-button-container">
-            <h2 class="section-title">My pets</h2>
+            <h2 class="section-title">My Furry Friends</h2>
           </div>
-          <TheEmptyState :icon="PawPrint" title="No pets yet" message="Add your first pet to get started!" actionLabel="Add Pet"
-            :actionIcon="CirclePlus" @action="router.push({ name: 'add-pet' })" />
+          <TheEmptyState :icon="PawPrint" title="No pets yet" message="Welcome your first furry friend to get started! 🐾"
+            actionLabel="Welcome a Pet" :actionIcon="CirclePlus" @action="router.push({ name: 'add-pet' })" />
         </div>
       </div>
 
-      <TheLoadingSpinner v-else message="Loading..." />
+      <TheLoadingSpinner v-else message="Just a moment..." />
 
     </div>
 
@@ -78,25 +78,25 @@ const isLoading = ref(true);
 
 const userEmailConfirmed: Ref<boolean | null> = ref(null);
 
-const updatePetLists = async () => {
+const updatePetLists = () => {
   if (petStore.pets.length === 0) {
     return;
   }
-  ownPets.value = await petStore.getOwnerPets();
-  carerPets.value = await petStore.getCarerPets();
+  ownPets.value = petStore.getOwnerPets();
+  carerPets.value = petStore.getCarerPets();
 };
 
 onBeforeMount(async () => {
   await fetchUserEmailConfirmed();
-  await updatePetLists();
+  updatePetLists();
   isLoading.value = false;
 });
 
 watch(
   () => route.params && petStore.pets,
-  async () => {
-    ownPets.value = await petStore.getOwnerPets();
-    carerPets.value = await petStore.getCarerPets();
+  () => {
+    ownPets.value = petStore.getOwnerPets();
+    carerPets.value = petStore.getCarerPets();
   },
 );
 

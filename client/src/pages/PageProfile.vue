@@ -19,23 +19,23 @@
               <XCircle v-else class="inline-block w-5 h-5 ml-1.5 align-middle text-red-500" role="img" aria-label="Not verified" />
             </p>
             <button v-if="!user.emailConfirmed" class="custom-button text-sm px-2.5 py-1" :disabled="isButtonDisabled"
-              @click="resendEmailConfirmation">
-              Resend email
+              aria-label="Resend confirmation email" @click="resendEmailConfirmation">
+              Resend confirmation
             </button>
           </div>
           <p><strong>Timezone:</strong> {{ user.timezone }}</p>
         </div>
 
         <div class="profile-actions">
-          <button class="custom-button" @click="showLogoutDialog = true">
+          <button class="custom-button" aria-label="Log out" @click="showLogoutDialog = true">
             <LogOut class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
-            Logout
+            Log Out
           </button>
           <button v-if="showSettings" class="custom-button" @click="router.push({ name: 'edit-profile' })">
-            Edit Profile
+            Edit My Details
           </button>
           <button v-if="showSettings" class="custom-button" @click="router.push({ name: 'change-password' })">
-            Change password
+            Change My Paw Code
           </button>
           <button v-if="showSettings" class="custom-button" @click="showDeleteDialog = true">
             <Trash2 class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
@@ -45,9 +45,9 @@
 
       </div>
 
-      <TheLoadingSpinner v-if="!user" message="Loading profile..." />
+      <TheLoadingSpinner v-if="!user" message="Loading your profile..." />
 
-      <TheConfirmDialog :isOpen="showLogoutDialog" title="Logout" message="Are you sure you want to logout?" confirmLabel="Logout"
+      <TheConfirmDialog :isOpen="showLogoutDialog" title="Heading out?" message="Ready to say goodbye for now?" confirmLabel="Log Out"
         @confirm="logout(); showLogoutDialog = false" @cancel="showLogoutDialog = false" />
 
       <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Account"
@@ -96,28 +96,31 @@ watchEffect(async () => {
     await fetchUser();
   }
   if (route.query.userUpdateSuccessfully === 'true') {
-    appStore.addNotification('User updated successfully', 'success');
+    appStore.addNotification('Your details are all updated! 🐾', 'success');
   }
 
   if (route.query.passwordChangedSuccessfully === 'true') {
-    appStore.addNotification('Password changed successfully', 'success');
+    appStore.addNotification('Your new secret paw code is saved! 🐾', 'success');
   }
 });
 
 const logout = async () => {
   await userStore.logout();
   router.push({ name: 'landing' });
-  appStore.addNotification('You have been logged out', 'success');
+  appStore.addNotification('See you next time, pet parent! 👋', 'success');
 };
 
 const deleteAccount = async () => {
   const { isSuccess, message } = await userStore.deleteAccount();
 
   if (isSuccess) {
-    appStore.addNotification('Your account has been deleted', 'success');
+    appStore.addNotification('Your account and all pet memories have been deleted.', 'success');
     logout();
   } else {
-    appStore.addNotification(message ?? 'Error deleting account', 'error');
+    appStore.addNotification(
+      message ?? "We couldn't delete your account. Please try again.",
+      'error',
+    );
   }
 };
 
@@ -127,11 +130,11 @@ const resendEmailConfirmation = async () => {
   const result = await userStore.resendEmailConfirmation();
 
   if (result.isSuccess) {
-    appStore.addNotification('Please check your email for the confirmation link', 'success');
+    appStore.addNotification('Check your inbox! We sent you the confirmation link 📧', 'success');
   } else {
     isButtonDisabled.value = false;
     appStore.addNotification(
-      result.message || 'Failed to resend email confirmation, please try again later',
+      result.message || "We couldn't resend the confirmation email. Please try again.",
       'error',
     );
   }

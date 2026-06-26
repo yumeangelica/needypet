@@ -6,14 +6,16 @@
 
         <div class="auth-card-header paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Create account</h1>
+          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Join the pack!</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
+
+        <p class="auth-subtitle">Create a new account to start caring for your pets 🐾</p>
 
         <form class="auth-form auth-register-form" @submit.prevent="createAccount">
           <!-- Username input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="username" type="text" placeholder="Username" required aria-label="Username"
+            <input class="auth-field-input" v-model="username" type="text" placeholder="Pick a username (your pet parent name)" required aria-label="Username"
               :aria-invalid="formFieldsErrorDetailsObject.username ? true : undefined"
               :aria-describedby="formFieldsErrorDetailsObject.username ? 'reg-username-error' : undefined" />
           </div>
@@ -23,7 +25,7 @@
 
           <!-- Email input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="email" placeholder="Email" type="email" required aria-label="Email"
+            <input class="auth-field-input" v-model="email" placeholder="Your email" type="email" required aria-label="Email"
               :aria-invalid="formFieldsErrorDetailsObject.email ? true : undefined"
               :aria-describedby="formFieldsErrorDetailsObject.email ? 'reg-email-error' : undefined" />
           </div>
@@ -33,7 +35,7 @@
 
           <!-- Password input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="password" @input="validatePassword" :type="passwordFieldType" placeholder="Password" required
+            <input class="auth-field-input" v-model="password" @input="validatePassword" :type="passwordFieldType" placeholder="Password (your secret paw code)" required
               id="password" aria-label="Password" aria-describedby="reg-password-requirements" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
@@ -43,17 +45,17 @@
 
           <div class="strong-password-note">
             <ul id="reg-password-requirements" aria-live="polite">
-              <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
-              <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
-              <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-              <li :class="{ 'valid': passwordValidations.special }">At least one special character (!@#$%^&amp;*)</li>
-              <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
+              <li :class="{ 'valid': passwordValidations.uppercase }">A big-cat letter (A-Z)</li>
+              <li :class="{ 'valid': passwordValidations.lowercase }">A little-pup letter (a-z)</li>
+              <li :class="{ 'valid': passwordValidations.number }">A number (0-9)</li>
+              <li :class="{ 'valid': passwordValidations.special }">A special paw mark (!@#$%^&amp;*)</li>
+              <li :class="{ 'valid': passwordValidations.minLength }">Nice and long (10+ characters)</li>
             </ul>
           </div>
 
           <!-- Confirm password input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="confirmPassword" placeholder="Confirm password" :type="passwordFieldType" required
+            <input class="auth-field-input" v-model="confirmPassword" placeholder="Confirm password (type your paw code again)" :type="passwordFieldType" required
               id="confirmPassword" aria-label="Confirm Password" :aria-invalid="formFieldsErrorDetailsObject.newPassword ? true : undefined"
               :aria-describedby="formFieldsErrorDetailsObject.newPassword ? 'reg-password-error' : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
@@ -70,19 +72,20 @@
             :aria-label="`Select timezone, current: ${selectedTimezone || 'none'}`"
             :aria-describedby="formFieldsErrorDetailsObject.timezone ? 'reg-timezone-error' : undefined" @click="showModal = true"
             @keydown.enter.prevent="showModal = true" @keydown.space.prevent="showModal = true">
-            <span class="auth-field-input" :class="{ 'text-foreground/70': !selectedTimezone }">
-              {{ selectedTimezone || 'Select Timezone' }}
+            <span class="auth-field-input auth-field-value" :class="{ 'text-foreground/70': !selectedTimezone }">
+              {{ selectedTimezone || 'Pick your timezone' }}
             </span>
           </div>
           <div v-if="formFieldsErrorDetailsObject.timezone" id="reg-timezone-error" class="custom-error-message" role="alert">
             {{ formFieldsErrorDetailsObject.timezone }}
           </div>
+          <p class="auth-field-hint">So your pets' daily tasks refresh at your own midnight 🐾</p>
 
           <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
             @timezoneSelected="timezone => selectedTimezone = timezone" />
 
           <div class="auth-action-row">
-            <button type="submit" class="action-button primary-action-button auth-action-button">Create Account</button>
+            <button type="submit" aria-label="Create account" class="action-button primary-action-button auth-action-button">Join the Pack</button>
             <button type="button" @click="goBack" class="action-button secondary-action-button auth-action-button">← Back</button>
           </div>
         </form>
@@ -141,7 +144,8 @@ const togglePasswordVisibility = () => {
 
 const createAccount = async () => {
   if (!isPasswordValid(passwordValidations.value)) {
-    formFieldsErrorDetailsObject.value.newPassword = 'Password does not meet the requirements.';
+    formFieldsErrorDetailsObject.value.newPassword =
+      "Your paw code doesn't meet all the requirements yet.";
     setTimeout(() => {
       formFieldsErrorDetailsObject.value.newPassword = '';
     }, 3000);
@@ -149,7 +153,7 @@ const createAccount = async () => {
   }
 
   if (password.value !== confirmPassword.value) {
-    formFieldsErrorDetailsObject.value.newPassword = 'Passwords do not match';
+    formFieldsErrorDetailsObject.value.newPassword = "Your paw codes don't match.";
     setTimeout(() => {
       formFieldsErrorDetailsObject.value.newPassword = '';
     }, 3000);
@@ -165,7 +169,7 @@ const createAccount = async () => {
 
   if (isSuccess) {
     router.push({ name: 'login', replace: true });
-    appStore.addNotification(message ?? 'Account created successfully', 'success');
+    appStore.addNotification(message ?? 'Welcome to the pack! 🐾', 'success');
     username.value = '';
     email.value = '';
     password.value = '';
@@ -178,7 +182,7 @@ const createAccount = async () => {
       newPassword: errorDetails?.newPassword?.[0] || '',
       timezone: errorDetails?.timezone?.[0] || '',
     };
-    errorMessage.value = message ? message : 'An error occurred. Please try again later.';
+    errorMessage.value = message ? message : 'Something went wrong. Please try again later.';
     setTimeout(() => {
       formFieldsErrorDetailsObject.value = {
         username: '',

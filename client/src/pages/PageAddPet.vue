@@ -2,38 +2,38 @@
   <div>
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
-        <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Add new pet:</h1>
+        <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Welcome a new furry friend! 🐾</h1>
         <form @submit.prevent="submitPet">
           <div>
-            <label class="form-label" for="addpet-name">Name:</label>
+            <label class="form-label" for="addpet-name">Name</label>
             <div class="form-field">
-              <input id="addpet-name" class="form-field-input" v-model="newPetObject.name" required placeholder="Pet's name" />
+              <input id="addpet-name" class="form-field-input" v-model="newPetObject.name" required placeholder="Fluffy, Whiskers, Buddy..." />
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="addpet-breed">Breed:</label>
+            <label class="form-label" for="addpet-breed">Breed</label>
             <div class="form-field">
-              <input id="addpet-breed" class="form-field-input" v-model="newPetObject.breed" placeholder="Pet's breed" />
+              <input id="addpet-breed" class="form-field-input" v-model="newPetObject.breed" placeholder="Golden Retriever, Siamese..." />
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="addpet-species">Species:</label>
+            <label class="form-label" for="addpet-species">What kind of pet?</label>
             <div class="form-field">
-              <input id="addpet-species" class="form-field-input" v-model="newPetObject.species" placeholder="Pet's species" />
+              <input id="addpet-species" class="form-field-input" v-model="newPetObject.species" placeholder="Dog, cat, rabbit..." />
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="addpet-description">Description:</label>
+            <label class="form-label" for="addpet-description">Tell us about them</label>
             <div class="form-field">
-              <textarea id="addpet-description" class="form-field-input" v-model="newPetObject.description" placeholder="About the pet"></textarea>
+              <textarea id="addpet-description" class="form-field-input" v-model="newPetObject.description" placeholder="Personality, quirks, favourite treats..."></textarea>
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="addpet-birthday">Birthday:</label>
+            <label class="form-label" for="addpet-birthday">When were they born?</label>
             <div class="form-field">
               <input id="addpet-birthday" class="form-field-input" type="date" :value="birthdayInputValue" @change="dateSelected($event)"
                 :max="todayString" />
@@ -41,7 +41,7 @@
           </div>
 
           <div class="form-button-group">
-            <button type="submit" class="form-button primary">Add Pet</button>
+            <button type="submit" aria-label="Add pet" class="form-button primary">Welcome Them Home</button>
             <button type="button" @click="router.push({ name: 'home' })" class="form-button secondary">Cancel</button>
           </div>
         </form>
@@ -135,10 +135,10 @@ const submitPet = async () => {
       birthday: null,
     };
     router.push({ name: 'home' });
-    appStore.addNotification('Pet added successfully', 'success');
+    appStore.addNotification('Welcome to the family! 🐾', 'success');
   } else {
     appStore.addNotification(
-      resultMessage(result, 'Failed to add pet, please try again later'),
+      resultMessage(result, "We couldn't welcome your new friend. Please try again."),
       'error',
     );
   }

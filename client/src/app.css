@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================
-   NeedyPet — Custom Theme (Pastel Pink/Lilac)
+   NeedyPet - Custom Theme (Pastel Pink/Lilac)
    ============================================ */
 
 @theme {
@@ -29,7 +29,8 @@
 
   /* Auth page colors */
   --color-auth-bg: #FFEEF5;
-  --color-auth-input-bg: #FFE0F1;
+  /* Soft lilac for input/select backgrounds (shared by form + auth fields). */
+  --color-auth-input-bg: #ECE0FB;
   --color-auth-button: #FBCDE6;
   --color-auth-button-secondary: #FFE0F1;
 
@@ -47,7 +48,7 @@
   --shadow-focus-ring: 0 0 0 3px rgba(178, 110, 150, 0.15);
 
   /* Font family */
-  --font-sans: 'Krona One', 'Arial', sans-serif;
+  --font-sans: 'Comfortaa', 'Arial', sans-serif;
 
   /* Layout */
   --content-max-width: 800px;
@@ -256,6 +257,25 @@ li {
   width: min(100%, 16rem);
   margin-right: auto;
   margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  line-height: 1.2;
+}
+
+.landing-intro {
+  margin: 0.1rem auto 0.35rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-foreground);
+  opacity: 0.8;
+}
+
+.landing-action-hint {
+  font-size: 0.7rem;
+  font-weight: 400;
+  opacity: 0.85;
 }
 
 .auth-card {
@@ -303,6 +323,14 @@ li {
 
 .auth-card-header h1 {
   margin: 0;
+}
+
+.auth-subtitle {
+  margin: 0 auto 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-foreground);
+  opacity: 0.8;
 }
 
 .auth-card-header svg {
@@ -448,6 +476,32 @@ li {
   opacity: 0.7;
 }
 
+/* Keep autofilled auth inputs on the pink theme instead of the browser's blue. */
+.auth-field-input:-webkit-autofill,
+.auth-field-input:-webkit-autofill:hover,
+.auth-field-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-foreground);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-auth-input-bg) inset;
+  caret-color: var(--color-foreground);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Timezone value is a span, not an input - keep long zone names on one line. */
+.auth-field-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-field-hint {
+  margin: -0.15rem 0 0.1rem;
+  padding-left: 4px;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--color-foreground);
+  opacity: 0.72;
+}
+
 /* Password toggle button (shared across auth & form pages) */
 .show-password-button {
   position: absolute;
@@ -525,7 +579,7 @@ li {
 }
 
 /* ============================================
-   Form container (pet/profile forms — card-like wrapper)
+   Form container (pet/profile forms - card-like wrapper)
    ============================================ */
 
 .form-container {
@@ -588,6 +642,18 @@ li {
   box-shadow: var(--shadow-focus-ring);
 }
 
+/* Override the browser autofill highlight (defaults to blue/yellow) so filled
+   fields keep the pink form styling. The inset shadow trick repaints the
+   background because browsers ignore `background` on autofilled inputs. */
+.form-field-input:-webkit-autofill,
+.form-field-input:-webkit-autofill:hover,
+.form-field-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-foreground);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-auth-input-bg) inset;
+  caret-color: var(--color-foreground);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 textarea.form-field-input {
   resize: vertical;
   min-height: 70px;
@@ -619,6 +685,27 @@ span.form-field-input {
   display: block;
   cursor: pointer;
   overflow-wrap: anywhere;
+}
+
+/* Quantity "value + unit" row. The unit Select (reka-ui) trigger is w-full, so
+   it is wrapped in a fixed-width box; the value input takes the rest. Explicit
+   widths here avoid the flex item collapsing to its minimum. */
+.value-unit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.value-unit-value {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.value-unit-select {
+  flex: 0 0 6rem;
+  width: 6rem;
 }
 
 /* Form labels */

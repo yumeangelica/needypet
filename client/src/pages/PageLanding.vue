@@ -11,11 +11,17 @@
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </h4>
 
-        <button @click="router.push({ name: 'login' })" class="action-button primary-action-button landing-action-button">
-          Login
+        <p class="landing-intro">First visit or coming back? Pick your paw-th 🐾</p>
+
+        <button @click="router.push({ name: 'login' })" aria-label="Log in to an existing account"
+          class="action-button primary-action-button landing-action-button">
+          Welcome Back
+          <span class="landing-action-hint">I already have an account</span>
         </button>
-        <button @click="router.push({ name: 'register' })" class="action-button secondary-action-button landing-action-button">
-          Create Account
+        <button @click="router.push({ name: 'register' })" aria-label="Create a new account"
+          class="action-button secondary-action-button landing-action-button">
+          Join the Pack
+          <span class="landing-action-hint">I'm new, make an account</span>
         </button>
       </div>
     </div>

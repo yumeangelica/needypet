@@ -178,7 +178,17 @@ const petSchema = new mongoose.Schema({
       },
     },
   ],
+  // UTC-midnight of the last local day this pet's needs were rolled forward.
+  // Acts as a durable idempotency guard so a rollover skipped after a concurrent
+  // save (VersionError) can be safely retried on the next cron tick, and so the
+  // job is idempotent across multiple Node instances.
+  lastRolledNeedDate: {
+    type: Date,
+  },
 });
+
+petSchema.set('optimisticConcurrency', true);
+petSchema.index({ owner: 1 });
 
 petSchema.set('toJSON', {
   transform(doc, returnedObject) {

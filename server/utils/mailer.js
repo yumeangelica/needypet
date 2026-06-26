@@ -1,9 +1,20 @@
 const nodemailer = require('nodemailer');
+const wellKnown = require('nodemailer/lib/well-known');
 const config = require('./config');
+
+// EMAIL_SERVICE may hold either a nodemailer well-known alias (e.g. 'gmail') or a
+// raw SMTP hostname (e.g. 'smtp.example.com'). Nodemailer only resolves a host
+// from `service` for known aliases; an unknown alias silently falls back to
+// localhost (ESOCKET/ECONNREFUSED 127.0.0.1). Pass it as `service` only when it
+// resolves, otherwise treat it as the SMTP `host`.
+const emailTransport =
+  config.emailService && wellKnown(config.emailService)
+    ? { service: config.emailService }
+    : { host: config.emailService || 'localhost' };
 
 // Create Transporter For Email Service
 const transporter = nodemailer.createTransport({
-  service: config.emailService,
+  ...emailTransport,
   port: config.emailPort,
   secure: config.emailPort === 465,
   auth: {

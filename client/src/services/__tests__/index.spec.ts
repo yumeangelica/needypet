@@ -29,4 +29,40 @@ describe('apiClient', () => {
       expect.objectContaining({ method: 'PATCH' }),
     );
   });
+
+  it('sets application/json when a request body is sent without a content type', async () => {
+    const fetchMock = vi.mocked(fetch);
+
+    await apiClient.post('/auth/users', { userName: 'testUser' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+        }),
+      }),
+    );
+  });
+
+  it('preserves a caller-provided content type case-insensitively', async () => {
+    const fetchMock = vi.mocked(fetch);
+
+    await apiClient.post(
+      '/api/upload',
+      { ok: true },
+      { headers: { 'content-type': 'application/vnd.api+json' } },
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'content-type': 'application/vnd.api+json',
+        }),
+      }),
+    );
+    const headers = fetchMock.mock.calls[0][1]?.headers as Record<string, string>;
+    expect(headers['Content-Type']).toBeUndefined();
+  });
 });

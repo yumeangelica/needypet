@@ -62,7 +62,7 @@ describe('PageRegister', () => {
     expect(wrapper.find('input[aria-label="Password"]').exists()).toBe(true);
     expect(wrapper.find('input[aria-label="Confirm Password"]').exists()).toBe(true);
     expect(wrapper.find('button[type="submit"]').exists()).toBe(true);
-    expect(wrapper.find('button[type="submit"]').text()).toContain('Create Account');
+    expect(wrapper.find('button[type="submit"]').text()).toContain('Join the Pack');
   });
 
   it('shows password validation hints that update as the user types', async () => {
@@ -93,7 +93,7 @@ describe('PageRegister', () => {
     // The password-mismatch error should be rendered
     const errorEl = wrapper.find('#reg-password-error');
     expect(errorEl.exists()).toBe(true);
-    expect(errorEl.text()).toContain('Passwords do not match');
+    expect(errorEl.text()).toContain("Your paw codes don't match");
   });
 
   it('shows a field error when the password does not meet requirements', async () => {

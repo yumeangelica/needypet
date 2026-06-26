@@ -135,14 +135,14 @@ export const useUserStore = defineStore('user', {
           return {
             isSuccess: true,
             message:
-              'Account created successfully, please check your email to confirm your account',
+              'Welcome to the pack! 🐾 Check your inbox to confirm your email and start caring for your pets.',
             errorDetails: null,
           };
         }
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Error creating account'),
+          message: getErrorMessage(error, "Couldn't create your account. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -189,7 +189,7 @@ export const useUserStore = defineStore('user', {
           await setLocalStorageItem('timezone', response.data.timezone);
           return {
             isSuccess: true,
-            message: response.data.message || 'User updated successfully',
+            message: response.data.message || 'Your details are all updated! 🐾',
           };
         }
       } catch (error) {
@@ -245,7 +245,7 @@ export const useUserStore = defineStore('user', {
         if (response.status === 200) {
           return {
             isSuccess: true,
-            message: response.data.message || 'Password changed successfully',
+            message: response.data.message || 'Your new secret paw code is saved! 🐾',
           };
         }
       } catch (error) {
@@ -301,7 +301,7 @@ export const useUserStore = defineStore('user', {
 
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Error deleting user account'),
+          message: getErrorMessage(error, "We couldn't delete your account. Please try again."),
         };
       }
 
@@ -347,13 +347,13 @@ export const useUserStore = defineStore('user', {
           );
           return {
             isSuccess: true,
-            message: response.data.message || 'Login successful',
+            message: response.data.message || 'Welcome back! 🐾',
           };
         }
         // Any non-200 success status is treated as a failed login.
         return {
           isSuccess: false,
-          message: response.data.message || 'Login failed',
+          message: response.data.message || "We couldn't let you in. Please try again.",
         };
       } catch (error) {
         const status = getErrorStatus(error);
@@ -361,14 +361,14 @@ export const useUserStore = defineStore('user', {
         if (status === 401) {
           return {
             isSuccess: false,
-            message: getErrorMessage(error, 'Invalid credentials'),
+            message: getErrorMessage(error, "That paw code doesn't match. Try again?"),
           };
         }
 
         if (status === 422) {
           return {
             isSuccess: false,
-            message: getErrorMessage(error, 'Validation error'),
+            message: getErrorMessage(error, 'Please check your details and try again.'),
           };
         }
 
@@ -376,7 +376,7 @@ export const useUserStore = defineStore('user', {
         // so callers can safely destructure it.
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Login failed. Please try again.'),
+          message: getErrorMessage(error, "We couldn't let you in. Please try again."),
         };
       }
     },
@@ -466,7 +466,7 @@ export const useUserStore = defineStore('user', {
         // failure shows a single error toast, not one here and one there.
         const status = getErrorStatus(error);
 
-        if (status === 535) {
+        if (status === 502) {
           return {
             isSuccess: false,
             message: getErrorMessage(
@@ -478,7 +478,10 @@ export const useUserStore = defineStore('user', {
 
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Unable to resend email confirmation. Please try again.'),
+          message: getErrorMessage(
+            error,
+            "We couldn't resend the confirmation email. Please try again.",
+          ),
         };
       }
 
@@ -560,7 +563,10 @@ export const useUserStore = defineStore('user', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Failed to reset password. Try to send a new reset link'),
+          message: getErrorMessage(
+            error,
+            "Couldn't reset your paw code. Try sending a new reset link.",
+          ),
           errorDetails: getErrorDetails(error),
         };
       }

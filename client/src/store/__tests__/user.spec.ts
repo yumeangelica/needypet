@@ -71,14 +71,14 @@ describe('user store - resendEmailConfirmation', () => {
     expect(callArg.url).toBe('/auth/resend-email-confirmation');
   });
 
-  it('fails without notifying and surfaces the backend message on a 535', async () => {
+  it('fails without notifying and surfaces the backend message on a 502', async () => {
     const userStore = useUserStore();
     userStore.token = 'test-token';
 
     const appStore = useAppStore();
     const notifySpy = vi.spyOn(appStore, 'addNotification');
 
-    mockedApiClient.mockRejectedValueOnce(apiError(535, { message: 'SMTP auth failed' }));
+    mockedApiClient.mockRejectedValueOnce(apiError(502, { message: 'SMTP auth failed' }));
 
     const result = await userStore.resendEmailConfirmation();
 
@@ -242,7 +242,7 @@ describe('user store - createAccount', () => {
     });
 
     expect(result.isSuccess).toBe(true);
-    expect(result.message).toContain('check your email');
+    expect(result.message).toContain('confirm your email');
   });
 
   it('returns validation errorDetails on 422', async () => {

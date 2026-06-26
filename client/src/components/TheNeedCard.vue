@@ -1,18 +1,18 @@
 <template>
-  <div class="need-card" :class="{ 'is-expanded': showOptions, 'card-inactive': !need.isActive }">
+  <div class="need-card" :class="{ 'is-expanded': showOptions, 'card-inactive': !needProp.isActive }">
     <div class="text-center">
-      <h5 class="need-card-category">{{ need.category }}</h5>
-      <p class="need-card-description">{{ need.description }}</p>
-      <p class="need-card-field">{{ need.duration?.value || need.quantity?.value }} {{ need.duration?.unit || need.quantity?.unit }}</p>
+      <h5 class="need-card-category">{{ needProp.category }}</h5>
+      <p class="need-card-description">{{ needProp.description }}</p>
+      <p class="need-card-field">{{ needProp.duration?.value || needProp.quantity?.value }} {{ needProp.duration?.unit || needProp.quantity?.unit }}</p>
     </div>
 
     <div class="flex justify-center items-center gap-2">
-      <button class="complete-button" v-if="!need.completed && isToday" :disabled="isSaving" @click="addRecord(petId, need)">
-        <Check class="size-4" aria-hidden="true" />Complete
+      <button class="complete-button" v-if="!needProp.completed && isToday" :disabled="isSaving" aria-label="Mark as done" @click="addRecord(petIdProp, needProp)">
+        <Check class="size-4" aria-hidden="true" />All Done!
       </button>
-      <div class="done-label" v-if="need.completed">
+      <div class="done-label" v-if="needProp.completed">
         <CheckCheck class="size-4" aria-hidden="true" />
-        Done
+        Purrfectly done!
       </div>
 
       <button v-if="isOwner" aria-label="Need options"
@@ -34,10 +34,10 @@
         <!-- isActive toggle -->
         <div v-if="isToday || isFuture" class="flex flex-col items-center">
           <span class="text-sm text-primary-foreground block mb-1">
-            {{ need.isActive ? 'Active' : 'Inactive' }}
+            {{ needProp.isActive ? 'Active' : 'Inactive' }}
           </span>
-          <Switch :checked="need.isActive" @update:checked="toggleNeedActive(need.id)"
-            :aria-label="`Toggle need active (currently ${need.isActive ? 'active' : 'inactive'})`" />
+          <Switch :checked="needProp.isActive" @update:checked="toggleNeedActive(needProp.id)"
+            :aria-label="`Toggle need active (currently ${needProp.isActive ? 'active' : 'inactive'})`" />
         </div>
 
         <!-- Delete need button -->
@@ -48,25 +48,25 @@
       </div>
     </div>
 
-    <!-- Delete confirmation dialog — only rendered when needed -->
-    <AlertDialog v-if="showDeleteConfirm" :open="showDeleteConfirm" title="Delete Need" message="Are you sure you want to delete this need?"
-      confirmLabel="Delete" cancelLabel="Cancel" variant="danger" @confirm="deleteNeed(need.id); showDeleteConfirm = false"
+    <!-- Delete confirmation dialog - only rendered when needed -->
+    <AlertDialog v-if="showDeleteConfirm" :open="showDeleteConfirm" title="Remove this care task?" message="This care task will be removed for the day. Remove it?"
+      confirmLabel="Remove" cancelLabel="Keep it" variant="danger" @confirm="deleteNeed(needProp.id); showDeleteConfirm = false"
       @cancel="showDeleteConfirm = false" />
 
-    <!-- Edit need modal — only rendered when needed -->
-    <Dialog v-if="isEditModalOpen" :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit Need" maxWidth="520px">
+    <!-- Edit need modal - only rendered when needed -->
+    <Dialog v-if="isEditModalOpen" :open="isEditModalOpen" @update:open="(v) => { if (!v) closeEditModal(); }" title="Edit care task" maxWidth="520px">
       <form @submit.prevent="updateNeed">
-        <label class="form-label" :for="`need-${need.id}-category`">Category</label>
-        <input :id="`need-${need.id}-category`" v-model="editForm.category" required type="text" placeholder="Enter need category"
+        <label class="form-label" :for="`need-${needProp.id}-category`">Type of care</label>
+        <input :id="`need-${needProp.id}-category`" v-model="editForm.category" required type="text" placeholder="e.g. Walk, Feed, Medicine"
           class="form-field-input mb-1" />
 
-        <label class="form-label" :for="`need-${need.id}-description`">Description</label>
-        <input :id="`need-${need.id}-description`" v-model="editForm.description" required type="text" placeholder="Enter need description"
+        <label class="form-label" :for="`need-${needProp.id}-description`">More details</label>
+        <input :id="`need-${needProp.id}-description`" v-model="editForm.description" required type="text" placeholder="e.g. Morning walk in the park"
           class="form-field-input mb-1" />
 
         <div v-if="editForm.type === 'quantity'">
-          <label class="form-label" :for="`need-${need.id}-quantity-value`">Quantity</label>
-          <input :id="`need-${need.id}-quantity-value`" v-model="editForm.value" type="number" placeholder="Enter quantity" required
+          <label class="form-label" :for="`need-${needProp.id}-quantity-value`">Quantity</label>
+          <input :id="`need-${needProp.id}-quantity-value`" v-model="editForm.value" type="number" placeholder="Enter quantity" required
             class="form-field-input mb-1" />
 
           <label class="form-label">Select unit</label>
@@ -75,16 +75,16 @@
         </div>
 
         <div v-else>
-          <label class="form-label" :for="`need-${need.id}-duration-value`">Duration</label>
+          <label class="form-label" :for="`need-${needProp.id}-duration-value`">Duration</label>
           <div class="flex items-center gap-2">
-            <input :id="`need-${need.id}-duration-value`" v-model="editForm.value" type="number" placeholder="Enter duration" required
+            <input :id="`need-${needProp.id}-duration-value`" v-model="editForm.value" type="number" placeholder="Enter duration" required
               class="form-field-input mb-1" />
             <span class="text-sm text-foreground">minute(s)</span>
           </div>
         </div>
 
         <div class="flex justify-center mt-4">
-          <button type="submit" class="custom-button">Update Need</button>
+          <button type="submit" aria-label="Update care task" class="custom-button">Save Changes</button>
         </div>
       </form>
     </Dialog>
@@ -93,29 +93,23 @@
 
 <script setup lang="ts">
 import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from '@lucide/vue';
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import type { Ref } from 'vue';
-import { computed, inject, onBeforeMount, ref } from 'vue';
+import { computed, inject, onBeforeMount, ref, toRefs } from 'vue';
 import { AlertDialog, Dialog, Select, Switch } from '@/components/ui';
 import { resultMessage } from '@/lib/apiError';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
-import { useUserStore } from '@/store/user';
 import type { DurationRecord, Need, QuantityRecord } from '@/types/pet';
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
 const petStore = usePetStore();
-const userStore = useUserStore();
 const appStore = useAppStore();
 
-const { need, petId } = defineProps<{
+const props = defineProps<{
   need: Need;
   petId: string;
+  todayDate: string;
 }>();
+const { need: needProp, petId: petIdProp, todayDate: todayDateProp } = toRefs(props);
 
 const emit = defineEmits(['needDeleted', 'needUpdated']);
 
@@ -130,6 +124,7 @@ const editForm = ref({
 });
 
 onBeforeMount(async () => {
+  const need = needProp.value;
   if (need.quantity) {
     editForm.value = {
       category: need.category,
@@ -157,15 +152,11 @@ const handleNeedDeletion = inject<HandleNeedDeletionType>('handleNeedDeletion');
 const isOwner = inject<Ref<boolean>>('isOwner');
 
 const isFuture = computed(() => {
-  const needDate = dayjs(need.dateFor).tz(userStore.timezone);
-  const today = dayjs().tz(userStore.timezone);
-  return needDate?.isAfter(today, 'day');
+  return needProp.value.dateFor > todayDateProp.value;
 });
 
 const isToday = computed(() => {
-  const needDate = dayjs(need.dateFor).tz(userStore.timezone);
-  const today = dayjs().tz(userStore.timezone);
-  return needDate?.isSame(today, 'day');
+  return needProp.value.dateFor === todayDateProp.value;
 });
 
 const isSaving = ref(false);
@@ -200,9 +191,12 @@ const addRecord = async (petId: string, need: Need) => {
 
   const result = await petStore.addRecord(petId, needId, recordObject);
   if (result.isSuccess) {
-    appStore.addNotification('Need completed! ✓', 'success');
+    appStore.addNotification('Purrfectly done! 🐾', 'success');
   } else {
-    appStore.addNotification(resultMessage(result, 'Failed to add record'), 'error');
+    appStore.addNotification(
+      resultMessage(result, "We couldn't save that. Please try again."),
+      'error',
+    );
   }
   isSaving.value = false;
 };
@@ -213,6 +207,7 @@ const toggleOptions = () => {
 };
 
 const editNeed = () => {
+  const need = needProp.value;
   isEditModalOpen.value = true;
   editForm.value = { ...editForm.value, category: need.category, description: need.description };
 };
@@ -220,12 +215,18 @@ const editNeed = () => {
 const toggleNeedActive = async (needId: string | undefined) => {
   if (!needId || !isOwner?.value) return;
 
-  const result = await petStore.toggleNeedisActive(petId, needId);
+  const result = await petStore.toggleNeedisActive(petIdProp.value, needId);
   if (result.isSuccess) {
     emit('needUpdated');
-    appStore.addNotification('Need active status toggled successfully', 'success');
+    appStore.addNotification(
+      needProp.value.isActive ? 'Care task paused 🐾' : 'Care task is active again! 🐾',
+      'success',
+    );
   } else {
-    appStore.addNotification(resultMessage(result, 'Failed to toggle need active status'), 'error');
+    appStore.addNotification(
+      resultMessage(result, "We couldn't update that care task. Please try again."),
+      'error',
+    );
   }
 };
 
@@ -240,11 +241,11 @@ const updateNeed = async () => {
     !editForm.value.value ||
     !editForm.value.unit
   ) {
-    appStore.addNotification('Please fill all fields', 'error');
+    appStore.addNotification('Oops! We need all the details for this care task.', 'error');
     return;
   }
 
-  const needId = need.id;
+  const needId = needProp.value.id;
   if (!needId) return;
 
   const updatedNeed = {
@@ -255,13 +256,16 @@ const updateNeed = async () => {
       unit: editForm.value.unit,
     },
   };
-  const result = await petStore.updateNeed(petId, needId, updatedNeed);
+  const result = await petStore.updateNeed(petIdProp.value, needId, updatedNeed);
 
   if (result.isSuccess) {
     emit('needUpdated');
-    appStore.addNotification('Need updated successfully', 'success');
+    appStore.addNotification('Care task updated! 🐾', 'success');
   } else {
-    appStore.addNotification(resultMessage(result, 'Failed to update need'), 'error');
+    appStore.addNotification(
+      resultMessage(result, "We couldn't update that care task. Please try again."),
+      'error',
+    );
   }
   closeEditModal();
 };
@@ -269,11 +273,14 @@ const updateNeed = async () => {
 const deleteNeed = async (needId: string | undefined) => {
   if (!needId) return;
 
-  const result = await petStore.deleteNeed(petId, needId);
+  const result = await petStore.deleteNeed(petIdProp.value, needId);
   if (result.isSuccess) {
     handleNeedDeletion?.(true);
   } else {
-    appStore.addNotification(resultMessage(result, 'Failed to delete need'), 'error');
+    appStore.addNotification(
+      resultMessage(result, "We couldn't remove that care task. Please try again."),
+      'error',
+    );
   }
 };
 </script>

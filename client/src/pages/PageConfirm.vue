@@ -7,7 +7,7 @@
         <div class="confirmation-container">
           <div class="confirmation-text">{{ confirmationMessage }}</div>
           <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
-            Go to Login
+            Pounce In
           </button>
         </div>
       </div>
@@ -19,7 +19,7 @@
 
           <div class="paw-header-container">
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-            <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Reset Password</h1>
+            <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Set a new paw code</h1>
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           </div>
 
@@ -27,28 +27,28 @@
 
           <form @submit.prevent="resetPassword">
             <div class="auth-field">
-              <input class="auth-field-input" type="password" v-model="newPassword" @input="validatePassword" placeholder="Enter new password"
+              <input class="auth-field-input" type="password" v-model="newPassword" @input="validatePassword" placeholder="Your new paw code"
                 aria-label="New Password" aria-describedby="confirm-reset-requirements" :aria-invalid="errorMessage ? true : undefined" />
             </div>
 
             <div class="strong-password-note">
               <ul id="confirm-reset-requirements" aria-live="polite">
-                <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
-                <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
-                <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-                <li :class="{ 'valid': passwordValidations.special }">At least one special character (!@#$%^&amp;*)</li>
-                <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
+                <li :class="{ 'valid': passwordValidations.uppercase }">A big-cat letter (A-Z)</li>
+                <li :class="{ 'valid': passwordValidations.lowercase }">A little-pup letter (a-z)</li>
+                <li :class="{ 'valid': passwordValidations.number }">A number (0-9)</li>
+                <li :class="{ 'valid': passwordValidations.special }">A special paw mark (!@#$%^&amp;*)</li>
+                <li :class="{ 'valid': passwordValidations.minLength }">Nice and long (10+ characters)</li>
               </ul>
             </div>
 
             <div class="auth-field">
-              <input class="auth-field-input" type="password" v-model="confirmPassword" placeholder="Confirm new password"
+              <input class="auth-field-input" type="password" v-model="confirmPassword" placeholder="Confirm your new paw code"
                 aria-label="Confirm Password" :aria-invalid="errorMessage ? true : undefined"
                 :aria-describedby="errorMessage ? 'confirm-reset-error' : undefined" />
             </div>
 
             <div class="flex flex-col gap-2">
-              <button type="submit" class="action-button primary-action-button">Set Password</button>
+              <button type="submit" aria-label="Set password" class="action-button primary-action-button">Save New Code</button>
               <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
             </div>
 
@@ -61,7 +61,7 @@
         <div v-else class="confirmation-container">
           <h1 class="sr-only">Password reset</h1>
           <div class="confirmation-text">{{ confirmationMessage }}</div>
-          <button @click="goToLogin" class="action-button primary-action-button">Go to Login</button>
+          <button @click="goToLogin" aria-label="Log in" class="action-button primary-action-button">Pounce In</button>
         </div>
       </div>
 
@@ -122,7 +122,7 @@ onBeforeMount(async () => {
   confirmationType.value = route.query.confirmationType as string | null;
 
   if (!urlEmail || !urlToken || !confirmationType.value) {
-    confirmationMessage.value = 'Invalid confirmation link. Please try again.';
+    confirmationMessage.value = "That link doesn't look right. Please try again.";
     showLoginButton.value = true;
     return;
   }
@@ -132,10 +132,11 @@ onBeforeMount(async () => {
       const isConfirmed = await userStore.confirmEmail(urlEmail, urlToken);
       if (isConfirmed) {
         confirmationMessage.value =
-          'Your email has been successfully confirmed. You can now log in.';
+          "Paw prints verified! 🐾 You're all set to log in and meet your pets.";
         showLoginButton.value = true;
       } else {
-        confirmationMessage.value = 'Invalid or expired confirmation link. Please try again.';
+        confirmationMessage.value =
+          "That confirmation link expired or didn't work. Let's try again!";
         showLoginButton.value = true;
       }
     } else if (confirmationType.value === 'password') {
@@ -145,12 +146,13 @@ onBeforeMount(async () => {
         email.value = urlEmail;
         token.value = urlToken;
       } else {
-        confirmationMessage.value = 'Invalid or expired password reset link. Please try again.';
+        confirmationMessage.value =
+          "That reset link expired or didn't work. Let's send you a fresh one!";
         showLoginButton.value = true;
       }
     }
   } catch (_error) {
-    confirmationMessage.value = 'An error occurred. Please try again later.';
+    confirmationMessage.value = 'Something went wrong. Please try again later.';
     showLoginButton.value = true;
   }
 });
@@ -163,12 +165,12 @@ const resetPassword = async () => {
   errorMessage.value = '';
 
   if (!isPasswordValid(passwordValidations.value)) {
-    errorMessage.value = 'Password does not meet the requirements.';
+    errorMessage.value = "Your paw code doesn't meet all the requirements yet.";
     return;
   }
 
   if (newPassword.value !== confirmPassword.value) {
-    errorMessage.value = 'Passwords do not match';
+    errorMessage.value = "Your paw codes don't match.";
     return;
   }
 
@@ -178,18 +180,18 @@ const resetPassword = async () => {
     if (!result.isSuccess) {
       errorMessage.value = resultMessage(
         result,
-        'Failed to reset password. Try to send a new reset link',
+        "Couldn't reset your paw code. Try sending a new reset link.",
       );
       return;
     }
 
-    validMessage.value = 'Password has been reset successfully';
+    validMessage.value = 'Your new paw code is saved! 🐾 Ready to log back in?';
     setTimeout(() => {
       validMessage.value = '';
       goBack();
     }, 3000);
   } catch (_error) {
-    errorMessage.value = 'Failed to reset password. Try to send a new reset link';
+    errorMessage.value = "Couldn't reset your paw code. Try sending a new reset link.";
   }
 };
 

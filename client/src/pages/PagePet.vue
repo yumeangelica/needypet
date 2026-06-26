@@ -2,7 +2,7 @@
   <div>
     <div v-if="$route.matched.length === 1" id="main-content" role="main" tabindex="-1"
       :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <TheLoadingSpinner v-if="isLoading" message="Loading pet..." />
+      <TheLoadingSpinner v-if="isLoading" message="Fetching your furry friend..." />
       <div v-else-if="pet" class="pet-container">
         <div class="full-pet-card">
 
@@ -29,37 +29,37 @@
 
           <!-- Need related container -->
           <div class="header-button-container">
-            <h3 class="text-center mt-2 mb-0">Needs:</h3>
-            <template v-if="pet.owner?.id === userStore.id && currentDate === dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
-              <button class="custom-button" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
+            <h3 class="text-center mt-2 mb-0">Daily Care Tasks</h3>
+            <template v-if="pet.owner?.id === userStore.id && currentDate === ownerToday">
+              <button class="custom-button" aria-label="Add care task" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
                 <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
-                Add need
+                Add a Care Task
               </button>
-              <p v-else>Maximum 10 needs per day</p>
+              <p v-else>That's plenty of love for one day! 🐾</p>
             </template>
-            <button class="custom-button" @click="currentDate = dayjs().tz(userStore.timezone).format('YYYY-MM-DD')"
-              v-if="currentDate !== dayjs().tz(userStore.timezone).format('YYYY-MM-DD')">
+            <button class="custom-button" @click="currentDate = ownerToday"
+              v-if="currentDate !== ownerToday">
               Today
             </button>
           </div>
 
-          <!-- Add Need Modal -->
-          <Dialog v-if="isOpen" :open="isOpen" @update:open="setOpen($event)" title="New need">
+          <!-- Add Care Task Modal -->
+          <Dialog v-if="isOpen" :open="isOpen" @update:open="setOpen($event)" title="New care task">
             <div>
               <form @submit.prevent="addNewNeed">
-                <h3 class="form-header">Add New Need</h3>
+                <h3 class="form-header">What does {{ pet.name }} need today?</h3>
 
-                <label class="form-label" for="need-category">Category:</label>
+                <label class="form-label" for="need-category">Type of care</label>
                 <div class="form-field">
                   <input id="need-category" class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine" />
                 </div>
 
-                <label class="form-label" for="need-description">Description:</label>
+                <label class="form-label" for="need-description">More details</label>
                 <div class="form-field">
                   <input id="need-description" class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park" />
                 </div>
 
-                <label class="form-label" for="need-date">Date:</label>
+                <label class="form-label" for="need-date">Date</label>
                 <div class="form-field">
                   <input id="need-date" class="form-field-input" readonly :value="currentDate" required />
                 </div>
@@ -77,20 +77,20 @@
                 </div>
 
                 <div v-if="selection === 'quantity'">
-                  <label class="form-label" for="need-quantity-value">Value and Unit:</label>
-                  <div class="flex gap-2 items-center">
-                    <div class="form-field flex-1">
-                      <input id="need-quantity-value" class="form-field-input w-full min-w-[80px]" v-model="valueOfSelection" required autofocus
-                        @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value"
-                        :aria-invalid="formFieldsErrorDetailsObject.quantityUnit ? true : undefined"
-                        :aria-describedby="formFieldsErrorDetailsObject.quantityUnit ? 'need-quantity-error' : undefined" />
+                  <label class="form-label" for="need-quantity-value">Value and Unit</label>
+                  <div class="value-unit-row">
+                    <input id="need-quantity-value" class="form-field-input value-unit-value" v-model="valueOfSelection" required autofocus
+                      @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value"
+                      :aria-invalid="formFieldsErrorDetailsObject.quantityUnit ? true : undefined"
+                      :aria-describedby="formFieldsErrorDetailsObject.quantityUnit ? 'need-quantity-error' : undefined" />
+                    <div class="value-unit-select">
+                      <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="Unit" aria-label="Select unit" />
                     </div>
-                    <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="select unit" class="w-28" aria-label="Select unit" />
                   </div>
                 </div>
 
                 <div v-if="selection === 'duration'">
-                  <label class="form-label" for="need-duration-value">Duration (minutes):</label>
+                  <label class="form-label" for="need-duration-value">Duration (minutes)</label>
                   <div class="form-field">
                     <input id="need-duration-value" class="form-field-input" v-model="valueOfSelection" required autofocus @input="cleanInput($event)"
                       inputmode="numeric" placeholder="Enter duration in minutes"
@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="form-button-group">
-                  <button class="form-button primary" type="submit">Add Need</button>
+                  <button class="form-button primary" type="submit" aria-label="Add care task">Add to Routine</button>
                   <button class="form-button secondary" type="button"
                     @click="() => { selection = ''; valueOfSelection = null; unitOfSelection = ''; }" v-if="selection">
                     Return
@@ -130,7 +130,7 @@
             <ul v-if="needsByDate[currentDate]">
               <li v-for="need in needsByDate[currentDate]" :key="need.id">
                 <div class="need-cards-container">
-                  <the-need-card :need="need" :petId="currentPetId" @needDeleted="handleNeedDeleted" @needUpdated="getPet(currentPetId)" />
+                  <the-need-card :need="need" :petId="currentPetId" :todayDate="ownerToday" @needDeleted="handleNeedDeleted" @needUpdated="getPet(currentPetId)" />
                 </div>
               </li>
             </ul>
@@ -141,7 +141,7 @@
       </div>
 
       <div v-else class="pet-container">
-        <p>Pet not found</p>
+        <p>We couldn't find that furry friend. 🐾</p>
       </div>
 
     </div>
@@ -183,6 +183,7 @@ const userStore = useUserStore();
 
 const currentDate: Ref<string> = ref(dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
 const pet: Ref<Pet | null> = ref(null);
+const hasSetInitialDate = ref(false);
 const isLoading = ref(true);
 const isOpen = ref(false);
 const category: Ref<Need['category']> = ref('');
@@ -203,13 +204,17 @@ const unitOfSelection: Ref<
 > = ref('');
 const isOwner = ref(false);
 
+const ownerTimezone = computed(() => pet.value?.owner?.timezone || userStore.timezone || 'UTC');
+
+const ownerToday = computed(() => dayjs().tz(ownerTimezone.value).format('YYYY-MM-DD'));
+
 const quantityUnits = [
   { label: 'ml', value: 'ml' },
   { label: 'g', value: 'g' },
 ];
 
 const changeDay = (delta: number) => {
-  const newDate = dayjs.tz(currentDate.value, userStore.timezone).add(delta, 'days');
+  const newDate = dayjs.tz(currentDate.value, ownerTimezone.value).add(delta, 'days');
   currentDate.value = newDate.format('YYYY-MM-DD');
 };
 
@@ -250,13 +255,17 @@ const cleanInput = (event: Event) => {
   valueOfSelection.value = Number(value);
 };
 
-async function getPet(id: string) {
-  const fetchedPet = await petStore.getPetById(id);
+function getPet(id: string) {
+  const fetchedPet = petStore.getPetById(id);
   if (fetchedPet) {
     pet.value = fetchedPet;
+    if (!hasSetInitialDate.value) {
+      currentDate.value = ownerToday.value;
+      hasSetInitialDate.value = true;
+    }
     needsByDate.value = needsByDateComputed.value;
   }
-  isOwner.value = await petStore.isOwner(id);
+  isOwner.value = petStore.isOwner(id);
   isLoading.value = false;
 }
 
@@ -267,7 +276,7 @@ const addNewNeed = async () => {
   }
 
   if (!category.value || !description.value) {
-    appStore.addNotification('Please fill in all fields', 'error');
+    appStore.addNotification('Oops! We need all the details for this care task.', 'error');
     return;
   }
 
@@ -352,7 +361,7 @@ onBeforeMount(async () => {
 const handleNeedDeleted = async (deleted: boolean) => {
   if (deleted && pet.value?.id) {
     await getPet(pet.value.id);
-    appStore.addNotification('Need removed', 'success');
+    appStore.addNotification('Care task removed 🐾', 'success');
   }
 };
 

@@ -55,7 +55,7 @@ const getAllUserPets = async (request, response, next) => {
     const pets = (
       await Pet.find({ $or: [{ owner: user._id }, { careTakers: user._id }] }) // Find all pets that the user is the owner or care taker
         .populate('needs')
-        .populate('owner', 'userName')
+        .populate('owner', 'userName timezone')
         .populate('careTakers', 'userName')
     ).map((pet) => {
       // Remove the caretakers list if the user is not the owner
@@ -282,8 +282,11 @@ const addNewNeed = async (request, response, next) => {
     if (
       pet.needs.filter(
         (need) =>
+          // Archived needs (e.g. rolled-over history) must not consume a daily
+          // slot; only count live needs for the day.
+          !need.archived &&
           need.dateFor.toISOString().split('T')[0] ===
-          validateNeed.dateFor.toISOString().split('T')[0],
+            validateNeed.dateFor.toISOString().split('T')[0],
       ).length >= 10
     ) {
       return response
@@ -353,7 +356,7 @@ const addNewRecord = async (request, response, next) => {
     }
 
     // The need's "day" is defined by the pet owner's timezone (who created it),
-    // not the acting caretaker's — otherwise a carer in a different timezone
+    // not the acting caretaker's - otherwise a carer in a different timezone
     // could be wrongly blocked from or allowed to record against it. The pet's
     // owner is a raw ObjectId here (getPetHandler does not populate it), so fetch
     // the owner's timezone, falling back to the caretaker's if unavailable.

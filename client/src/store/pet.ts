@@ -46,7 +46,10 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Error fetching pets'),
+          message: getErrorMessage(
+            error,
+            "We couldn't fetch your furry friends. Please try again.",
+          ),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -75,7 +78,7 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Error adding pet'),
+          message: getErrorMessage(error, "We couldn't welcome your new friend. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -104,7 +107,7 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Error deleting pet'),
+          message: getErrorMessage(error, "We couldn't say goodbye to your pet. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -136,7 +139,7 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Error updating pet'),
+          message: getErrorMessage(error, "We couldn't update your pet's info. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -187,7 +190,7 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Failed to toggle need active status'),
+          message: getErrorMessage(error, "We couldn't update that care task. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -239,7 +242,7 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Failed to update need'),
+          message: getErrorMessage(error, "We couldn't update that care task. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -285,7 +288,7 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Failed to delete need'),
+          message: getErrorMessage(error, "We couldn't remove that care task. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -343,7 +346,7 @@ export const usePetStore = defineStore('pet', {
       } catch (error) {
         return {
           isSuccess: false,
-          message: getErrorMessage(error, 'Failed to add record'),
+          message: getErrorMessage(error, "We couldn't save that. Please try again."),
           errorDetails: getErrorDetails(error),
         };
       }
@@ -403,25 +406,25 @@ export const usePetStore = defineStore('pet', {
   },
   getters: {
     // Gets the owner's pets from the state and returns them
-    getOwnerPets: (state) => async (): Promise<Pet[]> => {
+    getOwnerPets: (state) => (): Pet[] => {
       const userStore = useUserStore();
       return state.pets.filter((pet) => pet.owner?.id === userStore.id);
     },
     // Gets the carer's pets from the state and returns them
-    getCarerPets: (state) => async (): Promise<Pet[]> => {
+    getCarerPets: (state) => (): Pet[] => {
       const userStore = useUserStore();
       return state.pets.filter((pet) => pet.owner?.id !== userStore.id);
     },
     // Gets the pet by id from the state and returns it
     getPetById:
       (state) =>
-      async (id: string): Promise<Pet | undefined> => {
+      (id: string): Pet | undefined => {
         return state.pets.find((pet) => pet.id === id);
       },
     // Checks if the user is the owner of the pet
     isOwner:
       (state) =>
-      async (petId: string): Promise<boolean> => {
+      (petId: string): boolean => {
         const userStore = useUserStore();
         const pet = state.pets.find((pet) => pet.id === petId);
         return pet?.owner?.id === userStore.id;

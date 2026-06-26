@@ -80,6 +80,12 @@ const makeDurationNeed = (overrides = {}) => ({
   ...overrides,
 });
 
+const needCardProps = (need = makeDurationNeed()) => ({
+  need,
+  petId: 'pet-1',
+  todayDate: today(),
+});
+
 const globalProvide = (isOwner = true) => ({
   provide: {
     isOwner,
@@ -87,7 +93,7 @@ const globalProvide = (isOwner = true) => ({
   },
 });
 
-describe('TheNeedCard — rendering', () => {
+describe('TheNeedCard - rendering', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     resetMock();
@@ -99,7 +105,7 @@ describe('TheNeedCard — rendering', () => {
 
   it('renders the category and description', () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed(), petId: 'pet-1' },
+      props: needCardProps(),
       global: globalProvide(),
     });
 
@@ -109,7 +115,7 @@ describe('TheNeedCard — rendering', () => {
 
   it('renders duration value and unit', () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed(), petId: 'pet-1' },
+      props: needCardProps(),
       global: globalProvide(),
     });
 
@@ -119,7 +125,23 @@ describe('TheNeedCard — rendering', () => {
 
   it('shows the "Complete" button for an incomplete today need', () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed({ completed: false }), petId: 'pet-1' },
+      props: needCardProps(makeDurationNeed({ completed: false })),
+      global: globalProvide(),
+    });
+
+    expect(wrapper.find('.complete-button').exists()).toBe(true);
+  });
+
+  it('uses the stored YYYY-MM-DD directly instead of shifting it through the browser timezone', () => {
+    const wrapper = mount(TheNeedCard, {
+      props: {
+        need: makeDurationNeed({
+          completed: false,
+          dateFor: '2026-06-26',
+        }),
+        petId: 'pet-1',
+        todayDate: '2026-06-26',
+      },
       global: globalProvide(),
     });
 
@@ -128,7 +150,7 @@ describe('TheNeedCard — rendering', () => {
 
   it('shows the "Done" label for a completed need instead of the Complete button', () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed({ completed: true }), petId: 'pet-1' },
+      props: needCardProps(makeDurationNeed({ completed: true })),
       global: globalProvide(),
     });
 
@@ -138,10 +160,7 @@ describe('TheNeedCard — rendering', () => {
 
   it('does not show the Complete button for a future need', () => {
     const wrapper = mount(TheNeedCard, {
-      props: {
-        need: makeDurationNeed({ dateFor: futureDay() }),
-        petId: 'pet-1',
-      },
+      props: needCardProps(makeDurationNeed({ dateFor: futureDay() })),
       global: globalProvide(),
     });
 
@@ -150,7 +169,7 @@ describe('TheNeedCard — rendering', () => {
 
   it('shows the options menu button for owners', () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed(), petId: 'pet-1' },
+      props: needCardProps(),
       global: globalProvide(true),
     });
 
@@ -159,7 +178,7 @@ describe('TheNeedCard — rendering', () => {
 
   it('does not show the options menu button for non-owners', () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed(), petId: 'pet-1' },
+      props: needCardProps(),
       global: globalProvide(false),
     });
 
@@ -168,7 +187,7 @@ describe('TheNeedCard — rendering', () => {
 
   it('applies card-inactive class when isActive is false', () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed({ isActive: false }), petId: 'pet-1' },
+      props: needCardProps(makeDurationNeed({ isActive: false })),
       global: globalProvide(),
     });
 
@@ -176,7 +195,7 @@ describe('TheNeedCard — rendering', () => {
   });
 });
 
-describe('TheNeedCard — addRecord (Complete button)', () => {
+describe('TheNeedCard - addRecord (Complete button)', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     resetMock();
@@ -200,7 +219,7 @@ describe('TheNeedCard — addRecord (Complete button)', () => {
     });
 
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed(), petId: 'pet-1' },
+      props: needCardProps(),
       global: globalProvide(),
     });
 
@@ -213,7 +232,7 @@ describe('TheNeedCard — addRecord (Complete button)', () => {
   });
 });
 
-describe('TheNeedCard — emits', () => {
+describe('TheNeedCard - emits', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     resetMock();
@@ -230,7 +249,7 @@ describe('TheNeedCard — emits', () => {
 
   it('shows the delete confirmation dialog when the Delete button is clicked', async () => {
     const wrapper = mount(TheNeedCard, {
-      props: { need: makeDurationNeed(), petId: 'pet-1' },
+      props: needCardProps(),
       global: globalProvide(true),
     });
 
