@@ -57,6 +57,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+userSchema.index({ timezone: 1 });
+
 userSchema.set('toJSON', {
   transform(document, returnedObject) {
     returnedObject.id = returnedObject._id.toString(); // Change the _id property of the returned object to string id
@@ -131,7 +133,9 @@ userSchema.methods.generateEmailConfirmToken = function () {
  */
 userSchema.methods.verifyEmailConfirmToken = function (token) {
   return (
+    !!token &&
     this.emailConfirmToken === token &&
+    !!this.emailConfirmTokenExpires &&
     this.emailConfirmTokenExpires.getTime() > Date.now()
   );
 };

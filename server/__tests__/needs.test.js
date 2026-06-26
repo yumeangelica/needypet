@@ -17,7 +17,7 @@ const {
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-// The user's local "today" — adding a record requires the need's dateFor to
+// The user's local "today" - adding a record requires the need's dateFor to
 // match the user's current local date (see checkLocalDateByTimezone).
 const localToday = (tz = 'Europe/Helsinki') =>
   dayjs().tz(tz).format('YYYY-MM-DD');
@@ -173,6 +173,85 @@ describe('POST /api/pets/:id/newneed', () => {
       });
 
     assert.strictEqual(response.status, 401);
+  });
+
+  it('does not count archived needs toward the 10-per-day limit', async () => {
+    const { token, id } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    // The request's dateFor is normalized to the owner's local day (Helsinki),
+    // so seed against that same day to keep the comparison aligned near UTC
+    // midnight.
+    const ownerToday = localToday();
+
+    // Seed 10 archived needs for today directly (the API caps at 10 and cannot
+    // create archived needs). These are rolled-over history and must not consume
+    // the daily slot.
+    const archived = Array.from({ length: 10 }, () => ({
+      dateFor: new Date(`${ownerToday}T00:00:00.000Z`),
+      category: 'Walk',
+      description: 'Old walk',
+      duration: { value: 30, unit: 'minutes' },
+      archived: true,
+      isActive: false,
+      completed: false,
+      careRecords: [],
+    }));
+    await Pet.findOneAndUpdate(
+      { _id: pet.id, owner: id },
+      { $push: { needs: { $each: archived } } },
+    );
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Feeding',
+          description: 'Fresh meal',
+          dateFor: ownerToday,
+          quantity: { value: 100, unit: 'g' },
+        },
+      });
+
+    assert.strictEqual(response.status, 201);
+  });
+
+  it('returns 400 when 10 active needs already exist for the day', async () => {
+    const { token, id } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const ownerToday = localToday();
+
+    // Seed 10 active (non-archived) needs for today directly.
+    const active = Array.from({ length: 10 }, () => ({
+      dateFor: new Date(`${ownerToday}T00:00:00.000Z`),
+      category: 'Walk',
+      description: 'Daily walk',
+      duration: { value: 30, unit: 'minutes' },
+      archived: false,
+      isActive: true,
+      completed: false,
+      careRecords: [],
+    }));
+    await Pet.findOneAndUpdate(
+      { _id: pet.id, owner: id },
+      { $push: { needs: { $each: active } } },
+    );
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Feeding',
+          description: 'One too many',
+          dateFor: ownerToday,
+          quantity: { value: 100, unit: 'g' },
+        },
+      });
+
+    assert.strictEqual(response.status, 400);
   });
 
   it("stores a full datetime as the owner's local calendar day", async () => {

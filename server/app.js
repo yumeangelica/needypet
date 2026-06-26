@@ -9,6 +9,7 @@ const requestLogger = require('./middlewares/requestLoggerMiddleware');
 const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const dbReady = require('./middlewares/dbReadyMiddleware');
+const jsonBodyDefault = require('./middlewares/jsonBodyDefaultMiddleware');
 const {
   authLimiter,
   emailLimiter,
@@ -23,6 +24,7 @@ const path = require('node:path');
 
 // Middleware
 app.use(express.json()); // Json parser for post requests
+app.use(jsonBodyDefault); // Guarantee request.body is an object after parsing
 if (!isTesting) {
   app.use(requestLogger); // Request logger
 }
@@ -57,8 +59,9 @@ app.use(
 );
 
 if (!isTesting) {
-  // Run every hour
-  cron.schedule('0 * * * *', () => updatePetNeedstoNextDays()); // Check if pet needs needs updated every hour, if midnight, update pet needs
+  // Run every 15 minutes; the job is idempotent and catches up pets whose owner
+  // local day has advanced even if an earlier midnight tick was missed.
+  cron.schedule('*/15 * * * *', () => updatePetNeedstoNextDays()); // Roll pet needs to the owner's current local day
 }
 
 // Routes
