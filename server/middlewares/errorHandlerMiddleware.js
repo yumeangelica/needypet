@@ -52,6 +52,13 @@ const errorHandler = (error, request, response, next) => {
     message,
   };
 
+  // Malformed JSON body: express.json() throws a SyntaxError with status 400 and
+  // type 'entity.parse.failed'. Return a clean message instead of leaking the
+  // raw parser error (e.g. "Unexpected token ... in JSON").
+  if (error.type === 'entity.parse.failed') {
+    return response.status(400).json({ message: 'Invalid JSON body' });
+  }
+
   // Specific error handling
   switch (error.name) {
     case 'CastError':
@@ -106,24 +113,24 @@ const errorHandler = (error, request, response, next) => {
     case 'SMTPAuthenticationError': // Specific SMTP authentication error
       errorResponse.message =
         'Email authentication failed. Please contact support.';
-      return response.status(535).json(errorResponse);
+      return response.status(502).json(errorResponse);
 
     case 'SMTPError':
       errorResponse.message = 'Email Error';
-      return response.status(535).json(errorResponse);
+      return response.status(502).json(errorResponse);
 
     default:
       if (error.code === 'EAUTH') {
         errorResponse.message =
           'Email authentication failed. Please contact support.';
-        return response.status(535).json(errorResponse);
+        return response.status(502).json(errorResponse);
       }
 
       if (
         ['ECONNECTION', 'ESOCKET', 'ETIMEDOUT', 'EMESSAGE'].includes(error.code)
       ) {
         errorResponse.message = 'Unable to send email. Please try again later.';
-        return response.status(535).json(errorResponse);
+        return response.status(502).json(errorResponse);
       }
 
       // Catch jose errors by error code as fallback

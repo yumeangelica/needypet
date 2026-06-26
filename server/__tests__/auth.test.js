@@ -113,6 +113,50 @@ describe('POST /auth/users (duplicates)', () => {
   });
 });
 
+describe('POST /auth/users (email failure rollback)', () => {
+  it('returns 502 and does not persist the user when the confirmation email fails', async () => {
+    // Override the beforeEach stub so the confirmation email rejects.
+    mock.method(mailer, 'sendConfirmationEmail', () =>
+      Promise.reject(new Error('SMTP down')),
+    );
+
+    const payload = {
+      userName: 'orphanUser',
+      email: 'orphan@example.com',
+      newPassword: 'TestPass123!',
+      timezone: 'Europe/Helsinki',
+    };
+
+    const response = await api.post('/auth/users').send(payload);
+
+    assert.strictEqual(response.status, 502);
+    // The just-created user must be rolled back, not left orphaned.
+    const persisted = await User.findOne({ userName: payload.userName });
+    assert.strictEqual(persisted, null);
+  });
+
+  it('allows a clean retry after an email failure (no "already exists")', async () => {
+    mock.method(mailer, 'sendConfirmationEmail', () =>
+      Promise.reject(new Error('SMTP down')),
+    );
+
+    const payload = {
+      userName: 'retryUser',
+      email: 'retry@example.com',
+      newPassword: 'TestPass123!',
+      timezone: 'Europe/Helsinki',
+    };
+
+    const failed = await api.post('/auth/users').send(payload);
+    assert.strictEqual(failed.status, 502);
+
+    // Email works on the retry; registration should now succeed, not 400.
+    mock.method(mailer, 'sendConfirmationEmail', () => Promise.resolve());
+    const retry = await api.post('/auth/users').send(payload);
+    assert.strictEqual(retry.status, 201);
+  });
+});
+
 describe('GET /auth/users/:id', () => {
   it('returns the user for a valid token and id', async () => {
     const { token, id, userName } = await registerAndLogin();
@@ -235,7 +279,7 @@ describe('Email confirmation flow', () => {
 describe('Password reset flow', () => {
   it('issues a reset token even when the email is still unconfirmed', async () => {
     // requestPasswordReset gates on canResendPasswordReset(), which inspects the
-    // password reset token — not the email confirmation token. A freshly
+    // password reset token - not the email confirmation token. A freshly
     // registered (unconfirmed) user with no pending reset token should still get one.
     const { email } = await registerAndLogin();
 
@@ -254,7 +298,7 @@ describe('Password reset flow', () => {
   it('runs the full request -> verify -> reset flow', async () => {
     const { email, userName } = await registerAndLogin();
 
-    // 1. Request reset — server generates and stores a token.
+    // 1. Request reset - server generates and stores a token.
     const requestResponse = await api
       .post('/auth/request-password-reset')
       .send({ email });
@@ -370,5 +414,39 @@ describe('POST /auth/resend-email-confirmation', () => {
       .set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 400);
+  });
+});
+
+describe('request body handling', () => {
+  // A missing or non-JSON body must not crash handlers that read request.body.
+  // express.json() leaves request.body undefined in that case; jsonBodyDefault
+  // restores it to {} so validation produces a clean 4xx instead of a 500.
+  it('returns a validation error (not 500) when registering with no body', async () => {
+    const response = await api.post('/auth/users');
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails);
+  });
+
+  it('does not crash on a password-strength-gated route with no body', async () => {
+    const response = await api.post('/auth/users');
+
+    assert.notStrictEqual(response.status, 500);
+  });
+
+  it('returns 400 with a clean message on malformed JSON', async () => {
+    const response = await api
+      .post('/auth/users')
+      .set('Content-Type', 'application/json')
+      .send('{not valid json');
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Invalid JSON body');
+  });
+
+  it('does not crash request-password-reset when called with no body', async () => {
+    const response = await api.post('/auth/request-password-reset');
+
+    assert.notStrictEqual(response.status, 500);
   });
 });

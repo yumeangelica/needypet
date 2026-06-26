@@ -64,15 +64,27 @@ const createNewUser = async (request, response, next) => {
     try {
       await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
     } catch (emailError) {
+      // The user was already persisted above. If the confirmation email fails we
+      // return an error, so roll the user back to avoid an orphaned, unconfirmed
+      // account that would block a clean retry with "Username already exists".
+      try {
+        await User.findByIdAndDelete(user._id);
+      } catch (cleanupError) {
+        console.error('Failed to roll back user after email failure', {
+          userId: user._id.toString(),
+          error: cleanupError,
+        });
+      }
+
       if (emailError.code === 'EAUTH') {
         return next({
-          status: 535,
+          status: 502,
           message: 'Failed to authenticate email. Please contact support.',
         });
       }
 
       return next({
-        status: 535,
+        status: 502,
         message: 'Unable to send confirmation email. Please try again later.',
       });
     }
@@ -217,7 +229,7 @@ const deleteUser = async (request, response, next) => {
       { careTakers: user._id },
       { $pull: { careTakers: user._id } },
     );
-    await User.findByIdAndDelete(user.id);
+    await User.findByIdAndDelete(user._id);
 
     response.status(204).end();
   } catch (error) {
@@ -316,6 +328,10 @@ const validateUserToken = async (request, response, next) => {
     token = authHeader.substring(7); // Extract token from header starting from index 7
   }
 
+  if (!token) {
+    return response.status(401).json({ message: 'Token missing or invalid' });
+  }
+
   try {
     const { payload } = await jwtVerify(token, jwtSecretEncoded); // Verify token with secret key
 
@@ -334,6 +350,10 @@ const validateUserToken = async (request, response, next) => {
  */
 const verifyEmailConfirmationToken = async (request, response, next) => {
   const { token, email } = request.body;
+
+  if (!token || !email) {
+    return response.status(401).json({ message: 'Invalid token' });
+  }
 
   try {
     const user = await User.findOne({ email, emailConfirmToken: token }); // Find user by email and token
