@@ -1,4 +1,4 @@
-// Fetch-based API client — replaces axios.
+// Fetch-based API client - replaces axios.
 // Drop-in: import { apiClient } from '@/services';
 
 const baseURL: string = import.meta.env.VITE_APP_BACKEND_URL;
@@ -31,23 +31,32 @@ interface ApiResponse<T = unknown> {
 
 /**
  * Thin wrapper around fetch that behaves like axios:
- *  – prepends baseURL
- *  – JSON-encodes body automatically
- *  – parses JSON response (or returns null for 204)
- *  – throws an ApiError with `error.response.status` and
+ *  - prepends baseURL
+ *  - JSON-encodes body automatically
+ *  - parses JSON response (or returns null for 204)
+ *  - throws an ApiError with `error.response.status` and
  *    `error.response.data` on non-2xx responses, so every
  *    existing catch-block keeps working.
  */
 async function request<T = unknown>(opts: RequestOptions): Promise<ApiResponse<T>> {
   const url = `${baseURL}${opts.url}`;
 
+  const headers: Record<string, string> = { ...(opts.headers || {}) };
+
   const fetchOpts: RequestInit = {
     method: opts.method.toUpperCase(),
-    headers: opts.headers || {},
+    headers,
   };
 
   if (opts.data !== undefined) {
     fetchOpts.body = JSON.stringify(opts.data);
+    // Default the JSON content type (matching the previous axios behaviour) so
+    // callers that pass only a body still send application/json. Without this
+    // the server's express.json() leaves request.body undefined. A caller can
+    // still override by providing its own Content-Type header.
+    if (!Object.keys(headers).some((key) => key.toLowerCase() === 'content-type')) {
+      headers['Content-Type'] = 'application/json';
+    }
   }
 
   const res = await fetch(url, fetchOpts);

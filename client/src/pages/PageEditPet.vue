@@ -3,39 +3,39 @@
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
         <form @submit.prevent="confirmUpdatePet">
-          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Edit Pet</h1>
+          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Update your fur baby's info 🐾</h1>
 
           <div>
-            <label class="form-label" for="editpet-name">Name:</label>
+            <label class="form-label" for="editpet-name">Name</label>
             <div class="form-field">
-              <input id="editpet-name" class="form-field-input" v-model="existingPetObject.name" required placeholder="Enter pet's name" />
+              <input id="editpet-name" class="form-field-input" v-model="existingPetObject.name" required placeholder="Fluffy, Whiskers, Buddy..." />
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="editpet-breed">Breed:</label>
+            <label class="form-label" for="editpet-breed">Breed</label>
             <div class="form-field">
-              <input id="editpet-breed" class="form-field-input" v-model="existingPetObject.breed" placeholder="Enter pet's breed" />
+              <input id="editpet-breed" class="form-field-input" v-model="existingPetObject.breed" placeholder="Golden Retriever, Siamese..." />
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="editpet-species">Species:</label>
+            <label class="form-label" for="editpet-species">What kind of pet?</label>
             <div class="form-field">
-              <input id="editpet-species" class="form-field-input" v-model="existingPetObject.species" placeholder="Enter pet's species" />
+              <input id="editpet-species" class="form-field-input" v-model="existingPetObject.species" placeholder="Dog, cat, rabbit..." />
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="editpet-description">Description</label>
+            <label class="form-label" for="editpet-description">Tell us about them</label>
             <div class="form-field">
               <textarea id="editpet-description" class="form-field-input" v-model="existingPetObject.description"
-                placeholder="About the pet"></textarea>
+                placeholder="Personality, quirks, favourite treats..."></textarea>
             </div>
           </div>
 
           <div>
-            <label class="form-label" for="editpet-birthday">Birthday</label>
+            <label class="form-label" for="editpet-birthday">When were they born?</label>
             <div class="form-field">
               <input id="editpet-birthday" class="form-field-input" type="date" :value="birthdayInputValue" @change="dateSelected($event)"
                 :max="todayString" :aria-invalid="dateErrorMessage ? true : undefined"
@@ -45,9 +45,9 @@
           </div>
 
           <div class="form-button-group">
-            <button type="submit" class="form-button primary">Update Pet</button>
+            <button type="submit" aria-label="Update pet" class="form-button primary">Save Changes</button>
             <button type="button" @click="cancelEdit" class="form-button secondary">Cancel</button>
-            <button type="button" class="form-button danger" @click="showDeleteDialog = true">
+            <button type="button" class="form-button danger" aria-label="Delete pet" @click="showDeleteDialog = true">
               <Trash2 class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
               Delete Pet
             </button>
@@ -55,10 +55,10 @@
         </form>
       </div>
 
-      <TheConfirmDialog :isOpen="showUpdateDialog" title="Update Pet" message="Are you sure you want to update this pet?" confirmLabel="Update"
+      <TheConfirmDialog :isOpen="showUpdateDialog" title="Save changes?" message="Save the new details for your fur baby?" confirmLabel="Save"
         @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
 
-      <TheConfirmDialog :isOpen="showDeleteDialog" title="Delete Pet" message="Are you sure you want to delete this pet?" confirmLabel="Delete"
+      <TheConfirmDialog :isOpen="showDeleteDialog" title="Say goodbye?" message="Remove this pet and all their care history? We'll miss them! 🐾" confirmLabel="Delete"
         variant="danger" :icon="Trash2" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
     </div>
     <TheFooter />
@@ -165,7 +165,7 @@ const deletePet = async () => {
 const loadPetData = async () => {
   const petId = route.params.id as string;
   if (petId) {
-    const petData = await petStore.getPetById(petId);
+    const petData = petStore.getPetById(petId);
     if (petData) {
       existingPetObject.value = { ...petData };
     } else {

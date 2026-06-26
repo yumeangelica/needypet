@@ -6,17 +6,19 @@
 
         <div class="auth-card-header paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Login</h1>
+          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Welcome back!</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
+        <p class="auth-subtitle">Log in to your NeedyPet account 🐾</p>
+
         <form class="auth-form" @submit.prevent="login">
           <div class="auth-field">
-            <input class="auth-field-input" type="text" v-model="userName" placeholder="Enter your username" aria-label="Username" />
+            <input class="auth-field-input" type="text" v-model="userName" placeholder="Username (your pet parent name)" aria-label="Username" />
           </div>
 
           <div class="auth-field">
-            <input class="auth-field-input" :type="passwordFieldType" v-model="password" placeholder="Enter your password" aria-label="Password" />
+            <input class="auth-field-input" :type="passwordFieldType" v-model="password" placeholder="Password (your secret paw code)" aria-label="Password" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
               <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
@@ -24,12 +26,12 @@
           </div>
 
           <div class="auth-action-row">
-            <button type="submit" class="action-button primary-action-button auth-action-button">Log In</button>
+            <button type="submit" aria-label="Log in" class="action-button primary-action-button auth-action-button">Log In</button>
             <button type="button" @click="goBack" class="action-button secondary-action-button auth-action-button">← Back</button>
           </div>
 
           <button type="button" @click="router.push({ name: 'request-password-reset' })" class="auth-secondary-link">
-            Forgot Password
+            Lost your paw code?
           </button>
         </form>
       </div>

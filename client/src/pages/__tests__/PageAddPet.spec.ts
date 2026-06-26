@@ -15,7 +15,7 @@ import { useUserStore } from '@/store/user';
 
 const birthdayInput = (wrapper: ReturnType<typeof mount>) => wrapper.find('input#addpet-birthday');
 
-describe('PageAddPet — timezone-aware birthday', () => {
+describe('PageAddPet - timezone-aware birthday', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     push.mockClear();

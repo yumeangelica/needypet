@@ -6,17 +6,17 @@
 
         <div class="paw-header-container">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Forgot Password</h1>
+          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Lost your paw code?</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
         <form @submit.prevent="resetPassword">
           <div class="auth-field">
-            <input class="auth-field-input" type="email" v-model="email" placeholder="Enter your email" aria-label="Email" />
+            <input class="auth-field-input" type="email" v-model="email" placeholder="Your email" aria-label="Email" />
           </div>
 
           <div class="flex flex-col gap-2">
-            <button type="submit" class="action-button primary-action-button">Reset Password</button>
+            <button type="submit" aria-label="Send reset link" class="action-button primary-action-button">Send Reset Link</button>
             <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
           </div>
         </form>
@@ -46,9 +46,9 @@ const email = ref('');
 const resetPassword = async () => {
   const isSuccess = await userStore.requestPasswordReset(email.value);
   if (!isSuccess) {
-    appStore.addNotification('Failed to send password reset link, please try again later', 'error');
+    appStore.addNotification("We couldn't send the reset link. Please try again.", 'error');
   } else {
-    appStore.addNotification('Please check your email for the password reset link', 'success');
+    appStore.addNotification('Check your inbox! We sent you a reset link 📧', 'success');
   }
   goBack();
 };

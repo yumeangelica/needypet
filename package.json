@@ -5,7 +5,13 @@
   "scripts": {
     "dev": "concurrently -k -n client,server -c magenta,cyan \"bun run dev:client\" \"bun run dev:server\"",
     "dev:client": "cd client && bun run dev",
-    "dev:server": "cd server && bun run dev"
+    "dev:server": "cd server && bun run dev",
+    "lint": "bun run lint:client && bun run lint:server",
+    "lint:client": "cd client && bun run lint",
+    "lint:server": "cd server && bun run lint",
+    "lint:fix": "bun run lint:fix:client && bun run lint:fix:server",
+    "lint:fix:client": "cd client && bun run lint:fix",
+    "lint:fix:server": "cd server && bun run lint:fix"
   },
   "keywords": [],
   "author": "yumeangelica",

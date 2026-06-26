@@ -3,11 +3,11 @@
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
         <form @submit.prevent="submitForm">
-          <h1 class="text-[1.3rem] max-[568px]:text-[1.1rem]">Change Password:</h1>
+          <h1 class="text-[1.3rem] max-[568px]:text-[1.1rem]">Update my paw code 🐾</h1>
 
           <!-- Current Password input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Current Password"
+            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Your current paw code"
               aria-label="Current Password" :aria-invalid="errorDetailsObject.currentPassword ? true : undefined"
               :aria-describedby="errorDetailsObject.currentPassword ? 'changepw-current-error' : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
@@ -22,7 +22,7 @@
           <!-- New Password input field -->
           <div class="auth-field">
             <input class="auth-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
-              placeholder="New Password" aria-label="New Password" aria-describedby="changepw-requirements"
+              placeholder="Your new paw code" aria-label="New Password" aria-describedby="changepw-requirements"
               :aria-invalid="errorDetailsObject.newPassword ? true : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
@@ -35,16 +35,16 @@
 
           <div class="strong-password-note">
             <ul id="changepw-requirements" aria-live="polite">
-              <li :class="{ 'valid': passwordValidations.uppercase }">At least one uppercase</li>
-              <li :class="{ 'valid': passwordValidations.lowercase }">At least one lowercase</li>
-              <li :class="{ 'valid': passwordValidations.number }">At least one number</li>
-              <li :class="{ 'valid': passwordValidations.special }">At least one special character (!@#$%^&amp;*)</li>
-              <li :class="{ 'valid': passwordValidations.minLength }">Minimum 10 characters</li>
+              <li :class="{ 'valid': passwordValidations.uppercase }">A big-cat letter (A-Z)</li>
+              <li :class="{ 'valid': passwordValidations.lowercase }">A little-pup letter (a-z)</li>
+              <li :class="{ 'valid': passwordValidations.number }">A number (0-9)</li>
+              <li :class="{ 'valid': passwordValidations.special }">A special paw mark (!@#$%^&amp;*)</li>
+              <li :class="{ 'valid': passwordValidations.minLength }">Nice and long (10+ characters)</li>
             </ul>
           </div>
 
           <div class="form-button-group">
-            <button class="form-button primary" type="submit">Change Password</button>
+            <button class="form-button primary" type="submit" aria-label="Change password">Save New Code</button>
             <button type="button" class="form-button secondary" @click="router.push({ name: 'profile' })">Cancel</button>
           </div>
 

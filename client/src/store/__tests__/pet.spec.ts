@@ -226,7 +226,7 @@ describe('pet store - getAllPets', () => {
     const result = await petStore.getAllPets();
 
     expect(result.isSuccess).toBe(false);
-    expect(result.message).toBe('Error fetching pets');
+    expect(result.message).toBe("We couldn't fetch your furry friends. Please try again.");
   });
 });
 
@@ -545,7 +545,7 @@ describe('pet store - getters', () => {
       { id: 'pet-2', owner: { id: 'uid-2' } },
     ] as unknown as typeof petStore.pets;
 
-    const owned = await petStore.getOwnerPets();
+    const owned = petStore.getOwnerPets();
     expect(owned).toHaveLength(1);
     expect(owned[0].id).toBe('pet-1');
   });
@@ -560,7 +560,7 @@ describe('pet store - getters', () => {
       { id: 'pet-2', owner: { id: 'uid-2' } },
     ] as unknown as typeof petStore.pets;
 
-    const cared = await petStore.getCarerPets();
+    const cared = petStore.getCarerPets();
     expect(cared).toHaveLength(1);
     expect(cared[0].id).toBe('pet-2');
   });
@@ -572,7 +572,7 @@ describe('pet store - getters', () => {
       { id: 'pet-2', name: 'Luna' },
     ] as unknown as typeof petStore.pets;
 
-    const pet = await petStore.getPetById('pet-2');
+    const pet = petStore.getPetById('pet-2');
     expect(pet?.name).toBe('Luna');
   });
 
@@ -580,7 +580,7 @@ describe('pet store - getters', () => {
     const petStore = usePetStore();
     petStore.pets = [] as typeof petStore.pets;
 
-    const pet = await petStore.getPetById('unknown');
+    const pet = petStore.getPetById('unknown');
     expect(pet).toBeUndefined();
   });
 
@@ -591,7 +591,7 @@ describe('pet store - getters', () => {
     const petStore = usePetStore();
     petStore.pets = [{ id: 'pet-1', owner: { id: 'uid-1' } }] as unknown as typeof petStore.pets;
 
-    expect(await petStore.isOwner('pet-1')).toBe(true);
+    expect(petStore.isOwner('pet-1')).toBe(true);
   });
 
   it('isOwner returns false for a pet owned by another user', async () => {
@@ -601,6 +601,6 @@ describe('pet store - getters', () => {
     const petStore = usePetStore();
     petStore.pets = [{ id: 'pet-2', owner: { id: 'uid-2' } }] as unknown as typeof petStore.pets;
 
-    expect(await petStore.isOwner('pet-2')).toBe(false);
+    expect(petStore.isOwner('pet-2')).toBe(false);
   });
 });
