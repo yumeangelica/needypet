@@ -320,13 +320,24 @@ const updatePetNeedstoNextDays = async (referenceTime = dayjs()) => {
       owners.map((owner) => [owner._id.toString(), owner.timezone]),
     );
 
-    // Precompute each owner timezone's local "today" once.
+    // Precompute each owner timezone's local "today" once. Computed per zone so
+    // one invalid stored timezone (ICU/tzdata drift or a manual DB edit) cannot
+    // abort the whole tick; owners in a skipped zone simply do not roll until
+    // their timezone is fixed.
     const ownerTimezones = [
       ...new Set(owners.map((owner) => owner.timezone).filter(Boolean)),
     ];
-    const localTodayByTz = new Map(
-      ownerTimezones.map((tz) => [tz, now.tz(tz).startOf('day')]),
-    );
+    const localTodayByTz = new Map();
+    for (const tz of ownerTimezones) {
+      try {
+        localTodayByTz.set(tz, now.tz(tz).startOf('day'));
+      } catch (error) {
+        console.error('Skipping invalid owner timezone in need rollover', {
+          timezone: tz,
+          error,
+        });
+      }
+    }
 
     const pets = await Pet.find({
       owner: { $in: owners.map((owner) => owner._id) },

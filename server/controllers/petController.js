@@ -279,6 +279,19 @@ const addNewNeed = async (request, response, next) => {
       request.user.timezone,
     );
     const validateNeed = needValidation(request.body.need);
+
+    // A need in the owner's past could never receive care records (addNewRecord
+    // only accepts today) and would only feed the rollover backfill; reject it.
+    // This route is owner-only, so request.user is the pet's owner.
+    if (
+      validateNeed.dateFor.toISOString().split('T')[0] <
+      checkLocalDateByTimezone(request.user.timezone)
+    ) {
+      return response
+        .status(400)
+        .json({ message: 'Cannot add a need for a past day' });
+    }
+
     const pet = request.pet;
 
     if (
@@ -422,6 +435,12 @@ const toggleNeedisActive = async (request, response, next) => {
     return response.status(404).json({ message: 'Need not found' });
   }
 
+  // Archived needs are rolled-over history; only live needs may be toggled
+  // (matches the addNewRecord guard).
+  if (need.archived) {
+    return response.status(400).json({ message: 'Need is archived' });
+  }
+
   need.isActive = !need.isActive;
 
   try {
@@ -441,6 +460,12 @@ const updateNeed = async (request, response, next) => {
 
   if (!need) {
     return response.status(404).json({ message: 'Need not found' });
+  }
+
+  // Archived needs are rolled-over history; editing them would rewrite the
+  // care log (matches the addNewRecord guard).
+  if (need.archived) {
+    return response.status(400).json({ message: 'Need is archived' });
   }
 
   const updateDataObject = {

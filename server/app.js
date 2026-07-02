@@ -59,6 +59,10 @@ app.use(
 );
 
 if (!isTesting) {
+  // Catch up once at boot so a restart or a sleeping instance waking after
+  // midnight does not wait for the next quarter-hour tick. Mongoose buffers
+  // the queries until the connection opens, and the job catches its own errors.
+  updatePetNeedstoNextDays();
   // Run every 15 minutes; the job is idempotent and catches up pets whose owner
   // local day has advanced even if an earlier midnight tick was missed.
   cron.schedule('*/15 * * * *', () => updatePetNeedstoNextDays()); // Roll pet needs to the owner's current local day

@@ -581,4 +581,56 @@ describe('updatePetNeedstoNextDays (integration)', () => {
       laMidnight.tz('America/Los_Angeles').format('YYYY-MM-DD'),
     );
   });
+
+  it('still rolls valid owners when another owner has an invalid stored timezone', async () => {
+    const tz = 'Europe/Helsinki';
+    const referenceTime = dayjs.utc('2026-06-25T21:00:00.000Z');
+
+    const brokenUser = await User.create({
+      userName: 'brokenTzUser',
+      email: 'brokentz@example.com',
+      passwordHash: 'x'.repeat(20),
+      timezone: tz,
+    });
+    // Bypass the schema validator to simulate ICU/tzdata drift or a manual edit.
+    await User.collection.updateOne(
+      { _id: brokenUser._id },
+      { $set: { timezone: 'Not/AZone' } },
+    );
+    const brokenPet = makePetWithNeed(
+      0,
+      { dateFor: storedLocalDay(referenceTime, tz, 1) },
+      { owner: brokenUser._id },
+    );
+    await brokenPet.save();
+
+    const validUser = await User.create({
+      userName: 'validTzUser',
+      email: 'validtz@example.com',
+      passwordHash: 'x'.repeat(20),
+      timezone: tz,
+    });
+    const validPet = makePetWithNeed(
+      0,
+      { dateFor: storedLocalDay(referenceTime, tz, 1) },
+      { owner: validUser._id },
+    );
+    await validPet.save();
+
+    await updatePetNeedstoNextDays(referenceTime);
+
+    // The valid owner's pet rolled normally despite the broken zone.
+    const rolled = await Pet.findById(validPet._id);
+    const activeNeeds = rolled.needs.filter((n) => n.isActive && !n.archived);
+    assert.equal(activeNeeds.length, 1);
+    assert.equal(
+      ymd(activeNeeds[0].dateFor),
+      referenceTime.tz(tz).format('YYYY-MM-DD'),
+    );
+
+    // The broken owner's pet is skipped untouched, not corrupted.
+    const skipped = await Pet.findById(brokenPet._id);
+    assert.equal(skipped.needs.length, 1);
+    assert.equal(skipped.needs[0].archived, false);
+  });
 });

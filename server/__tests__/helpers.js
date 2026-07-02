@@ -1,5 +1,10 @@
 const supertest = require('supertest');
 const app = require('../app');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const api = supertest(app);
 
@@ -62,7 +67,10 @@ const createPet = async (token, pet = {}) => {
 const createPetWithNeed = async (token, need = {}) => {
   const pet = await createPet(token);
 
-  const today = new Date().toISOString().slice(0, 10);
+  // "Today" in the default registerAndLogin timezone (Europe/Helsinki): near
+  // UTC midnight the UTC date is still the owner's yesterday, which addNewNeed
+  // rejects. Callers overriding the user's timezone pass an explicit dateFor.
+  const today = dayjs().tz('Europe/Helsinki').format('YYYY-MM-DD');
   const needResponse = await api
     .post(`/api/pets/${pet.id}/newneed`)
     .set('Authorization', `Bearer ${token}`)
