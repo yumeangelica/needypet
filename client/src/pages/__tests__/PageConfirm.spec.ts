@@ -78,6 +78,11 @@ describe('PageConfirm password reset', () => {
     const wrapper = mount(PageConfirm);
     await flushPromises();
 
+    expect(
+      wrapper.find('.login-register-container.auth-panel.auth-card.auth-form-card').exists(),
+    ).toBe(true);
+    expect(wrapper.find('.auth-action-stack').exists()).toBe(true);
+
     const passwordInput = wrapper.find('input[aria-label="New Password"]');
 
     await passwordInput.setValue('ValidPass1?');

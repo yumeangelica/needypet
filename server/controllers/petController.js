@@ -89,6 +89,7 @@ const addNewPet = async (request, response, next) => {
     description: request.body.description || '',
     species: request.body.species || '',
     birthday: request.body.birthday || '',
+    image: request.body.image,
     owner: '',
     careTakers: [],
   };
@@ -146,7 +147,7 @@ const addNewPet = async (request, response, next) => {
  * @returns
  */
 const updatePet = async (request, response, next) => {
-  const { name, species, breed, description, birthday, careTakers } =
+  const { name, species, breed, description, birthday, image, careTakers } =
     request.body;
 
   let normalizedCareTakers = request.pet.careTakers;
@@ -187,6 +188,7 @@ const updatePet = async (request, response, next) => {
     breed: breed ? breed : request.pet.breed,
     description: description ? description : request.pet.description,
     birthday: birthday ? birthday : request.pet.birthday,
+    image: image !== undefined ? image : request.pet.image,
     careTakers: normalizedCareTakers,
   };
 

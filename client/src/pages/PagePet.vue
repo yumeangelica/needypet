@@ -1,37 +1,43 @@
 <template>
-  <div>
+  <div :class="{ 'app-page-root': $route.matched.length === 1 }">
     <div v-if="$route.matched.length === 1" id="main-content" role="main" tabindex="-1"
       :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <TheLoadingSpinner v-if="isLoading" message="Fetching your furry friend..." />
-      <div v-else-if="pet" class="pet-container">
+      <TheLoadingSpinner v-if="isLoading && !pet" message="Fetching your family member..." />
+      <div v-else-if="pet" class="pet-container pet-panel">
         <div class="full-pet-card">
 
-          <div class="inline-container">
-            <h1 class="text-[1.4rem] max-[568px]:text-[1.2rem]">{{ pet.name }}</h1>
-            <button v-if="pet.owner?.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
-              <Settings class="w-5 h-5" aria-hidden="true" />
-            </button>
-          </div>
+          <div class="pet-overview">
+            <div class="pet-copy">
+              <div class="inline-container">
+                <h1 class="text-[1.4rem] max-[568px]:text-[1.2rem]">{{ pet.name }}</h1>
+                <button v-if="pet.owner?.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
+                  <Settings class="w-5 h-5" aria-hidden="true" />
+                </button>
+              </div>
 
-          <div class="pet-info">
-            <p><strong>Description:</strong> {{ pet.description }}</p>
-            <p><strong>Species:</strong> {{ pet.species }}</p>
-            <p><strong>Breed:</strong> {{ pet.breed }}</p>
-            <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
-            <p><strong>Owner:</strong> {{ pet.owner?.userName }}</p>
-            <p v-if="pet.careTakers && pet.careTakers.length > 0">
-              <strong>Care takers:</strong>
-              <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">
-                {{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}
-              </span>
-            </p>
+              <div class="pet-info">
+                <p><strong>Description:</strong> {{ pet.description }}</p>
+                <p><strong>Species:</strong> {{ pet.species }}</p>
+                <p><strong>Breed:</strong> {{ pet.breed }}</p>
+                <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
+                <p><strong>Owner:</strong> {{ pet.owner?.userName }}</p>
+                <p v-if="pet.careTakers && pet.careTakers.length > 0">
+                  <strong>Care takers:</strong>
+                  <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">
+                    {{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <img class="pet-detail-image" :src="petImageSrc" :alt="`${pet.name} picture`" />
           </div>
 
           <!-- Need related container -->
           <div class="header-button-container">
             <h3 class="text-center mt-2 mb-0">Daily Care Tasks</h3>
             <template v-if="pet.owner?.id === userStore.id && currentDate === ownerToday">
-              <button class="custom-button" aria-label="Add care task" @click="setOpen(true)" v-if="needsByDate[currentDate] ? needsByDate[currentDate]?.length < 10 : true">
+              <button class="custom-button" aria-label="Add care task" @click="setOpen(true)" v-if="needsForCurrentDate.length < 10">
                 <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
                 Add a Care Task
               </button>
@@ -44,9 +50,9 @@
           </div>
 
           <!-- Add Care Task Modal -->
-          <Dialog v-if="isOpen" :open="isOpen" @update:open="setOpen($event)" title="New care task">
-            <div>
-              <form @submit.prevent="addNewNeed">
+          <Dialog v-if="isOpen" :open="isOpen" @update:open="setOpen($event)" title="New care task" maxWidth="620px">
+            <div class="care-task-dialog">
+              <form class="care-task-form" @submit.prevent="addNewNeed">
                 <h3 class="form-header">What does {{ pet.name }} need today?</h3>
 
                 <label class="form-label" for="need-category">Type of care</label>
@@ -69,7 +75,7 @@
                   <RadioGroup v-model="selection" aria-labelledby="need-measurement-label"
                     :aria-invalid="formFieldsErrorDetailsObject.selection ? true : undefined"
                     :aria-describedby="formFieldsErrorDetailsObject.selection ? 'need-selection-error' : undefined">
-                    <div class="flex gap-4">
+                    <div class="care-task-measurement-options">
                       <RadioGroupItem value="duration" label="Duration" />
                       <RadioGroupItem value="quantity" label="Quantity" />
                     </div>
@@ -120,22 +126,27 @@
             </div>
           </Dialog>
 
-          <div v-if="pet && needsByDate">
+          <section v-if="pet" class="daily-care-section" :aria-busy="isLoading ? 'true' : undefined">
             <div class="date-navigation">
               <button class="custom-button" @click="changeDay(-1)">← Previous</button>
               <h4>{{ currentDate }}</h4>
               <button class="custom-button" @click="changeDay(1)">Next →</button>
             </div>
 
-            <ul v-if="needsByDate[currentDate]">
-              <li v-for="need in needsByDate[currentDate]" :key="need.id">
-                <div class="need-cards-container">
-                  <the-need-card :need="need" :petId="currentPetId" :todayDate="ownerToday" @needDeleted="handleNeedDeleted" @needUpdated="getPet(currentPetId)" />
-                </div>
-              </li>
-            </ul>
-            <p v-else class="text-center">All clear for today! 🎉</p>
-          </div>
+            <div class="care-task-area" role="region" aria-label="Care tasks for selected day" :tabindex="needsForCurrentDate.length ? 0 : undefined">
+              <ul v-if="needsForCurrentDate.length" class="care-task-list">
+                <li v-for="need in needsForCurrentDate" :key="need.id" class="care-task-list-item">
+                  <div class="need-cards-container">
+                    <the-need-card :need="need" :petId="currentPetId" :todayDate="ownerToday" @needDeleted="handleNeedDeleted" @needUpdated="refreshCurrentPet" />
+                  </div>
+                </li>
+              </ul>
+              <div v-else class="empty-care-state">
+                <p class="empty-care-title">{{ emptyCareState.title }}</p>
+                <p class="empty-care-description">{{ emptyCareState.description }}</p>
+              </div>
+            </div>
+          </section>
 
         </div>
       </div>
@@ -165,6 +176,7 @@ import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
 import TheNeedCard from '@/components/TheNeedCard.vue';
 import { Dialog, RadioGroup, RadioGroupItem, Select } from '@/components/ui';
 import { resultMessage } from '@/lib/apiError';
+import { getPetImageSrc } from '@/lib/petImages';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -183,6 +195,7 @@ const userStore = useUserStore();
 
 const currentDate: Ref<string> = ref(dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
 const pet: Ref<Pet | null> = ref(null);
+const petImageSrc = computed(() => getPetImageSrc(pet.value?.image));
 const hasSetInitialDate = ref(false);
 const isLoading = ref(true);
 const isOpen = ref(false);
@@ -218,8 +231,6 @@ const changeDay = (delta: number) => {
   currentDate.value = newDate.format('YYYY-MM-DD');
 };
 
-const needsByDate = ref<Record<string, Need[]>>({});
-
 // The needs list only renders for a loaded pet, which always has an id.
 const currentPetId = computed(() => pet.value?.id ?? '');
 
@@ -232,6 +243,30 @@ const needsByDateComputed = computed<Record<string, Need[]>>(() => {
     acc[need.dateFor].push(need);
     return acc;
   }, {});
+});
+
+const needsForCurrentDate = computed(() => needsByDateComputed.value[currentDate.value] ?? []);
+
+const emptyCareState = computed(() => {
+  if (currentDate.value > ownerToday.value) {
+    return {
+      title: 'Care tasks will appear when this day starts',
+      description:
+        'Nothing needs doing yet. Future routines are generated on the day they are due.',
+    };
+  }
+
+  if (currentDate.value < ownerToday.value) {
+    return {
+      title: 'No care tasks for this day',
+      description: 'There were no care tasks scheduled here.',
+    };
+  }
+
+  return {
+    title: 'All clear for today! 🎉',
+    description: 'No care tasks are waiting right now.',
+  };
 });
 
 const setOpen = (open: boolean) => {
@@ -255,18 +290,57 @@ const cleanInput = (event: Event) => {
   valueOfSelection.value = Number(value);
 };
 
-function getPet(id: string) {
-  const fetchedPet = petStore.getPetById(id);
-  if (fetchedPet) {
-    pet.value = fetchedPet;
-    if (!hasSetInitialDate.value) {
-      currentDate.value = ownerToday.value;
-      hasSetInitialDate.value = true;
-    }
-    needsByDate.value = needsByDateComputed.value;
+const applyPet = (fetchedPet: Pet, id: string) => {
+  pet.value = fetchedPet;
+  if (!hasSetInitialDate.value) {
+    currentDate.value = ownerToday.value;
+    hasSetInitialDate.value = true;
   }
   isOwner.value = petStore.isOwner(id);
+};
+
+async function getPet(id: string) {
+  const cachedPet = petStore.getPetById(id);
+  const isSamePet = pet.value?.id === id;
+
+  if (cachedPet) {
+    applyPet(cachedPet, id);
+    isLoading.value = false;
+  } else {
+    if (!isSamePet) {
+      pet.value = null;
+    }
+    isLoading.value = true;
+  }
+
+  const result = await petStore.getAllPets();
+  const fetchedPet = petStore.getPetById(id);
+
+  if (fetchedPet) {
+    applyPet(fetchedPet, id);
+  } else if (!cachedPet || result.isSuccess) {
+    pet.value = null;
+    isOwner.value = false;
+    hasSetInitialDate.value = false;
+  }
+
   isLoading.value = false;
+}
+
+const refreshCurrentPet = async () => {
+  if (currentPetId.value) {
+    await getPet(currentPetId.value);
+  }
+};
+
+async function loadRoutePet() {
+  const id = route.params.id as string;
+  if (id) {
+    await getPet(id);
+  } else {
+    pet.value = null;
+    isLoading.value = false;
+  }
 }
 
 const addNewNeed = async () => {
@@ -338,12 +412,7 @@ const addNewNeed = async () => {
   }
 };
 
-watch(route, async () => {
-  const id = route.params.id as string;
-  if (id) {
-    await getPet(id);
-  }
-});
+watch(() => route.params.id, loadRoutePet);
 
 watch(selection, (newValue) => {
   if (newValue === 'duration') {
@@ -351,12 +420,7 @@ watch(selection, (newValue) => {
   }
 });
 
-onBeforeMount(async () => {
-  const id = route.params.id as string;
-  if (id) {
-    await getPet(id);
-  }
-});
+onBeforeMount(loadRoutePet);
 
 const handleNeedDeleted = async (deleted: boolean) => {
   if (deleted && pet.value?.id) {
@@ -388,19 +452,18 @@ provide('handleNeedDeletion', handleNeedDeleted);
 
 .date-navigation {
   margin-top: 4px;
-  margin-bottom: var(--space-stack);
+  margin-bottom: 0;
 }
 
 .pet-container {
-  margin-top: clamp(0.5rem, 3vh, 1.25rem);
   gap: clamp(0.75rem, 3vw, 1.25rem);
 }
 
 .full-pet-card {
-  background-color: var(--color-card);
+  background-color: var(--color-surface-app);
   border-radius: var(--radius-2xl);
-  border: 2px solid var(--color-card-border);
-  box-shadow: var(--shadow-card);
+  border: 2px solid var(--color-button-secondary);
+  box-shadow: var(--shadow-soft-card);
   padding: var(--space-card);
   width: 100%;
   max-width: var(--content-max-width);
@@ -409,8 +472,37 @@ provide('handleNeedDeletion', handleNeedDeleted);
   overflow-wrap: anywhere;
 }
 
+.pet-overview {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(1rem, 4vw, 2rem);
+  width: 100%;
+}
+
+.pet-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pet-detail-image {
+  width: clamp(120px, 26vw, 170px);
+  aspect-ratio: 1;
+  object-fit: contain;
+  flex: 0 0 auto;
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-inner);
+  border: 2px solid var(--color-button-secondary);
+  box-shadow: var(--shadow-button);
+}
+
 .pet-info {
   margin: 8px 0 12px;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--color-button-secondary);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-app-soft);
+  box-shadow: var(--shadow-field);
 }
 
 .pet-info p {
@@ -418,17 +510,143 @@ provide('handleNeedDeletion', handleNeedDeleted);
   line-height: 1.45;
 }
 
+.care-task-dialog {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: clamp(0.85rem, 3vw, 1.15rem);
+  border: 2px solid var(--color-button-secondary);
+  border-radius: var(--radius-2xl);
+  background: var(--color-surface-app);
+  box-shadow: var(--shadow-panel);
+  box-sizing: border-box;
+}
+
+.care-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.care-task-form .form-header {
+  margin-bottom: 10px;
+  font-size: clamp(1rem, 3vw, 1.2rem);
+}
+
+.care-task-form .form-field-input::placeholder {
+  opacity: 0.62;
+}
+
+.care-task-form .form-field-input[readonly] {
+  cursor: default;
+}
+
+.care-task-measurement-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin: 6px 0 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-form-field-border);
+  border-radius: var(--radius-field);
+  background: var(--color-form-field-bg);
+  box-shadow: var(--shadow-field);
+}
+
+.care-task-measurement-options :deep(.radio-group-label) {
+  flex: 1 1 9rem;
+  justify-content: center;
+  min-width: min(100%, 8.5rem);
+}
+
+.care-task-measurement-options :deep(.radio-group-text) {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.daily-care-section {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.85rem, 2.2vw, 1.25rem);
+  width: 100%;
+}
+
+.care-task-area {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: clamp(150px, 22vw, 190px);
+  max-height: clamp(22rem, 44vh, 30rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
+  padding: 0 0.35rem;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-2xl);
+  background: var(--color-surface-app-soft);
+  box-sizing: border-box;
+  box-shadow: var(--shadow-inset-surface);
+}
+
+.care-task-area:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 3px;
+}
+
+.care-task-list {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.care-task-list-item {
+  margin-bottom: 0;
+}
+
 .need-cards-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: clamp(0.75rem, 3vw, 1rem);
+  width: 100%;
   margin: var(--space-stack) 0;
 }
 
-ul {
+.empty-care-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   width: 100%;
+  max-width: min(100%, clamp(350px, 45vw, 420px));
+  min-height: clamp(120px, 18vw, 150px);
+  margin: var(--space-stack) auto;
+  padding: 1rem;
+  border: 0;
+  border-radius: var(--radius-2xl);
+  background: transparent;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.empty-care-state p {
   margin: 0;
+}
+
+.empty-care-title {
+  color: var(--color-primary-foreground);
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.empty-care-description {
+  max-width: 28rem;
+  color: var(--color-foreground);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0.82;
 }
 
 @media (min-width: 568px) {
@@ -460,6 +678,37 @@ ul {
 @media (max-width: 568px) {
   .full-pet-card {
     border-radius: var(--radius-xl);
+  }
+
+  .care-task-area {
+    min-height: 140px;
+    max-height: min(54svh, 30rem);
+    padding: 0 0.2rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .empty-care-state {
+    min-height: 112px;
+    border-radius: var(--radius-xl);
+  }
+
+  .pet-overview {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+
+  .pet-detail-image {
+    width: min(150px, 60vw);
+  }
+
+  .care-task-dialog {
+    padding: 0.85rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .care-task-measurement-options {
+    gap: 10px;
+    padding: 10px;
   }
 
   .date-navigation .custom-button {

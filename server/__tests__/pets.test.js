@@ -83,7 +83,45 @@ describe('POST /api/pets', () => {
     assert.strictEqual(response.status, 201);
     assert.strictEqual(response.body.name, 'Milo');
     assert.strictEqual(response.body.owner, id);
+    assert.deepStrictEqual(response.body.image, {
+      source: 'preset',
+      key: 'cat',
+    });
     assert.ok(response.body.id, 'created pet should have an id');
+  });
+
+  it('creates a new pet with an explicit preset image', async () => {
+    const { token } = await registerAndLogin();
+
+    const response = await api
+      .post('/api/pets')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'Bunny',
+        species: 'Rabbit',
+        image: { source: 'preset', key: 'bunny' },
+      });
+
+    assert.strictEqual(response.status, 201);
+    assert.deepStrictEqual(response.body.image, {
+      source: 'preset',
+      key: 'bunny',
+    });
+  });
+
+  it('rejects an invalid preset image key', async () => {
+    const { token } = await registerAndLogin();
+
+    const response = await api
+      .post('/api/pets')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'Milo',
+        image: { source: 'preset', key: 'dragon' },
+      });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails['image.key']);
   });
 
   it("adds the pet to an initial caretaker's pets array", async () => {
@@ -129,6 +167,44 @@ describe('PUT /api/pets/:id', () => {
     assert.strictEqual(response.status, 200);
     assert.strictEqual(response.body.name, 'Milo Updated');
     assert.strictEqual(response.body.species, 'Dog');
+  });
+
+  it('updates a pet preset image', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token, {
+      name: 'Milo',
+      image: { source: 'preset', key: 'cat' },
+    });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ image: { source: 'preset', key: 'dog' } });
+
+    assert.strictEqual(response.status, 200);
+    assert.deepStrictEqual(response.body.image, {
+      source: 'preset',
+      key: 'dog',
+    });
+  });
+
+  it('preserves a pet preset image when update omits it', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token, {
+      name: 'Milo',
+      image: { source: 'preset', key: 'bunny' },
+    });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Milo Updated' });
+
+    assert.strictEqual(response.status, 200);
+    assert.deepStrictEqual(response.body.image, {
+      source: 'preset',
+      key: 'bunny',
+    });
   });
 
   it("adds the pet to a new caretaker's pets array", async () => {

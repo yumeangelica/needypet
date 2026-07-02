@@ -7,7 +7,9 @@
     <TheHeader v-if="showHeaderNavigation" />
 
     <!-- Main content -->
-    <router-view />
+    <div class="route-shell">
+      <router-view />
+    </div>
 
     <!-- Mobile bottom navigation -->
     <TheMobileHeader v-if="showMobileNavigation" />
@@ -56,3 +58,13 @@ onUnmounted(() => {
   cleanup();
 });
 </script>
+
+<style scoped>
+.route-shell {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+</style>

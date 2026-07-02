@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="form-container">
+      <div class="form-container account-panel">
         <form @submit.prevent="submitForm">
           <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Update my details 🐾</h1>
 

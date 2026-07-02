@@ -12,6 +12,15 @@ type Duration = {
   unit: 'minutes';
 };
 
+type PetImageKey = 'dog' | 'cat' | 'bunny';
+
+type PetImageSource = 'preset';
+
+interface PetImage {
+  source: PetImageSource;
+  key: PetImageKey;
+}
+
 interface DurationRecord {
   note: string;
   duration: {
@@ -64,6 +73,7 @@ interface Pet {
   breed?: string;
   description?: string;
   birthday?: Date;
+  image?: PetImage;
   owner?: User;
   careTakers?: User[];
   needs?: Need[];
@@ -79,6 +89,18 @@ interface NewPetObject {
   species: string;
   description: string;
   birthday: Date | null;
+  image: PetImage;
 }
 
-export { CareRecord, DurationRecord, Need, NewPetObject, Pet, PetState, QuantityRecord };
+export {
+  CareRecord,
+  DurationRecord,
+  Need,
+  NewPetObject,
+  Pet,
+  PetImage,
+  PetImageKey,
+  PetImageSource,
+  PetState,
+  QuantityRecord,
+};

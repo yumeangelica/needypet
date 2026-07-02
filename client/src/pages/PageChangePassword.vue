@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="form-container">
-        <form @submit.prevent="submitForm">
-          <h1 class="text-[1.3rem] max-[568px]:text-[1.1rem]">Update my paw code 🐾</h1>
+      <div class="form-container account-panel">
+        <form class="change-password-form" @submit.prevent="submitForm">
+          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Update my paw code 🐾</h1>
 
-          <!-- Current Password input field -->
-          <div class="auth-field">
-            <input class="auth-field-input" v-model="currentPassword" :type="passwordFieldType" required placeholder="Your current paw code"
-              aria-label="Current Password" :aria-invalid="errorDetailsObject.currentPassword ? true : undefined"
+          <label class="form-label" for="changepw-current-password">Current paw code</label>
+          <div class="form-field">
+            <input id="changepw-current-password" class="form-field-input" v-model="currentPassword" :type="passwordFieldType" required
+              placeholder="Your current paw code" :aria-invalid="errorDetailsObject.currentPassword ? true : undefined"
               :aria-describedby="errorDetailsObject.currentPassword ? 'changepw-current-error' : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
@@ -19,10 +19,10 @@
             {{ errorDetailsObject.currentPassword }}
           </div>
 
-          <!-- New Password input field -->
-          <div class="auth-field">
-            <input class="auth-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
-              placeholder="Your new paw code" aria-label="New Password" aria-describedby="changepw-requirements"
+          <label class="form-label" for="changepw-new-password">New paw code</label>
+          <div class="form-field">
+            <input id="changepw-new-password" class="form-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
+              placeholder="Your new paw code" aria-describedby="changepw-requirements"
               :aria-invalid="errorDetailsObject.newPassword ? true : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
@@ -125,3 +125,27 @@ const submitForm = async () => {
   }
 };
 </script>
+
+<style scoped>
+.change-password-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.change-password-form .form-header {
+  margin-bottom: 0.85rem;
+}
+
+.change-password-form .form-label {
+  margin-top: 0.4rem;
+}
+
+.change-password-form .strong-password-note {
+  margin: 0.45rem 0 0.55rem;
+}
+
+.change-password-form .form-button-group {
+  margin-top: 0.75rem;
+}
+</style>

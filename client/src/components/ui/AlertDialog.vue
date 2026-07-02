@@ -69,12 +69,11 @@ function handleConfirm() {
   <DialogRoot :open="internalOpen" @update:open="(v) => { if (!v) handleCancel(); }">
     <DialogPortal v-if="shouldRender">
       <DialogOverlay class="alert-overlay fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
-      <DialogContent
-        class="alert-content fixed z-50 w-[95%] max-w-[400px] rounded-3xl bg-card border border-card-border shadow-lg p-8 flex flex-col items-center text-center">
-        <DialogTitle v-if="title" class="text-lg font-sans text-primary-foreground mb-2">{{ title }}</DialogTitle>
-        <DialogDescription v-if="message" class="text-sm opacity-85 max-w-xs mb-6 leading-relaxed">{{ message }}</DialogDescription>
+      <DialogContent class="alert-content">
+        <DialogTitle v-if="title" class="alert-title">{{ title }}</DialogTitle>
+        <DialogDescription v-if="message" class="alert-message">{{ message }}</DialogDescription>
         <slot />
-        <div class="alert-actions flex gap-3 justify-center w-full">
+        <div class="alert-actions">
           <button class="form-button secondary" @click="handleCancel">{{ cancelLabel }}</button>
           <button class="form-button" :class="variant === 'danger' ? 'danger' : 'primary'" @click="handleConfirm">{{ confirmLabel }}</button>
         </div>
@@ -93,17 +92,51 @@ function handleConfirm() {
 }
 
 .alert-content {
+  position: fixed;
+  z-index: 50;
   left: 50%;
   top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 95%;
+  max-width: 400px;
   max-height: calc(100svh - 2rem);
+  padding: 2rem;
+  border: 2px solid var(--color-form-panel-border);
+  border-radius: var(--radius-3xl);
+  background: var(--color-form-panel-bg);
+  box-shadow: var(--shadow-soft-card);
   overflow-y: auto;
   overflow-wrap: anywhere;
+  text-align: center;
   transform: translate(-50%, -50%) scale(1);
   animation: alert-content-show 200ms ease-out;
 }
 
+.alert-title {
+  margin: 0 0 0.5rem;
+  color: var(--color-primary-foreground);
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+
+.alert-message {
+  max-width: 20rem;
+  margin: 0 0 1.5rem;
+  color: var(--color-foreground);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
 .alert-actions {
+  display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .alert-content[data-state='closed'] {

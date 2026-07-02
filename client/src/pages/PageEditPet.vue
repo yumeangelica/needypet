@@ -1,9 +1,11 @@
 <template>
-  <div>
+  <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="form-container">
+      <div class="form-container pet-form-container pet-panel">
         <form @submit.prevent="confirmUpdatePet">
           <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Update your fur baby's info 🐾</h1>
+
+          <ThePetImagePicker v-model="existingPetObject.image" :petName="existingPetObject.name" />
 
           <div>
             <label class="form-label" for="editpet-name">Name</label>
@@ -74,6 +76,8 @@ import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import ThePetImagePicker from '@/components/ThePetImagePicker.vue';
+import { DEFAULT_PET_IMAGE, normalizePetImage } from '@/lib/petImages';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -99,6 +103,7 @@ const existingPetObject: Ref<Pet> = ref({
   species: '',
   description: '',
   birthday: undefined,
+  image: { ...DEFAULT_PET_IMAGE },
 });
 
 const todayString = computed(() => dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
@@ -138,13 +143,14 @@ const updatePet = async () => {
   const petId = existingPetObject.value.id;
   if (!petId) return;
 
-  const petData = {
+  const petData: Pet = {
     id: petId,
     name: existingPetObject.value.name,
     species: existingPetObject.value.species,
     breed: existingPetObject.value.breed,
     description: existingPetObject.value.description,
     birthday: existingPetObject.value.birthday,
+    image: normalizePetImage(existingPetObject.value.image),
   };
 
   const result = await petStore.updatePet(petId, petData);
@@ -167,7 +173,7 @@ const loadPetData = async () => {
   if (petId) {
     const petData = petStore.getPetById(petId);
     if (petData) {
-      existingPetObject.value = { ...petData };
+      existingPetObject.value = { ...petData, image: normalizePetImage(petData.image) };
     } else {
       router.push({ name: 'pet', params: { id: petId } });
     }

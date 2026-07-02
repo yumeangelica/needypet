@@ -3,12 +3,11 @@
     description="Search and select your timezone">
     <div class="mb-4">
       <input ref="inputField" v-model="searchQuery" placeholder="Search for timezone..." aria-label="Search for timezone"
-        class="w-full p-3 text-sm rounded-xl bg-auth-input-bg border border-card-border outline-none font-sans text-foreground focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2" />
+        class="form-field-input timezone-search-input" />
     </div>
     <ul class="timezone-list max-h-[400px] overflow-y-auto">
       <li v-for="zone in filteredTimezones" :key="zone">
-        <button type="button" @click="selectTimezone(zone)"
-          class="w-full text-left px-3 py-2 rounded-lg transition-colors hover:bg-card text-sm leading-snug font-sans text-foreground break-words focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2">
+        <button type="button" class="timezone-option" @click="selectTimezone(zone)">
           {{ zone }}
         </button>
       </li>
@@ -74,5 +73,45 @@ watch(
 <style scoped>
 .timezone-list {
   max-height: min(400px, calc(100svh - 14rem));
+}
+
+.timezone-search-input {
+  min-height: 50px;
+}
+
+.timezone-list li {
+  margin-bottom: 0.25rem;
+}
+
+.timezone-option {
+  width: 100%;
+  min-height: 40px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  text-align: left;
+  overflow-wrap: anywhere;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.timezone-option:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .timezone-option:hover {
+    border-color: var(--color-border-soft);
+    background: var(--color-surface-control);
+  }
+}
+
+.timezone-option:active {
+  transform: scale(0.99);
 }
 </style>

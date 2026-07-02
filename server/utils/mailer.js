@@ -74,7 +74,7 @@ const sendConfirmationEmail = async (
     <p><a href="${confirmationUrl}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">Confirm Email</a></p>
     <p>Once your email is confirmed, you'll be able to use the full application for your pet's needs.</p>
     <p>If you did not sign up for Needypet, please ignore this email.</p>
-    <p>We look forward to helping you take the best care of your furry friends!</p>
+    <p>We look forward to helping you take the best care of your lovely pets!</p>
     <p>Best regards,<br>The Needypet Team</p>
     <p style="font-size: 12px; color: #999;">Needypet - Your Pet Care Management App</p>
   </div>

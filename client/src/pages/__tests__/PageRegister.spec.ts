@@ -57,6 +57,7 @@ describe('PageRegister', () => {
   it('renders all registration form fields', () => {
     const wrapper = mount(PageRegister);
 
+    expect(wrapper.find('.login-register-container.auth-panel').exists()).toBe(true);
     expect(wrapper.find('input[aria-label="Username"]').exists()).toBe(true);
     expect(wrapper.find('input[aria-label="Email"]').exists()).toBe(true);
     expect(wrapper.find('input[aria-label="Password"]').exists()).toBe(true);

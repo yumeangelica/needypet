@@ -64,18 +64,16 @@ function handleOpenChange(val: boolean) {
   <DialogRoot :open="internalOpen" @update:open="handleOpenChange">
     <DialogPortal v-if="shouldRender">
       <DialogOverlay class="dialog-overlay fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
-      <DialogContent class="dialog-content fixed z-50 w-[95%] rounded-3xl bg-card border border-card-border shadow-lg overflow-hidden flex flex-col"
-        :style="{ maxWidth }">
-        <div v-if="title || $slots.header" class="dialog-header bg-primary px-6 py-3 flex items-center justify-between gap-3">
-          <DialogTitle v-if="title" class="text-lg leading-tight font-sans text-primary-foreground min-w-0">{{ title }}</DialogTitle>
+      <DialogContent class="dialog-content" :style="{ maxWidth }">
+        <div v-if="title || $slots.header" class="dialog-header">
+          <DialogTitle v-if="title" class="dialog-title">{{ title }}</DialogTitle>
           <slot name="header" />
-          <DialogClose
-            class="text-primary-foreground hover:opacity-70 cursor-pointer bg-transparent border-none rounded-lg px-2 py-1 font-sans text-sm transition-opacity focus-visible:outline-2 focus-visible:outline-primary-foreground focus-visible:outline-offset-2">
+          <DialogClose class="dialog-close">
             Close
           </DialogClose>
         </div>
         <DialogDescription v-if="description" class="sr-only">{{ description }}</DialogDescription>
-        <div class="dialog-body p-6 overflow-y-auto">
+        <div class="dialog-body">
           <slot />
         </div>
       </DialogContent>
@@ -93,15 +91,78 @@ function handleOpenChange(val: boolean) {
 }
 
 .dialog-content {
+  position: fixed;
+  z-index: 50;
   left: 50%;
   top: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 95%;
   max-height: calc(100svh - 2rem);
+  border: 2px solid var(--color-form-panel-border);
+  border-radius: var(--radius-3xl);
+  background: var(--color-form-panel-bg);
+  box-shadow: var(--shadow-soft-card);
+  overflow: hidden;
   transform: translate(-50%, -50%) scale(1);
   animation: content-show 200ms ease-out;
 }
 
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: var(--color-form-panel-bg);
+  border-bottom: 1px solid var(--color-border-divider);
+}
+
+.dialog-title {
+  min-width: 0;
+  color: var(--color-primary-foreground);
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.25;
+}
+
 .dialog-body {
   max-height: min(70vh, calc(100svh - 9rem));
+  padding: 1.5rem;
+  background: var(--color-form-panel-bg);
+  overflow-y: auto;
+}
+
+.dialog-close {
+  min-height: 38px;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--color-border-muted);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-control);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-primary-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+
+.dialog-close:focus-visible {
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .dialog-close:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-control-hover);
+    transform: translateY(-1px);
+  }
+}
+
+.dialog-close:active {
+  transform: translateY(1px) scale(0.98);
 }
 
 .dialog-content[data-state='closed'] {

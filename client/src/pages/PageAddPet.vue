@@ -1,9 +1,11 @@
 <template>
-  <div>
+  <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container">
-        <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Welcome a new furry friend! 🐾</h1>
+        <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Welcome a new pet to your family! 🐾</h1>
         <form @submit.prevent="submitPet">
+          <ThePetImagePicker v-model="newPetObject.image" :petName="newPetObject.name" />
+
           <div>
             <label class="form-label" for="addpet-name">Name</label>
             <div class="form-field">
@@ -58,7 +60,9 @@ import utc from 'dayjs/plugin/utc';
 import { computed, type Ref, ref } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import ThePetImagePicker from '@/components/ThePetImagePicker.vue';
 import { resultMessage } from '@/lib/apiError';
+import { DEFAULT_PET_IMAGE } from '@/lib/petImages';
 import { useAppStore } from '@/store/app';
 import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
@@ -82,6 +86,7 @@ const newPetObject: Ref<NewPetObject> = ref({
   species: '',
   description: '',
   birthday: null as Date | null,
+  image: { ...DEFAULT_PET_IMAGE },
 });
 
 const todayString = computed(() => dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
@@ -112,6 +117,7 @@ onBeforeRouteLeave(() => {
     species: '',
     description: '',
     birthday: null,
+    image: { ...DEFAULT_PET_IMAGE },
   };
   return true;
 });
@@ -133,6 +139,7 @@ const submitPet = async () => {
       species: '',
       description: '',
       birthday: null,
+      image: { ...DEFAULT_PET_IMAGE },
     };
     router.push({ name: 'home' });
     appStore.addNotification('Welcome to the family! 🐾', 'success');
