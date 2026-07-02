@@ -37,8 +37,6 @@ beforeEach(async () => {
   await Pet.deleteMany({});
 });
 
-const today = () => new Date().toISOString().slice(0, 10);
-
 describe('POST /api/pets/:id/newneed', () => {
   it('adds a need to a pet and returns 201 with the need', async () => {
     const { token } = await registerAndLogin();
@@ -51,7 +49,7 @@ describe('POST /api/pets/:id/newneed', () => {
         need: {
           category: 'Feeding',
           description: 'Morning meal',
-          dateFor: today(),
+          dateFor: localToday(),
           quantity: { value: 100, unit: 'g' },
         },
       });
@@ -73,7 +71,7 @@ describe('POST /api/pets/:id/newneed', () => {
         need: {
           category: 'ab',
           description: 'Too short category',
-          dateFor: today(),
+          dateFor: localToday(),
           duration: { value: 10, unit: 'minutes' },
         },
       });
@@ -96,7 +94,7 @@ describe('POST /api/pets/:id/newneed', () => {
         need: {
           category: 'Feeding',
           description: 'Morning meal',
-          dateFor: today(),
+          dateFor: localToday(),
           quantity: { value: 0, unit: 'g' },
         },
       });
@@ -115,7 +113,7 @@ describe('POST /api/pets/:id/newneed', () => {
         need: {
           category: 'Walk',
           description: 'Morning walk',
-          dateFor: today(),
+          dateFor: localToday(),
           duration: { value: -1, unit: 'minutes' },
         },
       });
@@ -139,7 +137,7 @@ describe('POST /api/pets/:id/newneed', () => {
         need: {
           category: 'Walk',
           description: 'Evening walk',
-          dateFor: today(),
+          dateFor: localToday(),
           duration: { value: 30, unit: 'minutes' },
         },
       });
@@ -167,7 +165,7 @@ describe('POST /api/pets/:id/newneed', () => {
         need: {
           category: 'Walk',
           description: 'Evening walk',
-          dateFor: today(),
+          dateFor: localToday(),
           duration: { value: 30, unit: 'minutes' },
         },
       });
@@ -258,6 +256,15 @@ describe('POST /api/pets/:id/newneed', () => {
     const owner = await registerAndLogin({ timezone: 'Asia/Tokyo' });
     const pet = await createPet(owner.token);
 
+    // 01:30 tomorrow in Tokyo is still the previous calendar day as a UTC
+    // datetime, so storage must shift it to the Tokyo day (and a future day
+    // passes the past-day guard).
+    const tokyoTomorrow = dayjs()
+      .tz('Asia/Tokyo')
+      .add(1, 'day')
+      .startOf('day')
+      .add(90, 'minute');
+
     const response = await api
       .post(`/api/pets/${pet.id}/newneed`)
       .set('Authorization', `Bearer ${owner.token}`)
@@ -265,14 +272,73 @@ describe('POST /api/pets/:id/newneed', () => {
         need: {
           category: 'Feeding',
           description: 'Late meal',
-          dateFor: '2026-06-21T16:30:00.000Z',
+          dateFor: tokyoTomorrow.utc().toISOString(),
           quantity: { value: 100, unit: 'g' },
         },
       });
 
     assert.strictEqual(response.status, 201);
     const added = response.body.needs[response.body.needs.length - 1];
-    assert.strictEqual(added.dateFor, '2026-06-22');
+    assert.strictEqual(added.dateFor, tokyoTomorrow.format('YYYY-MM-DD'));
+    // The stored day differs from the UTC calendar day, proving the shift.
+    assert.notStrictEqual(
+      added.dateFor,
+      tokyoTomorrow.utc().toISOString().split('T')[0],
+    );
+  });
+
+  it('returns 400 when adding a need for a past day', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const yesterday = dayjs()
+      .tz('Europe/Helsinki')
+      .subtract(1, 'day')
+      .format('YYYY-MM-DD');
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Walk',
+          description: 'Yesterday walk',
+          dateFor: yesterday,
+          duration: { value: 30, unit: 'minutes' },
+        },
+      });
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(
+      response.body.message,
+      'Cannot add a need for a past day',
+    );
+  });
+
+  it('allows adding a need for a future day', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const tomorrow = dayjs()
+      .tz('Europe/Helsinki')
+      .add(1, 'day')
+      .format('YYYY-MM-DD');
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Walk',
+          description: 'Tomorrow walk',
+          dateFor: tomorrow,
+          duration: { value: 30, unit: 'minutes' },
+        },
+      });
+
+    assert.strictEqual(response.status, 201);
+    const added = response.body.needs[response.body.needs.length - 1];
+    assert.strictEqual(added.dateFor, tomorrow);
   });
 });
 
@@ -373,6 +439,26 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
       });
 
     assert.strictEqual(response.status, 400);
+  });
+
+  it('returns 400 when updating an archived need', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token);
+
+    // Archive the need directly - archiving happens via the rollover job, not
+    // through the API.
+    await Pet.findOneAndUpdate(
+      { _id: petId, 'needs._id': needId },
+      { $set: { 'needs.$.archived': true, 'needs.$.isActive': false } },
+    );
+
+    const response = await api
+      .put(`/api/pets/${petId}/needs/${needId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ category: 'Too late' });
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Need is archived');
   });
 });
 

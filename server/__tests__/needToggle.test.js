@@ -2,10 +2,16 @@ const { describe, it, before, after, beforeEach } = require('node:test');
 const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
 const app = require('../app');
 const { mongodbUri } = require('../utils/config');
 const User = require('../models/userModel');
 const Pet = require('../models/petModel');
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const api = supertest(app);
 
@@ -44,7 +50,8 @@ const createPetWithNeed = async (token) => {
       need: {
         category: 'Walk',
         description: 'Morning walk',
-        dateFor: '2026-06-17',
+        // Owner-local today (newUserObject.timezone); a past day is rejected.
+        dateFor: dayjs().tz('Europe/Helsinki').format('YYYY-MM-DD'),
         duration: { value: 40, unit: 'minutes' },
       },
     });
@@ -120,5 +127,24 @@ describe('Need activity toggle', () => {
       .set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 404);
+  });
+
+  it('returns 400 when toggling an archived need', async () => {
+    const token = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token);
+
+    // Archive the need directly - archiving happens via the rollover job, not
+    // through the API.
+    await Pet.findOneAndUpdate(
+      { _id: petId, 'needs._id': needId },
+      { $set: { 'needs.$.archived': true, 'needs.$.isActive': false } },
+    );
+
+    const response = await api
+      .patch(`/api/pets/${petId}/needs/${needId}/togglestatus`)
+      .set('Authorization', `Bearer ${token}`);
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Need is archived');
   });
 });
