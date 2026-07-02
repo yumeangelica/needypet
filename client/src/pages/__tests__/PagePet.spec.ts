@@ -187,4 +187,30 @@ describe('PagePet - care tasks', () => {
     expect(wrapper.text()).toContain('Care tasks will appear when this day starts');
     expect(wrapper.text()).toContain('Future routines are generated on the day they are due.');
   });
+
+  it('advances today and refetches when the owner-local midnight passes', async () => {
+    const petStore = usePetStore();
+    petStore.pets = [makePet()];
+    const getAllPets = vi.spyOn(petStore, 'getAllPets').mockResolvedValue({ isSuccess: true });
+
+    // 30 seconds before midnight in the owner's timezone (Helsinki, UTC+3).
+    vi.setSystemTime(new Date('2026-07-02T20:59:30Z'));
+    const wrapper = await mountPagePet();
+
+    expect(wrapper.get('.date-navigation h4').text()).toBe('2026-07-02');
+    expect(getAllPets).toHaveBeenCalledTimes(1);
+
+    // The next minute tick crosses midnight.
+    vi.advanceTimersByTime(60000);
+    await flushPromises();
+
+    expect(wrapper.get('.date-navigation h4').text()).toBe('2026-07-03');
+    expect(wrapper.text()).toContain('All clear for today!');
+    expect(getAllPets).toHaveBeenCalledTimes(2);
+
+    // Later ticks within the same day must not refetch again.
+    vi.advanceTimersByTime(60000);
+    await flushPromises();
+    expect(getAllPets).toHaveBeenCalledTimes(2);
+  });
 });

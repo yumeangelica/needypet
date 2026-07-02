@@ -169,7 +169,16 @@ import { CirclePlus, Settings } from '@lucide/vue';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { computed, onBeforeMount, provide, type Ref, ref, watch } from 'vue';
+import {
+  computed,
+  onBeforeMount,
+  onMounted,
+  onUnmounted,
+  provide,
+  type Ref,
+  ref,
+  watch,
+} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
@@ -219,7 +228,12 @@ const isOwner = ref(false);
 
 const ownerTimezone = computed(() => pet.value?.owner?.timezone || userStore.timezone || 'UTC');
 
-const ownerToday = computed(() => dayjs().tz(ownerTimezone.value).format('YYYY-MM-DD'));
+// Ticks every minute so "today" rolls over while the page stays open across
+// midnight (a bare dayjs() in the computed would be evaluated only once).
+const nowTick = ref(dayjs());
+let nowTickIntervalId: ReturnType<typeof setInterval> | undefined;
+
+const ownerToday = computed(() => nowTick.value.tz(ownerTimezone.value).format('YYYY-MM-DD'));
 
 const quantityUnits = [
   { label: 'ml', value: 'ml' },
@@ -420,7 +434,27 @@ watch(selection, (newValue) => {
   }
 });
 
+watch(ownerToday, (newToday, previousToday) => {
+  // Follow the rollover when the user is parked on "today", then refetch so
+  // freshly generated tasks appear (the server may lag one cron tick - the
+  // empty-state copy covers that gap).
+  if (currentDate.value === previousToday) {
+    currentDate.value = newToday;
+  }
+  refreshCurrentPet();
+});
+
 onBeforeMount(loadRoutePet);
+
+onMounted(() => {
+  nowTickIntervalId = setInterval(() => {
+    nowTick.value = dayjs();
+  }, 60000);
+});
+
+onUnmounted(() => {
+  clearInterval(nowTickIntervalId);
+});
 
 const handleNeedDeleted = async (deleted: boolean) => {
   if (deleted && pet.value?.id) {
