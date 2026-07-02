@@ -1,7 +1,7 @@
 <template>
   <div class="page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="login-register-container auth-card auth-form-card auth-register-card overflow-y-auto max-h-[90vh]">
+      <div class="login-register-container auth-panel auth-card auth-form-card auth-register-card overflow-y-auto max-h-[90vh]">
         <TheLogoImage altText="NeedyPet Logo" />
 
         <div class="auth-card-header paw-header-container">

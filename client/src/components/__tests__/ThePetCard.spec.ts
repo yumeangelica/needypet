@@ -30,6 +30,30 @@ describe('ThePetCard', () => {
     expect(button.attributes('aria-label')).toContain('Milo');
   });
 
+  it('renders the resolved pet image with the cat fallback', () => {
+    const wrapper = mount(ThePetCard, { props: { pet } });
+
+    const image = wrapper.get('img.pet-card-image');
+    expect(image.attributes('src')).toBe('/needypet-cat-img.png');
+    expect(image.attributes('alt')).toBe('Milo picture');
+  });
+
+  it('keeps the card focused on the pet name and tasks', () => {
+    const wrapper = mount(ThePetCard, { props: { pet } });
+
+    expect(wrapper.text()).toContain('Milo');
+    expect(wrapper.text()).not.toContain('Cat');
+    expect(wrapper.text()).not.toContain('Tabby');
+  });
+
+  it('reserves the task count slot even when there are no tasks today', () => {
+    const wrapper = mount(ThePetCard, { props: { pet } });
+
+    const countSlot = wrapper.get('.pet-needs-count');
+    expect(countSlot.classes()).toContain('is-empty');
+    expect(countSlot.attributes('aria-hidden')).toBe('true');
+  });
+
   it('navigates to the pet view when activated', async () => {
     const wrapper = mount(ThePetCard, { props: { pet } });
 

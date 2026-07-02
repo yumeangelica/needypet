@@ -59,6 +59,7 @@ describe('PageLogin', () => {
     const passwordInput = wrapper.find('input[aria-label="Password"]');
     const submitButton = wrapper.find('button[type="submit"]');
 
+    expect(wrapper.find('.login-register-container.auth-panel').exists()).toBe(true);
     expect(usernameInput.exists()).toBe(true);
     expect(passwordInput.exists()).toBe(true);
     expect(submitButton.exists()).toBe(true);

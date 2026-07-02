@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 
 vi.mock('@/components/TheFooter.vue', () => ({ default: { template: '<footer />' } }));
 
@@ -10,7 +11,9 @@ vi.mock('vue-router', () => ({
   onBeforeRouteLeave: vi.fn(),
 }));
 
+import ThePetImagePicker from '@/components/ThePetImagePicker.vue';
 import PageAddPet from '@/pages/PageAddPet.vue';
+import { usePetStore } from '@/store/pet';
 import { useUserStore } from '@/store/user';
 
 const birthdayInput = (wrapper: ReturnType<typeof mount>) => wrapper.find('input#addpet-birthday');
@@ -74,5 +77,47 @@ describe('PageAddPet - timezone-aware birthday', () => {
 
     // Future date is not stored, so the input value stays empty.
     expect(birthdayInput(wrapper).attributes('value')).toBe('');
+  });
+
+  it('submits the default cat image when no picture is selected', async () => {
+    const userStore = useUserStore();
+    userStore.id = 'user-1';
+
+    const petStore = usePetStore();
+    const addNewPet = vi.spyOn(petStore, 'addNewPet').mockResolvedValue({ isSuccess: true });
+
+    const wrapper = mount(PageAddPet);
+
+    await wrapper.get('input#addpet-name').setValue('Milo');
+    await wrapper.get('form').trigger('submit');
+
+    expect(addNewPet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        image: { source: 'preset', key: 'cat' },
+      }),
+    );
+  });
+
+  it('submits the selected pet image', async () => {
+    const userStore = useUserStore();
+    userStore.id = 'user-1';
+
+    const petStore = usePetStore();
+    const addNewPet = vi.spyOn(petStore, 'addNewPet').mockResolvedValue({ isSuccess: true });
+
+    const wrapper = mount(PageAddPet);
+
+    wrapper
+      .getComponent(ThePetImagePicker)
+      .vm.$emit('update:modelValue', { source: 'preset', key: 'dog' });
+    await nextTick();
+    await wrapper.get('input#addpet-name').setValue('Milo');
+    await wrapper.get('form').trigger('submit');
+
+    expect(addNewPet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        image: { source: 'preset', key: 'dog' },
+      }),
+    );
   });
 });

@@ -1,51 +1,60 @@
 <template>
-  <div>
+  <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div v-if="user" class="form-container">
-
-        <div class="inline-container">
-          <h1 class="form-header mb-0 text-[1.3rem] max-[568px]:text-[1.1rem]">{{ user.userName }}</h1>
-          <button class="settings-button" aria-label="Settings" @click="toggleSettings">
-            <Settings class="w-5 h-5" aria-hidden="true" />
-          </button>
-        </div>
-
-        <div class="profile-info">
-          <p><strong>Email:</strong> {{ user.email }}</p>
-          <div class="email-confirmed">
-            <p>
-              <strong>Email verified</strong>
-              <CheckCircle2 v-if="user.emailConfirmed" class="inline-block w-5 h-5 ml-1.5 align-middle text-green-500" role="img" aria-label="Verified" />
-              <XCircle v-else class="inline-block w-5 h-5 ml-1.5 align-middle text-red-500" role="img" aria-label="Not verified" />
-            </p>
-            <button v-if="!user.emailConfirmed" class="custom-button text-sm px-2.5 py-1" :disabled="isButtonDisabled"
-              aria-label="Resend confirmation email" @click="resendEmailConfirmation">
-              Resend confirmation
+      <div class="form-container account-panel">
+        <template v-if="user">
+          <div class="profile-header">
+            <div class="profile-title-group">
+              <span class="profile-eyebrow">Pet parent</span>
+              <h1 class="profile-title">{{ user.userName }}</h1>
+            </div>
+            <button class="settings-button profile-settings-button" aria-label="Settings" :aria-expanded="showSettings" @click="toggleSettings">
+              <Settings class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
-          <p><strong>Timezone:</strong> {{ user.timezone }}</p>
-        </div>
 
-        <div class="profile-actions">
-          <button class="custom-button" aria-label="Log out" @click="showLogoutDialog = true">
-            <LogOut class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
-            Log Out
-          </button>
-          <button v-if="showSettings" class="custom-button" @click="router.push({ name: 'edit-profile' })">
-            Edit My Details
-          </button>
-          <button v-if="showSettings" class="custom-button" @click="router.push({ name: 'change-password' })">
-            Change My Paw Code
-          </button>
-          <button v-if="showSettings" class="custom-button" @click="showDeleteDialog = true">
-            <Trash2 class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
-            Delete Account
-          </button>
-        </div>
+          <div class="profile-info">
+            <div class="profile-row">
+              <span class="profile-label">Email</span>
+              <span class="profile-value">{{ user.email }}</span>
+            </div>
+            <div class="profile-row email-confirmed">
+              <span class="profile-label">Email verified</span>
+              <span class="profile-value profile-status">
+                <CheckCircle2 v-if="user.emailConfirmed" class="inline-block w-5 h-5 text-green-500" role="img" aria-label="Verified" />
+                <XCircle v-else class="inline-block w-5 h-5 text-red-500" role="img" aria-label="Not verified" />
+                {{ user.emailConfirmed ? 'Verified' : 'Not verified' }}
+              </span>
+              <button v-if="!user.emailConfirmed" class="custom-button text-sm px-2.5 py-1" :disabled="isButtonDisabled"
+                aria-label="Resend confirmation email" @click="resendEmailConfirmation">
+                Resend confirmation
+              </button>
+            </div>
+            <div class="profile-row">
+              <span class="profile-label">Timezone</span>
+              <span class="profile-value">{{ user.timezone }}</span>
+            </div>
+          </div>
 
+          <div class="profile-actions">
+            <button class="custom-button profile-action profile-logout-button" aria-label="Log out" @click="showLogoutDialog = true">
+              <LogOut class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
+              Log Out
+            </button>
+            <button v-if="showSettings" class="custom-button profile-action" @click="router.push({ name: 'edit-profile' })">
+              Edit My Details
+            </button>
+            <button v-if="showSettings" class="custom-button profile-action" @click="router.push({ name: 'change-password' })">
+              Change My Paw Code
+            </button>
+            <button v-if="showSettings" class="custom-button profile-action profile-danger-button" @click="showDeleteDialog = true">
+              <Trash2 class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
+              Delete Account
+            </button>
+          </div>
+        </template>
+        <TheLoadingSpinner v-else message="Loading your profile..." />
       </div>
-
-      <TheLoadingSpinner v-if="!user" message="Loading your profile..." />
 
       <TheConfirmDialog :isOpen="showLogoutDialog" title="Heading out?" message="Ready to say goodbye for now?" confirmLabel="Log Out"
         @confirm="logout(); showLogoutDialog = false" @cancel="showLogoutDialog = false" />
@@ -146,21 +155,159 @@ onBeforeRouteLeave(() => {
 </script>
 
 <style scoped>
-.profile-info {
-  margin: 4px 0 8px;
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-stack);
+  margin-bottom: 0.9rem;
+}
+
+.profile-title-group {
+  min-width: 0;
+}
+
+.profile-eyebrow {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--color-primary-foreground);
+  font-size: 0.84rem;
+  font-weight: 700;
+  opacity: 0.84;
+}
+
+.profile-title {
+  margin: 0;
+  color: var(--color-primary-foreground);
+  font-size: 1.35rem;
+  line-height: 1.2;
   overflow-wrap: anywhere;
 }
 
-.profile-info p {
-  margin: 4px 0;
-  line-height: 1.45;
+.profile-settings-button[aria-expanded="true"] {
+  background: var(--color-surface-control);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-control-hover);
+}
+
+.profile-info {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0.9rem;
+  border: 2px solid var(--color-button-secondary);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-app);
+  box-shadow: var(--shadow-field);
+  overflow-wrap: anywhere;
+}
+
+.profile-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.45fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.35rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border-divider);
+}
+
+.profile-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.profile-label {
+  color: var(--color-primary-foreground);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.profile-value {
+  justify-self: end;
+  min-width: 0;
+  color: var(--color-foreground);
+  font-size: 0.88rem;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.profile-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
 }
 
 .email-confirmed {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
+  grid-template-columns: minmax(7rem, 0.45fr) minmax(0, 1fr);
+}
+
+.email-confirmed .custom-button {
+  grid-column: 1 / -1;
+  justify-self: end;
+  min-height: 38px;
+}
+
+.profile-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.profile-action {
+  width: 100%;
+  min-height: 48px;
+  padding-inline: 0.95rem;
+}
+
+.profile-logout-button {
+  grid-column: 1 / -1;
+  font-weight: 700;
+}
+
+.profile-danger-button {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger-border);
+  color: var(--color-destructive);
+}
+
+@media (hover: hover) {
+  .profile-danger-button:hover {
+    background: var(--color-danger-hover);
+  }
+}
+
+@media (max-width: 568px) {
+  .profile-header {
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .profile-title {
+    font-size: 1.15rem;
+  }
+
+  .profile-row,
+  .email-confirmed {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+    align-items: start;
+  }
+
+  .profile-value {
+    justify-self: start;
+    text-align: left;
+  }
+
+  .profile-status {
+    justify-content: flex-start;
+  }
+
+  .profile-actions {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
 }
 </style>

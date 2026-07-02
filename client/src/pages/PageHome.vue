@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <h1 class="sr-only">Home</h1>
 
@@ -10,28 +10,30 @@
       </div>
 
       <div v-else-if="userEmailConfirmed === true">
-        <TheLoadingSpinner v-if="isLoading" message="Fetching your furry friends..." />
+        <TheLoadingSpinner v-if="isLoading" message="Fetching your family members..." />
 
         <div v-else-if="ownPets.length > 0 || carerPets.length > 0" class="pets-container">
-          <div v-if="ownPets.length > 0">
-            <div class="title-and-button-container">
-              <h2 class="section-title">My Furry Friends</h2>
-              <button @click="router.push({ name: 'add-pet' })" aria-label="Add pet" class="custom-button">
-                <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
-                Welcome a Pet
-              </button>
-            </div>
+          <div class="pets-surface pet-panel">
+            <section v-if="ownPets.length > 0" class="pet-section">
+              <div class="title-and-button-container">
+                <h2 class="section-title">My Pets</h2>
+                <button @click="router.push({ name: 'add-pet' })" aria-label="Add pet" class="custom-button">
+                  <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
+                  Welcome a Pet
+                </button>
+              </div>
 
-            <div class="cards-container">
-              <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
-            </div>
-          </div>
+              <div class="cards-container">
+                <ThePetCard v-for="pet in ownPets" :key="pet.id" :pet="pet" />
+              </div>
+            </section>
 
-          <div v-if="carerPets.length > 0">
-            <h2 class="section-title">Pets I Help Care For</h2>
-            <div class="cards-container">
-              <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
-            </div>
+            <section v-if="carerPets.length > 0" class="pet-section">
+              <h2 class="section-title">Pets I Help Care For</h2>
+              <div class="cards-container">
+                <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
+              </div>
+            </section>
           </div>
         </div>
 
@@ -126,8 +128,21 @@ const fetchUserEmailConfirmed = async () => {
   align-items: center;
   gap: clamp(1rem, 3vw, 1.5rem);
   width: 100%;
-  padding: clamp(0.5rem, 2vw, 1rem);
+  padding: 0;
   box-sizing: border-box;
+}
+
+.pets-surface {
+  padding: clamp(0.9rem, 3vw, 1.25rem);
+  border: 1px solid var(--color-home-pets-surface-border);
+  border-radius: var(--radius-2xl);
+  background: var(--color-home-pets-surface);
+  box-shadow: var(--shadow-inset-surface);
+  box-sizing: border-box;
+}
+
+.pet-section + .pet-section {
+  margin-top: clamp(1.25rem, 4vw, 1.75rem);
 }
 
 .cards-container {
@@ -144,5 +159,37 @@ const fetchUserEmailConfirmed = async () => {
   font-size: 1.3rem;
   padding: 6px 0;
   line-height: 1.25;
+}
+
+@media (max-width: 430px) {
+  .title-and-button-container {
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 0.25rem 0 0.85rem;
+  }
+
+  .title-and-button-container .custom-button {
+    width: min(100%, 17rem);
+  }
+
+  .pets-container {
+    gap: 0.85rem;
+    padding: 0;
+  }
+
+  .pets-surface {
+    padding: 0.85rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .cards-container {
+    gap: 0.85rem;
+    margin-top: 0;
+  }
+
+  .section-title {
+    font-size: 1.35rem;
+    padding: 0;
+  }
 }
 </style>

@@ -14,10 +14,10 @@
 
       <!-- Password reset -->
       <div v-else-if="confirmationType === 'password'">
-        <div v-if="showForm" class="login-register-container">
+        <div v-if="showForm" class="login-register-container auth-panel auth-card auth-form-card">
           <TheLogoImage altText="NeedyPet logo" />
 
-          <div class="paw-header-container">
+          <div class="auth-card-header paw-header-container">
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
             <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Set a new paw code</h1>
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
@@ -25,7 +25,7 @@
 
           <div v-if="validMessage" class="custom-valid-message text-center" role="status">{{ validMessage }}</div>
 
-          <form @submit.prevent="resetPassword">
+          <form class="auth-form" @submit.prevent="resetPassword">
             <div class="auth-field">
               <input class="auth-field-input" type="password" v-model="newPassword" @input="validatePassword" placeholder="Your new paw code"
                 aria-label="New Password" aria-describedby="confirm-reset-requirements" :aria-invalid="errorMessage ? true : undefined" />
@@ -47,7 +47,7 @@
                 :aria-describedby="errorMessage ? 'confirm-reset-error' : undefined" />
             </div>
 
-            <div class="flex flex-col gap-2">
+            <div class="auth-action-stack">
               <button type="submit" aria-label="Set password" class="action-button primary-action-button">Save New Code</button>
               <button type="button" @click="goBack" class="action-button secondary-action-button">← Back</button>
             </div>
@@ -210,9 +210,9 @@ const goToLogin = () => {
 .confirmation-container {
   padding: var(--space-card);
   border-radius: var(--radius-3xl);
-  background-color: var(--color-auth-bg);
-  border: 1px solid var(--color-button-primary);
-  box-shadow: var(--shadow-card);
+  background-color: var(--color-surface-inner);
+  border: 1px solid var(--color-border-soft);
+  box-shadow: var(--shadow-soft-card);
   text-align: center;
   overflow-wrap: anywhere;
 }

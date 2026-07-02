@@ -39,11 +39,12 @@ defineProps<{
 }
 
 .notification {
-  background-color: #fff;
+  background-color: var(--color-surface-inner);
   padding: 14px 16px;
   margin-bottom: 12px;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-soft-card);
+  border: 1px solid var(--color-border-soft);
   border-left: 10px solid transparent;
   line-height: 1.4;
   overflow-wrap: anywhere;

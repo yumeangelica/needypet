@@ -12,7 +12,16 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div :class="cn('rounded-2xl border border-card-border bg-card shadow-sm', props.class)">
+  <div :class="cn('ui-card', props.class)">
     <slot />
   </div>
 </template>
+
+<style scoped>
+.ui-card {
+  border: 2px solid var(--color-button-secondary);
+  border-radius: var(--radius-2xl);
+  background: var(--color-surface-app);
+  box-shadow: var(--shadow-card);
+}
+</style>

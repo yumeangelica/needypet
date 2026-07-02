@@ -1,8 +1,10 @@
 <template>
   <button type="button" class="small-pet-card" :aria-label="cardLabel" @click="navigateToPetView">
-    <p v-if="pet.species || pet.breed" class="pet-subtitle">{{ [pet.species, pet.breed].filter(Boolean).join(' · ') }}</p>
+    <img class="pet-card-image" :src="petImageSrc" :alt="`${pet.name} picture`" />
     <h5>{{ pet.name }}</h5>
-    <p v-if="todayNeedsCount > 0" class="pet-needs-count">{{ todayNeedsCount }} {{ todayNeedsCount === 1 ? 'care task' : 'care tasks' }} today</p>
+    <p class="pet-needs-count" :class="{ 'is-empty': todayNeedsCount === 0 }" :aria-hidden="todayNeedsCount === 0 ? 'true' : undefined">
+      {{ todayNeedsCount > 0 ? `${todayNeedsCount} ${todayNeedsCount === 1 ? 'care task' : 'care tasks'} today` : '' }}
+    </p>
   </button>
 </template>
 
@@ -12,6 +14,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { getPetImageSrc } from '@/lib/petImages';
 import { useUserStore } from '@/store/user';
 import type { Pet } from '@/types/pet';
 
@@ -24,6 +27,8 @@ const { pet } = defineProps<{
 
 const router = useRouter();
 const userStore = useUserStore();
+
+const petImageSrc = computed(() => getPetImageSrc(pet.image));
 
 const todayNeedsCount = computed(() => {
   if (!pet.needs || pet.needs.length === 0) return 0;
@@ -50,17 +55,17 @@ function navigateToPetView() {
 .small-pet-card {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 7px;
   border-radius: var(--radius-2xl);
-  padding: clamp(0.75rem, 3vw, 1rem);
+  padding: clamp(0.65rem, 2.5vw, 0.9rem);
   margin: 0;
-  box-shadow: var(--shadow-card);
-  width: clamp(148px, 40vw, 180px);
-  aspect-ratio: 1;
-  background-color: var(--color-card);
-  border: 2px solid var(--color-card-border);
+  box-shadow: var(--shadow-soft-card);
+  width: clamp(170px, 44vw, 220px);
+  aspect-ratio: 0.92;
+  background-color: var(--color-need-bg);
+  border: 2px solid var(--color-button-secondary);
   cursor: pointer;
   overflow: hidden;
   transition: box-shadow 0.15s, transform 0.2s ease;
@@ -80,7 +85,7 @@ function navigateToPetView() {
 
 @media (hover: hover) {
   .small-pet-card:hover {
-    box-shadow: var(--shadow-hover);
+    box-shadow: var(--shadow-soft-hover);
     transform: translateY(-5px);
   }
 }
@@ -90,38 +95,53 @@ function navigateToPetView() {
 }
 
 .small-pet-card h5 {
-  font-size: 0.95rem;
+  font-size: clamp(1rem, 3vw, 1.12rem);
+  font-weight: 700;
   width: 100%;
   text-align: center;
-  margin-top: auto;
-  padding-top: 10px;
+  margin: 0;
+  padding-top: 1px;
   line-height: 1.3;
+  color: var(--color-primary-foreground);
   overflow-wrap: anywhere;
 }
 
-.pet-subtitle {
-  font-size: 0.75rem;
-  color: var(--color-foreground);
-  opacity: 0.7;
-  text-align: center;
-  margin: 0;
-  line-height: 1.2;
-  max-width: 100%;
-  overflow-wrap: anywhere;
+.pet-card-image {
+  width: min(86%, 170px);
+  aspect-ratio: 1;
+  object-fit: contain;
+  flex: 0 0 auto;
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-inner);
+  border: 2px solid var(--color-button-secondary);
+  box-shadow: var(--shadow-button);
 }
 
 .pet-needs-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.75rem;
-  color: var(--color-foreground);
-  opacity: 0.6;
+  color: var(--color-primary-foreground);
   text-align: center;
-  margin: 4px 0 0 0;
+  margin: 0;
+  padding: 4px 9px;
   max-width: 100%;
+  min-height: calc(1.25em + 8px);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-control);
+  border: 1px solid var(--color-button-primary);
   overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+
+.pet-needs-count.is-empty {
+  visibility: hidden;
 }
 
 @media (max-width: 568px) {
   .small-pet-card {
+    width: clamp(180px, 58vw, 220px);
     border-radius: var(--radius-xl);
   }
 }

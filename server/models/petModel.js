@@ -24,6 +24,20 @@ const petSchema = new mongoose.Schema({
   birthday: {
     type: Date,
   },
+  image: {
+    source: {
+      type: String,
+      enum: ['preset'],
+      default: 'preset',
+      required: true,
+    },
+    key: {
+      type: String,
+      enum: ['dog', 'cat', 'bunny'],
+      default: 'cat',
+      required: true,
+    },
+  },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

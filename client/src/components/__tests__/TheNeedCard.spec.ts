@@ -193,6 +193,15 @@ describe('TheNeedCard - rendering', () => {
 
     expect(wrapper.find('.need-card').classes()).toContain('card-inactive');
   });
+
+  it('treats a missing legacy isActive value as visually active', () => {
+    const wrapper = mount(TheNeedCard, {
+      props: needCardProps(makeDurationNeed({ isActive: undefined })),
+      global: globalProvide(),
+    });
+
+    expect(wrapper.find('.need-card').classes()).not.toContain('card-inactive');
+  });
 });
 
 describe('TheNeedCard - addRecord (Complete button)', () => {

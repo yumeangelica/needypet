@@ -3,7 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed } from 'vue';
+import logoDesktopSrc from '@/assets/images/needypet_logo_desktop_1024.webp';
+import logoMobileSrc from '@/assets/images/needypet_logo_mobile_512.webp';
 import { useAppStore } from '@/store/app';
 
 // Props for the component
@@ -14,27 +16,7 @@ defineProps<{
 const appStore = useAppStore();
 const isMobile = computed(() => appStore.isMobile);
 
-const logoSrc = ref('');
-
-// Function to update the logo source based on screen size
-const updateLogoSrc = async () => {
-  logoSrc.value = isMobile.value
-    ? (await import('@/assets/images/needypet_logo_mobile_512.webp')).default
-    : (await import('@/assets/images/needypet_logo_desktop_1024.webp')).default;
-};
-
-onMounted(() => {
-  // Initialize the logo based on current screen size
-  updateLogoSrc();
-
-  // Listen for screen size changes and update the logo
-  const cleanup = appStore.watchScreenSize();
-
-  // Cleanup when the component is unmounted
-  onUnmounted(() => {
-    cleanup();
-  });
-});
+const logoSrc = computed(() => (isMobile.value ? logoMobileSrc : logoDesktopSrc));
 </script>
 
 <style scoped>
@@ -42,8 +24,11 @@ onMounted(() => {
   width: 90%;
   max-width: 250px;
   height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
   margin: 0 auto;
   display: block;
+  flex: 0 0 auto;
 }
 
 </style>
