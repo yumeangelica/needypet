@@ -1,11 +1,14 @@
 <template>
   <Dialog :open="isOpen" @update:open="(v) => { if (!v) closeModal(); }" title="Select Timezone"
     description="Search and select your timezone">
+    <p class="timezone-helper">
+      This decides when your pets' daily tasks reset — midnight in the timezone you pick 🐾
+    </p>
     <div class="mb-4">
       <input ref="inputField" v-model="searchQuery" placeholder="Search for timezone..." aria-label="Search for timezone"
-        class="form-field-input timezone-search-input" />
+        class="form-field-input" />
     </div>
-    <ul class="timezone-list max-h-[400px] overflow-y-auto">
+    <ul class="timezone-list overflow-y-auto">
       <li v-for="zone in filteredTimezones" :key="zone">
         <button type="button" class="timezone-option" @click="selectTimezone(zone)">
           {{ zone }}
@@ -71,12 +74,15 @@ watch(
 </script>
 
 <style scoped>
-.timezone-list {
-  max-height: min(400px, calc(100svh - 14rem));
+.timezone-helper {
+  margin: 0 0 0.8rem;
+  color: var(--color-foreground);
+  font-size: 0.78rem;
+  line-height: 1.45;
 }
 
-.timezone-search-input {
-  min-height: 50px;
+.timezone-list {
+  max-height: min(400px, calc(100svh - 14rem));
 }
 
 .timezone-list li {
@@ -96,7 +102,7 @@ watch(
   line-height: 1.35;
   text-align: left;
   overflow-wrap: anywhere;
-  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 .timezone-option:focus-visible {
@@ -112,6 +118,6 @@ watch(
 }
 
 .timezone-option:active {
-  transform: scale(0.99);
+  transform: scale(0.97);
 }
 </style>

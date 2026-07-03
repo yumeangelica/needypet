@@ -1,8 +1,11 @@
 <template>
   <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="form-container">
-        <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Welcome a new pet to your family! 🐾</h1>
+      <div class="form-container pet-form-container pet-panel">
+        <div class="card-band">
+          <h1 class="form-header page-title">Welcome a new pet to your family! 🐾</h1>
+        </div>
+        <div class="card-body">
         <form @submit.prevent="submitPet">
           <ThePetImagePicker v-model="newPetObject.image" :petName="newPetObject.name" />
 
@@ -47,6 +50,7 @@
             <button type="button" @click="router.push({ name: 'home' })" class="form-button secondary">Cancel</button>
           </div>
         </form>
+        </div>
       </div>
     </div>
     <TheFooter />

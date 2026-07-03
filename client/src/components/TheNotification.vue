@@ -29,7 +29,7 @@ defineProps<{
   top: calc(10px + env(safe-area-inset-top, 0px));
   right: 12px;
   width: min(340px, calc(100vw - 24px));
-  z-index: 30000;
+  z-index: var(--z-index-toast);
   pointer-events: none;
 }
 
@@ -39,11 +39,11 @@ defineProps<{
 }
 
 .notification {
-  background-color: var(--color-surface-inner);
+  background-color: var(--color-card-bg);
   padding: 14px 16px;
   margin-bottom: 12px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-soft-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
   border: 1px solid var(--color-border-soft);
   border-left: 10px solid transparent;
   line-height: 1.4;

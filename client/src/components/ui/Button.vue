@@ -52,15 +52,15 @@ const classes = computed(() =>
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 44px;
+  min-height: var(--tap-target-size);
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   font-family: var(--font-sans);
   line-height: 1.25;
   color: var(--color-primary-foreground);
   cursor: pointer;
-  box-shadow: var(--shadow-button);
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s, opacity 0.15s;
+  box-shadow: var(--shadow-control);
+  transition: var(--transition-interactive);
 }
 
 .ui-button:focus-visible {
@@ -90,7 +90,7 @@ const classes = computed(() =>
 
 .ui-button-default,
 .ui-button-outline {
-  background: var(--color-button-primary);
+  background: var(--gradient-button-primary);
 }
 
 .ui-button-ghost {
@@ -108,6 +108,7 @@ const classes = computed(() =>
 }
 
 .ui-button-destructive {
+  border-width: 2px;
   border-color: var(--color-danger-border);
   background: var(--color-danger-soft);
   color: var(--color-destructive);
@@ -116,7 +117,7 @@ const classes = computed(() =>
 @media (hover: hover) {
   .ui-button-default:hover,
   .ui-button-outline:hover {
-    background: var(--color-button-primary-hover);
+    background: var(--gradient-button-primary-hover);
   }
 
   .ui-button-ghost:hover {
@@ -151,8 +152,8 @@ const classes = computed(() =>
 }
 
 .ui-button-icon {
-  width: 44px;
-  height: 44px;
+  width: var(--tap-target-size);
+  height: var(--tap-target-size);
   padding: 0;
   border-radius: 50%;
 }

@@ -4,9 +4,9 @@
       <div class="login-register-container auth-panel auth-card auth-form-card auth-register-card overflow-y-auto max-h-[90vh]">
         <TheLogoImage altText="NeedyPet Logo" />
 
-        <div class="auth-card-header paw-header-container">
+        <div class="auth-card-header paw-header-container title-underline">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Join the pack!</h1>
+          <h1 class="page-title-sm">Join the pack!</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 
@@ -15,7 +15,7 @@
         <form class="auth-form auth-register-form" @submit.prevent="createAccount">
           <!-- Username input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="username" type="text" placeholder="Pick a username (your pet parent name)" required aria-label="Username"
+            <input class="auth-field-input" v-model="username" type="text" placeholder="Pick a pet parent name" required aria-label="Username"
               :aria-invalid="formFieldsErrorDetailsObject.username ? true : undefined"
               :aria-describedby="formFieldsErrorDetailsObject.username ? 'reg-username-error' : undefined" />
           </div>
@@ -55,7 +55,7 @@
 
           <!-- Confirm password input field -->
           <div class="auth-field">
-            <input class="auth-field-input" v-model="confirmPassword" placeholder="Confirm password (type your paw code again)" :type="passwordFieldType" required
+            <input class="auth-field-input" v-model="confirmPassword" placeholder="Confirm your paw code" :type="passwordFieldType" required
               id="confirmPassword" aria-label="Confirm Password" :aria-invalid="formFieldsErrorDetailsObject.newPassword ? true : undefined"
               :aria-describedby="formFieldsErrorDetailsObject.newPassword ? 'reg-password-error' : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
@@ -79,7 +79,7 @@
           <div v-if="formFieldsErrorDetailsObject.timezone" id="reg-timezone-error" class="custom-error-message" role="alert">
             {{ formFieldsErrorDetailsObject.timezone }}
           </div>
-          <p class="auth-field-hint">So your pets' daily tasks refresh at your own midnight 🐾</p>
+          <p class="auth-field-hint">Pick where you live — your pets' daily tasks reset at midnight in this timezone 🐾</p>
 
           <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
             @timezoneSelected="timezone => selectedTimezone = timezone" />

@@ -20,3 +20,6 @@ server_updates/
 
 .vscode/
 package-lock.json
+
+CLAUDE.md
+AGENTS.md

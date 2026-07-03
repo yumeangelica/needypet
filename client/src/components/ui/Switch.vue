@@ -42,10 +42,10 @@ function handleChange(val: boolean) {
   align-items: center;
   padding: 0;
   border: 2px solid var(--color-border-soft);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  transition: var(--transition-field);
 }
 
 .switch-root:focus-visible {
@@ -74,7 +74,7 @@ function handleChange(val: boolean) {
   width: 1.25rem;
   height: 1.25rem;
   pointer-events: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-surface-thumb);
   box-shadow: var(--shadow-control);
   transition: transform 0.15s;

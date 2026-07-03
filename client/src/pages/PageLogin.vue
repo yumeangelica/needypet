@@ -4,9 +4,9 @@
       <div class="login-register-container auth-panel auth-card auth-form-card">
         <TheLogoImage altText="NeedyPet Logo" />
 
-        <div class="auth-card-header paw-header-container">
+        <div class="auth-card-header paw-header-container title-underline">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Welcome back!</h1>
+          <h1 class="page-title-sm">Welcome back!</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
 

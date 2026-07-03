@@ -16,7 +16,7 @@
           <div class="pets-surface pet-panel">
             <section v-if="ownPets.length > 0" class="pet-section">
               <div class="title-and-button-container">
-                <h2 class="section-title">My Pets</h2>
+                <h2 class="section-title title-underline">My Pets</h2>
                 <button @click="router.push({ name: 'add-pet' })" aria-label="Add pet" class="custom-button">
                   <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
                   Welcome a Pet
@@ -29,7 +29,7 @@
             </section>
 
             <section v-if="carerPets.length > 0" class="pet-section">
-              <h2 class="section-title">Pets I Help Care For</h2>
+              <h2 class="section-title title-underline">Pets I Help Care For</h2>
               <div class="cards-container">
                 <ThePetCard v-for="pet in carerPets" :key="pet.id" :pet="pet" />
               </div>
@@ -39,7 +39,7 @@
 
         <div v-else>
           <div class="title-and-button-container">
-            <h2 class="section-title">My Furry Friends</h2>
+            <h2 class="section-title title-underline">My Furry Friends</h2>
           </div>
           <TheEmptyState :icon="PawPrint" title="No pets yet" message="Welcome your first furry friend to get started! 🐾"
             actionLabel="Welcome a Pet" :actionIcon="CirclePlus" @action="router.push({ name: 'add-pet' })" />
@@ -134,11 +134,19 @@ const fetchUserEmailConfirmed = async () => {
 
 .pets-surface {
   padding: clamp(0.9rem, 3vw, 1.25rem);
-  border: 1px solid var(--color-home-pets-surface-border);
+  border: 1px solid var(--color-glass-rim);
   border-radius: var(--radius-2xl);
   background: var(--color-home-pets-surface);
-  box-shadow: var(--shadow-inset-surface);
+  box-shadow: var(--shadow-inset-surface), var(--shadow-glass);
   box-sizing: border-box;
+}
+
+/* Frosted glass: the paw-pattern page background shimmers through the blur.
+   Without support the flat lilac tint above is the fallback. */
+@supports (backdrop-filter: blur(1px)) {
+  .pets-surface {
+    backdrop-filter: blur(7px);
+  }
 }
 
 .pet-section + .pet-section {
@@ -154,14 +162,15 @@ const fetchUserEmailConfirmed = async () => {
   max-width: 100%;
 }
 
+/* Underline comes from the shared .title-underline utility */
 .section-title {
   margin: 0;
   font-size: 1.3rem;
-  padding: 6px 0;
+  padding: 6px 0 14px;
   line-height: 1.25;
 }
 
-@media (max-width: 430px) {
+@media (max-width: 568px) {
   .title-and-button-container {
     flex-direction: column;
     gap: 0.6rem;
@@ -188,8 +197,8 @@ const fetchUserEmailConfirmed = async () => {
   }
 
   .section-title {
-    font-size: 1.35rem;
-    padding: 0;
+    font-size: 1.2rem;
+    padding: 0 0 12px;
   }
 }
 </style>

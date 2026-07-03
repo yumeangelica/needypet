@@ -2,10 +2,15 @@
   <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container account-panel">
+        <div class="card-band">
+          <h1 class="form-header page-title">Update my paw code 🐾</h1>
+        </div>
+        <div class="card-body">
         <form class="change-password-form" @submit.prevent="submitForm">
-          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Update my paw code 🐾</h1>
-
-          <label class="form-label" for="changepw-current-password">Current paw code</label>
+          <div class="form-label-row">
+            <label class="form-label" for="changepw-current-password">Current paw code</label>
+            <TheInfoHint placement="right" label="What is a paw code?" text="Your paw code is simply your NeedyPet password." />
+          </div>
           <div class="form-field">
             <input id="changepw-current-password" class="form-field-input" v-model="currentPassword" :type="passwordFieldType" required
               placeholder="Your current paw code" :aria-invalid="errorDetailsObject.currentPassword ? true : undefined"
@@ -52,6 +57,7 @@
             {{ errorMessage }}
           </div>
         </form>
+        </div>
       </div>
     </div>
     <TheFooter />
@@ -63,6 +69,7 @@ import { Eye, EyeOff } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import TheInfoHint from '@/components/TheInfoHint.vue';
 import { validatePasswordRules } from '@/lib/passwordRules';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
@@ -127,25 +134,7 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-.change-password-form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.change-password-form .form-header {
-  margin-bottom: 0.85rem;
-}
-
-.change-password-form .form-label {
-  margin-top: 0.4rem;
-}
-
 .change-password-form .strong-password-note {
   margin: 0.45rem 0 0.55rem;
-}
-
-.change-password-form .form-button-group {
-  margin-top: 0.75rem;
 }
 </style>

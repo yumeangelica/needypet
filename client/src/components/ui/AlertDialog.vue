@@ -84,16 +84,16 @@ function handleConfirm() {
 
 <style scoped>
 .alert-overlay {
-  animation: alert-overlay-show 150ms ease-out;
+  animation: np-overlay-in 150ms ease-out;
 }
 
 .alert-overlay[data-state='closed'] {
-  animation: alert-overlay-hide 100ms ease-in;
+  animation: np-overlay-out 100ms ease-in;
 }
 
 .alert-content {
   position: fixed;
-  z-index: 50;
+  z-index: var(--z-index-overlay);
   left: 50%;
   top: 50%;
   display: flex;
@@ -103,22 +103,22 @@ function handleConfirm() {
   max-width: 400px;
   max-height: calc(100svh - 2rem);
   padding: 2rem;
-  border: 2px solid var(--color-form-panel-border);
+  border: 1px solid var(--color-card-edge);
   border-radius: var(--radius-3xl);
-  background: var(--color-form-panel-bg);
-  box-shadow: var(--shadow-soft-card);
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-panel);
   overflow-y: auto;
   overflow-wrap: anywhere;
   text-align: center;
   transform: translate(-50%, -50%) scale(1);
-  animation: alert-content-show 200ms ease-out;
+  animation: np-dialog-pop-in 200ms ease-out;
 }
 
 .alert-title {
   margin: 0 0 0.5rem;
   color: var(--color-primary-foreground);
   font-family: var(--font-sans);
-  font-size: 1.1rem;
+  font-size: 1.125rem;
   line-height: 1.25;
 }
 
@@ -140,51 +140,7 @@ function handleConfirm() {
 }
 
 .alert-content[data-state='closed'] {
-  animation: alert-content-hide 150ms ease-in;
-}
-
-@keyframes alert-overlay-show {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes alert-overlay-hide {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes alert-content-show {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes alert-content-hide {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  to {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
+  animation: np-dialog-pop-out 150ms ease-in;
 }
 
 @media (max-width: 568px) {

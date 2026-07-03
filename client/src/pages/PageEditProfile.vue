@@ -2,9 +2,11 @@
   <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container account-panel">
+        <div class="card-band">
+          <h1 class="form-header page-title">Update my details 🐾</h1>
+        </div>
+        <div class="card-body">
         <form @submit.prevent="submitForm">
-          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Update my details 🐾</h1>
-
           <label class="form-label" for="editprofile-username">Pet parent name</label>
           <div class="form-field">
             <input id="editprofile-username" class="form-field-input" v-model="editData.userName" type="text" required placeholder="Your pet parent name"
@@ -23,7 +25,11 @@
           </div>
           <div v-if="errorDetailsObject.email" id="editprofile-email-error" class="custom-error-message" role="alert">{{ errorDetailsObject.email }}</div>
 
-          <label class="form-label">Timezone</label>
+          <div class="form-label-row">
+            <label class="form-label">Timezone</label>
+            <TheInfoHint placement="right" label="Why does the timezone matter?"
+              text="Your pets' new daily tasks appear at midnight in this timezone, so pick where you actually live." />
+          </div>
           <div class="form-field cursor-pointer" role="button" tabindex="0" aria-haspopup="dialog"
             :aria-label="`Select timezone, current: ${editData.timezone || 'none'}`"
             :aria-describedby="errorDetailsObject.timezone ? 'editprofile-timezone-error' : undefined" @click="showModal = true"
@@ -39,7 +45,10 @@
           <TheTimezoneSelectorModal :isOpen="showModal" @update:isOpen="showModal = $event"
             @timezoneSelected="timezone => editData.timezone = timezone" />
 
-          <label class="form-label" for="editprofile-current-password">Current paw code</label>
+          <div class="form-label-row">
+            <label class="form-label" for="editprofile-current-password">Current paw code</label>
+            <TheInfoHint placement="right" label="What is a paw code?" text="Your paw code is simply your NeedyPet password." />
+          </div>
           <div class="form-field">
             <input id="editprofile-current-password" class="form-field-input" v-model="editData.currentPassword" :type="passwordFieldType" required
               placeholder="Your current paw code" :aria-invalid="errorDetailsObject.currentPassword ? true : undefined"
@@ -63,6 +72,7 @@
             {{ errorMessage }}
           </div>
         </form>
+        </div>
       </div>
     </div>
     <TheFooter />
@@ -74,6 +84,7 @@ import { Eye, EyeOff } from '@lucide/vue';
 import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import TheInfoHint from '@/components/TheInfoHint.vue';
 import TheTimezoneSelectorModal from '@/components/TheTimezoneSelectorModal.vue';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';

@@ -4,38 +4,42 @@
       :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <TheLoadingSpinner v-if="isLoading && !pet" message="Fetching your family member..." />
       <div v-else-if="pet" class="pet-container pet-panel">
-        <div class="full-pet-card">
+        <div class="full-pet-card card-shell">
+
+          <div class="card-band">
+            <h1 class="page-title-lg">{{ pet.name }}</h1>
+            <button v-if="pet.owner?.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
+              <Settings class="w-5 h-5" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div class="card-body">
 
           <div class="pet-overview">
-            <div class="pet-copy">
-              <div class="inline-container">
-                <h1 class="text-[1.4rem] max-[568px]:text-[1.2rem]">{{ pet.name }}</h1>
-                <button v-if="pet.owner?.id === userStore.id" class="settings-button" aria-label="Edit pet" @click="router.push({ name: 'edit-pet' })">
-                  <Settings class="w-5 h-5" aria-hidden="true" />
-                </button>
-              </div>
-
-              <div class="pet-info">
-                <p><strong>Description:</strong> {{ pet.description }}</p>
-                <p><strong>Species:</strong> {{ pet.species }}</p>
-                <p><strong>Breed:</strong> {{ pet.breed }}</p>
-                <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
-                <p><strong>Owner:</strong> {{ pet.owner?.userName }}</p>
-                <p v-if="pet.careTakers && pet.careTakers.length > 0">
-                  <strong>Care takers:</strong>
-                  <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">
-                    {{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}
-                  </span>
-                </p>
-              </div>
+            <div class="pet-info">
+              <p><strong>Description:</strong> {{ pet.description }}</p>
+              <p><strong>Species:</strong> {{ pet.species }}</p>
+              <p><strong>Breed:</strong> {{ pet.breed }}</p>
+              <p><strong>Birthday:</strong> {{ pet.birthday }}</p>
+              <p><strong>Owner:</strong> {{ pet.owner?.userName }}</p>
+              <p v-if="pet.careTakers && pet.careTakers.length > 0">
+                <strong>Care takers:</strong>
+                <span v-for="(careTaker, index) in pet.careTakers" :key="careTaker.id">
+                  {{ careTaker.userName }}{{ index !== pet.careTakers.length - 1 ? ', ' : '' }}
+                </span>
+              </p>
             </div>
 
-            <img class="pet-detail-image" :src="petImageSrc" :alt="`${pet.name} picture`" />
+            <img class="pet-detail-image sticker-tile" :src="petImageSrc" :alt="`${pet.name} picture`" />
           </div>
 
           <!-- Need related container -->
           <div class="header-button-container">
-            <h3 class="text-center mt-2 mb-0">Daily Care Tasks</h3>
+            <div class="daily-care-heading mt-2">
+              <h3 class="text-center mb-0">Daily Care Tasks</h3>
+              <TheInfoHint align="end" label="How do daily care tasks work?"
+                text="Every morning NeedyPet creates a fresh copy of each active task. Use Previous and Next to browse other days." />
+            </div>
             <template v-if="pet.owner?.id === userStore.id && currentDate === ownerToday">
               <button class="custom-button" aria-label="Add care task" @click="setOpen(true)" v-if="needsForCurrentDate.length < 10">
                 <CirclePlus class="inline-block w-4 h-4 mr-1" aria-hidden="true" />
@@ -70,7 +74,11 @@
                   <input id="need-date" class="form-field-input" readonly :value="currentDate" required />
                 </div>
 
-                <label class="form-label" id="need-measurement-label">Measurement type</label>
+                <div class="form-label-row">
+                  <label class="form-label" id="need-measurement-label">Measurement type</label>
+                  <TheInfoHint placement="right" label="What are the measurement types?"
+                    text="Duration tracks time in minutes; Quantity tracks an amount in ml or g." />
+                </div>
                 <div v-show="!selection" class="mt-2">
                   <RadioGroup v-model="selection" aria-labelledby="need-measurement-label"
                     :aria-invalid="formFieldsErrorDetailsObject.selection ? true : undefined"
@@ -148,6 +156,7 @@
             </div>
           </section>
 
+          </div>
         </div>
       </div>
 
@@ -181,6 +190,7 @@ import {
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
+import TheInfoHint from '@/components/TheInfoHint.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
 import TheNeedCard from '@/components/TheNeedCard.vue';
 import { Dialog, RadioGroup, RadioGroupItem, Select } from '@/components/ui';
@@ -236,8 +246,8 @@ let nowTickIntervalId: ReturnType<typeof setInterval> | undefined;
 const ownerToday = computed(() => nowTick.value.tz(ownerTimezone.value).format('YYYY-MM-DD'));
 
 const quantityUnits = [
-  { label: 'ml', value: 'ml' },
-  { label: 'g', value: 'g' },
+  { label: 'millilitres (ml)', value: 'ml' },
+  { label: 'grams (g)', value: 'g' },
 ];
 
 const changeDay = (delta: number) => {
@@ -484,6 +494,13 @@ provide('handleNeedDeletion', handleNeedDeleted);
   text-align: center;
 }
 
+.daily-care-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
 .date-navigation {
   margin-top: 4px;
   margin-bottom: 0;
@@ -493,12 +510,8 @@ provide('handleNeedDeletion', handleNeedDeleted);
   gap: clamp(0.75rem, 3vw, 1.25rem);
 }
 
+/* Shell visuals come from the shared .card-shell class */
 .full-pet-card {
-  background-color: var(--color-surface-app);
-  border-radius: var(--radius-2xl);
-  border: 2px solid var(--color-button-secondary);
-  box-shadow: var(--shadow-soft-card);
-  padding: var(--space-card);
   width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
@@ -507,36 +520,32 @@ provide('handleNeedDeletion', handleNeedDeleted);
 }
 
 .pet-overview {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: clamp(1rem, 4vw, 2rem);
+  display: grid;
+  grid-template-areas: 'info image';
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: clamp(1rem, 4vw, 2rem);
+  row-gap: 0.5rem;
   width: 100%;
+  margin-bottom: var(--space-stack);
 }
 
-.pet-copy {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
+/* Visuals come from the shared .sticker-tile utility */
 .pet-detail-image {
   width: clamp(120px, 26vw, 170px);
-  aspect-ratio: 1;
-  object-fit: contain;
-  flex: 0 0 auto;
+  grid-area: image;
   border-radius: var(--radius-xl);
-  background: var(--color-surface-inner);
-  border: 2px solid var(--color-button-secondary);
-  box-shadow: var(--shadow-button);
 }
 
 .pet-info {
-  margin: 8px 0 12px;
+  grid-area: info;
+  min-width: 0;
+  margin: 0;
   padding: 0.8rem 0.9rem;
-  border: 1px solid var(--color-button-secondary);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
-  background: var(--color-surface-app-soft);
-  box-shadow: var(--shadow-field);
+  background: var(--color-well);
+  box-shadow: var(--shadow-field-input);
 }
 
 .pet-info p {
@@ -544,31 +553,17 @@ provide('handleNeedDeletion', handleNeedDeleted);
   line-height: 1.45;
 }
 
+/* The dialog itself now provides the band header + cream body, so this
+   wrapper only constrains the form width. */
 .care-task-dialog {
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
-  padding: clamp(0.85rem, 3vw, 1.15rem);
-  border: 2px solid var(--color-button-secondary);
-  border-radius: var(--radius-2xl);
-  background: var(--color-surface-app);
-  box-shadow: var(--shadow-panel);
   box-sizing: border-box;
 }
 
-.care-task-form {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
 .care-task-form .form-header {
-  margin-bottom: 10px;
   font-size: clamp(1rem, 3vw, 1.2rem);
-}
-
-.care-task-form .form-field-input::placeholder {
-  opacity: 0.62;
 }
 
 .care-task-form .form-field-input[readonly] {
@@ -579,12 +574,12 @@ provide('handleNeedDeletion', handleNeedDeleted);
   display: flex;
   flex-wrap: wrap;
   gap: 12px 18px;
-  margin: 6px 0 10px;
+  margin: 0 0 0.7rem;
   padding: 10px 12px;
-  border: 1px solid var(--color-form-field-border);
+  border: 1.5px solid var(--color-form-field-border);
   border-radius: var(--radius-field);
   background: var(--color-form-field-bg);
-  box-shadow: var(--shadow-field);
+  box-shadow: var(--shadow-field-input);
 }
 
 .care-task-measurement-options :deep(.radio-group-label) {
@@ -617,14 +612,14 @@ provide('handleNeedDeletion', handleNeedDeleted);
   padding: 0 0.35rem;
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-2xl);
-  background: var(--color-surface-app-soft);
+  background: var(--color-well-soft);
   box-sizing: border-box;
   box-shadow: var(--shadow-inset-surface);
 }
 
 .care-task-area:focus-visible {
   outline: 2px solid var(--color-primary-foreground);
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .care-task-list {
@@ -727,17 +722,19 @@ provide('handleNeedDeletion', handleNeedDeleted);
   }
 
   .pet-overview {
-    flex-direction: column-reverse;
-    align-items: center;
+    grid-template-areas:
+      'image'
+      'info';
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .pet-info {
+    justify-self: stretch;
   }
 
   .pet-detail-image {
     width: min(150px, 60vw);
-  }
-
-  .care-task-dialog {
-    padding: 0.85rem;
-    border-radius: var(--radius-xl);
   }
 
   .care-task-measurement-options {

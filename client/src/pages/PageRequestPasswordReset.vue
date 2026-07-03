@@ -4,11 +4,13 @@
       <div class="login-register-container auth-panel auth-card auth-form-card">
         <TheLogoImage altText="NeedyPet logo" />
 
-        <div class="auth-card-header paw-header-container">
+        <div class="auth-card-header paw-header-container title-underline">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-          <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Lost your paw code?</h1>
+          <h1 class="page-title-sm">Lost your paw code?</h1>
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </div>
+
+        <p class="auth-subtitle">Forgot your password? Enter your email and we'll send you a reset link 🐾</p>
 
         <form class="auth-form" @submit.prevent="resetPassword">
           <div class="auth-field">

@@ -4,6 +4,15 @@
 
 NeedyPet is designed to streamline pet care management within households and pet care facilities. It provides a unified platform that allows multiple caretakers to collaboratively manage the health and daily activities of pets. This centralizes communication and task tracking, preventing common issues such as overfeeding or missed medication, and incorporates user-specific timezone settings for accurate activity scheduling.
 
+## Repository Status
+
+This repository is a legacy portfolio snapshot of the Vue/Vite, Express, and
+MongoDB implementation. It should remain on the current stack for preservation,
+polish, documentation, and bug fixes. New product work should happen in a new
+Nuxt 4 application using Bun, SQLite locally, and Postgres/Supabase in
+production. Migration notes are documented in
+[migrationReadiness.md](migrationReadiness.md).
+
 ## Application User Roles
 
 - **Pet Owner**: Primary user responsible for creating and managing pet profiles and setting up care schedules. Pet owners have full control over their pets' profiles and care activities.
@@ -19,6 +28,7 @@ NeedyPet is designed to streamline pet care management within households and pet
 2. **Pet Profile Management**:
    - **Adding/Editing Pets**: Owners can add new pets, edit pet information, or delete pet profiles.
    - **Pet Details**: Profiles include the pet’s name, species, breed, birthday, and a detailed description.
+   - **Pet Images**: The legacy application supports preset pet images. User-uploaded pet photos are planned for the future Nuxt 4 rebuild and should use object storage plus SQL metadata.
    - **Carer Access**: Pets can have carers in the backend data model. Carers can complete activities but cannot modify pet details or toggle activity statuses. Frontend caretaker assignment and invitation flows are planned.
 
 3. **Care Activities (Needs/Tasks)**:
@@ -46,6 +56,7 @@ NeedyPet is designed to streamline pet care management within households and pet
 - **Email Services**: Nodemailer is used for account email verification and password resets.
 - **Testing and Quality**: Backend tests use the Node.js test runner and Supertest. Frontend tests use Vitest. Biome is used in both workspaces.
 - **Security**: Implements JWT-based authentication, password hashing, input validation, secure HTTP headers, and GDPR-aware data handling practices.
+- **Migration Readiness**: The current MongoDB model should be exported through a versioned JSON bundle before importing into the future relational schema. Embedded pet needs and care records should become separate SQL tables.
 
 ## Compliance and Standards
 

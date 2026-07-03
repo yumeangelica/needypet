@@ -13,6 +13,13 @@ The backend API for NeedyPet, a pet care management application. See the [root R
 - [helmet](https://helmetjs.github.io/) and CORS for security headers
 - [Biome](https://biomejs.dev/) for linting and formatting
 
+## Legacy scope
+
+This server belongs to the legacy portfolio snapshot. Keep fixes focused on the
+existing Express/MongoDB implementation. Do not migrate this server to Nuxt
+server routes, SQLite, or Postgres in-place. The target rebuild plan is captured
+in [../documentation/migrationReadiness.md](../documentation/migrationReadiness.md).
+
 ## Environment variables
 
 The server reads configuration from environment files (gitignored). Copy

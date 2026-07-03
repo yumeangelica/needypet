@@ -19,9 +19,9 @@ const props = defineProps<{
 
 <style scoped>
 .ui-card {
-  border: 2px solid var(--color-button-secondary);
+  border: 1px solid var(--color-card-edge);
   border-radius: var(--radius-2xl);
-  background: var(--color-surface-app);
-  box-shadow: var(--shadow-card);
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-panel);
 }
 </style>

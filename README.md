@@ -10,6 +10,10 @@ NeedyPet simplifies pet care coordination within households and pet care facilit
 
 This repository is a polished portfolio snapshot of the original Vue/Vite, Express, and MongoDB implementation. It is intentionally kept on this stack as evidence of the work completed here. Future product work should happen in a new repository, where the domain can be rebuilt with Nuxt 4, Bun, and Postgres without mixing migration code into this archive.
 
+For coding agents and future maintainers, start with [AGENTS.md](AGENTS.md) and
+[CLAUDE.md](CLAUDE.md). The future Nuxt 4 rebuild notes live in
+[documentation/migrationReadiness.md](documentation/migrationReadiness.md).
+
 ## Features
 
 - **User Registration and Authentication**:
@@ -26,6 +30,7 @@ This repository is a polished portfolio snapshot of the original Vue/Vite, Expre
 
 - **Pet Management**:
   - Owner users can manage pet details such as name, birthday, species, breed, and specific care needs.
+  - Pets use a small preset image picker in this legacy version. User-uploaded pet photos should be implemented in the future Nuxt 4 rebuild with external object storage and database metadata, not added to this archive.
 
 - **Care Activities (Needs)**:
   - Needs are specific care activities required by pets, such as feeding, walking, or medication.
@@ -76,9 +81,11 @@ This repository is a polished portfolio snapshot of the original Vue/Vite, Expre
    - Access profile settings by clicking the settings icon next to your username.
    - Deleting your account will remove all associated data and log you out permanently.
 
-## Upcoming Features
+## Future Product Direction
 
-The following features are planned for future versions of NeedyPet:
+This legacy repository should stay focused on bug fixes, polish, documentation,
+and tests. Larger product work should be designed in the future Nuxt 4 rebuild.
+The likely next-version features are:
 
 1. **Caretaker Support Throughout the Application**:
    - Extending caretaker functionalities to the frontend, allowing seamless management of caretaker permissions and responsibilities, including email-based invitations for adding caretakers.
@@ -88,6 +95,9 @@ The following features are planned for future versions of NeedyPet:
 
 3. **Native Mobile Applications**:
    - Native applications for iOS and Android to provide a seamless mobile experience.
+
+4. **Uploaded Pet Photos**:
+   - User-uploaded pet images backed by object storage and SQL metadata, rather than database-stored image blobs.
 
 #### Note
 
@@ -99,6 +109,7 @@ The following features are planned for future versions of NeedyPet:
 - **Backend technologies**: Node.js, Express 5, MongoDB with Mongoose, JavaScript, Zod, jose, bcryptjs, Nodemailer, node-cron, Helmet, Biome, Node.js test runner, and Supertest.
 - **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, and Biome.
 - **Frontend API client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts`.
+- **Migration direction**: Keep this archive on MongoDB/Mongoose. For the future app, use a new Nuxt 4 codebase with SQLite locally, Postgres/Supabase in production, and the relational model outlined in [documentation/migrationReadiness.md](documentation/migrationReadiness.md).
 
 ## Development
 

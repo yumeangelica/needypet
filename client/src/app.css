@@ -8,11 +8,6 @@
   /* Brand colors mapped to Tailwind tokens */
   --color-primary: #FBCDE6;
   --color-primary-foreground: rgb(178, 77, 137);
-  --color-primary-foreground-muted: rgba(178, 77, 137, 0.8);
-  --color-on-primary: #FFFFFF;
-  --color-primary-overlay-hover: rgba(255, 255, 255, 0.15);
-  --color-primary-overlay-active: rgba(255, 255, 255, 0.25);
-  --color-primary-overlay-border: rgba(255, 255, 255, 0.2);
   --color-foreground: #705E76;
   --color-card-border: rgb(178, 110, 150);
   --color-destructive: #ff3b30;
@@ -24,20 +19,14 @@
   /* App-specific colors */
   --color-status-done: #BCE3FF;
   --color-surface-app: #EEDBFA;
-  --color-surface-app-soft: rgba(238, 219, 250, 0.72);
   --color-surface-inner: #FFEEF5;
-  --color-surface-inner-muted: rgba(255, 245, 251, 0.76);
   --color-surface-field: #FBEAF6;
   --color-surface-control: #FFE0F1;
-  --color-home-pets-surface: rgba(250, 225, 249, 0.48);
-  --color-home-pets-surface-border: rgba(178, 77, 137, 0.14);
-  --color-lilac-border: rgb(204, 179, 216);
-  --color-need-bg: var(--color-surface-app);
-  --color-need-inactive: #ded7e0;
-  --color-form-panel-bg: var(--color-surface-app);
-  --color-form-panel-border: var(--color-lilac-border);
-  --color-form-field-bg: var(--color-surface-field);
-  --color-form-field-border: rgba(178, 77, 137, 0.2);
+  --color-home-pets-surface: rgba(238, 219, 250, 0.62);
+  --color-need-inactive: var(--color-muted);
+  --color-need-inactive-body: #f3f0f4;
+  --color-form-field-bg: var(--color-well);
+  --color-form-field-border: var(--color-border-hover);
   --color-form-button-secondary: var(--color-surface-control);
   --color-form-button-secondary-hover: #F8D2EA;
   --color-surface-control-soft: rgba(255, 224, 241, 0.52);
@@ -54,6 +43,29 @@
   --color-danger-hover: rgba(255, 59, 48, 0.12);
   --color-danger-border: rgba(255, 59, 48, 0.4);
 
+  /* Pastel duo card scheme: cream body + pink->lilac band on the lilac page */
+  --color-card-bg: #FFF9FC;
+  --color-card-edge: rgba(204, 179, 216, 0.65);
+  --color-well: #F6ECFB;
+  --color-well-soft: rgba(238, 219, 250, 0.55);
+  /* rgb(178,77,137) is only ~3.5:1 on the band's pink; this darker tone is
+     ~5.6:1 there, so small band text stays WCAG AA readable. */
+  --color-primary-foreground-strong: rgb(140, 45, 100);
+  --gradient-card-band: linear-gradient(135deg, #FBCDE6 0%, #F3D9F3 55%, #EEDBFA 100%);
+  /* Nav chrome: same family as the card band, slightly pinker */
+  --gradient-nav: linear-gradient(90deg, #FBCDE6 0%, #F8D7EE 55%, #F3D9F3 100%);
+  --shadow-nav: 0 2px 12px rgba(178, 110, 150, 0.2);
+  --shadow-nav-up: 0 -2px 12px rgba(178, 110, 150, 0.18);
+  /* Frosted-glass surface (home pets backdrop) */
+  --color-glass-rim: rgba(255, 255, 255, 0.55);
+  --shadow-glass: 0 8px 24px rgba(178, 110, 150, 0.14);
+  /* Cream pill highlight (nav active/hover states) */
+  --color-pill-cream: rgba(255, 249, 252, 0.72);
+  --color-pill-cream-soft: rgba(255, 249, 252, 0.5);
+  --color-pill-cream-strong: rgba(255, 249, 252, 0.82);
+  /* Decorative paw silhouette, used via mask-image so it tints with background */
+  --mask-paw: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='4' r='2'/%3E%3Ccircle cx='18' cy='8' r='2'/%3E%3Ccircle cx='20' cy='16' r='2'/%3E%3Cpath d='M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z'/%3E%3C/svg%3E");
+
   /* Notification accent colors */
   --color-status-success: #4caf50;
   --color-status-error: #f44336;
@@ -62,14 +74,14 @@
   /* Auth page colors */
   /* Soft lilac for input/select backgrounds (shared by form + auth fields). */
   --color-auth-input-bg: #ECE0FB;
-  --color-auth-button: #FBCDE6;
+  --color-auth-button: var(--color-primary);
   --color-auth-button-secondary: var(--color-surface-control);
 
-  /* Button colors */
+  /* Button colors (button-primary remains as an accent for chip borders etc.) */
   --color-button-primary: #f3c3e3;
-  --color-button-primary-hover: #eeb8d8;
-  --color-button-secondary: var(--color-lilac-border);
-  --color-button-secondary-hover: #d8bddf;
+  /* Primary buttons share a soft pink->lilac sheen tied to the band gradient */
+  --gradient-button-primary: linear-gradient(135deg, #FBCDE6 0%, #F5D7F1 100%);
+  --gradient-button-primary-hover: linear-gradient(135deg, #F8C0DE 0%, #EECBEC 100%);
 
   /* Reusable shadow recipes */
   --shadow-panel: 0 6px 16px rgba(178, 110, 150, 0.24);
@@ -78,12 +90,27 @@
   --shadow-control-hover: 0 5px 14px rgba(178, 110, 150, 0.26);
   --shadow-inset-surface: inset 0 1px 0 rgba(255, 255, 255, 0.45);
   --shadow-sm: 0 1px 3px rgba(178, 110, 150, 0.22);
-  --shadow-card: var(--shadow-panel);
-  --shadow-soft-card: var(--shadow-panel);
-  --shadow-soft-hover: var(--shadow-panel-hover);
   --shadow-field: inset 0 1px 0 rgba(255, 255, 255, 0.48), 0 1px 4px rgba(178, 110, 150, 0.18);
-  --shadow-button: var(--shadow-control);
+  /* Softer inset for form inputs: subtle depth without the bright top rim that
+     made near-white fields float against the lilac card. */
+  --shadow-field-input: inset 0 1px 2px rgba(178, 110, 150, 0.12);
   --shadow-focus-ring: 0 0 0 3px rgba(178, 110, 150, 0.15);
+
+  /* Motion recipes: interactive = buttons/links/cards, field = input shells */
+  --transition-interactive: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s, opacity 0.15s, transform 0.1s;
+  --transition-field: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+
+  /* Layer scale (base layers stay literal: body::before 0, #app 1) */
+  --z-index-header: 40;
+  --z-index-mobile-nav: 50;
+  --z-index-overlay: 50;
+  --z-index-popover: 100;
+  --z-index-toast: 200;
+  --z-index-skip-link: 210;
+
+  /* Shared control sizes */
+  --tap-target-size: 44px;
+  --field-min-height: 52px;
 
   /* Font family */
   --font-sans: 'Comfortaa', 'Arial', sans-serif;
@@ -112,6 +139,7 @@
   --radius-xl: 25px;
   --radius-2xl: 40px;
   --radius-3xl: 50px;
+  --radius-pill: 999px;
 }
 
 /* ============================================
@@ -194,7 +222,7 @@ h1, h2, h3, h4, h5, h6, p, a, li, button {
 .icon-strong,
 .icon-strong svg,
 .icon-strong .lucide {
-  color: var(--color-primary-foreground) !important;
+  color: var(--color-primary-foreground);
   stroke-width: 2.2;
 }
 
@@ -202,8 +230,8 @@ h1, h2, h3, h4, h5, h6, p, a, li, button {
 .paw-header-container svg,
 .paw-header-container .lucide,
 .paw-header-container .lucide-paw-print {
-  color: var(--color-primary-foreground) !important;
-  fill: var(--color-primary-foreground) !important;
+  color: var(--color-primary-foreground);
+  fill: var(--color-primary-foreground);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -215,6 +243,11 @@ h1 { font-size: 1.5rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.3rem; }
 h4 { font-size: 1.15rem; }
+
+/* Page title tiers (h1 sizes per page family; mobile sizes in the 568px block) */
+.page-title-sm { font-size: 1.15rem; }
+.page-title { font-size: 1.3rem; }
+.page-title-lg { font-size: 1.4rem; }
 
 strong {
   color: var(--color-primary-foreground);
@@ -246,7 +279,7 @@ li {
   position: absolute;
   left: -9999px;
   top: 0;
-  z-index: 40001;
+  z-index: var(--z-index-skip-link);
   padding: 10px 16px;
   background: var(--color-primary);
   color: var(--color-primary-foreground);
@@ -306,23 +339,131 @@ li {
   min-height: calc(100svh - var(--header-height));
 }
 
+/* ============================================
+   Pastel duo card primitives (band + body)
+   ============================================ */
 
+/* Shared shell for duo cards; .form-container composes it below. */
+.card-shell,
+.form-container {
+  padding: 0;
+  border: 1px solid var(--color-card-edge);
+  border-radius: var(--radius-2xl);
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-panel);
+  /* Clips the band gradient to the rounded corners */
+  overflow: hidden;
+}
+
+.card-band {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-stack);
+  min-width: 0;
+  padding: clamp(0.85rem, 2.5vw, 1.1rem) var(--space-card);
+  background: var(--gradient-card-band);
+  border-bottom: 1px solid var(--color-border-divider);
+  overflow: hidden;
+}
+
+/* Decorative paw watermark peeking from the band's corner (paint-only) */
+.card-band::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -0.4rem;
+  bottom: -0.8rem;
+  width: 3.4rem;
+  height: 3.4rem;
+  background: var(--color-primary-foreground);
+  opacity: 0.13;
+  transform: rotate(-14deg);
+  pointer-events: none;
+  mask-image: var(--mask-paw);
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+/* Band titles sit on the pink gradient; use the darker tone so smaller
+   mobile title sizes keep enough contrast. */
+.card-band :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  min-width: 0;
+  color: var(--color-primary-foreground-strong);
+}
+
+.card-body {
+  padding: var(--space-card);
+}
+
+/* Pet image "sticker": pastel gradient backdrop + white ring. Width and
+   radius stay per-component. */
+.sticker-tile {
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: var(--gradient-card-band);
+  border: 3px solid var(--color-surface-thumb);
+  box-shadow: var(--shadow-control);
+}
+
+/* Small centered gradient underline for headings (home sections, auth titles) */
+.title-underline {
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.title-underline::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 44px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: var(--radius-pill);
+  background: var(--gradient-card-band);
+}
 
 /* ============================================
    Auth pages (Login, Register, Landing, etc.)
    ============================================ */
 
 .login-register-container {
+  position: relative;
   width: 100%;
   max-width: min(94vw, var(--auth-card-max-width));
   box-sizing: border-box;
   margin: var(--auth-panel-top) auto 0;
   padding: var(--space-card);
   border-radius: var(--radius-3xl);
+  /* Stays on the original pink: the logo image has this same color baked in,
+     so a cream card body would show the logo's square edges. */
   background-color: var(--color-surface-inner);
   border: 1px solid var(--color-auth-button);
   box-shadow: var(--shadow-panel);
   overflow-wrap: break-word;
+}
+
+/* Decorative corner paw. Kept fully inside the card (no overflow: hidden here -
+   the register card depends on its own max-height/scroll behavior). */
+.login-register-container::after,
+.confirmation-message::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  bottom: 0.9rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  background: var(--color-primary-foreground);
+  opacity: 0.08;
+  transform: rotate(-14deg);
+  pointer-events: none;
+  mask-image: var(--mask-paw);
+  mask-repeat: no-repeat;
+  mask-size: contain;
 }
 
 .auth-panel {
@@ -485,7 +626,7 @@ li {
   align-items: center;
   justify-content: center;
   align-self: center;
-  min-height: 44px;
+  min-height: var(--tap-target-size);
   margin: 0.35rem auto 0;
   padding: 0.5rem 0.85rem;
   border: none;
@@ -495,7 +636,7 @@ li {
   font-family: var(--font-sans);
   font-size: 0.75rem;
   line-height: 1.25;
-  transition: background 0.15s, opacity 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 @media (hover: hover) {
@@ -539,11 +680,11 @@ li {
   padding: 0;
   background: var(--color-auth-input-bg);
   border: 2px solid var(--color-border-soft);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-pill);
   margin-bottom: 12px;
   box-sizing: border-box;
   box-shadow: var(--shadow-field);
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  transition: var(--transition-field);
 }
 
 .auth-field:focus-within {
@@ -556,10 +697,11 @@ li {
   width: 100%;
   min-width: 0;
   min-height: 50px;
-  padding: 13px 20px;
+  /* Extra horizontal padding so text clears the pill curve */
+  padding: 13px 22px;
   background: transparent;
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-pill);
   font-family: var(--font-sans);
   font-size: 0.86rem;
   line-height: 1.4;
@@ -614,15 +756,15 @@ li {
   border: 1px solid var(--color-border-subtle);
   cursor: pointer;
   color: var(--color-primary-foreground);
-  width: 44px;
-  height: 44px;
+  width: var(--tap-target-size);
+  height: var(--tap-target-size);
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   box-shadow: var(--shadow-sm);
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 @media (hover: hover) {
@@ -646,16 +788,16 @@ li {
   padding: 13px 16px;
   margin-top: 0;
   border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-pill);
   font-family: var(--font-sans);
   font-size: 0.85rem;
   line-height: 1.25;
   color: var(--color-primary-foreground);
   cursor: pointer;
   min-height: 48px;
-  box-shadow: var(--shadow-button);
+  box-shadow: var(--shadow-control);
   text-align: center;
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 @media (hover: hover) {
@@ -672,7 +814,13 @@ li {
 }
 
 .primary-action-button {
-  background: var(--color-auth-button);
+  background: var(--gradient-button-primary);
+}
+
+@media (hover: hover) {
+  .primary-action-button:hover {
+    background: var(--gradient-button-primary-hover);
+  }
 }
 
 .secondary-action-button {
@@ -702,16 +850,13 @@ li {
    Form container (pet/profile forms - card-like wrapper)
    ============================================ */
 
+/* Duo card shell (visuals come from the .card-shell group above);
+   pages place a .card-band + .card-body inside. */
 .form-container {
   width: 100%;
   max-width: var(--panel-max-width);
   box-sizing: border-box;
   margin: 2vh auto;
-  padding: var(--space-card);
-  border-radius: var(--radius-2xl);
-  background-color: var(--color-form-panel-bg);
-  border: 2px solid var(--color-form-panel-border);
-  box-shadow: var(--shadow-panel);
 }
 
 .pet-panel {
@@ -723,8 +868,6 @@ li {
 
 .pet-form-container {
   max-width: var(--content-max-width);
-  background-color: var(--color-surface-app);
-  border-color: var(--color-button-secondary);
 }
 
 .account-panel {
@@ -736,14 +879,26 @@ li {
   flex-direction: column;
 }
 
-.account-panel > form {
+.account-panel form {
   width: 100%;
+}
+
+/* Let the body fill the account panel's min-height below the band */
+.account-panel > .card-body {
+  flex: 1 0 auto;
+}
+
+/* Keep form columns pleasantly narrow inside wide cards (auth-card proportions). */
+.form-container form {
+  width: 100%;
+  max-width: min(100%, 30rem);
+  margin-inline: auto;
 }
 
 .form-header {
   text-align: center;
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-stack);
 }
 
 /* ============================================
@@ -756,20 +911,29 @@ li {
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 50px;
+  min-height: var(--field-min-height);
   padding: 0;
   background: var(--color-form-field-bg);
-  border: 2px solid var(--color-form-field-border);
-  border-radius: var(--radius-lg);
-  margin-bottom: 10px;
+  border: 1.5px solid var(--color-form-field-border);
+  border-radius: var(--radius-field);
+  margin-bottom: 0.7rem;
   box-sizing: border-box;
-  box-shadow: var(--shadow-field);
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  box-shadow: var(--shadow-field-input);
+  transition: var(--transition-field);
+}
+
+/* Hover affordance; focus rules below win while a field is focused. */
+@media (hover: hover) {
+  .form-field:hover,
+  .form-field-input:hover {
+    border-color: var(--color-border-hover);
+  }
 }
 
 .form-field:focus-within,
 .form-field:focus-visible {
-  border-color: var(--color-card-border);
+  border-color: var(--color-primary-foreground);
+  background: var(--color-surface-inner);
   box-shadow: var(--shadow-focus-ring);
   outline: none;
 }
@@ -782,19 +946,19 @@ li {
 .form-field-input {
   width: 100%;
   min-width: 0;
-  min-height: 50px;
-  padding: 13px 20px;
+  min-height: var(--field-min-height);
+  padding: 13px 18px;
   background: var(--color-form-field-bg);
-  border: 2px solid var(--color-form-field-border);
-  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--color-form-field-border);
+  border-radius: var(--radius-field);
   font-family: var(--font-sans);
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   line-height: 1.4;
   color: var(--color-foreground);
   outline: none;
   box-sizing: border-box;
-  box-shadow: var(--shadow-field);
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  box-shadow: var(--shadow-field-input);
+  transition: var(--transition-field);
 }
 
 .form-field > .form-field-input {
@@ -809,12 +973,12 @@ li {
 
 .form-field-input::placeholder {
   color: var(--color-foreground);
-  font-style: italic;
-  opacity: 0.7;
+  opacity: 0.55;
 }
 
 .form-field-input:focus {
-  border-color: var(--color-card-border);
+  border-color: var(--color-primary-foreground);
+  background: var(--color-surface-inner);
   box-shadow: var(--shadow-focus-ring);
 }
 
@@ -878,7 +1042,7 @@ span.form-field-input {
   align-items: center;
   gap: 8px;
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 0.65rem;
 }
 
 .value-unit-value {
@@ -897,8 +1061,14 @@ span.form-field-input {
   font-size: 0.92rem;
   font-weight: 650;
   color: var(--color-primary-foreground);
-  margin-bottom: 5px;
-  margin-top: 8px;
+  margin: 0.5rem 0 0.3rem;
+}
+
+/* Label + info-hint side by side */
+.form-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* ============================================
@@ -921,7 +1091,7 @@ span.form-field-input {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: var(--color-button-primary);
+  background: var(--gradient-button-primary);
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   padding: 12px 20px;
@@ -930,17 +1100,17 @@ span.form-field-input {
   line-height: 1.25;
   color: var(--color-primary-foreground);
   cursor: pointer;
-  min-height: 44px;
+  min-height: var(--tap-target-size);
   text-align: center;
-  box-shadow: var(--shadow-button);
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  box-shadow: var(--shadow-control);
+  transition: var(--transition-interactive);
 }
 
 @media (hover: hover) {
   .custom-button:hover {
     border-color: var(--color-border-hover);
     box-shadow: var(--shadow-control-hover);
-    background: var(--color-button-primary-hover);
+    background: var(--gradient-button-primary-hover);
     transform: translateY(-1px);
   }
 }
@@ -963,7 +1133,7 @@ span.form-field-input {
   flex-direction: row;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 14px;
+  margin-top: 1rem;
   align-items: center;
   justify-content: center;
 }
@@ -985,9 +1155,9 @@ span.form-field-input {
   font-size: 0.85rem;
   line-height: 1.25;
   cursor: pointer;
-  box-shadow: var(--shadow-button);
+  box-shadow: var(--shadow-control);
   text-align: center;
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 @media (hover: hover) {
@@ -1011,7 +1181,7 @@ span.form-field-input {
 }
 
 .form-button.primary {
-  background: var(--color-button-primary);
+  background: var(--gradient-button-primary);
   color: var(--color-primary-foreground);
 }
 
@@ -1023,7 +1193,7 @@ span.form-field-input {
 
 @media (hover: hover) {
   .form-button.primary:hover {
-    background: var(--color-button-primary-hover);
+    background: var(--gradient-button-primary-hover);
   }
 
   .form-button.secondary:hover {
@@ -1053,11 +1223,11 @@ span.form-field-input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--tap-target-size);
+  min-height: var(--tap-target-size);
   border-radius: 50%;
   box-shadow: var(--shadow-sm);
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 @media (hover: hover) {
@@ -1098,11 +1268,12 @@ span.form-field-input {
    ============================================ */
 
 .confirmation-message {
+  position: relative;
   padding: 20px;
   border-radius: var(--radius-3xl);
-  background-color: var(--color-surface-app);
-  border: 2px solid var(--color-button-secondary);
-  box-shadow: var(--shadow-soft-card);
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-card-edge);
+  box-shadow: var(--shadow-panel);
   text-align: center;
   margin-top: 5vh;
 }
@@ -1140,7 +1311,7 @@ span.form-field-input {
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
-  background: var(--color-surface-inner-muted);
+  background: var(--color-well);
   box-shadow: var(--shadow-field);
   box-sizing: border-box;
 }
@@ -1167,19 +1338,6 @@ span.form-field-input {
 }
 
 /* ============================================
-   Inline container (name + settings icon)
-   ============================================ */
-
-.inline-container {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-width: 0;
-}
-
-/* ============================================
    Number input spinner removal
    ============================================ */
 
@@ -1187,6 +1345,54 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* ============================================
+   Shared dialog animations (ui/Dialog, ui/AlertDialog)
+   ============================================ */
+
+@keyframes np-overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes np-overlay-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes np-dialog-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes np-dialog-pop-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
 }
 
 /* ============================================
@@ -1265,8 +1471,11 @@ input[type="number"]::-webkit-outer-spin-button {
     margin-top: 0.15rem;
   }
 
+  /* Phones: let the card grow and the page scroll as one surface - the
+     internal card scroll reads as a confusing "window over a window". */
   .login-register-container.auth-register-card {
-    max-height: calc(100svh - 2rem);
+    max-height: none;
+    overflow-y: visible;
   }
 
   .auth-register-card .strong-password-note {
@@ -1278,8 +1487,13 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 
   .form-container,
-  .confirmation-message {
+  .confirmation-message,
+  .card-shell {
     border-radius: var(--radius-xl);
+  }
+
+  .card-band {
+    padding: 0.75rem 1rem;
   }
 
   .account-panel {
@@ -1302,6 +1516,10 @@ input[type="number"]::-webkit-outer-spin-button {
   h4 { font-size: 0.9rem; }
   h5 { font-size: 0.8rem; }
 
+  .page-title-sm { font-size: 0.9rem; }
+  .page-title { font-size: 1.1rem; }
+  .page-title-lg { font-size: 1.2rem; }
+
   .custom-button,
   .action-button {
     padding: 10px 14px;
@@ -1321,6 +1539,35 @@ input[type="number"]::-webkit-outer-spin-button {
     margin-bottom: 3px;
     line-height: 1.2;
     padding: 1px 0;
+  }
+}
+
+/* Narrowest phones: shrink auth text so long placeholders and the intro
+   sentence fit without mid-word breaks or clipping against the eye button. */
+@media (max-width: 400px) {
+  .landing-intro {
+    font-size: 0.78rem;
+  }
+
+  .auth-field-input {
+    font-size: 0.8rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.8rem;
+  }
+
+  /* Degrade a too-long placeholder to an ellipsis instead of slicing a letter */
+  .auth-field-input::placeholder,
+  .form-field-input::placeholder {
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Keep narrow bands free for the title text */
+  .card-band::after {
+    display: none;
   }
 }
 

@@ -4,7 +4,7 @@
       <!-- Email confirmation -->
       <div v-if="confirmationType === 'email'">
         <h1 class="sr-only">Email confirmation</h1>
-        <div class="confirmation-container">
+        <div class="confirmation-message confirmation-container">
           <div class="confirmation-text">{{ confirmationMessage }}</div>
           <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
             Pounce In
@@ -17,11 +17,13 @@
         <div v-if="showForm" class="login-register-container auth-panel auth-card auth-form-card">
           <TheLogoImage altText="NeedyPet logo" />
 
-          <div class="auth-card-header paw-header-container">
+          <div class="auth-card-header paw-header-container title-underline">
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
-            <h1 class="text-[1.15rem] max-[568px]:text-[0.9rem]">Set a new paw code</h1>
+            <h1 class="page-title-sm">Set a new paw code</h1>
             <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           </div>
+
+          <p class="auth-subtitle">Choose a new password for your NeedyPet account 🐾</p>
 
           <div v-if="validMessage" class="custom-valid-message text-center" role="status">{{ validMessage }}</div>
 
@@ -58,7 +60,7 @@
           </form>
         </div>
 
-        <div v-else class="confirmation-container">
+        <div v-else class="confirmation-message confirmation-container">
           <h1 class="sr-only">Password reset</h1>
           <div class="confirmation-text">{{ confirmationMessage }}</div>
           <button @click="goToLogin" aria-label="Log in" class="action-button primary-action-button">Pounce In</button>
@@ -66,7 +68,7 @@
       </div>
 
       <!-- Invalid confirmation link -->
-      <div v-else class="confirmation-container">
+      <div v-else class="confirmation-message confirmation-container">
         <h1 class="sr-only">Confirmation</h1>
         <div class="confirmation-text">{{ confirmationMessage }}</div>
         <button v-if="showLoginButton" @click="goToLogin" class="action-button primary-action-button">
@@ -207,13 +209,9 @@ const goToLogin = () => {
 </script>
 
 <style scoped>
+/* Card visuals come from the shared .confirmation-message recipe */
 .confirmation-container {
   padding: var(--space-card);
-  border-radius: var(--radius-3xl);
-  background-color: var(--color-surface-inner);
-  border: 1px solid var(--color-border-soft);
-  box-shadow: var(--shadow-soft-card);
-  text-align: center;
   overflow-wrap: anywhere;
 }
 

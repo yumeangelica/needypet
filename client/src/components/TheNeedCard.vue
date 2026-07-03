@@ -1,47 +1,59 @@
 <template>
   <div class="need-card" :class="{ 'is-expanded': showOptions, 'card-inactive': !isNeedActive }">
-    <div class="text-center">
+    <div class="need-card-band">
       <h5 class="need-card-category">{{ needProp.category }}</h5>
-      <p class="need-card-description">{{ needProp.description }}</p>
-      <p class="need-card-field">{{ needProp.duration?.value || needProp.quantity?.value }} {{ needProp.duration?.unit || needProp.quantity?.unit }}</p>
     </div>
 
-    <div class="flex justify-center items-center gap-2">
-      <button class="complete-button" v-if="!needProp.completed && isToday" :disabled="isSaving" aria-label="Mark as done" @click="addRecord(petIdProp, needProp)">
-        <Check class="size-4" aria-hidden="true" />All Done!
-      </button>
-      <div class="done-label" v-if="needProp.completed">
-        <CheckCheck class="size-4" aria-hidden="true" />
-        Purrfectly done!
+    <div class="need-card-body">
+      <div class="text-center">
+        <p class="need-card-description">{{ needProp.description }}</p>
+        <p class="need-card-field">{{ needProp.duration?.value || needProp.quantity?.value }} {{ needProp.duration?.unit || needProp.quantity?.unit }}</p>
+        <p v-if="!isNeedActive" class="need-paused-note">
+          <CirclePause class="size-4" aria-hidden="true" />
+          Paused — won't continue tomorrow
+        </p>
       </div>
 
-      <button v-if="isOwner" aria-label="Need options"
-        class="need-icon-button" @click="toggleOptions">
-        <EllipsisVertical class="size-5" aria-hidden="true" />
-      </button>
-    </div>
-
-    <!-- Toggleable buttons -->
-    <div v-if="isOwner" class="options-container">
-      <div class="options-content">
-        <!-- Edit need button -->
-        <button v-if="isToday || isFuture" class="need-icon-button" @click="editNeed" aria-label="Edit need">
-          <Pencil class="size-5" aria-hidden="true" />
+      <div class="flex justify-center items-center gap-2">
+        <button class="complete-button" v-if="!needProp.completed && isToday" :disabled="isSaving" aria-label="Mark as done" @click="addRecord(petIdProp, needProp)">
+          <Check class="size-4" aria-hidden="true" />All Done!
         </button>
-
-        <!-- isActive toggle -->
-        <div v-if="isToday || isFuture" class="flex flex-col items-center">
-          <span class="text-sm text-primary-foreground block mb-1">
-            {{ isNeedActive ? 'Active' : 'Inactive' }}
-          </span>
-          <Switch :checked="isNeedActive" @update:checked="toggleNeedActive(needProp.id)"
-            :aria-label="`Toggle need active (currently ${isNeedActive ? 'active' : 'inactive'})`" />
+        <div class="done-label" v-if="needProp.completed">
+          <CheckCheck class="size-4" aria-hidden="true" />
+          Purrfectly done!
         </div>
 
-        <!-- Delete need button -->
-        <button class="need-icon-button danger" @click="showDeleteConfirm = true" aria-label="Delete need">
-          <Trash2 class="size-5" aria-hidden="true" />
+        <button v-if="isOwner" aria-label="Need options"
+          class="need-icon-button" @click="toggleOptions">
+          <EllipsisVertical class="size-5" aria-hidden="true" />
         </button>
+      </div>
+
+      <!-- Toggleable buttons -->
+      <div v-if="isOwner" class="options-container">
+        <div class="options-content">
+          <!-- Edit need button -->
+          <button v-if="isToday || isFuture" class="need-icon-button" @click="editNeed" aria-label="Edit need">
+            <Pencil class="size-5" aria-hidden="true" />
+          </button>
+
+          <!-- isActive toggle -->
+          <div v-if="isToday || isFuture" class="flex flex-col items-center">
+            <span class="text-sm text-primary-foreground block mb-1">
+              {{ isNeedActive ? 'Active' : 'Inactive' }}
+            </span>
+            <Switch :checked="isNeedActive" @update:checked="toggleNeedActive(needProp.id)"
+              :aria-label="`Toggle need active (currently ${isNeedActive ? 'active' : 'inactive'})`" />
+          </div>
+
+          <TheInfoHint v-if="isToday || isFuture" placement="top" align="end" label="What does pausing do?"
+            text="Active tasks repeat: a fresh copy appears each morning. Paused tasks stay on this day and won't continue tomorrow." />
+
+          <!-- Delete need button -->
+          <button class="need-icon-button danger" @click="showDeleteConfirm = true" aria-label="Delete need">
+            <Trash2 class="size-5" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
 
@@ -68,7 +80,7 @@
 
           <label class="form-label">Select unit</label>
           <Select :modelValue="editForm.unit" @update:modelValue="(v) => editForm.unit = v" placeholder="Select unit" aria-label="Select unit"
-            :options="[{ value: 'ml', label: 'ml' }, { value: 'g', label: 'g' }]" />
+            :options="[{ value: 'ml', label: 'millilitres (ml)' }, { value: 'g', label: 'grams (g)' }]" />
         </div>
 
         <div v-else>
@@ -89,9 +101,10 @@
 </template>
 
 <script setup lang="ts">
-import { Check, CheckCheck, EllipsisVertical, Pencil, Trash2 } from '@lucide/vue';
+import { Check, CheckCheck, CirclePause, EllipsisVertical, Pencil, Trash2 } from '@lucide/vue';
 import type { Ref } from 'vue';
 import { computed, inject, onBeforeMount, ref, toRefs } from 'vue';
+import TheInfoHint from '@/components/TheInfoHint.vue';
 import { AlertDialog, Dialog, Select, Switch } from '@/components/ui';
 import { resultMessage } from '@/lib/apiError';
 import { useAppStore } from '@/store/app';
@@ -219,7 +232,9 @@ const toggleNeedActive = async (needId: string | undefined) => {
   if (result.isSuccess) {
     emit('needUpdated');
     appStore.addNotification(
-      wasActive ? 'Care task paused 🐾' : 'Care task is active again! 🐾',
+      wasActive
+        ? "Care task paused — it won't continue tomorrow 🐾"
+        : 'Care task is active again! 🐾',
       'success',
     );
   } else {
@@ -288,25 +303,46 @@ const deleteNeed = async (needId: string | undefined) => {
 <style scoped>
 .need-card {
   border-radius: var(--radius-2xl);
-  background: var(--color-surface-app);
-  border: 2px solid var(--color-button-secondary);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-edge);
   width: 100%;
   /* Grows from the comfortable phone size up to a wider card on tablets/desktop;
      width:100% still shrinks it below the floor on narrow screens. */
   max-width: min(100%, clamp(350px, 45vw, 420px));
   margin: 0;
-  padding: clamp(0.75rem, 2vw, 1rem);
+  padding: 0;
   box-sizing: border-box;
-  box-shadow: var(--shadow-button);
+  box-shadow: var(--shadow-panel);
   overflow-wrap: anywhere;
+  /* Clips the band gradient to the rounded corners */
+  overflow: hidden;
+}
+
+.need-card-band {
+  padding: 0.5rem 1rem;
+  background: var(--gradient-card-band);
+  border-bottom: 1px solid var(--color-border-divider);
+  text-align: center;
+}
+
+.need-card-body {
+  padding: clamp(0.75rem, 2vw, 1rem);
 }
 
 .card-inactive {
-  background: var(--color-need-inactive);
+  background: var(--color-need-inactive-body);
   color: var(--color-muted-foreground);
   border: 1px solid var(--color-border-inactive);
   opacity: 0.8;
   transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.card-inactive .need-card-band {
+  background: var(--color-need-inactive);
+}
+
+.card-inactive .need-card-category {
+  color: var(--color-muted-foreground);
 }
 
 .card-inactive .complete-button,
@@ -318,8 +354,10 @@ const deleteNeed = async (needId: string | undefined) => {
 .need-card-category {
   font-size: 1.1rem;
   font-weight: 700;
-  margin: 4px 0 0;
+  margin: 0;
   line-height: 1.25;
+  /* Bold 17.6px on the band's pink needs the darker tone for AA contrast */
+  color: var(--color-primary-foreground-strong);
 }
 
 .need-card-description {
@@ -334,12 +372,24 @@ const deleteNeed = async (needId: string | undefined) => {
   line-height: 1.35;
 }
 
+/* Passive cue so carers also see why a gray card won't roll over */
+.need-paused-note {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 0 8px;
+  color: var(--color-muted-foreground);
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
 .complete-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: var(--color-button-primary);
+  background: var(--gradient-button-primary);
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-md);
   padding: 6px 12px;
@@ -349,14 +399,15 @@ const deleteNeed = async (needId: string | undefined) => {
   color: var(--color-primary-foreground);
   cursor: pointer;
   min-width: 60px;
-  min-height: 44px;
-  box-shadow: var(--shadow-button);
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s, opacity 0.2s;
+  min-height: var(--tap-target-size);
+  box-shadow: var(--shadow-control);
+  transition: var(--transition-interactive);
 }
 
 @media (hover: hover) {
   .complete-button:hover {
     border-color: var(--color-border-hover);
+    background: var(--gradient-button-primary-hover);
     box-shadow: var(--shadow-control-hover);
     transform: translateY(-1px);
   }
@@ -385,10 +436,10 @@ const deleteNeed = async (needId: string | undefined) => {
   gap: 4px;
   background-color: var(--color-status-done);
   color: var(--color-foreground);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   text-align: center;
   min-width: 60px;
-  min-height: 44px;
+  min-height: var(--tap-target-size);
   padding: 6px 12px;
   font-size: 0.85rem;
   line-height: 1.2;
@@ -408,7 +459,7 @@ const deleteNeed = async (needId: string | undefined) => {
   box-shadow: var(--shadow-sm);
   color: var(--color-primary-foreground);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 .need-icon-button:focus-visible {
@@ -456,6 +507,12 @@ const deleteNeed = async (needId: string | undefined) => {
 .is-expanded .options-container {
   grid-template-rows: 1fr;
   opacity: 1;
+}
+
+/* Fully expanded: allow the info-hint bubble to escape the row box.
+   Collapse re-applies the clipping (is-expanded is removed first). */
+.is-expanded .options-content {
+  overflow: visible;
 }
 
 @media (max-width: 568px) {

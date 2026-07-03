@@ -2,9 +2,11 @@
   <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container pet-form-container pet-panel">
+        <div class="card-band">
+          <h1 class="form-header page-title">Update your fur baby's info 🐾</h1>
+        </div>
+        <div class="card-body">
         <form @submit.prevent="confirmUpdatePet">
-          <h1 class="form-header text-[1.3rem] max-[568px]:text-[1.1rem]">Update your fur baby's info 🐾</h1>
-
           <ThePetImagePicker v-model="existingPetObject.image" :petName="existingPetObject.name" />
 
           <div>
@@ -55,6 +57,7 @@
             </button>
           </div>
         </form>
+        </div>
       </div>
 
       <TheConfirmDialog :isOpen="showUpdateDialog" title="Save changes?" message="Save the new details for your fur baby?" confirmLabel="Save"
