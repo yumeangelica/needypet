@@ -55,23 +55,24 @@ const emit = defineEmits<(e: 'update:modelValue', value: string) => void>();
   justify-content: space-between;
   gap: 0.5rem;
   width: 100%;
-  min-height: 50px;
-  padding: 13px 20px;
-  border: 2px solid var(--color-form-field-border);
-  border-radius: var(--radius-lg);
+  min-height: var(--field-min-height);
+  padding: 13px 18px;
+  border: 1.5px solid var(--color-form-field-border);
+  border-radius: var(--radius-field);
   background: var(--color-form-field-bg);
-  box-shadow: var(--shadow-field);
+  box-shadow: var(--shadow-field-input);
   color: var(--color-foreground);
   font-family: var(--font-sans);
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   line-height: 1.4;
   cursor: pointer;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: var(--transition-field);
 }
 
 .select-trigger:focus-visible {
-  border-color: var(--color-card-border);
+  border-color: var(--color-primary-foreground);
+  background: var(--color-surface-inner);
   box-shadow: var(--shadow-focus-ring);
   outline: none;
 }
@@ -82,14 +83,20 @@ const emit = defineEmits<(e: 'update:modelValue', value: string) => void>();
   }
 }
 
+</style>
+
+<!-- Unscoped: the content is teleported to <body>, where the scoped
+     data-attribute selector does not reach it. Without the z-index here the
+     popper wrapper stays at z:auto and the list paints behind dialogs. -->
+<style>
 .select-content {
-  z-index: 100;
+  z-index: var(--z-index-popover);
   min-width: 160px;
   overflow: hidden;
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   background: var(--color-surface-inner);
-  box-shadow: var(--shadow-soft-card);
+  box-shadow: var(--shadow-panel);
 }
 
 .select-item {

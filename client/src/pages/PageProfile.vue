@@ -3,16 +3,17 @@
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
       <div class="form-container account-panel">
         <template v-if="user">
-          <div class="profile-header">
+          <div class="card-band">
             <div class="profile-title-group">
               <span class="profile-eyebrow">Pet parent</span>
-              <h1 class="profile-title">{{ user.userName }}</h1>
+              <h1 class="profile-title page-title">{{ user.userName }}</h1>
             </div>
             <button class="settings-button profile-settings-button" aria-label="Settings" :aria-expanded="showSettings" @click="toggleSettings">
               <Settings class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
 
+          <div class="card-body">
           <div class="profile-info">
             <div class="profile-row">
               <span class="profile-label">Email</span>
@@ -31,7 +32,11 @@
               </button>
             </div>
             <div class="profile-row">
-              <span class="profile-label">Timezone</span>
+              <span class="profile-label profile-label-with-hint">
+                Timezone
+                <TheInfoHint label="Why does the timezone matter?"
+                  text="Your pets' new daily tasks appear at midnight in this timezone." />
+              </span>
               <span class="profile-value">{{ user.timezone }}</span>
             </div>
           </div>
@@ -52,8 +57,11 @@
               Delete Account
             </button>
           </div>
+          </div>
         </template>
-        <TheLoadingSpinner v-else message="Loading your profile..." />
+        <div v-else class="card-body">
+          <TheLoadingSpinner message="Loading your profile..." />
+        </div>
       </div>
 
       <TheConfirmDialog :isOpen="showLogoutDialog" title="Heading out?" message="Ready to say goodbye for now?" confirmLabel="Log Out"
@@ -73,6 +81,7 @@ import { computed, type Ref, ref, watchEffect } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheInfoHint from '@/components/TheInfoHint.vue';
 import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
@@ -114,9 +123,14 @@ watchEffect(async () => {
 });
 
 const logout = async () => {
+  // Capture the name before logout() clears the store/localStorage.
+  const name = user.value?.userName ?? userStore.userName;
   await userStore.logout();
   router.push({ name: 'landing' });
-  appStore.addNotification('See you next time, pet parent! 👋', 'success');
+  appStore.addNotification(
+    name ? `See you next time, ${name}! 👋` : 'See you next time, pet parent! 👋',
+    'success',
+  );
 };
 
 const deleteAccount = async () => {
@@ -155,14 +169,6 @@ onBeforeRouteLeave(() => {
 </script>
 
 <style scoped>
-.profile-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-stack);
-  margin-bottom: 0.9rem;
-}
-
 .profile-title-group {
   min-width: 0;
 }
@@ -170,16 +176,16 @@ onBeforeRouteLeave(() => {
 .profile-eyebrow {
   display: block;
   margin-bottom: 0.15rem;
-  color: var(--color-primary-foreground);
-  font-size: 0.84rem;
+  /* Small text on the band gradient needs the darker tone for AA contrast */
+  color: var(--color-primary-foreground-strong);
+  font-size: 0.72rem;
   font-weight: 700;
-  opacity: 0.84;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .profile-title {
   margin: 0;
-  color: var(--color-primary-foreground);
-  font-size: 1.35rem;
   line-height: 1.2;
   overflow-wrap: anywhere;
 }
@@ -195,10 +201,10 @@ onBeforeRouteLeave(() => {
   gap: 0.55rem;
   margin: 0;
   padding: 0.9rem;
-  border: 2px solid var(--color-button-secondary);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
-  background: var(--color-surface-app);
-  box-shadow: var(--shadow-field);
+  background: var(--color-well);
+  box-shadow: var(--shadow-field-input);
   overflow-wrap: anywhere;
 }
 
@@ -221,6 +227,12 @@ onBeforeRouteLeave(() => {
   color: var(--color-primary-foreground);
   font-size: 0.86rem;
   font-weight: 700;
+}
+
+.profile-label-with-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .profile-value {
@@ -280,15 +292,6 @@ onBeforeRouteLeave(() => {
 }
 
 @media (max-width: 568px) {
-  .profile-header {
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
-  }
-
-  .profile-title {
-    font-size: 1.15rem;
-  }
-
   .profile-row,
   .email-confirmed {
     grid-template-columns: 1fr;

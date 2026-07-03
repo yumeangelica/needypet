@@ -1,6 +1,6 @@
 <template>
   <button type="button" class="small-pet-card" :aria-label="cardLabel" @click="navigateToPetView">
-    <img class="pet-card-image" :src="petImageSrc" :alt="`${pet.name} picture`" />
+    <img class="pet-card-image sticker-tile" :src="petImageSrc" :alt="`${pet.name} picture`" />
     <h5>{{ pet.name }}</h5>
     <p class="pet-needs-count" :class="{ 'is-empty': todayNeedsCount === 0 }" :aria-hidden="todayNeedsCount === 0 ? 'true' : undefined">
       {{ todayNeedsCount > 0 ? `${todayNeedsCount} ${todayNeedsCount === 1 ? 'care task' : 'care tasks'} today` : '' }}
@@ -61,11 +61,11 @@ function navigateToPetView() {
   border-radius: var(--radius-2xl);
   padding: clamp(0.65rem, 2.5vw, 0.9rem);
   margin: 0;
-  box-shadow: var(--shadow-soft-card);
+  box-shadow: var(--shadow-panel);
   width: clamp(170px, 44vw, 220px);
   aspect-ratio: 0.92;
-  background-color: var(--color-need-bg);
-  border: 2px solid var(--color-button-secondary);
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-card-edge);
   cursor: pointer;
   overflow: hidden;
   transition: box-shadow 0.15s, transform 0.2s ease;
@@ -85,7 +85,7 @@ function navigateToPetView() {
 
 @media (hover: hover) {
   .small-pet-card:hover {
-    box-shadow: var(--shadow-soft-hover);
+    box-shadow: var(--shadow-panel-hover);
     transform: translateY(-5px);
   }
 }
@@ -106,15 +106,11 @@ function navigateToPetView() {
   overflow-wrap: anywhere;
 }
 
+/* Visuals come from the shared .sticker-tile utility */
 .pet-card-image {
   width: min(86%, 170px);
-  aspect-ratio: 1;
-  object-fit: contain;
   flex: 0 0 auto;
   border-radius: var(--radius-xl);
-  background: var(--color-surface-inner);
-  border: 2px solid var(--color-button-secondary);
-  box-shadow: var(--shadow-button);
 }
 
 .pet-needs-count {
@@ -128,7 +124,7 @@ function navigateToPetView() {
   padding: 4px 9px;
   max-width: 100%;
   min-height: calc(1.25em + 8px);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-pill);
   background: var(--color-surface-control);
   border: 1px solid var(--color-button-primary);
   overflow-wrap: anywhere;

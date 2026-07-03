@@ -1,6 +1,6 @@
 <template>
   <div class="pet-image-picker">
-    <img class="pet-image-picker-preview" :src="selectedImageSrc" :alt="previewAlt" />
+    <img class="pet-image-picker-preview sticker-tile" :src="selectedImageSrc" :alt="previewAlt" />
     <button type="button" class="pet-image-picker-trigger" @click="isOpen = true">
       Choose picture
     </button>
@@ -11,7 +11,7 @@
         <button v-for="option in PET_IMAGE_OPTIONS" :key="option.key" type="button"
           :class="['pet-image-picker-option', { selected: option.key === selectedImage.key }]"
           :aria-selected="option.key === selectedImage.key" role="option" @click="selectImage(option.key)">
-          <img :src="option.src" alt="" aria-hidden="true" />
+          <img class="sticker-tile" :src="option.src" alt="" aria-hidden="true" />
           <span>{{ option.label }}</span>
         </button>
       </div>
@@ -55,15 +55,7 @@ const selectImage = (key: PetImageKey) => {
   margin: 0 auto var(--space-stack);
 }
 
-.pet-image-picker-preview,
-.pet-image-picker-option img {
-  aspect-ratio: 1;
-  object-fit: contain;
-  background: var(--color-surface-inner);
-  border: 2px solid var(--color-button-secondary);
-  box-shadow: var(--shadow-button);
-}
-
+/* Tile visuals come from the shared .sticker-tile utility */
 .pet-image-picker-preview {
   width: clamp(110px, 32vw, 150px);
   border-radius: var(--radius-xl);
@@ -75,12 +67,12 @@ const selectImage = (key: PetImageKey) => {
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-lg);
   background: var(--color-surface-control);
-  box-shadow: var(--shadow-button);
+  box-shadow: var(--shadow-control);
   color: var(--color-primary-foreground);
   font-family: var(--font-sans);
   font-size: 0.75rem;
   line-height: 1.25;
-  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  transition: var(--transition-interactive);
 }
 
 .pet-image-picker-trigger:focus-visible,
@@ -118,13 +110,13 @@ const selectImage = (key: PetImageKey) => {
   padding: 12px;
   border: 2px solid var(--color-border-soft);
   border-radius: var(--radius-md);
-  background: var(--color-surface-app);
+  background: var(--color-well);
   color: var(--color-primary-foreground);
   font-family: var(--font-sans);
   font-size: 0.8rem;
   line-height: 1.25;
-  box-shadow: var(--shadow-button);
-  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: var(--shadow-control);
+  transition: var(--transition-interactive);
 }
 
 .pet-image-picker-option img {

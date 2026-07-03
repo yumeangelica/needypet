@@ -35,14 +35,17 @@ const navigateTo = (name: string) => {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 50;
+  z-index: var(--z-index-mobile-nav);
   display: flex;
   align-items: center;
   justify-content: space-around;
+  gap: 0.5rem;
   height: var(--mobile-nav-reserve);
-  border-top: 1px solid var(--color-card-border);
-  background: var(--color-primary);
+  border-radius: 18px 18px 0 0;
+  background: var(--gradient-nav);
+  box-shadow: var(--shadow-nav-up);
   padding-bottom: env(safe-area-inset-bottom);
+  padding-inline: 0.75rem;
   box-sizing: border-box;
 }
 
@@ -55,16 +58,20 @@ const navigateTo = (name: string) => {
   gap: 0.25rem;
   max-width: 220px;
   min-height: 48px;
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.75rem;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--color-primary-foreground-muted);
+  /* Darker tone keeps the small labels AA-readable on the pink gradient */
+  color: var(--color-primary-foreground-strong);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 .mobile-nav-button.is-current {
+  background: var(--color-pill-cream);
+  border-color: var(--color-border-divider);
+  box-shadow: var(--shadow-sm);
   color: var(--color-primary-foreground);
 }
 
@@ -86,14 +93,14 @@ const navigateTo = (name: string) => {
 
 @media (hover: hover) {
   .mobile-nav-button:hover {
-    border-color: var(--color-primary-overlay-border);
-    background: var(--color-primary-overlay-hover);
+    border-color: var(--color-border-divider);
+    background: var(--color-pill-cream-soft);
     color: var(--color-primary-foreground);
   }
 }
 
 .mobile-nav-button:active {
-  background: var(--color-primary-overlay-active);
+  background: var(--color-pill-cream-strong);
   transform: scale(0.98);
 }
 </style>

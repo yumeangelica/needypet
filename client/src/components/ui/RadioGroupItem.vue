@@ -30,13 +30,13 @@ const props = defineProps<{
   background: var(--color-surface-control-soft);
   box-shadow: var(--shadow-field);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 .radio-group-label:has(.radio-group-control[data-state='checked']) {
   border-color: var(--color-primary-foreground);
   background: var(--color-surface-control);
-  box-shadow: var(--shadow-button);
+  box-shadow: var(--shadow-control);
 }
 
 .radio-group-label:focus-within {
@@ -56,7 +56,7 @@ const props = defineProps<{
   background: var(--color-surface-field);
   box-shadow: var(--shadow-field);
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 .radio-group-control[data-state='checked'] {
@@ -64,7 +64,8 @@ const props = defineProps<{
 }
 
 .radio-group-control:focus-visible {
-  outline: none;
+  outline: 2px solid var(--color-primary-foreground);
+  outline-offset: 2px;
 }
 
 @media (hover: hover) {

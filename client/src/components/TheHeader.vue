@@ -42,8 +42,9 @@ const navigateTo = (name: string) => {
 .desktop-header {
   position: sticky;
   top: 0;
-  z-index: 40;
-  background: var(--color-primary);
+  z-index: var(--z-index-header);
+  background: var(--gradient-nav);
+  box-shadow: var(--shadow-nav);
 }
 
 .desktop-nav {
@@ -59,19 +60,23 @@ const navigateTo = (name: string) => {
   align-items: center;
   gap: 0.5rem;
   min-height: 40px;
-  padding: 0.4rem 0.75rem;
+  padding: 0.4rem 0.95rem;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--color-primary-foreground-muted);
+  /* Darker tone keeps 14px labels AA-readable on the pink gradient */
+  color: var(--color-primary-foreground-strong);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   line-height: 1.25;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 .desktop-nav-button.is-current {
+  background: var(--color-pill-cream);
+  border-color: var(--color-border-divider);
+  box-shadow: var(--shadow-sm);
   color: var(--color-primary-foreground);
 }
 
@@ -94,20 +99,20 @@ const navigateTo = (name: string) => {
 }
 
 .desktop-nav-button:focus-visible {
-  outline: 2px solid var(--color-on-primary);
+  outline: 2px solid var(--color-primary-foreground);
   outline-offset: 2px;
 }
 
 @media (hover: hover) {
   .desktop-nav-button:hover {
-    border-color: var(--color-primary-overlay-border);
-    background: var(--color-primary-overlay-hover);
+    border-color: var(--color-border-divider);
+    background: var(--color-pill-cream-soft);
     color: var(--color-primary-foreground);
   }
 }
 
 .desktop-nav-button:active {
-  background: var(--color-primary-overlay-active);
+  background: var(--color-pill-cream-strong);
   transform: scale(0.98);
 }
 </style>

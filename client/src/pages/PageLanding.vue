@@ -5,13 +5,13 @@
         <h1 class="sr-only">NeedyPet</h1>
         <TheLogoImage altText="NeedyPet Logo" />
 
-        <h4 class="text-center paw-header-container">
+        <h4 class="text-center paw-header-container title-underline">
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
           All your pet's needs, one place
           <PawPrint class="inline-block w-5 h-5" aria-hidden="true" />
         </h4>
 
-        <p class="landing-intro">First visit or coming back? Pick your paw-th 🐾</p>
+        <p class="landing-intro">First visit or coming back? <span class="text-nowrap">Pick your paw-th 🐾</span></p>
 
         <div class="landing-actions">
           <button @click="router.push({ name: 'login' })" aria-label="Log in to an existing account"

@@ -83,29 +83,29 @@ function handleOpenChange(val: boolean) {
 
 <style scoped>
 .dialog-overlay {
-  animation: overlay-show 150ms ease-out;
+  animation: np-overlay-in 150ms ease-out;
 }
 
 .dialog-overlay[data-state='closed'] {
-  animation: overlay-hide 100ms ease-in;
+  animation: np-overlay-out 100ms ease-in;
 }
 
 .dialog-content {
   position: fixed;
-  z-index: 50;
+  z-index: var(--z-index-overlay);
   left: 50%;
   top: 50%;
   display: flex;
   flex-direction: column;
   width: 95%;
   max-height: calc(100svh - 2rem);
-  border: 2px solid var(--color-form-panel-border);
+  border: 1px solid var(--color-card-edge);
   border-radius: var(--radius-3xl);
-  background: var(--color-form-panel-bg);
-  box-shadow: var(--shadow-soft-card);
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-panel);
   overflow: hidden;
   transform: translate(-50%, -50%) scale(1);
-  animation: content-show 200ms ease-out;
+  animation: np-dialog-pop-in 200ms ease-out;
 }
 
 .dialog-header {
@@ -114,13 +114,13 @@ function handleOpenChange(val: boolean) {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
-  background: var(--color-form-panel-bg);
+  background: var(--gradient-card-band);
   border-bottom: 1px solid var(--color-border-divider);
 }
 
 .dialog-title {
   min-width: 0;
-  color: var(--color-primary-foreground);
+  color: var(--color-primary-foreground-strong);
   font-family: var(--font-sans);
   font-size: 1.125rem;
   line-height: 1.25;
@@ -129,7 +129,7 @@ function handleOpenChange(val: boolean) {
 .dialog-body {
   max-height: min(70vh, calc(100svh - 9rem));
   padding: 1.5rem;
-  background: var(--color-form-panel-bg);
+  background: var(--color-card-bg);
   overflow-y: auto;
 }
 
@@ -145,7 +145,7 @@ function handleOpenChange(val: boolean) {
   font-size: 0.85rem;
   line-height: 1.25;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: var(--transition-interactive);
 }
 
 .dialog-close:focus-visible {
@@ -166,51 +166,7 @@ function handleOpenChange(val: boolean) {
 }
 
 .dialog-content[data-state='closed'] {
-  animation: content-hide 150ms ease-in;
-}
-
-@keyframes overlay-show {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes overlay-hide {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes content-show {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes content-hide {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  to {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
+  animation: np-dialog-pop-out 150ms ease-in;
 }
 
 @media (max-width: 568px) {
