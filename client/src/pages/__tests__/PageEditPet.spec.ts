@@ -23,6 +23,8 @@ vi.mock('vue-router', () => ({
   useRouter: () => ({ push }),
 }));
 
+const birthdayInput = (wrapper: ReturnType<typeof mount>) => wrapper.find('input#editpet-birthday');
+
 describe('PageEditPet - pet image', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -59,6 +61,39 @@ describe('PageEditPet - pet image', () => {
       'pet-1',
       expect.objectContaining({
         image: { source: 'preset', key: 'bunny' },
+      }),
+    );
+  });
+
+  it('submits birthday as a date-only string in the update payload', async () => {
+    const userStore = useUserStore();
+    userStore.timezone = 'Europe/Helsinki';
+
+    const petStore = usePetStore();
+    petStore.pets = [
+      {
+        id: 'pet-1',
+        name: 'Milo',
+        species: 'Cat',
+        breed: 'Tabby',
+        birthday: '2024-01-01',
+        image: { source: 'preset', key: 'cat' },
+      },
+    ] as unknown as typeof petStore.pets;
+
+    const updatePet = vi.spyOn(petStore, 'updatePet').mockResolvedValue({ isSuccess: true });
+
+    const wrapper = mount(PageEditPet);
+
+    await birthdayInput(wrapper).setValue('2024-02-03');
+    await birthdayInput(wrapper).trigger('change');
+    await wrapper.get('form').trigger('submit');
+    await wrapper.get('button.confirm-update').trigger('click');
+
+    expect(updatePet).toHaveBeenCalledWith(
+      'pet-1',
+      expect.objectContaining({
+        birthday: '2024-02-03',
       }),
     );
   });

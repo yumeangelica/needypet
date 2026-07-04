@@ -54,7 +54,7 @@ describe('POST /api/pets/:id/newneed', () => {
     assert.strictEqual(added.quantity.value, 100);
   });
 
-  it('returns 400 on an invalid need (category too short)', async () => {
+  it('returns 422 on an invalid need (category too short)', async () => {
     const { token } = await registerAndLogin();
     const pet = await createPet(token);
 
@@ -70,11 +70,64 @@ describe('POST /api/pets/:id/newneed', () => {
         },
       });
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 422);
     assert.ok(response.body.errorDetails.category, 'should report category error');
   });
 
-  it('returns 400 when quantity value is zero', async () => {
+  it('returns 422 when the need wrapper is missing', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.need, 'should report need wrapper error');
+  });
+
+  it('returns 422 when a need has no measurement', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Walk',
+          description: 'No measurement',
+          dateFor: localToday(),
+        },
+      });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.quantity, 'should report measurement error');
+  });
+
+  it('returns 422 when a need has both measurement types', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token);
+
+    const response = await api
+      .post(`/api/pets/${pet.id}/newneed`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        need: {
+          category: 'Feeding',
+          description: 'Too many measurements',
+          dateFor: localToday(),
+          quantity: { value: 100, unit: 'g' },
+          duration: { value: 10, unit: 'minutes' },
+        },
+      });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.quantity, 'should report measurement error');
+  });
+
+  it('returns 422 when quantity value is zero', async () => {
     const { token } = await registerAndLogin();
     const pet = await createPet(token);
 
@@ -90,10 +143,10 @@ describe('POST /api/pets/:id/newneed', () => {
         },
       });
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 422);
   });
 
-  it('returns 400 when duration value is negative', async () => {
+  it('returns 422 when duration value is negative', async () => {
     const { token } = await registerAndLogin();
     const pet = await createPet(token);
 
@@ -109,10 +162,10 @@ describe('POST /api/pets/:id/newneed', () => {
         },
       });
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 422);
   });
 
-  it('returns 401 when a non-owner tries to add a need', async () => {
+  it('returns 403 when a non-owner tries to add a need', async () => {
     const owner = await registerAndLogin();
     const pet = await createPet(owner.token);
 
@@ -133,10 +186,10 @@ describe('POST /api/pets/:id/newneed', () => {
         },
       });
 
-    assert.strictEqual(response.status, 401);
+    assert.strictEqual(response.status, 403);
   });
 
-  it('returns 401 when an assigned caretaker tries to add a need', async () => {
+  it('returns 403 when an assigned caretaker tries to add a need', async () => {
     const owner = await registerAndLogin();
     const carer = await registerAndLogin({
       userName: 'carerUser',
@@ -161,7 +214,7 @@ describe('POST /api/pets/:id/newneed', () => {
         },
       });
 
-    assert.strictEqual(response.status, 401);
+    assert.strictEqual(response.status, 403);
   });
 
   it('does not count archived needs toward the 10-per-day limit', async () => {
@@ -347,7 +400,7 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
     assert.strictEqual(response.status, 404);
   });
 
-  it('returns 401 when a non-owner tries to update a need', async () => {
+  it('returns 403 when a non-owner tries to update a need', async () => {
     const owner = await registerAndLogin();
     const { petId, needId } = await createPetWithNeed(owner.token);
 
@@ -361,7 +414,7 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
       .set('Authorization', `Bearer ${other.token}`)
       .send({ category: 'Hacked' });
 
-    assert.strictEqual(response.status, 401);
+    assert.strictEqual(response.status, 403);
   });
 
   it('preserves the existing measure when only category/description change', async () => {
@@ -381,7 +434,7 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
     assert.strictEqual(updated.duration.value, 40);
   });
 
-  it('returns 400 when updating a need to zero quantity', async () => {
+  it('returns 422 when updating a need to zero quantity', async () => {
     const { token } = await registerAndLogin();
     const { petId, needId } = await createPetWithNeed(token);
 
@@ -394,10 +447,10 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
         quantity: { value: 0, unit: 'g' },
       });
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 422);
   });
 
-  it('returns 400 when updating a need to negative duration', async () => {
+  it('returns 422 when updating a need to negative duration', async () => {
     const { token } = await registerAndLogin();
     const { petId, needId } = await createPetWithNeed(token);
 
@@ -410,7 +463,25 @@ describe('PUT /api/pets/:id/needs/:needid', () => {
         duration: { value: -1, unit: 'minutes' },
       });
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 422);
+  });
+
+  it('returns 422 when updating a need with both measurement types', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token);
+
+    const response = await api
+      .put(`/api/pets/${petId}/needs/${needId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        category: 'Updated meal',
+        description: 'Too many measurements',
+        quantity: { value: 100, unit: 'g' },
+        duration: { value: 10, unit: 'minutes' },
+      });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.quantity, 'should report measurement error');
   });
 
   it('returns 400 when updating an archived need', async () => {
@@ -459,6 +530,43 @@ describe('DELETE /api/pets/:id/needs/:needid', () => {
       .set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 404);
+  });
+
+  it('deletes a valid need even when the pet has a legacy need that fails current schema validation', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token);
+
+    // Inject a need that violates the current schema (category below minlength),
+    // bypassing validation with a raw write to simulate legacy data. A bare
+    // pet.save() would fail on this whole-document validation and block the
+    // unrelated delete below; validateModifiedOnly must let it through.
+    await Pet.collection.updateOne(
+      { _id: new mongoose.Types.ObjectId(petId) },
+      {
+        $push: {
+          needs: {
+            _id: new mongoose.Types.ObjectId(),
+            dateFor: new Date('2020-01-01T00:00:00.000Z'),
+            category: 'x', // below the 3-char minlength
+            archived: true,
+            isActive: false,
+            completed: false,
+            careRecords: [],
+          },
+        },
+      },
+    );
+
+    const response = await api
+      .delete(`/api/pets/${petId}/needs/${needId}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    assert.strictEqual(response.status, 204);
+
+    const pet = await Pet.findById(petId);
+    assert.strictEqual(pet.needs.id(needId), null);
+    // The legacy need is untouched, and the delete still succeeded.
+    assert.strictEqual(pet.needs.length, 1);
   });
 });
 
@@ -514,7 +622,7 @@ describe('POST /api/pets/:id/needs/:needid/newrecord', () => {
     assert.strictEqual(response.status, 404);
   });
 
-  it('returns 400 when adding a zero quantity record', async () => {
+  it('returns 422 when adding a zero quantity record', async () => {
     const { token } = await registerAndLogin();
     const { petId, needId } = await createPetWithNeed(token, {
       dateFor: localToday(),
@@ -527,10 +635,65 @@ describe('POST /api/pets/:id/needs/:needid/newrecord', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ note: 'No food', quantity: { value: 0, unit: 'g' } });
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 422);
   });
 
-  it('returns 400 when adding a negative duration record', async () => {
+  it('returns 422 when adding a record without a measurement', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token, {
+      dateFor: localToday(),
+      duration: { value: 40, unit: 'minutes' },
+    });
+
+    const response = await api
+      .post(`/api/pets/${petId}/needs/${needId}/newrecord`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ note: 'No measurement' });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.quantity, 'should report measurement error');
+  });
+
+  it('returns 422 when adding a record with both measurement types', async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token, {
+      dateFor: localToday(),
+      duration: { value: 40, unit: 'minutes' },
+    });
+
+    const response = await api
+      .post(`/api/pets/${petId}/needs/${needId}/newrecord`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        note: 'Too many measurements',
+        quantity: { value: 100, unit: 'g' },
+        duration: { value: 10, unit: 'minutes' },
+      });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.quantity, 'should report measurement error');
+  });
+
+  it("returns 400 when a record's measurement does not match the need", async () => {
+    const { token } = await registerAndLogin();
+    const { petId, needId } = await createPetWithNeed(token, {
+      dateFor: localToday(),
+      duration: { value: 40, unit: 'minutes' },
+    });
+
+    const response = await api
+      .post(`/api/pets/${petId}/needs/${needId}/newrecord`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ note: 'Wrong measurement', quantity: { value: 100, unit: 'g' } });
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(
+      response.body.message,
+      'Care record measurement must match need measurement',
+    );
+  });
+
+  it('returns 422 when adding a negative duration record', async () => {
     const { token } = await registerAndLogin();
     const { petId, needId } = await createPetWithNeed(token, {
       dateFor: localToday(),
@@ -545,7 +708,7 @@ describe('POST /api/pets/:id/needs/:needid/newrecord', () => {
         duration: { value: -1, unit: 'minutes' },
       });
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 422);
   });
 
   it("uses the owner's timezone so a carer in another timezone can record", async () => {

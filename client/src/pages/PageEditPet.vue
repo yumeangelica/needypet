@@ -112,8 +112,7 @@ const existingPetObject: Ref<Pet> = ref({
 const todayString = computed(() => dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
 
 const birthdayInputValue = computed(() => {
-  if (!existingPetObject.value.birthday) return '';
-  return dayjs(existingPetObject.value.birthday).tz(userStore.timezone).format('YYYY-MM-DD');
+  return existingPetObject.value.birthday || '';
 });
 
 onBeforeMount(() => {
@@ -124,17 +123,21 @@ onBeforeMount(() => {
 
 const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  if (target.value) {
-    // The picked value is a calendar day in the user's timezone; compare at day
-    // granularity so a user near midnight is not wrongly blocked from "today".
-    const selectedDay = dayjs.tz(target.value, userStore.timezone);
-    const today = dayjs().tz(userStore.timezone);
-    if (!selectedDay.isAfter(today, 'day')) {
-      dateErrorMessage.value = '';
-      existingPetObject.value.birthday = new Date(`${target.value}T00:00:00`);
-    } else {
-      dateErrorMessage.value = 'Please select a date in the past or today';
-    }
+  if (!target.value) {
+    dateErrorMessage.value = '';
+    existingPetObject.value.birthday = null;
+    return;
+  }
+
+  // The picked value is a calendar day in the user's timezone; compare at day
+  // granularity so a user near midnight is not wrongly blocked from "today".
+  const selectedDay = dayjs.tz(target.value, userStore.timezone);
+  const today = dayjs().tz(userStore.timezone);
+  if (!selectedDay.isAfter(today, 'day')) {
+    dateErrorMessage.value = '';
+    existingPetObject.value.birthday = target.value;
+  } else {
+    dateErrorMessage.value = 'Please select a date in the past or today';
   }
 };
 

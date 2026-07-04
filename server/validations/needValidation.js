@@ -78,18 +78,40 @@ const archivedSchema = z.boolean();
 
 const isActiveSchema = z.boolean();
 
-const needSchema = z.object({
-  dateFor: dateForSchema,
-  category: categorySchema,
-  description: descriptionSchema,
-  frequency: frequencySchema.optional(),
-  quantity: quantitySchema.optional(),
-  duration: durationSchema.optional(),
-  completed: completedSchema.optional(),
-  archived: archivedSchema.optional(),
-  isActive: isActiveSchema.optional(),
-});
+const needSchema = z
+  .object({
+    dateFor: dateForSchema,
+    category: categorySchema,
+    description: descriptionSchema,
+    frequency: frequencySchema.optional(),
+    quantity: quantitySchema.optional(),
+    duration: durationSchema.optional(),
+    completed: completedSchema.optional(),
+    archived: archivedSchema.optional(),
+    isActive: isActiveSchema.optional(),
+  })
+  .superRefine((need, ctx) => {
+    const measurementCount = Number(Boolean(need.quantity)) + Number(Boolean(need.duration));
 
-const needValidation = needSchema.parse;
+    if (measurementCount !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['quantity'],
+        message: 'Need must have exactly one measurement type',
+      });
+    }
+  });
+
+const needValidation = (data) => {
+  try {
+    return needSchema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw error;
+    }
+
+    throw new Error('Unknown error during validation', { cause: error });
+  }
+};
 
 module.exports = needValidation;

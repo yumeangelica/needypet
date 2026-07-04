@@ -114,13 +114,14 @@ Mongo/Mongoose stores the domain in a nested shape:
   - embedded `needs[]`
 - `Need`
   - `dateFor`, `category`, `description`
-  - optional `quantity` or `duration`
+  - exactly one measurement shape: `quantity` or `duration`
   - `completed`, `archived`, `isActive`
   - optional `frequency`
   - embedded `careRecords[]`
 - `CareRecord`
   - `date`, `careTaker`, `note`
-  - optional `quantity` or `duration`
+  - exactly one measurement shape matching the parent need: `quantity` or
+    `duration`
   - `timezone`
 
 ## Target relational shape
@@ -203,7 +204,9 @@ columns during migration for traceability.
 ## Date and timezone rules to preserve
 
 - `users.timezone` is an IANA timezone identifier.
-- `pets.birthday` is a date-only value.
+- `pets.birthday` is a date-only value: the API accepts and returns
+  `YYYY-MM-DD`, stores valid values at UTC midnight, and accepts `null` to clear
+  the field.
 - `needs.date_for` is a date-only value representing the owner's local care day.
 - `care_records.date` is a UTC timestamp.
 - Need rollover should use the pet owner's timezone, not the caretaker's
@@ -281,6 +284,8 @@ Before considering a migration successful:
 - `care_records.date` is a valid UTC timestamp
 - preset images use only known keys: `dog`, `cat`, `bunny`
 - quantity and duration units match the legacy enums
+- every need and care record has exactly one measurement shape, and each care
+  record's measurement shape matches its parent need
 
 ## Practical next step
 

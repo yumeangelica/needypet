@@ -10,6 +10,11 @@ dayjs.extend(isSameOrAfter);
 const ROLLOVER_LOOKBACK_MINUTES = 30;
 let rolloverJobRunning = false;
 
+// The supported IANA timezone list is stable for the process lifetime, so
+// compute it once instead of on every validation/date call (userModel and
+// petModel validators, rollover job, and the helpers below all reuse this).
+const SUPPORTED_TIMEZONES = new Set(Intl.supportedValuesOf('timeZone'));
+
 /**
  * @description Completes the daily task if the total quantity or duration is greater than or equal to the need quantity or duration
  * @param {*} need
@@ -67,8 +72,7 @@ const dailyTaskCompleter = (need) => {
  */
 const tzIdentifierChecker = (timezone) => {
   // Timezone is in format 'Europe/Helsinki'
-  const timezones = Intl.supportedValuesOf('timeZone');
-  return timezones.includes(timezone); // Check if the timezone is valid
+  return SUPPORTED_TIMEZONES.has(timezone); // Check if the timezone is valid
 };
 
 /**
@@ -77,7 +81,7 @@ const tzIdentifierChecker = (timezone) => {
  * @returns formatted date in 'YYYY-MM-DD' format
  */
 const checkLocalDateByTimezone = (timezone) => {
-  if (!Intl.supportedValuesOf('timeZone').includes(timezone)) {
+  if (!SUPPORTED_TIMEZONES.has(timezone)) {
     throw new Error('Invalid timezone');
   }
 
@@ -103,8 +107,7 @@ const getMidnightTimezones = (
 ) => {
   const now = dayjs.isDayjs(referenceTime) ? referenceTime : dayjs(referenceTime);
   const previous = now.subtract(lookbackMinutes, 'minute');
-  const timezones = Intl.supportedValuesOf('timeZone');
-  return timezones.filter((timezone) => {
+  return [...SUPPORTED_TIMEZONES].filter((timezone) => {
     const localNow = now.tz(timezone);
     const localPrevious = previous.tz(timezone);
     return localPrevious.format('YYYY-MM-DD') !== localNow.format('YYYY-MM-DD');

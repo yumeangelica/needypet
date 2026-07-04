@@ -172,7 +172,12 @@ userSchema.methods.generatePasswordResetToken = function () {
  * @returns true if token is valid
  */
 userSchema.methods.verifyPasswordResetToken = function (token) {
-  return this.passwordResetToken === token && this.passwordResetExpires.getTime() > Date.now();
+  return (
+    !!token &&
+    this.passwordResetToken === token &&
+    !!this.passwordResetExpires &&
+    this.passwordResetExpires.getTime() > Date.now()
+  );
 };
 
 /**

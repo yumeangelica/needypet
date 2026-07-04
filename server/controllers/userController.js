@@ -9,6 +9,27 @@ const updateUserValidation = require('../validations/updateUserValidation');
 const z = require('zod');
 const passwordStrengthValidation = require('../validations/passwordStrengthValidation');
 
+const emailDeliveryError = (
+  error,
+  fallbackMessage = 'Unable to send email. Please try again later.',
+) => ({
+  name: 'EmailDeliveryError',
+  status: 502,
+  message:
+    error?.code === 'EAUTH'
+      ? 'Failed to authenticate email. Please contact support.'
+      : fallbackMessage,
+});
+
+const validateRouteUser = (request, response) => {
+  if (request.params?.id !== request.user._id.toString()) {
+    response.status(403).json({ message: 'Forbidden' });
+    return false;
+  }
+
+  return true;
+};
+
 /**
  * @description Gets the user by id
  * @param {*} request
@@ -18,6 +39,10 @@ const passwordStrengthValidation = require('../validations/passwordStrengthValid
 const getUserById = async (request, response, next) => {
   try {
     const user = request.user; // User is attached to the request object by getUserHandler middleware
+    if (!validateRouteUser(request, response)) {
+      return;
+    }
+
     response.status(200).json(user);
   } catch (error) {
     next(error);
@@ -76,17 +101,12 @@ const createNewUser = async (request, response, next) => {
         });
       }
 
-      if (emailError.code === 'EAUTH') {
-        return next({
-          status: 502,
-          message: 'Failed to authenticate email. Please contact support.',
-        });
-      }
-
-      return next({
-        status: 502,
-        message: 'Unable to send confirmation email. Please try again later.',
-      });
+      return next(
+        emailDeliveryError(
+          emailError,
+          'Unable to send confirmation email. Please try again later.',
+        ),
+      );
     }
 
     response.status(201).json(user);
@@ -109,6 +129,10 @@ const createNewUser = async (request, response, next) => {
 const updateUser = async (request, response, next) => {
   try {
     const user = request.user;
+    if (!validateRouteUser(request, response)) {
+      return;
+    }
+
     const isPasswordUpdate = request.body.newPassword && request.body.currentPassword; // Check if password is being updated
     const validationResult = updateUserValidation(request.body, isPasswordUpdate); // Validate request body with or without new password
 
@@ -161,8 +185,16 @@ const updateUser = async (request, response, next) => {
     }
 
     const emailChanged = Boolean(email && email !== user.email);
+    let previousEmailState;
 
     if (emailChanged) {
+      previousEmailState = {
+        email: user.email,
+        emailConfirmed: user.emailConfirmed,
+        emailConfirmToken: user.emailConfirmToken,
+        emailConfirmTokenExpires: user.emailConfirmTokenExpires,
+      };
+
       user.email = email;
       user.emailConfirmed = false; // Set emailConfirmed to false if email is updated
       user.generateEmailConfirmToken(); // Generate new email confirmation token
@@ -175,8 +207,23 @@ const updateUser = async (request, response, next) => {
     await user.save(); // Save updated user to database
 
     if (emailChanged) {
-      // If email is updated, send confirmation email
-      await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken);
+      try {
+        // If email is updated, send confirmation email
+        await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken);
+      } catch (emailError) {
+        user.email = previousEmailState.email;
+        user.emailConfirmed = previousEmailState.emailConfirmed;
+        user.emailConfirmToken = previousEmailState.emailConfirmToken;
+        user.emailConfirmTokenExpires = previousEmailState.emailConfirmTokenExpires;
+        await user.save();
+
+        return next(
+          emailDeliveryError(
+            emailError,
+            'Unable to send confirmation email. Please try again later.',
+          ),
+        );
+      }
     }
 
     response.status(200).json({
@@ -209,6 +256,10 @@ const updateUser = async (request, response, next) => {
 const deleteUser = async (request, response, next) => {
   try {
     const user = request.user; // User is attached to the request object by getUserHandler middleware
+    if (!validateRouteUser(request, response)) {
+      return;
+    }
+
     const ownedPetIds = await Pet.find({ owner: user._id }).distinct('_id');
 
     if (ownedPetIds.length > 0) {
@@ -291,9 +342,28 @@ const requestPasswordReset = async (request, response, next) => {
       return response.status(200).json({ message: 'Password reset link sent to email' });
     }
 
+    const previousPasswordResetState = {
+      passwordResetToken: user.passwordResetToken,
+      passwordResetExpires: user.passwordResetExpires,
+    };
+
     user.generatePasswordResetToken(); // Generate password reset token
     await user.save(); // Save updated user to database
-    await mailer.sendPasswordResetEmail(user.email, user.passwordResetToken); // Send password reset email to user
+
+    try {
+      await mailer.sendPasswordResetEmail(user.email, user.passwordResetToken); // Send password reset email to user
+    } catch (emailError) {
+      user.passwordResetToken = previousPasswordResetState.passwordResetToken;
+      user.passwordResetExpires = previousPasswordResetState.passwordResetExpires;
+      await user.save();
+
+      return next(
+        emailDeliveryError(
+          emailError,
+          'Unable to send password reset email. Please try again later.',
+        ),
+      );
+    }
 
     response.status(200).json({ message: 'Password reset link sent to email' });
   } catch (error) {
@@ -323,6 +393,12 @@ const validateUserToken = async (request, response, next) => {
     const { payload } = await jwtVerify(token, jwtSecretEncoded); // Verify token with secret key
 
     if (!payload.id) {
+      return response.status(401).json({ message: 'Token invalid' });
+    }
+
+    const user = await User.findById(payload.id).select('_id');
+
+    if (!user) {
       return response.status(401).json({ message: 'Token invalid' });
     }
 
@@ -371,14 +447,37 @@ const verifyEmailConfirmationToken = async (request, response, next) => {
 const resendEmailConfirmation = async (request, response, next) => {
   const user = request.user; // User is attached to the request object by getUserHandler middleware
 
+  if (user.emailConfirmed) {
+    return response.status(400).json({ message: 'Email already confirmed' });
+  }
+
   if (!user.canResendVerificationEmail()) {
     return response.status(400).json({ message: 'Cannot resend email confirmation yet' });
   }
 
   try {
+    const previousEmailConfirmState = {
+      emailConfirmToken: user.emailConfirmToken,
+      emailConfirmTokenExpires: user.emailConfirmTokenExpires,
+    };
+
     user.generateEmailConfirmToken(); // Generate new email confirmation token
     await user.save(); // Save updated user to database
-    await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+
+    try {
+      await mailer.sendConfirmationEmail(user.email, user.emailConfirmToken); // Send confirmation email to user
+    } catch (emailError) {
+      user.emailConfirmToken = previousEmailConfirmState.emailConfirmToken;
+      user.emailConfirmTokenExpires = previousEmailConfirmState.emailConfirmTokenExpires;
+      await user.save();
+
+      return next(
+        emailDeliveryError(
+          emailError,
+          'Unable to send confirmation email. Please try again later.',
+        ),
+      );
+    }
 
     response.status(200).json({ message: 'Confirmation email resent' });
   } catch (error) {

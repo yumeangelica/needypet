@@ -269,6 +269,27 @@ describe('pet store - addNewPet', () => {
     expect(result.isSuccess).toBe(false);
     expect(result.message).toBe('Name too short');
   });
+
+  it('surfaces 422 field errors from the backend', async () => {
+    const userStore = useUserStore();
+    userStore.token = 'tok-abc';
+
+    const petStore = usePetStore();
+
+    mockedApiClient.mockRejectedValueOnce(
+      apiError(422, {
+        message: 'Validation error',
+        errorDetails: { birthday: ['Birthday must be a date in YYYY-MM-DD format'] },
+      }),
+    );
+
+    const result = await petStore.addNewPet({ name: 'Milo' } as Parameters<
+      typeof petStore.addNewPet
+    >[0]);
+
+    expect(result.isSuccess).toBe(false);
+    expect(result.errorDetails?.birthday?.[0]).toBe('Birthday must be a date in YYYY-MM-DD format');
+  });
 });
 
 describe('pet store - deletePet', () => {
@@ -293,19 +314,19 @@ describe('pet store - deletePet', () => {
     expect(result.isSuccess).toBe(true);
   });
 
-  it('returns error on 401', async () => {
+  it('returns error on 403', async () => {
     const userStore = useUserStore();
     userStore.token = 'tok-abc';
 
     const petStore = usePetStore();
     seedPetWithNeed(petStore);
 
-    mockedApiClient.mockRejectedValueOnce(apiError(401, { message: 'Unauthorized' }));
+    mockedApiClient.mockRejectedValueOnce(apiError(403, { message: 'Forbidden' }));
 
     const result = await petStore.deletePet('pet-1');
 
     expect(result.isSuccess).toBe(false);
-    expect(result.message).toBe('Unauthorized');
+    expect(result.message).toBe('Forbidden');
   });
 });
 
@@ -342,7 +363,7 @@ describe('pet store - updatePet', () => {
     const petStore = usePetStore();
     seedPetWithNeed(petStore);
 
-    mockedApiClient.mockRejectedValueOnce(apiError(401, { message: 'Not the owner' }));
+    mockedApiClient.mockRejectedValueOnce(apiError(403, { message: 'Not the owner' }));
 
     const result = await petStore.updatePet(
       'pet-1',
@@ -351,6 +372,29 @@ describe('pet store - updatePet', () => {
 
     expect(result.isSuccess).toBe(false);
     expect(result.message).toBe('Not the owner');
+  });
+
+  it('surfaces 400 field errors from the backend', async () => {
+    const userStore = useUserStore();
+    userStore.token = 'tok-abc';
+
+    const petStore = usePetStore();
+    seedPetWithNeed(petStore);
+
+    mockedApiClient.mockRejectedValueOnce(
+      apiError(400, {
+        message: 'Validation error',
+        errorDetails: { careTakers: ['Caretaker ids must be valid'] },
+      }),
+    );
+
+    const result = await petStore.updatePet(
+      'pet-1',
+      {} as Parameters<typeof petStore.updatePet>[1],
+    );
+
+    expect(result.isSuccess).toBe(false);
+    expect(result.errorDetails?.careTakers?.[0]).toBe('Caretaker ids must be valid');
   });
 });
 
