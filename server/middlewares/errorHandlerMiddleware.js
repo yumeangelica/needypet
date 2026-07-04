@@ -92,10 +92,7 @@ const errorHandler = (error, request, response, next) => {
       // Expose per-field messages in the same { field: [messages] } shape the
       // frontend and the controllers' zod responses use.
       errorResponse.errorDetails = Object.fromEntries(
-        Object.entries(error.errors).map(([field, fieldError]) => [
-          field,
-          [fieldError.message],
-        ]),
+        Object.entries(error.errors).map(([field, fieldError]) => [field, [fieldError.message]]),
       );
       return response.status(422).json(errorResponse);
     case 'MongoServerError':
@@ -111,8 +108,7 @@ const errorHandler = (error, request, response, next) => {
       return response.status(422).json(errorResponse);
 
     case 'SMTPAuthenticationError': // Specific SMTP authentication error
-      errorResponse.message =
-        'Email authentication failed. Please contact support.';
+      errorResponse.message = 'Email authentication failed. Please contact support.';
       return response.status(502).json(errorResponse);
 
     case 'SMTPError':
@@ -121,26 +117,23 @@ const errorHandler = (error, request, response, next) => {
 
     default:
       if (error.code === 'EAUTH') {
-        errorResponse.message =
-          'Email authentication failed. Please contact support.';
+        errorResponse.message = 'Email authentication failed. Please contact support.';
         return response.status(502).json(errorResponse);
       }
 
-      if (
-        ['ECONNECTION', 'ESOCKET', 'ETIMEDOUT', 'EMESSAGE'].includes(error.code)
-      ) {
+      if (['ECONNECTION', 'ESOCKET', 'ETIMEDOUT', 'EMESSAGE'].includes(error.code)) {
         errorResponse.message = 'Unable to send email. Please try again later.';
         return response.status(502).json(errorResponse);
       }
 
       // Catch jose errors by error code as fallback
-      if (error.code && error.code.startsWith('ERR_JWT')) {
+      if (error.code?.startsWith('ERR_JWT')) {
         errorResponse.message =
           error.code === 'ERR_JWT_EXPIRED' ? 'Token Expired' : 'Invalid token';
         return response.status(401).json(errorResponse);
       }
 
-      if (error.code && error.code.startsWith('ERR_JWS')) {
+      if (error.code?.startsWith('ERR_JWS')) {
         errorResponse.message = 'Invalid token';
         return response.status(401).json(errorResponse);
       }

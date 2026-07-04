@@ -1,8 +1,5 @@
 require('dotenv').config({
-  path:
-    process.env.NODE_ENV === 'production'
-      ? '.env.production'
-      : '.env.development',
+  path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development',
   quiet: true,
 });
 
@@ -27,9 +24,7 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
 const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 const emailService = process.env.EMAIL_SERVICE;
-const emailPort = process.env.EMAIL_PORT
-  ? Number.parseInt(process.env.EMAIL_PORT, 10)
-  : undefined;
+const emailPort = process.env.EMAIL_PORT ? Number.parseInt(process.env.EMAIL_PORT, 10) : undefined;
 const emailFrom = process.env.EMAIL_FROM;
 
 // Fail fast on missing required configuration instead of surfacing cryptic
@@ -48,9 +43,7 @@ if (!mongodbUri) {
   );
 }
 if (missing.length > 0) {
-  throw new Error(
-    `Missing required environment variable(s): ${missing.join(', ')}`,
-  );
+  throw new Error(`Missing required environment variable(s): ${missing.join(', ')}`);
 }
 
 module.exports = {

@@ -50,10 +50,7 @@ const sendMail = (to, subject, html) => {
   return transporter.sendMail(mailOptions);
 };
 
-const sendConfirmationEmail = async (
-  recipientEmail,
-  emailConfirmationToken,
-) => {
+const sendConfirmationEmail = async (recipientEmail, emailConfirmationToken) => {
   if (config.isTesting) {
     return;
   }
@@ -80,11 +77,7 @@ const sendConfirmationEmail = async (
   </div>
 `;
 
-  await sendMail(
-    recipientEmail,
-    'Please Confirm Your NeedyPet Email Address',
-    message,
-  );
+  await sendMail(recipientEmail, 'Please Confirm Your NeedyPet Email Address', message);
 };
 
 const sendPasswordResetEmail = async (recipientEmail, passwordResetToken) => {

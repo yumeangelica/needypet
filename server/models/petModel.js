@@ -215,9 +215,7 @@ petSchema.set('toJSON', {
 
     // Format birthday
     if (returnedObject.birthday) {
-      returnedObject.birthday = returnedObject.birthday
-        .toISOString()
-        .split('T')[0]; // Yyyy-mm-dd
+      returnedObject.birthday = returnedObject.birthday.toISOString().split('T')[0]; // Yyyy-mm-dd
     }
 
     // Process needs array

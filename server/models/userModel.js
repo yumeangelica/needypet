@@ -151,10 +151,7 @@ userSchema.methods.canResendVerificationEmail = function () {
   }
 
   // A token exists; allow resending only once it has expired.
-  return (
-    !!this.emailConfirmTokenExpires &&
-    Date.now() > this.emailConfirmTokenExpires.getTime()
-  );
+  return !!this.emailConfirmTokenExpires && Date.now() > this.emailConfirmTokenExpires.getTime();
 };
 
 /**
@@ -175,10 +172,7 @@ userSchema.methods.generatePasswordResetToken = function () {
  * @returns true if token is valid
  */
 userSchema.methods.verifyPasswordResetToken = function (token) {
-  return (
-    this.passwordResetToken === token &&
-    this.passwordResetExpires.getTime() > Date.now()
-  );
+  return this.passwordResetToken === token && this.passwordResetExpires.getTime() > Date.now();
 };
 
 /**
@@ -192,10 +186,7 @@ userSchema.methods.canResendPasswordReset = function () {
   }
 
   // A token exists; allow resending only once it has expired.
-  return (
-    !!this.passwordResetExpires &&
-    Date.now() > this.passwordResetExpires.getTime()
-  );
+  return !!this.passwordResetExpires && Date.now() > this.passwordResetExpires.getTime();
 };
 
 const User = mongoose.model('User', userSchema);

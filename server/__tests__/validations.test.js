@@ -142,39 +142,27 @@ describe('recordValidation', () => {
   });
 
   it('accepts a valid quantity record', () => {
-    assert.doesNotThrow(() =>
-      recordValidation({ note: '', quantity: { value: 100, unit: 'ml' } }),
-    );
+    assert.doesNotThrow(() => recordValidation({ note: '', quantity: { value: 100, unit: 'ml' } }));
   });
 
   it('rejects an invalid quantity unit', () => {
-    assert.throws(() =>
-      recordValidation({ note: '', quantity: { value: 100, unit: 'liters' } }),
-    );
+    assert.throws(() => recordValidation({ note: '', quantity: { value: 100, unit: 'liters' } }));
   });
 
   it('accepts a record with no note', () => {
-    assert.doesNotThrow(() =>
-      recordValidation({ duration: { value: 30, unit: 'minutes' } }),
-    );
+    assert.doesNotThrow(() => recordValidation({ duration: { value: 30, unit: 'minutes' } }));
   });
 
   it('rejects a record with an invalid duration unit', () => {
-    assert.throws(() =>
-      recordValidation({ duration: { value: 30, unit: 'hours' } }),
-    );
+    assert.throws(() => recordValidation({ duration: { value: 30, unit: 'hours' } }));
   });
 
   it('rejects a zero quantity record', () => {
-    assert.throws(() =>
-      recordValidation({ note: '', quantity: { value: 0, unit: 'ml' } }),
-    );
+    assert.throws(() => recordValidation({ note: '', quantity: { value: 0, unit: 'ml' } }));
   });
 
   it('rejects a negative duration record', () => {
-    assert.throws(() =>
-      recordValidation({ note: '', duration: { value: -1, unit: 'minutes' } }),
-    );
+    assert.throws(() => recordValidation({ note: '', duration: { value: -1, unit: 'minutes' } }));
   });
 });
 
@@ -233,9 +221,7 @@ describe('registerValidation', () => {
   });
 
   it('rejects a userName longer than 40 characters', () => {
-    assert.throws(() =>
-      registerValidation({ ...validData(), userName: 'a'.repeat(41) }),
-    );
+    assert.throws(() => registerValidation({ ...validData(), userName: 'a'.repeat(41) }));
   });
 
   it('rejects an invalid email format', () => {
@@ -265,15 +251,11 @@ describe('registerValidation', () => {
   });
 
   it('rejects UTC as a timezone (not in Intl.supportedValuesOf)', () => {
-    assert.throws(() =>
-      registerValidation({ ...validData(), timezone: 'UTC' }),
-    );
+    assert.throws(() => registerValidation({ ...validData(), timezone: 'UTC' }));
   });
 
   it('rejects a newPassword shorter than 10 characters', () => {
-    assert.throws(() =>
-      registerValidation({ ...validData(), newPassword: 'Short1!' }),
-    );
+    assert.throws(() => registerValidation({ ...validData(), newPassword: 'Short1!' }));
   });
 });
 
@@ -295,9 +277,7 @@ describe('updateUserValidation', () => {
   });
 
   it('accepts a profile update with only currentPassword (other fields optional)', () => {
-    assert.doesNotThrow(() =>
-      updateUserValidation({ currentPassword: 'CurrentPass123!' }),
-    );
+    assert.doesNotThrow(() => updateUserValidation({ currentPassword: 'CurrentPass123!' }));
   });
 
   it('rejects missing currentPassword on profile update', () => {
@@ -310,17 +290,12 @@ describe('updateUserValidation', () => {
 
   it('rejects a new password shorter than 10 characters on password update', () => {
     assert.throws(() =>
-      updateUserValidation(
-        { currentPassword: 'OldPass123!', newPassword: 'Short1!' },
-        true,
-      ),
+      updateUserValidation({ currentPassword: 'OldPass123!', newPassword: 'Short1!' }, true),
     );
   });
 
   it('rejects an invalid timezone on profile update', () => {
-    assert.throws(() =>
-      updateUserValidation({ ...validProfileData(), timezone: 'Bad/Zone' }),
-    );
+    assert.throws(() => updateUserValidation({ ...validProfileData(), timezone: 'Bad/Zone' }));
   });
 
   it('rejects an invalid email format on profile update', () => {
@@ -338,9 +313,7 @@ describe('updateUserValidation', () => {
 
 describe('loginValidation', () => {
   it('accepts valid login data', () => {
-    assert.doesNotThrow(() =>
-      loginValidation({ userName: 'testUser', password: 'any' }),
-    );
+    assert.doesNotThrow(() => loginValidation({ userName: 'testUser', password: 'any' }));
   });
 
   it('rejects a userName shorter than 3 characters', () => {

@@ -17,7 +17,7 @@ const authenticateToken = async (request, response, next) => {
     return response.status(401).json({ message: 'Token missing or invalid' });
   }
 
-  if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+  if (authHeader?.toLowerCase().startsWith('bearer ')) {
     token = authHeader.substring(7); // Extract token from header starting from index 7
   }
 

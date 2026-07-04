@@ -1,10 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const {
-  tzIdentifierChecker,
-  checkLocalDateByTimezone,
-  dailyTaskCompleter,
-} = require('../helper');
+const { tzIdentifierChecker, checkLocalDateByTimezone, dailyTaskCompleter } = require('../helper');
 
 describe('tzIdentifierChecker', () => {
   it('returns true for a valid IANA timezone', () => {
@@ -36,10 +32,7 @@ describe('checkLocalDateByTimezone', () => {
   });
 
   it('throws on an invalid timezone', () => {
-    assert.throws(
-      () => checkLocalDateByTimezone('Not/ATimezone'),
-      /Invalid timezone/,
-    );
+    assert.throws(() => checkLocalDateByTimezone('Not/ATimezone'), /Invalid timezone/);
   });
 
   it('throws on UTC (not supported by Intl API)', () => {

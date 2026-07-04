@@ -26,11 +26,7 @@ const dailyTaskCompleter = (need) => {
     return;
   }
 
-  const taskType = need.quantity?.value
-    ? 'quantity'
-    : need.duration?.value
-      ? 'duration'
-      : null; // Check if the need is quantity or duration
+  const taskType = need.quantity?.value ? 'quantity' : need.duration?.value ? 'duration' : null; // Check if the need is quantity or duration
 
   switch (taskType) {
     case 'quantity': {
@@ -105,9 +101,7 @@ const getMidnightTimezones = (
   referenceTime = dayjs(),
   lookbackMinutes = ROLLOVER_LOOKBACK_MINUTES,
 ) => {
-  const now = dayjs.isDayjs(referenceTime)
-    ? referenceTime
-    : dayjs(referenceTime);
+  const now = dayjs.isDayjs(referenceTime) ? referenceTime : dayjs(referenceTime);
   const previous = now.subtract(lookbackMinutes, 'minute');
   const timezones = Intl.supportedValuesOf('timeZone');
   return timezones.filter((timezone) => {
@@ -125,11 +119,9 @@ const getMidnightTimezones = (
  * @param {dayjs.Dayjs} day - any dayjs instance whose calendar day is wanted
  * @returns {Date} a Date at UTC midnight of that calendar day
  */
-const toStoredNeedDate = (day) =>
-  new Date(Date.UTC(day.year(), day.month(), day.date()));
+const toStoredNeedDate = (day) => new Date(Date.UTC(day.year(), day.month(), day.date()));
 
-const isSameStoredDay = (date, day) =>
-  dayjs.utc(date).startOf('day').isSame(day, 'day');
+const isSameStoredDay = (date, day) => dayjs.utc(date).startOf('day').isSame(day, 'day');
 
 const measureKey = (need) => {
   if (need.duration?.value != null || need.duration?.unit) {
@@ -206,10 +198,7 @@ const rollPetNeedsForward = (pet, localToday) => {
   // stored value also guards against an owner moving to an earlier timezone.
   if (
     pet.lastRolledNeedDate &&
-    dayjs
-      .utc(pet.lastRolledNeedDate)
-      .startOf('day')
-      .isSameOrAfter(todayUtc, 'day')
+    dayjs.utc(pet.lastRolledNeedDate).startOf('day').isSameOrAfter(todayUtc, 'day')
   ) {
     return false;
   }
@@ -303,9 +292,7 @@ const updatePetNeedstoNextDays = async (referenceTime = dayjs()) => {
   rolloverJobRunning = true;
 
   try {
-    const now = dayjs.isDayjs(referenceTime)
-      ? referenceTime
-      : dayjs(referenceTime);
+    const now = dayjs.isDayjs(referenceTime) ? referenceTime : dayjs(referenceTime);
     // Roll pets by owner timezone only. We intentionally scan owners on every
     // tick instead of relying on a short midnight window: lastRolledNeedDate is
     // the durable idempotency guard, so a delayed cron or server restart after
@@ -316,17 +303,13 @@ const updatePetNeedstoNextDays = async (referenceTime = dayjs()) => {
       return;
     }
 
-    const ownerTimezone = new Map(
-      owners.map((owner) => [owner._id.toString(), owner.timezone]),
-    );
+    const ownerTimezone = new Map(owners.map((owner) => [owner._id.toString(), owner.timezone]));
 
     // Precompute each owner timezone's local "today" once. Computed per zone so
     // one invalid stored timezone (ICU/tzdata drift or a manual DB edit) cannot
     // abort the whole tick; owners in a skipped zone simply do not roll until
     // their timezone is fixed.
-    const ownerTimezones = [
-      ...new Set(owners.map((owner) => owner.timezone).filter(Boolean)),
-    ];
+    const ownerTimezones = [...new Set(owners.map((owner) => owner.timezone).filter(Boolean))];
     const localTodayByTz = new Map();
     for (const tz of ownerTimezones) {
       try {
