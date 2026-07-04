@@ -88,6 +88,9 @@
             <button type="submit" aria-label="Create account" class="action-button primary-action-button auth-action-button">Join the Pack</button>
             <button type="button" @click="goBack" class="action-button secondary-action-button auth-action-button">← Back</button>
           </div>
+          <div v-if="errorMessage" id="reg-form-error" class="custom-error-message" role="alert">
+            {{ errorMessage }}
+          </div>
         </form>
       </div>
     </div>
@@ -176,13 +179,16 @@ const createAccount = async () => {
     confirmPassword.value = '';
     selectedTimezone.value = '';
   } else {
-    formFieldsErrorDetailsObject.value = {
+    const fieldErrors = {
       username: errorDetails?.userName?.[0] || '',
       email: errorDetails?.email?.[0] || '',
       newPassword: errorDetails?.newPassword?.[0] || '',
       timezone: errorDetails?.timezone?.[0] || '',
     };
-    errorMessage.value = message ? message : 'Something went wrong. Please try again later.';
+    formFieldsErrorDetailsObject.value = fieldErrors;
+    errorMessage.value = Object.values(fieldErrors).some(Boolean)
+      ? ''
+      : (message ?? 'Something went wrong. Please try again later.');
     setTimeout(() => {
       formFieldsErrorDetailsObject.value = {
         username: '',

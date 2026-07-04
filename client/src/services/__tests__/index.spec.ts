@@ -17,6 +17,7 @@ describe('apiClient', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it('normalizes request methods before calling fetch', async () => {
@@ -43,6 +44,15 @@ describe('apiClient', () => {
         }),
       }),
     );
+  });
+
+  it('uses same-origin paths when the backend URL env value is missing', async () => {
+    const fetchMock = vi.mocked(fetch);
+    vi.stubEnv('VITE_APP_BACKEND_URL', undefined);
+
+    await apiClient.get('/api/test');
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/test', expect.objectContaining({ method: 'GET' }));
   });
 
   it('preserves a caller-provided content type case-insensitively', async () => {

@@ -69,14 +69,30 @@ describe('app store - addNotification / removeNotification', () => {
   it('removeNotification removes the specific notification by id', () => {
     const appStore = useAppStore();
     appStore.addNotification('First', 'success');
-    // Advance time so the second notification gets a different Date.now() id.
-    vi.advanceTimersByTime(1);
     appStore.addNotification('Second', 'error');
 
     expect(appStore.notifications).toHaveLength(2);
 
     const firstId = appStore.notifications[0].id;
     appStore.removeNotification(firstId);
+
+    expect(appStore.notifications).toHaveLength(1);
+    expect(appStore.notifications[0].message).toBe('Second');
+  });
+
+  it('assigns distinct ids even when notifications are created in the same millisecond', () => {
+    const appStore = useAppStore();
+    // Freeze the clock so both notifications share the same Date.now() timestamp;
+    // the monotonic id source must still keep their ids distinct.
+    vi.setSystemTime(new Date('2026-07-04T00:00:00Z'));
+    appStore.addNotification('First', 'success');
+    appStore.addNotification('Second', 'error');
+
+    const [first, second] = appStore.notifications;
+    expect(first.timestamp).toBe(second.timestamp);
+    expect(first.id).not.toBe(second.id);
+
+    appStore.removeNotification(first.id);
 
     expect(appStore.notifications).toHaveLength(1);
     expect(appStore.notifications[0].message).toBe('Second');
@@ -93,7 +109,6 @@ describe('app store - addNotification / removeNotification', () => {
   it('does add if message is the same but type differs', () => {
     const appStore = useAppStore();
     appStore.addNotification('Same message', 'success');
-    vi.advanceTimersByTime(1);
     appStore.addNotification('Same message', 'error');
 
     expect(appStore.notifications).toHaveLength(2);

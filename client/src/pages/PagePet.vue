@@ -61,12 +61,16 @@
 
                 <label class="form-label" for="need-category">Type of care</label>
                 <div class="form-field">
-                  <input id="need-category" class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine" />
+                  <input id="need-category" class="form-field-input" v-model="category" required placeholder="e.g. Walk, Feed, Medicine"
+                    :aria-invalid="formFieldsErrorDetailsObject.category ? true : undefined"
+                    :aria-describedby="formFieldsErrorDetailsObject.category ? 'need-category-error' : undefined" />
                 </div>
 
                 <label class="form-label" for="need-description">More details</label>
                 <div class="form-field">
-                  <input id="need-description" class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park" />
+                  <input id="need-description" class="form-field-input" v-model="description" required placeholder="e.g. Morning walk in the park"
+                    :aria-invalid="formFieldsErrorDetailsObject.description ? true : undefined"
+                    :aria-describedby="formFieldsErrorDetailsObject.description ? 'need-description-error' : undefined" />
                 </div>
 
                 <label class="form-label" for="need-date">Date</label>
@@ -95,8 +99,8 @@
                   <div class="value-unit-row">
                     <input id="need-quantity-value" class="form-field-input value-unit-value" v-model="valueOfSelection" required autofocus
                       @input="cleanInput($event)" inputmode="numeric" placeholder="Enter value"
-                      :aria-invalid="formFieldsErrorDetailsObject.quantityUnit ? true : undefined"
-                      :aria-describedby="formFieldsErrorDetailsObject.quantityUnit ? 'need-quantity-error' : undefined" />
+                      :aria-invalid="formFieldsErrorDetailsObject.quantityValue ? true : undefined"
+                      :aria-describedby="formFieldsErrorDetailsObject.quantityValue ? 'need-quantity-value-error' : undefined" />
                     <div class="value-unit-select">
                       <Select v-model="unitOfSelection" :options="quantityUnits" placeholder="Unit" aria-label="Select unit" />
                     </div>
@@ -124,8 +128,17 @@
                 <div v-if="formFieldsErrorDetailsObject.selection" id="need-selection-error" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.selection }}
                 </div>
+                <div v-if="formFieldsErrorDetailsObject.category" id="need-category-error" class="custom-error-message" role="alert">
+                  {{ formFieldsErrorDetailsObject.category }}
+                </div>
+                <div v-if="formFieldsErrorDetailsObject.description" id="need-description-error" class="custom-error-message" role="alert">
+                  {{ formFieldsErrorDetailsObject.description }}
+                </div>
                 <div v-if="formFieldsErrorDetailsObject.durationValue" id="need-duration-error" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.durationValue }}
+                </div>
+                <div v-if="formFieldsErrorDetailsObject.quantityValue" id="need-quantity-value-error" class="custom-error-message" role="alert">
+                  {{ formFieldsErrorDetailsObject.quantityValue }}
                 </div>
                 <div v-if="formFieldsErrorDetailsObject.quantityUnit" id="need-quantity-error" class="custom-error-message" role="alert">
                   {{ formFieldsErrorDetailsObject.quantityUnit }}
@@ -222,8 +235,11 @@ const category: Ref<Need['category']> = ref('');
 const description: Ref<Need['description']> = ref('');
 
 const formFieldsErrorDetailsObject = ref({
+  category: '',
+  description: '',
   selection: '',
   durationValue: '',
+  quantityValue: '',
   quantityUnit: '',
 });
 
@@ -304,14 +320,27 @@ const clearFields = () => {
   selection.value = '';
   valueOfSelection.value = null;
   unitOfSelection.value = '';
+  clearFormErrors();
+};
+
+const clearFormErrors = () => {
+  formFieldsErrorDetailsObject.value = {
+    category: '',
+    description: '',
+    selection: '',
+    durationValue: '',
+    quantityValue: '',
+    quantityUnit: '',
+  };
 };
 
 const cleanInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   target.value = target.value.replace(/[^0-9]/g, '');
   let value = target.value;
-  value = value.replace(/^0+/, '');
-  valueOfSelection.value = Number(value);
+  value = value.replace(/^0+(?=\d)/, '');
+  target.value = value;
+  valueOfSelection.value = value ? Number(value) : null;
 };
 
 const applyPet = (fetchedPet: Pet, id: string) => {
@@ -378,6 +407,33 @@ const addNewNeed = async () => {
     return;
   }
 
+  clearFormErrors();
+
+  const validateTextFields = () => {
+    let isValid = true;
+    const trimmedCategory = category.value.trim();
+    const trimmedDescription = description.value.trim();
+
+    if (trimmedCategory.length < 3) {
+      formFieldsErrorDetailsObject.value.category = 'Category must be at least 3 characters';
+      isValid = false;
+    } else if (trimmedCategory.length > 50) {
+      formFieldsErrorDetailsObject.value.category = 'Category must be at most 50 characters';
+      isValid = false;
+    }
+
+    if (!trimmedDescription) {
+      formFieldsErrorDetailsObject.value.description = 'Description is required';
+      isValid = false;
+    } else if (trimmedDescription.length > 1000) {
+      formFieldsErrorDetailsObject.value.description =
+        'Description must be at most 1000 characters';
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const validateSelection = () => {
     if (!selection.value) {
       formFieldsErrorDetailsObject.value.selection = 'Please choose a need type';
@@ -387,10 +443,26 @@ const addNewNeed = async () => {
   };
 
   const validateDuration = () => {
-    if (selection.value === 'duration' && (valueOfSelection.value ?? 0) > 1440) {
-      formFieldsErrorDetailsObject.value.durationValue = 'Duration cannot be over 1440 minutes';
+    if (selection.value === 'duration') {
+      if ((valueOfSelection.value ?? 0) < 1) {
+        formFieldsErrorDetailsObject.value.durationValue = 'Duration must be at least 1 minute';
+        return false;
+      }
+
+      if ((valueOfSelection.value ?? 0) > 1440) {
+        formFieldsErrorDetailsObject.value.durationValue = 'Duration cannot be over 1440 minutes';
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const validateQuantity = () => {
+    if (selection.value === 'quantity' && (valueOfSelection.value ?? 0) < 1) {
+      formFieldsErrorDetailsObject.value.quantityValue = 'Quantity must be at least 1';
       return false;
     }
+
     return true;
   };
 
@@ -402,11 +474,15 @@ const addNewNeed = async () => {
     return true;
   };
 
-  if (!validateSelection() || !validateDuration() || !validateQuantityUnit()) {
+  if (
+    !validateTextFields() ||
+    !validateSelection() ||
+    !validateDuration() ||
+    !validateQuantity() ||
+    !validateQuantityUnit()
+  ) {
     setTimeout(() => {
-      formFieldsErrorDetailsObject.value.selection = '';
-      formFieldsErrorDetailsObject.value.durationValue = '';
-      formFieldsErrorDetailsObject.value.quantityUnit = '';
+      clearFormErrors();
     }, 5000);
     return;
   }
@@ -415,8 +491,8 @@ const addNewNeed = async () => {
   const unit = selection.value === 'duration' ? 'minutes' : unitOfSelection.value;
 
   const needObject: Need = {
-    category: category.value,
-    description: description.value,
+    category: category.value.trim(),
+    description: description.value.trim(),
     dateFor: currentDate.value,
     [selection.value]: {
       value: valueOfSelection.value,

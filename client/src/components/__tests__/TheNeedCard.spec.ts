@@ -272,4 +272,21 @@ describe('TheNeedCard - emits', () => {
     // AlertDialog stub should now be present
     expect(wrapper.find('.alert-dialog-stub').exists()).toBe(true);
   });
+
+  it('blocks invalid edit values before calling the store', async () => {
+    const petStore = usePetStore();
+    const updateNeed = vi.spyOn(petStore, 'updateNeed').mockResolvedValue({ isSuccess: true });
+
+    const wrapper = mount(TheNeedCard, {
+      props: needCardProps(),
+      global: globalProvide(true),
+    });
+
+    await wrapper.find('button[aria-label="Need options"]').trigger('click');
+    await wrapper.find('button[aria-label="Edit need"]').trigger('click');
+    await wrapper.find('#need-need-1-duration-value').setValue('1441');
+    await wrapper.find('form').trigger('submit');
+
+    expect(updateNeed).not.toHaveBeenCalled();
+  });
 });

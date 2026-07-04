@@ -7,6 +7,11 @@ export interface Notification {
   timestamp: number;
 }
 
+// Monotonic id source for notifications. Date.now() alone can collide when two
+// notifications are created within the same millisecond, which would make
+// removeNotification drop both; a counter guarantees a unique id per toast.
+let notificationSeq = 0;
+
 export const useAppStore = defineStore('app', {
   state: () => ({
     isMobile: false,
@@ -34,7 +39,7 @@ export const useAppStore = defineStore('app', {
       return data;
     },
     addNotification(message: string, type: 'success' | 'error' | 'info', duration = 5000) {
-      const id = Date.now();
+      const id = ++notificationSeq;
       const newNotification: Notification = {
         id,
         timestamp: Date.now(),

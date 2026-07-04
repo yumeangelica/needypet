@@ -68,7 +68,7 @@
             <button type="button" class="form-button secondary" @click="router.push({ name: 'profile' })">Cancel</button>
           </div>
 
-          <div v-if="errorMessage" class="custom-error-message">
+          <div v-if="errorMessage" class="custom-error-message" role="alert">
             {{ errorMessage }}
           </div>
         </form>
