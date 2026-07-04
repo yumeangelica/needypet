@@ -65,6 +65,28 @@ describe('PageAddPet - timezone-aware birthday', () => {
     expect(birthdayInput(wrapper).attributes('value')).toBe('2026-06-23');
   });
 
+  it('submits birthday as a date-only string', async () => {
+    const userStore = useUserStore();
+    userStore.id = 'user-1';
+    userStore.timezone = 'Pacific/Kiritimati';
+
+    const petStore = usePetStore();
+    const addNewPet = vi.spyOn(petStore, 'addNewPet').mockResolvedValue({ isSuccess: true });
+
+    const wrapper = mount(PageAddPet);
+
+    await wrapper.get('input#addpet-name').setValue('Milo');
+    await birthdayInput(wrapper).setValue('2026-06-23');
+    await birthdayInput(wrapper).trigger('change');
+    await wrapper.get('form').trigger('submit');
+
+    expect(addNewPet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        birthday: '2026-06-23',
+      }),
+    );
+  });
+
   it("rejects a day in the future relative to the user's timezone", async () => {
     const userStore = useUserStore();
     userStore.timezone = 'Pacific/Honolulu'; // local today is 2026-06-22

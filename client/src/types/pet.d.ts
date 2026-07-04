@@ -72,7 +72,7 @@ interface Pet {
   species?: string;
   breed?: string;
   description?: string;
-  birthday?: Date;
+  birthday?: string | null;
   image?: PetImage;
   owner?: User;
   careTakers?: User[];
@@ -88,7 +88,7 @@ interface NewPetObject {
   breed: string;
   species: string;
   description: string;
-  birthday: Date | null;
+  birthday: string | null;
   image: PetImage;
 }
 

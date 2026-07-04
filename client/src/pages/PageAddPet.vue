@@ -89,28 +89,30 @@ const newPetObject: Ref<NewPetObject> = ref({
   breed: '',
   species: '',
   description: '',
-  birthday: null as Date | null,
+  birthday: null,
   image: { ...DEFAULT_PET_IMAGE },
 });
 
 const todayString = computed(() => dayjs().tz(userStore.timezone).format('YYYY-MM-DD'));
 
 const birthdayInputValue = computed(() => {
-  if (!newPetObject.value.birthday) return '';
-  return dayjs(newPetObject.value.birthday).tz(userStore.timezone).format('YYYY-MM-DD');
+  return newPetObject.value.birthday || '';
 });
 
 const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  if (target.value) {
-    // The picked value is a calendar day in the user's timezone; compare at day
-    // granularity so a user near midnight is not wrongly blocked from "today".
-    const selectedDay = dayjs.tz(target.value, userStore.timezone);
-    const today = dayjs().tz(userStore.timezone);
+  if (!target.value) {
+    newPetObject.value.birthday = null;
+    return;
+  }
 
-    if (!selectedDay.isAfter(today, 'day')) {
-      newPetObject.value.birthday = new Date(`${target.value}T00:00:00`);
-    }
+  // The picked value is a calendar day in the user's timezone; compare at day
+  // granularity so a user near midnight is not wrongly blocked from "today".
+  const selectedDay = dayjs.tz(target.value, userStore.timezone);
+  const today = dayjs().tz(userStore.timezone);
+
+  if (!selectedDay.isAfter(today, 'day')) {
+    newPetObject.value.birthday = target.value;
   }
 };
 

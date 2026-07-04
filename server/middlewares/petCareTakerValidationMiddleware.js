@@ -12,7 +12,9 @@ const petCareTakerValidationMiddleware = (request, response, next) => {
       request.pet.owner.toString() === request.user._id.toString()
     )
   ) {
-    return response.status(401).json({ message: 'Unauthorized' });
+    // The user is authenticated but neither the owner nor a caretaker of this
+    // pet: an authorization failure (403 Forbidden), not authentication (401).
+    return response.status(403).json({ message: 'Forbidden' });
   }
 
   next();

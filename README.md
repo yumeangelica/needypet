@@ -26,9 +26,12 @@ currently includes:
   resend confirmation email; update username/email/timezone with the current
   password; change password with matching client/server strength rules.
 - **Pet management:** owners can create, view, update and delete pets with name,
-  species, breed, description, birthday and preset image metadata.
+  species, breed, description, date-only birthday (`YYYY-MM-DD`) and preset
+  image metadata.
 - **Care tasks:** owners can add, edit, delete, complete and pause/resume daily
-  needs. Needs support duration in minutes or quantity in milliliters/grams.
+  needs. Each need uses exactly one measurement type: duration in minutes or
+  quantity in milliliters/grams; care records must use the same type as their
+  target need.
 - **Daily rollover:** active needs are copied forward to the next owner-local
   day; inactive needs stay paused; historical needs remain browsable by date.
 - **Caretaker permissions:** backend data and permissions support caretakers.
@@ -63,7 +66,7 @@ currently includes:
 
 2. **Pet Management**:
    - View your pets on the homepage after logging in.
-   - Add new pets by clicking **Add Pet**, filling in details (name, breed, species, description, birthday), and submitting.
+   - Add new pets by clicking **Add Pet**, filling in details (name, breed, species, description, date-only birthday), and submitting.
 
 3. **Viewing and Editing Pet Details**:
    - Access pet details by clicking on a pet card.

@@ -46,7 +46,7 @@ const makePet = (overrides: Partial<Pet> = {}): Pet => ({
   species: 'Cat',
   breed: 'Tabby',
   description: 'Tiny boss',
-  birthday: new Date('2024-01-01'),
+  birthday: '2024-01-01',
   owner: {
     id: 'owner-1',
     userName: 'Angelica',

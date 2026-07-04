@@ -67,6 +67,26 @@ describe('needValidation', () => {
         category: 'Walk',
         description: '',
         dateFor: new Date('2026-06-09'),
+        duration: { value: 10, unit: 'minutes' },
+      }),
+    );
+  });
+
+  it('rejects a need without a measurement', () => {
+    assert.throws(() =>
+      needValidation({
+        category: 'Walk',
+        description: 'No measurement',
+        dateFor: new Date('2026-06-09'),
+      }),
+    );
+  });
+
+  it('rejects a need with both measurement types', () => {
+    assert.throws(() =>
+      needValidation({
+        ...validNeed(),
+        quantity: { value: 100, unit: 'g' },
       }),
     );
   });
@@ -151,6 +171,20 @@ describe('recordValidation', () => {
 
   it('accepts a record with no note', () => {
     assert.doesNotThrow(() => recordValidation({ duration: { value: 30, unit: 'minutes' } }));
+  });
+
+  it('rejects a record without a measurement', () => {
+    assert.throws(() => recordValidation({ note: 'No measurement' }));
+  });
+
+  it('rejects a record with both measurement types', () => {
+    assert.throws(() =>
+      recordValidation({
+        note: 'Too much shape',
+        quantity: { value: 100, unit: 'ml' },
+        duration: { value: 30, unit: 'minutes' },
+      }),
+    );
   });
 
   it('rejects a record with an invalid duration unit', () => {

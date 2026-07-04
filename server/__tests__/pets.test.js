@@ -103,6 +103,43 @@ describe('POST /api/pets', () => {
     });
   });
 
+  it('creates a new pet with a date-only birthday', async () => {
+    const { token } = await registerAndLogin();
+
+    const response = await api.post('/api/pets').set('Authorization', `Bearer ${token}`).send({
+      name: 'Milo',
+      species: 'Cat',
+      birthday: '2024-02-29',
+    });
+
+    assert.strictEqual(response.status, 201);
+    assert.strictEqual(response.body.birthday, '2024-02-29');
+  });
+
+  it('returns 422 for a malformed birthday', async () => {
+    const { token } = await registerAndLogin();
+
+    const response = await api.post('/api/pets').set('Authorization', `Bearer ${token}`).send({
+      name: 'Milo',
+      birthday: '2024-02-31',
+    });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.birthday, 'should report birthday error');
+  });
+
+  it('returns 422 for a future birthday', async () => {
+    const { token } = await registerAndLogin();
+
+    const response = await api.post('/api/pets').set('Authorization', `Bearer ${token}`).send({
+      name: 'Milo',
+      birthday: '9999-01-01',
+    });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.birthday, 'should report birthday error');
+  });
+
   it('rejects an invalid preset image key', async () => {
     const { token } = await registerAndLogin();
 
@@ -140,6 +177,22 @@ describe('POST /api/pets', () => {
       carerUser.pets.map((petId) => petId.toString()),
       [pet.id],
     );
+  });
+
+  it('returns 400 when adding the owner as the initial caretaker', async () => {
+    const owner = await registerAndLogin();
+
+    const response = await api
+      .post('/api/pets')
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({
+        name: 'Milo',
+        species: 'Cat',
+        careTaker: owner.id,
+      });
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Owner cannot be a caretaker');
   });
 
   it('returns 401 without a token', async () => {
@@ -201,6 +254,59 @@ describe('PUT /api/pets/:id', () => {
     });
   });
 
+  it('updates a pet with a date-only birthday', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token, { name: 'Milo' });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ birthday: '2023-05-06' });
+
+    assert.strictEqual(response.status, 200);
+    assert.strictEqual(response.body.birthday, '2023-05-06');
+  });
+
+  it('returns 422 when updating a pet to a malformed birthday', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token, { name: 'Milo' });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ birthday: '2023/05/06' });
+
+    assert.strictEqual(response.status, 422);
+    assert.ok(response.body.errorDetails.birthday, 'should report birthday error');
+  });
+
+  it('clears optional fields when empty values are submitted', async () => {
+    const { token } = await registerAndLogin();
+    const pet = await createPet(token, {
+      name: 'Milo',
+      species: 'Cat',
+      breed: 'Tabby',
+      description: 'Tiny boss',
+      birthday: '2020-01-02',
+    });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        species: '',
+        breed: '',
+        description: '',
+        birthday: null,
+      });
+
+    assert.strictEqual(response.status, 200);
+    assert.strictEqual(response.body.species, '');
+    assert.strictEqual(response.body.breed, '');
+    assert.strictEqual(response.body.description, '');
+    assert.strictEqual(response.body.birthday, undefined);
+  });
+
   it("adds the pet to a new caretaker's pets array", async () => {
     const owner = await registerAndLogin();
     const carer = await registerAndLogin({
@@ -260,6 +366,19 @@ describe('PUT /api/pets/:id', () => {
     assert.strictEqual(response.body.message, 'Caretaker ids must be valid');
   });
 
+  it('returns 400 when adding the owner as a caretaker', async () => {
+    const owner = await registerAndLogin();
+    const pet = await createPet(owner.token, { name: 'Milo' });
+
+    const response = await api
+      .put(`/api/pets/${pet.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ careTakers: [owner.id] });
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Owner cannot be a caretaker');
+  });
+
   it("removes the pet from a dropped caretaker's pets array", async () => {
     const owner = await registerAndLogin();
     const carer = await registerAndLogin({
@@ -296,7 +415,7 @@ describe('PUT /api/pets/:id', () => {
     );
   });
 
-  it('returns 401 when a non-owner tries to update', async () => {
+  it('returns 403 when a non-owner tries to update', async () => {
     const owner = await registerAndLogin();
     const pet = await createPet(owner.token, { name: 'Milo' });
 
@@ -310,7 +429,7 @@ describe('PUT /api/pets/:id', () => {
       .set('Authorization', `Bearer ${other.token}`)
       .send({ name: 'Hacked' });
 
-    assert.strictEqual(response.status, 401);
+    assert.strictEqual(response.status, 403);
   });
 
   it('returns 404 for an unknown pet id', async () => {
@@ -323,6 +442,18 @@ describe('PUT /api/pets/:id', () => {
       .send({ name: 'Ghost' });
 
     assert.strictEqual(response.status, 404);
+  });
+
+  it('returns 400 for a malformed pet id', async () => {
+    const { token } = await registerAndLogin();
+
+    const response = await api
+      .put('/api/pets/not-a-valid-id')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Ghost' });
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Malformatted id');
   });
 });
 
@@ -341,7 +472,7 @@ describe('DELETE /api/pets/:id', () => {
     assert.strictEqual(remaining, null);
   });
 
-  it('returns 401 when a non-owner tries to delete', async () => {
+  it('returns 403 when a non-owner tries to delete', async () => {
     const owner = await registerAndLogin();
     const pet = await createPet(owner.token, { name: 'Milo' });
 
@@ -354,7 +485,7 @@ describe('DELETE /api/pets/:id', () => {
       .delete(`/api/pets/${pet.id}`)
       .set('Authorization', `Bearer ${other.token}`);
 
-    assert.strictEqual(response.status, 401);
+    assert.strictEqual(response.status, 403);
 
     // The pet should still exist.
     const stillThere = await Pet.findById(pet.id);

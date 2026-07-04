@@ -97,6 +97,24 @@ All `/api` routes require a valid bearer token.
 | PATCH  | `/pets/:id/needs/:needid/togglestatus`    | Toggle a need's active status.    |
 | POST   | `/pets/:id/needs/:needid/newrecord`       | Add a care record to a need.     |
 
+## API contracts
+
+- Date-only fields use `YYYY-MM-DD` in request and response payloads.
+  `pets.birthday` stores valid values at UTC midnight and can be cleared with
+  `null`; `need.dateFor` remains the owner's local care day.
+- Needs and care records must include exactly one measurement shape: `duration`
+  or `quantity`. Care records must use the same measurement shape as the parent
+  need.
+- Schema validation failures return **422** with `errorDetails`. Authenticated
+  users who lack permission receive **403**. Business-rule failures such as
+  completed/archived needs or wrong care-record measurement type remain **400**.
+- `/auth/users/:id` is self-only: the route id must match the authenticated
+  token user. `/auth/validatetoken` also verifies that the token user still
+  exists.
+- Email-sending flows roll back pending token/email state if delivery fails, so
+  failed profile-email changes, reset requests or confirmation resends do not
+  leave stale replacement tokens behind.
+
 ## Security notes and known limitations
 
 This is a portfolio showcase app. A few intentional trade-offs are worth calling
@@ -110,7 +128,8 @@ out for anyone reviewing or extending it:
 - **Rate limiting.** The authentication routes are rate limited, with a stricter
   limit on the email-sending endpoints (`request-password-reset`,
   `resend-email-confirmation`). The limiter is disabled under `NODE_ENV=testing`
-  so the test suite is not throttled.
+  (requests still succeed — they are simply never throttled) so the test suite is
+  deterministic.
 - **Transactional email.** Test runs skip real outbound email. In development and
   production, mail delivery errors are returned to the caller instead of being
   swallowed silently.
@@ -129,3 +148,15 @@ server/
 ├── validations/   zod schemas
 └── __tests__/     Test suite
 ```
+
+## Deferred work
+
+Backend improvements consciously left out of the current showcase are recorded so
+they don't need re-deriving:
+
+- [../documentation/backendBacklog.md](../documentation/backendBacklog.md) —
+  general backend backlog (unused `frequency` field, user optimistic
+  concurrency and completed polish-pass notes).
+- [ROLLOVER_BACKLOG.md](ROLLOVER_BACKLOG.md) — rollover- and data-model-specific
+  items (archived-need retention, recurrence identity, distributed lock, per-tick
+  query narrowing).

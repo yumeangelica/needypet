@@ -169,11 +169,12 @@ const petSchema = new mongoose.Schema({
             // Format 'Europe/Helsinki', will indicate where the record was created
             type: String,
             required: true,
-            default: 'UTC',
             validate: {
               validator(timezone) {
-                const timezones = Intl.supportedValuesOf('timeZone');
-                return timezones.includes(timezone);
+                // Lazily required to avoid a circular import at module load
+                // (helper requires this model at its top); reuses the cached
+                // supported-timezone Set instead of recomputing the list here.
+                return require('../helper').tzIdentifierChecker(timezone);
               },
               message: 'Invalid timezone',
             },

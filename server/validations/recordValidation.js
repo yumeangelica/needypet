@@ -27,12 +27,34 @@ const durationSchema = z.object({
   unit: durationUnitSchema,
 });
 
-const recordSchema = z.object({
-  quantity: quantitySchema.optional(),
-  duration: durationSchema.optional(),
-  note: z.string().optional(),
-});
+const recordSchema = z
+  .object({
+    quantity: quantitySchema.optional(),
+    duration: durationSchema.optional(),
+    note: z.string().optional(),
+  })
+  .superRefine((record, ctx) => {
+    const measurementCount = Number(Boolean(record.quantity)) + Number(Boolean(record.duration));
 
-const recordValidation = recordSchema.parse;
+    if (measurementCount !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['quantity'],
+        message: 'Care record must have exactly one measurement type',
+      });
+    }
+  });
+
+const recordValidation = (data) => {
+  try {
+    return recordSchema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw error;
+    }
+
+    throw new Error('Unknown error during validation', { cause: error });
+  }
+};
 
 module.exports = recordValidation;

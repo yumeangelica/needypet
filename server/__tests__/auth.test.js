@@ -167,6 +167,59 @@ describe('GET /auth/users/:id', () => {
     const response = await api.get(`/auth/users/${id}`);
     assert.strictEqual(response.status, 401);
   });
+
+  it('returns 403 when the route id does not match the token user', async () => {
+    const owner = await registerAndLogin();
+    const other = await registerAndLogin({
+      userName: 'otherUser',
+      email: 'other@example.com',
+    });
+
+    const response = await api
+      .get(`/auth/users/${other.id}`)
+      .set('Authorization', `Bearer ${owner.token}`);
+
+    assert.strictEqual(response.status, 403);
+    assert.strictEqual(response.body.message, 'Forbidden');
+  });
+});
+
+describe('PUT /auth/users/:id', () => {
+  it('returns 403 when the route id does not match the token user', async () => {
+    const owner = await registerAndLogin();
+    const other = await registerAndLogin({
+      userName: 'otherUser',
+      email: 'other@example.com',
+    });
+
+    const response = await api
+      .put(`/auth/users/${other.id}`)
+      .set('Authorization', `Bearer ${owner.token}`)
+      .send({ email: 'changed@example.com', currentPassword: owner.password });
+
+    assert.strictEqual(response.status, 403);
+    assert.strictEqual(response.body.message, 'Forbidden');
+  });
+
+  it('rolls back email state when profile email confirmation sending fails', async () => {
+    const user = await registerAndLogin();
+    const before = await User.findById(user.id);
+
+    mock.method(mailer, 'sendConfirmationEmail', () => Promise.reject(new Error('SMTP down')));
+
+    const response = await api
+      .put(`/auth/users/${user.id}`)
+      .set('Authorization', `Bearer ${user.token}`)
+      .send({ email: 'changed@example.com', currentPassword: user.password });
+
+    assert.strictEqual(response.status, 502);
+
+    const after = await User.findById(user.id);
+    assert.strictEqual(after.email, before.email);
+    assert.strictEqual(after.emailConfirmed, before.emailConfirmed);
+    assert.strictEqual(after.emailConfirmToken, before.emailConfirmToken);
+    assert.deepStrictEqual(after.emailConfirmTokenExpires, before.emailConfirmTokenExpires);
+  });
 });
 
 describe('DELETE /auth/users/:id', () => {
@@ -215,6 +268,21 @@ describe('DELETE /auth/users/:id', () => {
       [],
     );
   });
+
+  it('returns 403 when the route id does not match the token user', async () => {
+    const owner = await registerAndLogin();
+    const other = await registerAndLogin({
+      userName: 'otherUser',
+      email: 'other@example.com',
+    });
+
+    const response = await api
+      .delete(`/auth/users/${other.id}`)
+      .set('Authorization', `Bearer ${owner.token}`);
+
+    assert.strictEqual(response.status, 403);
+    assert.strictEqual(response.body.message, 'Forbidden');
+  });
 });
 
 describe('POST /auth/validatetoken', () => {
@@ -230,6 +298,16 @@ describe('POST /auth/validatetoken', () => {
   it('returns 401 when the token is missing', async () => {
     const response = await api.post('/auth/validatetoken');
     assert.strictEqual(response.status, 401);
+  });
+
+  it('returns 401 when the token user no longer exists', async () => {
+    const { token, id } = await registerAndLogin();
+    await User.findByIdAndDelete(id);
+
+    const response = await api.post('/auth/validatetoken').set('Authorization', `Bearer ${token}`);
+
+    assert.strictEqual(response.status, 401);
+    assert.strictEqual(response.body.message, 'Token invalid');
   });
 });
 
@@ -354,6 +432,29 @@ describe('Password reset flow', () => {
     assert.strictEqual(response.status, 401);
   });
 
+  it('returns 401 (not 500) when a reset token has no expiry stored', async () => {
+    const { email } = await registerAndLogin();
+
+    // Simulate a corrupted/legacy record: a matching token but a null expiry.
+    // verifyPasswordResetToken must guard the missing expiry instead of calling
+    // .getTime() on null, which would surface as a 500.
+    const token = 'orphan-token-without-expiry';
+    await User.updateOne(
+      { email },
+      { $set: { passwordResetToken: token, passwordResetExpires: null } },
+    );
+
+    const verifyResponse = await api
+      .post('/auth/verify-password-reset-token')
+      .send({ email, token });
+    assert.strictEqual(verifyResponse.status, 401);
+
+    const resetResponse = await api
+      .post('/auth/password-reset')
+      .send({ email, token, newPassword: 'BrandNewPass456!' });
+    assert.strictEqual(resetResponse.status, 401);
+  });
+
   it('does not issue a new token while an unexpired reset token already exists', async () => {
     const { email } = await registerAndLogin();
 
@@ -374,6 +475,32 @@ describe('Password reset flow', () => {
       'the existing reset token should be left unchanged',
     );
   });
+
+  it('rolls back the previous reset-token state when reset email sending fails', async () => {
+    const { email } = await registerAndLogin();
+    const previousToken = 'previous-reset-token';
+    const previousExpiry = new Date(Date.now() - 60_000);
+
+    await User.updateOne(
+      { email },
+      {
+        $set: {
+          passwordResetToken: previousToken,
+          passwordResetExpires: previousExpiry,
+        },
+      },
+    );
+
+    mock.method(mailer, 'sendPasswordResetEmail', () => Promise.reject(new Error('SMTP down')));
+
+    const response = await api.post('/auth/request-password-reset').send({ email });
+
+    assert.strictEqual(response.status, 502);
+
+    const after = await User.findOne({ email });
+    assert.strictEqual(after.passwordResetToken, previousToken);
+    assert.deepStrictEqual(after.passwordResetExpires, previousExpiry);
+  });
 });
 
 describe('POST /auth/resend-email-confirmation', () => {
@@ -386,6 +513,51 @@ describe('POST /auth/resend-email-confirmation', () => {
       .set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 400);
+  });
+
+  it('returns 400 and does not send mail when the email is already confirmed', async () => {
+    const { token, id } = await registerAndLogin();
+    await User.findByIdAndUpdate(id, {
+      $set: {
+        emailConfirmed: true,
+        emailConfirmToken: null,
+        emailConfirmTokenExpires: null,
+      },
+    });
+    const sendMock = mock.method(mailer, 'sendConfirmationEmail', () => Promise.resolve());
+
+    const response = await api
+      .post('/auth/resend-email-confirmation')
+      .set('Authorization', `Bearer ${token}`);
+
+    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.body.message, 'Email already confirmed');
+    assert.strictEqual(sendMock.mock.calls.length, 0);
+  });
+
+  it('rolls back confirmation-token state when resend email sending fails', async () => {
+    const { token, id } = await registerAndLogin();
+    const previousToken = 'previous-confirm-token';
+    const previousExpiry = new Date(Date.now() - 60_000);
+
+    await User.findByIdAndUpdate(id, {
+      $set: {
+        emailConfirmed: false,
+        emailConfirmToken: previousToken,
+        emailConfirmTokenExpires: previousExpiry,
+      },
+    });
+    mock.method(mailer, 'sendConfirmationEmail', () => Promise.reject(new Error('SMTP down')));
+
+    const response = await api
+      .post('/auth/resend-email-confirmation')
+      .set('Authorization', `Bearer ${token}`);
+
+    assert.strictEqual(response.status, 502);
+
+    const after = await User.findById(id);
+    assert.strictEqual(after.emailConfirmToken, previousToken);
+    assert.deepStrictEqual(after.emailConfirmTokenExpires, previousExpiry);
   });
 });
 

@@ -15,6 +15,47 @@ const dateOnlyRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const invalidDate = () => new Date(Number.NaN);
 
+const hasBodyField = (body, field) => Object.hasOwn(body, field);
+
+const validationErrorResponse = (response, errorDetails) =>
+  response.status(422).json({ message: 'Validation error', errorDetails });
+
+const normalizeBirthdayForStorage = (birthday, ownerTimezone) => {
+  if (birthday === undefined) {
+    return { shouldSet: false };
+  }
+
+  if (birthday === null || birthday === '') {
+    return { shouldSet: true, value: undefined };
+  }
+
+  if (typeof birthday !== 'string' || !dateOnlyRegex.test(birthday)) {
+    return {
+      shouldSet: false,
+      errorDetails: { birthday: ['Birthday must be a date in YYYY-MM-DD format'] },
+    };
+  }
+
+  const parsedDate = dayjs.tz(birthday, ownerTimezone);
+
+  if (!parsedDate.isValid() || parsedDate.format('YYYY-MM-DD') !== birthday) {
+    return {
+      shouldSet: false,
+      errorDetails: { birthday: ['Birthday must be a valid date'] },
+    };
+  }
+
+  if (birthday > checkLocalDateByTimezone(ownerTimezone)) {
+    return {
+      shouldSet: false,
+      errorDetails: { birthday: ['Birthday cannot be in the future'] },
+    };
+  }
+
+  const [year, month, day] = birthday.split('-').map(Number);
+  return { shouldSet: true, value: new Date(Date.UTC(year, month - 1, day)) };
+};
+
 const normalizeNeedDateForStorage = (dateFor, ownerTimezone) => {
   if (!(dateFor instanceof Date) && typeof dateFor !== 'string') {
     return invalidDate();
@@ -35,6 +76,18 @@ const normalizeNeedDateForStorage = (dateFor, ownerTimezone) => {
   } catch (_error) {
     return invalidDate();
   }
+};
+
+const getNeedMeasurementType = (need) => {
+  if (need.quantity?.value != null || need.quantity?.unit) {
+    return 'quantity';
+  }
+
+  if (need.duration?.value != null || need.duration?.unit) {
+    return 'duration';
+  }
+
+  return null;
 };
 
 /**
@@ -80,24 +133,36 @@ const getAllUserPets = async (request, response, next) => {
  * @returns
  */
 const addNewPet = async (request, response, next) => {
+  const owner = request.user; // Owner is the user who is making the request
+  const normalizedBirthday = normalizeBirthdayForStorage(request.body.birthday, owner.timezone);
+
+  if (normalizedBirthday.errorDetails) {
+    return validationErrorResponse(response, normalizedBirthday.errorDetails);
+  }
+
   const newPetObject = {
     name: request.body.name || '',
     breed: request.body.breed || '',
     description: request.body.description || '',
     species: request.body.species || '',
-    birthday: request.body.birthday || '',
     image: request.body.image,
     owner: '',
     careTakers: [],
   };
 
-  const owner = request.user; // Owner is the user who is making the request
+  if (normalizedBirthday.shouldSet && normalizedBirthday.value) {
+    newPetObject.birthday = normalizedBirthday.value;
+  }
 
   newPetObject.owner = owner._id;
 
   let careTaker;
 
-  if (request.body.careTaker && request.body.careTaker !== owner._id.toString()) {
+  if (request.body.careTaker) {
+    if (request.body.careTaker === owner._id.toString()) {
+      return response.status(400).json({ message: 'Owner cannot be a caretaker' });
+    }
+
     careTaker = await User.findById(request.body.careTaker); // Find care taker by id
 
     if (!careTaker) {
@@ -139,6 +204,8 @@ const addNewPet = async (request, response, next) => {
  */
 const updatePet = async (request, response, next) => {
   const { name, species, breed, description, birthday, image, careTakers } = request.body;
+  const updateSet = {};
+  const updateUnset = {};
 
   let normalizedCareTakers = request.pet.careTakers;
 
@@ -153,6 +220,10 @@ const updatePet = async (request, response, next) => {
       return response.status(400).json({ message: 'Caretaker ids must be valid' });
     }
 
+    if (normalizedCareTakers.includes(request.user._id.toString())) {
+      return response.status(400).json({ message: 'Owner cannot be a caretaker' });
+    }
+
     const existingCareTakers = await User.find({
       _id: { $in: normalizedCareTakers },
     }).select('_id');
@@ -160,17 +231,55 @@ const updatePet = async (request, response, next) => {
     if (existingCareTakers.length !== normalizedCareTakers.length) {
       return response.status(404).json({ message: 'Caretaker not found' });
     }
+
+    updateSet.careTakers = normalizedCareTakers;
   }
 
-  const updateData = {
-    name: name ? name : request.pet.name,
-    species: species ? species : request.pet.species,
-    breed: breed ? breed : request.pet.breed,
-    description: description ? description : request.pet.description,
-    birthday: birthday ? birthday : request.pet.birthday,
-    image: image !== undefined ? image : request.pet.image,
-    careTakers: normalizedCareTakers,
-  };
+  if (hasBodyField(request.body, 'name')) {
+    updateSet.name = name;
+  }
+
+  if (hasBodyField(request.body, 'species')) {
+    updateSet.species = species;
+  }
+
+  if (hasBodyField(request.body, 'breed')) {
+    updateSet.breed = breed;
+  }
+
+  if (hasBodyField(request.body, 'description')) {
+    updateSet.description = description;
+  }
+
+  if (hasBodyField(request.body, 'birthday')) {
+    const normalizedBirthday = normalizeBirthdayForStorage(birthday, request.user.timezone);
+
+    if (normalizedBirthday.errorDetails) {
+      return validationErrorResponse(response, normalizedBirthday.errorDetails);
+    }
+
+    if (normalizedBirthday.value) {
+      updateSet.birthday = normalizedBirthday.value;
+    } else {
+      updateUnset.birthday = '';
+    }
+  }
+
+  if (hasBodyField(request.body, 'image')) {
+    updateSet.image = image;
+  }
+
+  const updateOperation = {};
+  if (Object.keys(updateSet).length > 0) {
+    updateOperation.$set = updateSet;
+  }
+  if (Object.keys(updateUnset).length > 0) {
+    updateOperation.$unset = updateUnset;
+  }
+
+  if (Object.keys(updateOperation).length === 0) {
+    return response.json(request.pet);
+  }
 
   try {
     const updatedPet = await Pet.findOneAndUpdate(
@@ -179,7 +288,7 @@ const updatePet = async (request, response, next) => {
         _id: request.pet._id,
         owner: request.user._id,
       },
-      updateData,
+      updateOperation,
       { returnDocument: 'after', runValidators: true },
     );
 
@@ -251,11 +360,19 @@ const deletePet = async (request, response, next) => {
  */
 const addNewNeed = async (request, response, next) => {
   try {
-    request.body.need.dateFor = normalizeNeedDateForStorage(
-      request.body.need.dateFor,
-      request.user.timezone,
-    );
-    const validateNeed = needValidation(request.body.need);
+    if (
+      !request.body.need ||
+      typeof request.body.need !== 'object' ||
+      Array.isArray(request.body.need)
+    ) {
+      return validationErrorResponse(response, { need: ['Need is required'] });
+    }
+
+    const needData = {
+      ...request.body.need,
+      dateFor: normalizeNeedDateForStorage(request.body.need.dateFor, request.user.timezone),
+    };
+    const validateNeed = needValidation(needData);
 
     // A need in the owner's past could never receive care records (addNewRecord
     // only accepts today) and would only feed the rollover backfill; reject it.
@@ -304,7 +421,10 @@ const addNewNeed = async (request, response, next) => {
     response.status(201).json(pet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return response.status(400).json({
+      // 422 Unprocessable Entity for schema validation failures, matching the
+      // canonical ZodError branch in errorHandlerMiddleware and the user
+      // controller. Business-rule rejections in this file stay 400.
+      return response.status(422).json({
         message: 'Validation error',
         errorDetails: error.flatten().fieldErrors,
       });
@@ -339,6 +459,15 @@ const addNewRecord = async (request, response, next) => {
 
     if (need.archived) {
       return response.status(400).json({ message: 'Need is archived' });
+    }
+
+    const needMeasurementType = getNeedMeasurementType(need);
+    const recordMeasurementType = validateRecord.quantity ? 'quantity' : 'duration';
+
+    if (!needMeasurementType || needMeasurementType !== recordMeasurementType) {
+      return response
+        .status(400)
+        .json({ message: 'Care record measurement must match need measurement' });
     }
 
     // The need's "day" is defined by the pet owner's timezone (who created it),
@@ -380,7 +509,10 @@ const addNewRecord = async (request, response, next) => {
     response.status(201).json(pet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return response.status(400).json({
+      // 422 Unprocessable Entity for schema validation failures, matching the
+      // canonical ZodError branch in errorHandlerMiddleware and the user
+      // controller. Business-rule rejections in this file stay 400.
+      return response.status(422).json({
         message: 'Validation error',
         errorDetails: error.flatten().fieldErrors,
       });
@@ -440,8 +572,10 @@ const updateNeed = async (request, response, next) => {
   }
 
   const updateDataObject = {
-    category: request.body.category ? request.body.category : need.category,
-    description: request.body.description ? request.body.description : need.description,
+    category: hasBodyField(request.body, 'category') ? request.body.category : need.category,
+    description: hasBodyField(request.body, 'description')
+      ? request.body.description
+      : need.description,
     dateFor: need.dateFor,
     isActive: need.isActive,
     archived: need.archived,
@@ -449,24 +583,30 @@ const updateNeed = async (request, response, next) => {
     careRecords: need.careRecords,
   };
 
-  if (request.body.quantity) {
-    updateDataObject.quantity = {
-      value: request.body.quantity.value,
-      unit: request.body.quantity.unit,
-    };
-  } else if (request.body.duration) {
-    updateDataObject.duration = {
-      value: request.body.duration.value,
-      unit: request.body.duration.unit,
-    };
-  } else if (need.quantity?.value != null || need.quantity?.unit) {
+  if (hasBodyField(request.body, 'quantity')) {
+    updateDataObject.quantity = request.body.quantity;
+  }
+
+  if (hasBodyField(request.body, 'duration')) {
+    updateDataObject.duration = request.body.duration;
+  }
+
+  if (
+    !hasBodyField(request.body, 'quantity') &&
+    !hasBodyField(request.body, 'duration') &&
+    (need.quantity?.value != null || need.quantity?.unit)
+  ) {
     // No measure in the request body: carry over the existing one so a
     // category/description-only update does not wipe the need's measure.
     updateDataObject.quantity = {
       value: need.quantity.value,
       unit: need.quantity.unit,
     };
-  } else if (need.duration?.value != null || need.duration?.unit) {
+  } else if (
+    !hasBodyField(request.body, 'quantity') &&
+    !hasBodyField(request.body, 'duration') &&
+    (need.duration?.value != null || need.duration?.unit)
+  ) {
     updateDataObject.duration = {
       value: need.duration.value,
       unit: need.duration.unit,
@@ -496,7 +636,10 @@ const updateNeed = async (request, response, next) => {
     response.status(200).json(updatedPet);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return response.status(400).json({
+      // 422 Unprocessable Entity for schema validation failures, matching the
+      // canonical ZodError branch in errorHandlerMiddleware and the user
+      // controller. Business-rule rejections in this file stay 400.
+      return response.status(422).json({
         message: 'Validation error',
         errorDetails: error.flatten().fieldErrors,
       });
@@ -516,8 +659,21 @@ const deleteNeed = async (request, response, next) => {
   }
 
   try {
-    pet.needs.pull(need._id);
-    await pet.save();
+    // Remove the need with an atomic $pull instead of pet.save(): pulling from
+    // the embedded array marks the whole `needs` path modified, so even
+    // save({ validateModifiedOnly: true }) would re-validate sibling subdocs and
+    // let one legacy need (no longer matching the current schema) block this
+    // delete. $pull touches only the target and skips subdocument validation.
+    // Owner is re-asserted here to match updatePet/deletePet.
+    const updatedPet = await Pet.findOneAndUpdate(
+      { _id: request.pet._id, owner: request.user._id },
+      { $pull: { needs: { _id: need._id } } },
+    );
+
+    if (!updatedPet) {
+      return response.status(404).json({ message: 'Pet not found' });
+    }
+
     response.status(204).end();
   } catch (error) {
     next(error);

@@ -185,6 +185,7 @@ describe('PUT /auth/users/:id (updateUser)', () => {
     await updateUser(
       {
         user,
+        params: { id: user._id.toString() },
         body: { email: 'changed@example.com', currentPassword: password },
       },
       response,
@@ -204,7 +205,11 @@ describe('PUT /auth/users/:id (updateUser)', () => {
 
     const response = createMockResponse();
     await updateUser(
-      { user, body: { email: 'edit@example.com', currentPassword: password } },
+      {
+        user,
+        params: { id: user._id.toString() },
+        body: { email: 'edit@example.com', currentPassword: password },
+      },
       response,
       mock.fn(),
     );

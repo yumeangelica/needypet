@@ -15,6 +15,7 @@ const handledClientErrorNames = new Set([
   'Pet not found',
   'ValidationError',
   'ZodError',
+  'EmailDeliveryError',
 ]);
 
 const handledOperationalCodes = new Set([
