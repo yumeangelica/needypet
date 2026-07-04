@@ -14,12 +14,12 @@ The frontend for NeedyPet, a pet care management application. See the [root READ
 - TypeScript in `strict` mode
 - [Bun](https://bun.sh/) as the package manager and script runner
 
-## Legacy scope
+## Scope
 
-This client belongs to the legacy portfolio snapshot. Keep UI and bug-fix work
-within the current Vue/Vite architecture. Do not migrate this app to Nuxt in
-place. Current pet images are preset assets; real upload support belongs in the
-future Nuxt 4 rebuild described in
+This client is a modern showcase app on the Vue 3 / Vite / TypeScript / Tailwind
+v4 stack. Keep work within this architecture; don't migrate this app to Nuxt in
+place — the Nuxt 4 rebuild is a separate forked project. Pet images are preset
+assets; real upload support belongs in that future rebuild, described in
 [../documentation/migrationReadiness.md](../documentation/migrationReadiness.md).
 
 ## Environment variables

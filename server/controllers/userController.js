@@ -109,12 +109,8 @@ const createNewUser = async (request, response, next) => {
 const updateUser = async (request, response, next) => {
   try {
     const user = request.user;
-    const isPasswordUpdate =
-      request.body.newPassword && request.body.currentPassword; // Check if password is being updated
-    const validationResult = updateUserValidation(
-      request.body,
-      isPasswordUpdate,
-    ); // Validate request body with or without new password
+    const isPasswordUpdate = request.body.newPassword && request.body.currentPassword; // Check if password is being updated
+    const validationResult = updateUserValidation(request.body, isPasswordUpdate); // Validate request body with or without new password
 
     // If password is being updated
     if (isPasswordUpdate) {
@@ -146,9 +142,7 @@ const updateUser = async (request, response, next) => {
 
       await user.setPassword(newPassword);
       await user.save();
-      return response
-        .status(200)
-        .json({ message: 'Password updated successfully' });
+      return response.status(200).json({ message: 'Password updated successfully' });
     }
 
     // If password is not being updated
@@ -225,10 +219,7 @@ const deleteUser = async (request, response, next) => {
       await Pet.deleteMany({ _id: { $in: ownedPetIds } });
     }
 
-    await Pet.updateMany(
-      { careTakers: user._id },
-      { $pull: { careTakers: user._id } },
-    );
+    await Pet.updateMany({ careTakers: user._id }, { $pull: { careTakers: user._id } });
     await User.findByIdAndDelete(user._id);
 
     response.status(204).end();
@@ -293,15 +284,11 @@ const requestPasswordReset = async (request, response, next) => {
 
     // Not revealing if user exists or not to avoid email enumeration
     if (!user) {
-      return response
-        .status(200)
-        .json({ message: 'Password reset link sent to email' });
+      return response.status(200).json({ message: 'Password reset link sent to email' });
     }
 
     if (!user.canResendPasswordReset()) {
-      return response
-        .status(200)
-        .json({ message: 'Password reset link sent to email' });
+      return response.status(200).json({ message: 'Password reset link sent to email' });
     }
 
     user.generatePasswordResetToken(); // Generate password reset token
@@ -324,7 +311,7 @@ const validateUserToken = async (request, response, next) => {
     return response.status(401).json({ message: 'Token missing or invalid' });
   }
 
-  if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+  if (authHeader?.toLowerCase().startsWith('bearer ')) {
     token = authHeader.substring(7); // Extract token from header starting from index 7
   }
 
@@ -385,9 +372,7 @@ const resendEmailConfirmation = async (request, response, next) => {
   const user = request.user; // User is attached to the request object by getUserHandler middleware
 
   if (!user.canResendVerificationEmail()) {
-    return response
-      .status(400)
-      .json({ message: 'Cannot resend email confirmation yet' });
+    return response.status(400).json({ message: 'Cannot resend email confirmation yet' });
   }
 
   try {
@@ -410,7 +395,7 @@ const verifyPasswordResetToken = async (request, response, next) => {
   try {
     const user = await User.findOne({ email, passwordResetToken: token }); // Find user by email and token
 
-    if (!user || !user.verifyPasswordResetToken(token)) {
+    if (!user?.verifyPasswordResetToken(token)) {
       // If user not found or token is invalid
       return response.status(401).json({ message: 'Invalid token' });
     }
@@ -430,7 +415,7 @@ const passwordReset = async (request, response, next) => {
   try {
     const user = await User.findOne({ email, passwordResetToken: token }); // Find user by email and token
 
-    if (!user || !user.verifyPasswordResetToken(token)) {
+    if (!user?.verifyPasswordResetToken(token)) {
       // If user not found or token is invalid
       return response.status(401).json({ message: 'Invalid token' });
     }

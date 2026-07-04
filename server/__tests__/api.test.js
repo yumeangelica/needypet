@@ -36,9 +36,7 @@ describe('API Tests', () => {
   });
 
   it('successfully creates a new user', async () => {
-    const response = await supertest(app)
-      .post('/auth/users')
-      .send(newUserObject);
+    const response = await supertest(app).post('/auth/users').send(newUserObject);
 
     assert.strictEqual(response.status, 201);
   });

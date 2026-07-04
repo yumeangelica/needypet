@@ -39,9 +39,7 @@ describe('POST /auth/login', () => {
   it('returns 401 on a wrong password', async () => {
     const { userName } = await registerAndLogin();
 
-    const response = await api
-      .post('/auth/login')
-      .send({ userName, password: 'WrongPass123!' });
+    const response = await api.post('/auth/login').send({ userName, password: 'WrongPass123!' });
 
     assert.strictEqual(response.status, 401);
   });
@@ -116,9 +114,7 @@ describe('POST /auth/users (duplicates)', () => {
 describe('POST /auth/users (email failure rollback)', () => {
   it('returns 502 and does not persist the user when the confirmation email fails', async () => {
     // Override the beforeEach stub so the confirmation email rejects.
-    mock.method(mailer, 'sendConfirmationEmail', () =>
-      Promise.reject(new Error('SMTP down')),
-    );
+    mock.method(mailer, 'sendConfirmationEmail', () => Promise.reject(new Error('SMTP down')));
 
     const payload = {
       userName: 'orphanUser',
@@ -136,9 +132,7 @@ describe('POST /auth/users (email failure rollback)', () => {
   });
 
   it('allows a clean retry after an email failure (no "already exists")', async () => {
-    mock.method(mailer, 'sendConfirmationEmail', () =>
-      Promise.reject(new Error('SMTP down')),
-    );
+    mock.method(mailer, 'sendConfirmationEmail', () => Promise.reject(new Error('SMTP down')));
 
     const payload = {
       userName: 'retryUser',
@@ -161,9 +155,7 @@ describe('GET /auth/users/:id', () => {
   it('returns the user for a valid token and id', async () => {
     const { token, id, userName } = await registerAndLogin();
 
-    const response = await api
-      .get(`/auth/users/${id}`)
-      .set('Authorization', `Bearer ${token}`);
+    const response = await api.get(`/auth/users/${id}`).set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 200);
     assert.strictEqual(response.body.userName, userName);
@@ -182,9 +174,7 @@ describe('DELETE /auth/users/:id', () => {
     const { token, id } = await registerAndLogin();
     const pet = await createPet(token);
 
-    const response = await api
-      .delete(`/auth/users/${id}`)
-      .set('Authorization', `Bearer ${token}`);
+    const response = await api.delete(`/auth/users/${id}`).set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 204);
 
@@ -231,9 +221,7 @@ describe('POST /auth/validatetoken', () => {
   it('accepts a valid token', async () => {
     const { token } = await registerAndLogin();
 
-    const response = await api
-      .post('/auth/validatetoken')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await api.post('/auth/validatetoken').set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 200);
     assert.strictEqual(response.body.token, token);
@@ -254,9 +242,7 @@ describe('Email confirmation flow', () => {
     const token = user.emailConfirmToken;
     assert.ok(token, 'a confirmation token should exist after registration');
 
-    const response = await api
-      .post('/auth/verify-email-confirmation-token')
-      .send({ email, token });
+    const response = await api.post('/auth/verify-email-confirmation-token').send({ email, token });
 
     assert.strictEqual(response.status, 200);
 
@@ -283,9 +269,7 @@ describe('Password reset flow', () => {
     // registered (unconfirmed) user with no pending reset token should still get one.
     const { email } = await registerAndLogin();
 
-    const response = await api
-      .post('/auth/request-password-reset')
-      .send({ email });
+    const response = await api.post('/auth/request-password-reset').send({ email });
     assert.strictEqual(response.status, 200);
 
     const user = await User.findOne({ email });
@@ -299,9 +283,7 @@ describe('Password reset flow', () => {
     const { email, userName } = await registerAndLogin();
 
     // 1. Request reset - server generates and stores a token.
-    const requestResponse = await api
-      .post('/auth/request-password-reset')
-      .send({ email });
+    const requestResponse = await api.post('/auth/request-password-reset').send({ email });
     assert.strictEqual(requestResponse.status, 200);
 
     const user = await User.findOne({ email });
@@ -322,9 +304,7 @@ describe('Password reset flow', () => {
     assert.strictEqual(resetResponse.status, 200);
 
     // The new password should now work for login, and the token is cleared.
-    const loginResponse = await api
-      .post('/auth/login')
-      .send({ userName, password: newPassword });
+    const loginResponse = await api.post('/auth/login').send({ userName, password: newPassword });
     assert.strictEqual(loginResponse.status, 200);
 
     const afterReset = await User.findOne({ email });
@@ -357,10 +337,7 @@ describe('Password reset flow', () => {
       Array.isArray(response.body.errorDetails?.newPassword),
       'newPassword errors should be an array',
     );
-    assert.match(
-      response.body.errorDetails.newPassword[0],
-      /strength|10 char/i,
-    );
+    assert.match(response.body.errorDetails.newPassword[0], /strength|10 char/i);
 
     // The token must not be consumed when the reset is rejected.
     const afterReject = await User.findOne({ email });
@@ -383,16 +360,11 @@ describe('Password reset flow', () => {
     // First request issues a token.
     await api.post('/auth/request-password-reset').send({ email });
     const firstToken = (await User.findOne({ email })).passwordResetToken;
-    assert.ok(
-      firstToken,
-      'a reset token should be issued on the first request',
-    );
+    assert.ok(firstToken, 'a reset token should be issued on the first request');
 
     // Second request while the first token is still valid must not replace it
     // (canResendPasswordReset() returns false), so reset links stay throttled.
-    const secondResponse = await api
-      .post('/auth/request-password-reset')
-      .send({ email });
+    const secondResponse = await api.post('/auth/request-password-reset').send({ email });
     assert.strictEqual(secondResponse.status, 200);
 
     const secondToken = (await User.findOne({ email })).passwordResetToken;

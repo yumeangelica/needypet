@@ -7,20 +7,14 @@ const timezone = require('dayjs/plugin/timezone');
 const { mongodbUri } = require('../utils/config');
 const User = require('../models/userModel');
 const Pet = require('../models/petModel');
-const {
-  api,
-  registerAndLogin,
-  createPet,
-  createPetWithNeed,
-} = require('./helpers');
+const { api, registerAndLogin, createPet, createPetWithNeed } = require('./helpers');
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 // The user's local "today" - adding a record requires the need's dateFor to
 // match the user's current local date (see checkLocalDateByTimezone).
-const localToday = (tz = 'Europe/Helsinki') =>
-  dayjs().tz(tz).format('YYYY-MM-DD');
+const localToday = (tz = 'Europe/Helsinki') => dayjs().tz(tz).format('YYYY-MM-DD');
 
 before(async () => {
   await mongoose.connect(mongodbUri);
@@ -77,10 +71,7 @@ describe('POST /api/pets/:id/newneed', () => {
       });
 
     assert.strictEqual(response.status, 400);
-    assert.ok(
-      response.body.errorDetails.category,
-      'should report category error',
-    );
+    assert.ok(response.body.errorDetails.category, 'should report category error');
   });
 
   it('returns 400 when quantity value is zero', async () => {
@@ -232,10 +223,7 @@ describe('POST /api/pets/:id/newneed', () => {
       completed: false,
       careRecords: [],
     }));
-    await Pet.findOneAndUpdate(
-      { _id: pet.id, owner: id },
-      { $push: { needs: { $each: active } } },
-    );
+    await Pet.findOneAndUpdate({ _id: pet.id, owner: id }, { $push: { needs: { $each: active } } });
 
     const response = await api
       .post(`/api/pets/${pet.id}/newneed`)
@@ -259,11 +247,7 @@ describe('POST /api/pets/:id/newneed', () => {
     // 01:30 tomorrow in Tokyo is still the previous calendar day as a UTC
     // datetime, so storage must shift it to the Tokyo day (and a future day
     // passes the past-day guard).
-    const tokyoTomorrow = dayjs()
-      .tz('Asia/Tokyo')
-      .add(1, 'day')
-      .startOf('day')
-      .add(90, 'minute');
+    const tokyoTomorrow = dayjs().tz('Asia/Tokyo').add(1, 'day').startOf('day').add(90, 'minute');
 
     const response = await api
       .post(`/api/pets/${pet.id}/newneed`)
@@ -281,20 +265,14 @@ describe('POST /api/pets/:id/newneed', () => {
     const added = response.body.needs[response.body.needs.length - 1];
     assert.strictEqual(added.dateFor, tokyoTomorrow.format('YYYY-MM-DD'));
     // The stored day differs from the UTC calendar day, proving the shift.
-    assert.notStrictEqual(
-      added.dateFor,
-      tokyoTomorrow.utc().toISOString().split('T')[0],
-    );
+    assert.notStrictEqual(added.dateFor, tokyoTomorrow.utc().toISOString().split('T')[0]);
   });
 
   it('returns 400 when adding a need for a past day', async () => {
     const { token } = await registerAndLogin();
     const pet = await createPet(token);
 
-    const yesterday = dayjs()
-      .tz('Europe/Helsinki')
-      .subtract(1, 'day')
-      .format('YYYY-MM-DD');
+    const yesterday = dayjs().tz('Europe/Helsinki').subtract(1, 'day').format('YYYY-MM-DD');
 
     const response = await api
       .post(`/api/pets/${pet.id}/newneed`)
@@ -309,20 +287,14 @@ describe('POST /api/pets/:id/newneed', () => {
       });
 
     assert.strictEqual(response.status, 400);
-    assert.strictEqual(
-      response.body.message,
-      'Cannot add a need for a past day',
-    );
+    assert.strictEqual(response.body.message, 'Cannot add a need for a past day');
   });
 
   it('allows adding a need for a future day', async () => {
     const { token } = await registerAndLogin();
     const pet = await createPet(token);
 
-    const tomorrow = dayjs()
-      .tz('Europe/Helsinki')
-      .add(1, 'day')
-      .format('YYYY-MM-DD');
+    const tomorrow = dayjs().tz('Europe/Helsinki').add(1, 'day').format('YYYY-MM-DD');
 
     const response = await api
       .post(`/api/pets/${pet.id}/newneed`)

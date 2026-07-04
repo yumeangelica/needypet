@@ -13,12 +13,13 @@ The backend API for NeedyPet, a pet care management application. See the [root R
 - [helmet](https://helmetjs.github.io/) and CORS for security headers
 - [Biome](https://biomejs.dev/) for linting and formatting
 
-## Legacy scope
+## Scope
 
-This server belongs to the legacy portfolio snapshot. Keep fixes focused on the
-existing Express/MongoDB implementation. Do not migrate this server to Nuxt
-server routes, SQLite, or Postgres in-place. The target rebuild plan is captured
-in [../documentation/migrationReadiness.md](../documentation/migrationReadiness.md).
+This server is a modern showcase app on the Express 5 / MongoDB / Mongoose stack.
+Keep work within this implementation; don't migrate it to Nuxt server routes,
+SQLite, or Postgres in place — that belongs to the separate Nuxt 4 rebuild. The
+rebuild plan is captured in
+[../documentation/migrationReadiness.md](../documentation/migrationReadiness.md).
 
 ## Environment variables
 
@@ -98,8 +99,8 @@ All `/api` routes require a valid bearer token.
 
 ## Security notes and known limitations
 
-This is a portfolio snapshot. A few intentional trade-offs are worth calling out
-for anyone reviewing or extending it:
+This is a portfolio showcase app. A few intentional trade-offs are worth calling
+out for anyone reviewing or extending it:
 
 - **Token storage.** Email-confirmation and password-reset tokens are stored in
   the database in plaintext (not hashed). They are short-lived (2 hours), but a

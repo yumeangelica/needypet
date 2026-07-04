@@ -116,10 +116,7 @@ describe('rollPetNeedsForward', () => {
       .slice(1)
       .map((n) => ymd(n.dateFor))
       .sort();
-    assert.deepEqual(
-      generatedDays,
-      [ymd(utcDay(2)), ymd(utcDay(1)), ymd(utcDay(0))].sort(),
-    );
+    assert.deepEqual(generatedDays, [ymd(utcDay(2)), ymd(utcDay(1)), ymd(utcDay(0))].sort());
 
     // All non-active needs are archived.
     const nonActive = pet.needs.filter((n) => !n.isActive);
@@ -204,9 +201,7 @@ describe('rollPetNeedsForward', () => {
         ymd(need.dateFor) === ymd(utcDay(0)),
     );
     assert.equal(activeWalksToday.length, 1);
-    const generatedYesterday = pet.needs.find(
-      (need) => ymd(need.dateFor) === ymd(utcDay(1)),
-    );
+    const generatedYesterday = pet.needs.find((need) => ymd(need.dateFor) === ymd(utcDay(1)));
     assert.ok(generatedYesterday);
     assert.equal(generatedYesterday.archived, true);
   });
@@ -286,12 +281,8 @@ describe('getMidnightTimezones', () => {
   });
 
   it('does not treat a repeated midnight during fall-back as a new day', () => {
-    const firstMidnight = getMidnightTimezones(
-      dayjs.utc('2026-11-01T04:00:00.000Z'),
-    );
-    const repeatedMidnight = getMidnightTimezones(
-      dayjs.utc('2026-11-01T05:00:00.000Z'),
-    );
+    const firstMidnight = getMidnightTimezones(dayjs.utc('2026-11-01T04:00:00.000Z'));
+    const repeatedMidnight = getMidnightTimezones(dayjs.utc('2026-11-01T05:00:00.000Z'));
 
     assert.ok(firstMidnight.includes('America/Havana'));
     assert.equal(repeatedMidnight.includes('America/Havana'), false);
@@ -333,9 +324,7 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     // Running again in the same local day must not create duplicates.
     await updatePetNeedstoNextDays(referenceTime);
     const reChecked = await Pet.findById(pet._id);
-    const stillOneActive = reChecked.needs.filter(
-      (n) => n.isActive && !n.archived,
-    );
+    const stillOneActive = reChecked.needs.filter((n) => n.isActive && !n.archived);
     assert.equal(stillOneActive.length, 1);
   });
 
@@ -419,9 +408,7 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     await updatePetNeedstoNextDays(referenceTime);
 
     const updated = await Pet.findById(pet._id);
-    const activeNeeds = updated.needs.filter(
-      (need) => need.isActive && !need.archived,
-    );
+    const activeNeeds = updated.needs.filter((need) => need.isActive && !need.archived);
     assert.equal(activeNeeds.length, 1);
     assert.equal(ymd(activeNeeds[0].dateFor), '2026-04-24');
   });
@@ -453,9 +440,7 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     await updatePetNeedstoNextDays(repeatedMidnight);
 
     const updated = await Pet.findById(pet._id);
-    const activeNeeds = updated.needs.filter(
-      (need) => need.isActive && !need.archived,
-    );
+    const activeNeeds = updated.needs.filter((need) => need.isActive && !need.archived);
     assert.equal(activeNeeds.length, 1);
     assert.equal(ymd(activeNeeds[0].dateFor), '2026-11-01');
   });
@@ -487,14 +472,9 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     await updatePetNeedstoNextDays(secondTick);
 
     const updated = await Pet.findById(pet._id);
-    const activeNeeds = updated.needs.filter(
-      (need) => need.isActive && !need.archived,
-    );
+    const activeNeeds = updated.needs.filter((need) => need.isActive && !need.archived);
     assert.equal(activeNeeds.length, 1);
-    assert.equal(
-      ymd(activeNeeds[0].dateFor),
-      firstTick.tz(tz).format('YYYY-MM-DD'),
-    );
+    assert.equal(ymd(activeNeeds[0].dateFor), firstTick.tz(tz).format('YYYY-MM-DD'));
   });
 
   it('rolls over even when the cron resumes after the midnight lookback window', async () => {
@@ -521,14 +501,9 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     await updatePetNeedstoNextDays(lateTick);
 
     const updated = await Pet.findById(pet._id);
-    const activeNeeds = updated.needs.filter(
-      (need) => need.isActive && !need.archived,
-    );
+    const activeNeeds = updated.needs.filter((need) => need.isActive && !need.archived);
     assert.equal(activeNeeds.length, 1);
-    assert.equal(
-      ymd(activeNeeds[0].dateFor),
-      lateTick.tz(tz).format('YYYY-MM-DD'),
-    );
+    assert.equal(ymd(activeNeeds[0].dateFor), lateTick.tz(tz).format('YYYY-MM-DD'));
   });
 
   it('uses the new timezone when the owner moves between rollovers', async () => {
@@ -556,14 +531,9 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     await updatePetNeedstoNextDays(tokyoMidnight);
 
     const afterTokyo = await Pet.findById(pet._id);
-    const tokyoActive = afterTokyo.needs.filter(
-      (need) => need.isActive && !need.archived,
-    );
+    const tokyoActive = afterTokyo.needs.filter((need) => need.isActive && !need.archived);
     assert.equal(tokyoActive.length, 1);
-    assert.equal(
-      ymd(tokyoActive[0].dateFor),
-      tokyoMidnight.tz('Asia/Tokyo').format('YYYY-MM-DD'),
-    );
+    assert.equal(ymd(tokyoActive[0].dateFor), tokyoMidnight.tz('Asia/Tokyo').format('YYYY-MM-DD'));
 
     // Owner relocates; the next local midnight is Los Angeles'.
     user.timezone = 'America/Los_Angeles';
@@ -572,9 +542,7 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     await updatePetNeedstoNextDays(laMidnight);
 
     const afterLa = await Pet.findById(pet._id);
-    const laActive = afterLa.needs.filter(
-      (need) => need.isActive && !need.archived,
-    );
+    const laActive = afterLa.needs.filter((need) => need.isActive && !need.archived);
     assert.equal(laActive.length, 1);
     assert.equal(
       ymd(laActive[0].dateFor),
@@ -593,10 +561,7 @@ describe('updatePetNeedstoNextDays (integration)', () => {
       timezone: tz,
     });
     // Bypass the schema validator to simulate ICU/tzdata drift or a manual edit.
-    await User.collection.updateOne(
-      { _id: brokenUser._id },
-      { $set: { timezone: 'Not/AZone' } },
-    );
+    await User.collection.updateOne({ _id: brokenUser._id }, { $set: { timezone: 'Not/AZone' } });
     const brokenPet = makePetWithNeed(
       0,
       { dateFor: storedLocalDay(referenceTime, tz, 1) },
@@ -623,10 +588,7 @@ describe('updatePetNeedstoNextDays (integration)', () => {
     const rolled = await Pet.findById(validPet._id);
     const activeNeeds = rolled.needs.filter((n) => n.isActive && !n.archived);
     assert.equal(activeNeeds.length, 1);
-    assert.equal(
-      ymd(activeNeeds[0].dateFor),
-      referenceTime.tz(tz).format('YYYY-MM-DD'),
-    );
+    assert.equal(ymd(activeNeeds[0].dateFor), referenceTime.tz(tz).format('YYYY-MM-DD'));
 
     // The broken owner's pet is skipped untouched, not corrupted.
     const skipped = await Pet.findById(brokenPet._id);

@@ -27,9 +27,7 @@ describe('GET /api/pets', () => {
     await createPet(token, { name: 'Milo' });
     await createPet(token, { name: 'Luna' });
 
-    const response = await api
-      .get('/api/pets')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await api.get('/api/pets').set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 200);
     assert.strictEqual(response.body.length, 2);
@@ -40,9 +38,7 @@ describe('GET /api/pets', () => {
   it('returns an empty array when the user has no pets', async () => {
     const { token } = await registerAndLogin();
 
-    const response = await api
-      .get('/api/pets')
-      .set('Authorization', `Bearer ${token}`);
+    const response = await api.get('/api/pets').set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.body, []);
@@ -57,9 +53,7 @@ describe('GET /api/pets', () => {
       email: 'other@example.com',
     });
 
-    const response = await api
-      .get('/api/pets')
-      .set('Authorization', `Bearer ${other.token}`);
+    const response = await api.get('/api/pets').set('Authorization', `Bearer ${other.token}`);
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.body, []);

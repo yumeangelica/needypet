@@ -29,10 +29,7 @@ const normalizeNeedDateForStorage = (dateFor, ownerTimezone) => {
       return invalidDate();
     }
 
-    const [year, month, day] = parsedDate
-      .format('YYYY-MM-DD')
-      .split('-')
-      .map(Number);
+    const [year, month, day] = parsedDate.format('YYYY-MM-DD').split('-').map(Number);
 
     return new Date(Date.UTC(year, month - 1, day));
   } catch (_error) {
@@ -100,10 +97,7 @@ const addNewPet = async (request, response, next) => {
 
   let careTaker;
 
-  if (
-    request.body.careTaker &&
-    request.body.careTaker !== owner._id.toString()
-  ) {
+  if (request.body.careTaker && request.body.careTaker !== owner._id.toString()) {
     careTaker = await User.findById(request.body.careTaker); // Find care taker by id
 
     if (!careTaker) {
@@ -127,10 +121,7 @@ const addNewPet = async (request, response, next) => {
 
     if (careTaker) {
       // Keep the caretaker's pets array in sync with the pet's careTakers.
-      await User.updateMany(
-        { _id: careTaker._id },
-        { $addToSet: { pets: pet._id } },
-      );
+      await User.updateMany({ _id: careTaker._id }, { $addToSet: { pets: pet._id } });
     }
 
     response.status(201).json(pet);
@@ -147,30 +138,19 @@ const addNewPet = async (request, response, next) => {
  * @returns
  */
 const updatePet = async (request, response, next) => {
-  const { name, species, breed, description, birthday, image, careTakers } =
-    request.body;
+  const { name, species, breed, description, birthday, image, careTakers } = request.body;
 
   let normalizedCareTakers = request.pet.careTakers;
 
   if (careTakers !== undefined) {
     if (!Array.isArray(careTakers)) {
-      return response
-        .status(400)
-        .json({ message: 'Caretakers must be an array' });
+      return response.status(400).json({ message: 'Caretakers must be an array' });
     }
 
-    normalizedCareTakers = [
-      ...new Set(careTakers.map((careTaker) => String(careTaker))),
-    ];
+    normalizedCareTakers = [...new Set(careTakers.map((careTaker) => String(careTaker)))];
 
-    if (
-      normalizedCareTakers.some(
-        (careTaker) => !mongoose.Types.ObjectId.isValid(careTaker),
-      )
-    ) {
-      return response
-        .status(400)
-        .json({ message: 'Caretaker ids must be valid' });
+    if (normalizedCareTakers.some((careTaker) => !mongoose.Types.ObjectId.isValid(careTaker))) {
+      return response.status(400).json({ message: 'Caretaker ids must be valid' });
     }
 
     const existingCareTakers = await User.find({
@@ -254,10 +234,7 @@ const deletePet = async (request, response, next) => {
     }
 
     // Remove pet from owner's pets array
-    await User.updateMany(
-      { pets: request.pet._id },
-      { $pull: { pets: request.pet._id } },
-    );
+    await User.updateMany({ pets: request.pet._id }, { $pull: { pets: request.pet._id } });
 
     response.status(204).end();
   } catch (error) {
@@ -287,9 +264,7 @@ const addNewNeed = async (request, response, next) => {
       validateNeed.dateFor.toISOString().split('T')[0] <
       checkLocalDateByTimezone(request.user.timezone)
     ) {
-      return response
-        .status(400)
-        .json({ message: 'Cannot add a need for a past day' });
+      return response.status(400).json({ message: 'Cannot add a need for a past day' });
     }
 
     const pet = request.pet;
@@ -304,9 +279,7 @@ const addNewNeed = async (request, response, next) => {
             validateNeed.dateFor.toISOString().split('T')[0],
       ).length >= 10
     ) {
-      return response
-        .status(400)
-        .json({ message: 'Maximum number of needs for the day reached' });
+      return response.status(400).json({ message: 'Maximum number of needs for the day reached' });
     }
 
     const newNeedObject = {
@@ -361,9 +334,7 @@ const addNewRecord = async (request, response, next) => {
     }
 
     if (need.completed) {
-      return response
-        .status(400)
-        .json({ message: 'Need is already completed' });
+      return response.status(400).json({ message: 'Need is already completed' });
     }
 
     if (need.archived) {
@@ -470,9 +441,7 @@ const updateNeed = async (request, response, next) => {
 
   const updateDataObject = {
     category: request.body.category ? request.body.category : need.category,
-    description: request.body.description
-      ? request.body.description
-      : need.description,
+    description: request.body.description ? request.body.description : need.description,
     dateFor: need.dateFor,
     isActive: need.isActive,
     archived: need.archived,

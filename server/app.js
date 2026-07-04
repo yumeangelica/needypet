@@ -10,10 +10,7 @@ const errorHandler = require('./middlewares/errorHandlerMiddleware');
 const unknownEndpoint = require('./middlewares/unknownEndpointHandler');
 const dbReady = require('./middlewares/dbReadyMiddleware');
 const jsonBodyDefault = require('./middlewares/jsonBodyDefaultMiddleware');
-const {
-  authLimiter,
-  emailLimiter,
-} = require('./middlewares/rateLimitMiddleware');
+const { authLimiter, emailLimiter } = require('./middlewares/rateLimitMiddleware');
 const petsRoutes = require('./routes/petRoutes');
 const usersRoutes = require('./routes/userRoutes');
 const { updatePetNeedstoNextDays } = require('./helper');

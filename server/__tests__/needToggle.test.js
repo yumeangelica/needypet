@@ -84,10 +84,7 @@ describe('Need activity toggle', () => {
       .set('Origin', 'http://localhost:5173')
       .set('Access-Control-Request-Method', 'PATCH');
 
-    assert.ok(
-      [200, 204].includes(response.status),
-      `unexpected status ${response.status}`,
-    );
+    assert.ok([200, 204].includes(response.status), `unexpected status ${response.status}`);
     const allowMethods = response.headers['access-control-allow-methods'] || '';
     assert.match(allowMethods, /PATCH/, 'Allow-Methods should include PATCH');
   });
@@ -101,9 +98,7 @@ describe('Need activity toggle', () => {
       .set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(firstToggle.status, 200);
-    const needAfterFirst = firstToggle.body.needs.find(
-      (need) => need.id === needId,
-    );
+    const needAfterFirst = firstToggle.body.needs.find((need) => need.id === needId);
     assert.strictEqual(needAfterFirst.isActive, false);
 
     const secondToggle = await api
@@ -111,9 +106,7 @@ describe('Need activity toggle', () => {
       .set('Authorization', `Bearer ${token}`);
 
     assert.strictEqual(secondToggle.status, 200);
-    const needAfterSecond = secondToggle.body.needs.find(
-      (need) => need.id === needId,
-    );
+    const needAfterSecond = secondToggle.body.needs.find((need) => need.id === needId);
     assert.strictEqual(needAfterSecond.isActive, true);
   });
 

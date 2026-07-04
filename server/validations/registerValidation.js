@@ -5,11 +5,7 @@ const userNameSchema = z
   .string()
   .min(3)
   .max(40, { message: 'Username must be between 3 and 40 characters' });
-const emailSchema = z
-  .string()
-  .min(6)
-  .max(100)
-  .email({ message: 'Invalid email format' });
+const emailSchema = z.string().min(6).max(100).email({ message: 'Invalid email format' });
 const newPasswordSchema = z
   .string()
   .min(10)

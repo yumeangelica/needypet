@@ -14,13 +14,7 @@ const descriptionSchema = z
 
 const timesSchema = z.number().min(1);
 
-const periodicityUnitSchema = z.enum([
-  'daily',
-  'weekly',
-  'monthly',
-  'yearly',
-  'custom',
-]);
+const periodicityUnitSchema = z.enum(['daily', 'weekly', 'monthly', 'yearly', 'custom']);
 
 const periodicityIntervalSchema = z.number().min(1);
 
