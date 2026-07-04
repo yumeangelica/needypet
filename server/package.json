@@ -1,6 +1,6 @@
 {
   "name": "needypet-server",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "description": "pet care management app",
   "main": "index.js",
   "scripts": {
@@ -8,8 +8,8 @@
     "dev": "cross-env NODE_ENV=development node --watch index.js",
     "test": "cross-env NODE_ENV=testing node --test --test-concurrency=1 __tests__/*.test.js",
     "test:coverage": "cross-env NODE_ENV=testing node --test --test-concurrency=1 --experimental-test-coverage __tests__/*.test.js",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write ."
+    "lint": "biome check ../server",
+    "lint:fix": "biome check --write ../server"
   },
   "author": "yumeangelica",
   "license": "SEE LICENSE IN LICENSE",
@@ -29,7 +29,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.0",
     "supertest": "^7.2.2"
   }
 }
