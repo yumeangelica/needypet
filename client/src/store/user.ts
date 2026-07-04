@@ -1,4 +1,3 @@
-// @ts-check
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { type ApiResult, getErrorDetails, getErrorMessage, getErrorStatus } from '@/lib/apiError';
 import { apiClient } from '@/services';
@@ -28,7 +27,7 @@ interface LoginResponse {
  * @param key
  * @param value
  */
-const setLocalStorageItem = async (key: string, value: string): Promise<void> => {
+const setLocalStorageItem = (key: string, value: string): void => {
   localStorage.setItem(key, value);
 };
 
@@ -46,11 +45,11 @@ const setAuthData = async (
   emailConfirmed: boolean,
 ): Promise<void> => {
   const userStore = useUserStore(); // Get the user store
-  await setLocalStorageItem('token', token);
-  await setLocalStorageItem('userName', userName);
-  await setLocalStorageItem('id', id);
-  await setLocalStorageItem('timezone', timezone);
-  await setLocalStorageItem('emailConfirmed', emailConfirmed.toString());
+  setLocalStorageItem('token', token);
+  setLocalStorageItem('userName', userName);
+  setLocalStorageItem('id', id);
+  setLocalStorageItem('timezone', timezone);
+  setLocalStorageItem('emailConfirmed', emailConfirmed.toString());
   userStore.$patch((state) => {
     state.token = token;
     state.userName = userName;
@@ -184,9 +183,8 @@ export const useUserStore = defineStore('user', {
             userName: response.data.userName,
             timezone: response.data.timezone,
           });
-          await setLocalStorageItem('userName', response.data.userName);
-          await setLocalStorageItem('email', response.data.email);
-          await setLocalStorageItem('timezone', response.data.timezone);
+          setLocalStorageItem('userName', response.data.userName);
+          setLocalStorageItem('timezone', response.data.timezone);
           return {
             isSuccess: true,
             message: response.data.message || 'Your details are all updated! 🐾',

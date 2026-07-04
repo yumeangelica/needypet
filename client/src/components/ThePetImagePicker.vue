@@ -7,10 +7,10 @@
 
     <Dialog :open="isOpen" title="Choose picture" description="Choose one built-in pet picture" maxWidth="560px"
       @update:open="isOpen = $event">
-      <div class="pet-image-picker-grid" role="listbox" aria-label="Pet pictures">
+      <div class="pet-image-picker-grid" aria-label="Pet pictures">
         <button v-for="option in PET_IMAGE_OPTIONS" :key="option.key" type="button"
           :class="['pet-image-picker-option', { selected: option.key === selectedImage.key }]"
-          :aria-selected="option.key === selectedImage.key" role="option" @click="selectImage(option.key)">
+          :aria-pressed="option.key === selectedImage.key" @click="selectImage(option.key)">
           <img class="sticker-tile" :src="option.src" alt="" aria-hidden="true" />
           <span>{{ option.label }}</span>
         </button>

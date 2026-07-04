@@ -1,4 +1,3 @@
-// @ts-check
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { type ApiResult, getErrorDetails, getErrorMessage } from '@/lib/apiError';
 import { apiClient } from '@/services';
@@ -204,7 +203,11 @@ export const usePetStore = defineStore('pet', {
      * @param updatedNeed
      * @returns
      */
-    async updateNeed(petId: string, needId: string, updatedNeed: object): Promise<ApiResult> {
+    async updateNeed(
+      petId: string,
+      needId: string,
+      updatedNeed: Record<string, unknown>,
+    ): Promise<ApiResult> {
       const userStore = useUserStore();
       const token = userStore.token;
 

@@ -249,14 +249,57 @@ const closeEditModal = () => {
   isEditModalOpen.value = false;
 };
 
-const updateNeed = async () => {
-  if (
-    !editForm.value.category ||
-    !editForm.value.description ||
-    !editForm.value.value ||
-    !editForm.value.unit
-  ) {
+const validateEditForm = () => {
+  const category = editForm.value.category.trim();
+  const description = editForm.value.description.trim();
+  const value = Number(editForm.value.value);
+
+  if (!category || category.length < 3) {
+    appStore.addNotification('Category must be at least 3 characters', 'error');
+    return null;
+  }
+
+  if (category.length > 50) {
+    appStore.addNotification('Category must be at most 50 characters', 'error');
+    return null;
+  }
+
+  if (!description) {
+    appStore.addNotification('Description is required', 'error');
+    return null;
+  }
+
+  if (description.length > 1000) {
+    appStore.addNotification('Description must be at most 1000 characters', 'error');
+    return null;
+  }
+
+  if (!value || value < 1) {
+    appStore.addNotification(
+      editForm.value.type === 'duration'
+        ? 'Duration must be at least 1 minute'
+        : 'Quantity must be at least 1',
+      'error',
+    );
+    return null;
+  }
+
+  if (editForm.value.type === 'duration' && value > 1440) {
+    appStore.addNotification('Duration cannot be over 1440 minutes', 'error');
+    return null;
+  }
+
+  if (!editForm.value.unit) {
     appStore.addNotification('Oops! We need all the details for this care task.', 'error');
+    return null;
+  }
+
+  return { category, description, value };
+};
+
+const updateNeed = async () => {
+  const validatedForm = validateEditForm();
+  if (!validatedForm) {
     return;
   }
 
@@ -264,10 +307,10 @@ const updateNeed = async () => {
   if (!needId) return;
 
   const updatedNeed = {
-    category: editForm.value.category,
-    description: editForm.value.description,
+    category: validatedForm.category,
+    description: validatedForm.description,
     [editForm.value.type]: {
-      value: editForm.value.value,
+      value: validatedForm.value,
       unit: editForm.value.unit,
     },
   };

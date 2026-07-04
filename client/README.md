@@ -22,6 +22,11 @@ place — the Nuxt 4 rebuild is a separate forked project. Pet images are preset
 assets; real upload support belongs in that future rebuild, described in
 [../documentation/migrationReadiness.md](../documentation/migrationReadiness.md).
 
+The canonical feature inventory and future rebuild target list live in the root
+[README](../README.md) and
+[migration readiness notes](../documentation/migrationReadiness.md). Keep this
+client README focused on frontend setup and implementation details.
+
 ## Environment variables
 
 Copy [`.env.example`](.env.example) to `.env.development` and `.env.production` (both gitignored) and fill in the values:
@@ -63,6 +68,27 @@ src/
 ├── store/         Pinia stores
 └── types/         Shared TypeScript types
 ```
+
+## API client
+
+All backend calls go through a single fetch-based wrapper in
+[`src/services/index.ts`](src/services/index.ts), imported as `apiClient`. It
+prepends `VITE_APP_BACKEND_URL`, JSON-encodes request bodies, parses JSON
+responses (204 → `null`), and throws an `ApiError` on non-2xx responses. The
+surface intentionally mirrors the axios API it replaced:
+
+- Callable form: `apiClient({ method, url, headers, data })`
+- Shorthands: `apiClient.get/post/put/patch/delete(url, data?, config?)`
+- Success shape: `{ status, data }`
+- Error shape: `ApiError` with `error.response.{ status, data }`
+
+Store actions wrap these calls and normalize outcomes through the helpers in
+[`src/lib/apiError.ts`](src/lib/apiError.ts) (`getErrorStatus`,
+`getErrorMessage`, `getErrorDetails`) into a shared `ApiResult`. A Nuxt 4 rebuild
+would map this layer onto `$fetch` / `useFetch` while keeping the same
+`ApiResult` contract for the stores. Request/response field validation lives on
+the server (Zod schemas in `server/validations/`), so form-parity rules for the
+rebuild should be read from there.
 
 ## Styling
 

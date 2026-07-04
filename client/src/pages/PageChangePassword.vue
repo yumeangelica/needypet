@@ -27,14 +27,14 @@
           <label class="form-label" for="changepw-new-password">New paw code</label>
           <div class="form-field">
             <input id="changepw-new-password" class="form-field-input" v-model="newPassword" @input="validatePassword" :type="passwordFieldType" required
-              placeholder="Your new paw code" aria-describedby="changepw-requirements"
+              placeholder="Your new paw code" :aria-describedby="newPasswordDescribedBy"
               :aria-invalid="errorDetailsObject.newPassword ? true : undefined" />
             <button type="button" class="show-password-button" :aria-label="passwordFieldType === 'password' ? 'Show password' : 'Hide password'" @click="togglePasswordVisibility">
               <Eye v-if="passwordFieldType === 'password'" class="w-5 h-5" aria-hidden="true" />
               <EyeOff v-else class="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
-          <div v-if="errorDetailsObject.newPassword" class="custom-error-message" role="alert">
+          <div v-if="errorDetailsObject.newPassword" id="changepw-new-error" class="custom-error-message" role="alert">
             {{ errorDetailsObject.newPassword }}
           </div>
 
@@ -70,7 +70,7 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TheFooter from '@/components/TheFooter.vue';
 import TheInfoHint from '@/components/TheInfoHint.vue';
-import { validatePasswordRules } from '@/lib/passwordRules';
+import { isPasswordValid, validatePasswordRules } from '@/lib/passwordRules';
 import { useAppStore } from '@/store/app';
 import { useUserStore } from '@/store/user';
 
@@ -100,13 +100,28 @@ const passwordValidations = ref({
 
 const validatePassword = () => {
   passwordValidations.value = validatePasswordRules(newPassword.value);
+  if (isPasswordValid(passwordValidations.value)) {
+    errorDetailsObject.value.newPassword = '';
+  }
 };
+
+const newPasswordDescribedBy = computed(() =>
+  errorDetailsObject.value.newPassword
+    ? 'changepw-requirements changepw-new-error'
+    : 'changepw-requirements',
+);
 
 const togglePasswordVisibility = () => {
   passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
 };
 
 const submitForm = async () => {
+  validatePassword();
+  if (!isPasswordValid(passwordValidations.value)) {
+    errorDetailsObject.value.newPassword = "Your paw code doesn't meet all the requirements yet.";
+    return;
+  }
+
   const { isSuccess, message, errorDetails } = await userStore.changePassword({
     currentPassword: currentPassword.value,
     newPassword: newPassword.value,

@@ -113,12 +113,20 @@ watchEffect(async () => {
   if (route.name === 'profile') {
     await fetchUser();
   }
+  let shouldClearSuccessQuery = false;
+
   if (route.query.userUpdateSuccessfully === 'true') {
     appStore.addNotification('Your details are all updated! 🐾', 'success');
+    shouldClearSuccessQuery = true;
   }
 
   if (route.query.passwordChangedSuccessfully === 'true') {
     appStore.addNotification('Your new secret paw code is saved! 🐾', 'success');
+    shouldClearSuccessQuery = true;
+  }
+
+  if (shouldClearSuccessQuery) {
+    router.replace({ name: 'profile', query: {} });
   }
 });
 

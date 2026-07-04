@@ -14,45 +14,45 @@ For coding agents and future maintainers, start with [AGENTS.md](AGENTS.md) and
 [CLAUDE.md](CLAUDE.md). The future Nuxt 4 rebuild notes live in
 [documentation/migrationReadiness.md](documentation/migrationReadiness.md).
 
-## Features
+## Current Showcase Features
 
-- **User Registration and Authentication**:
-  - **Registration**: New users create an account by providing a username, password, email, and selecting their timezone.
-  - **Email Verification**: Users receive a confirmation email upon registration and must verify their email before accessing full functionality.
-  - **Login**: Users log in to access their profiles and manage pet details. Passwords are securely hashed and stored.
-  - **Password Recovery**: Users can request a password reset link via email if they forget their password.
+This repository is the finished Vue/Vite + Express/Mongo showcase version. It
+currently includes:
 
-- **User Profiles**:
-  - **Profile Management**: Users can update their profile information including username, email, timezone, and password, and can delete their accounts.
-  - **Roles and Permissions**:
-    - **Pet Owners**: Can add, update, delete pets and manage detailed pet profiles including care needs.
-    - **Carers**: Can view shared pets and complete needs but cannot modify pet ownership details or toggle the active/inactive status of needs. Frontend caretaker management is planned.
+- **Account flow:** register with username, email, password and timezone; confirm
+  email; log in; request/reset a forgotten password; validate saved sessions;
+  log out; delete the account.
+- **Profile management:** view username, email verification status and timezone;
+  resend confirmation email; update username/email/timezone with the current
+  password; change password with matching client/server strength rules.
+- **Pet management:** owners can create, view, update and delete pets with name,
+  species, breed, description, birthday and preset image metadata.
+- **Care tasks:** owners can add, edit, delete, complete and pause/resume daily
+  needs. Needs support duration in minutes or quantity in milliliters/grams.
+- **Daily rollover:** active needs are copied forward to the next owner-local
+  day; inactive needs stay paused; historical needs remain browsable by date.
+- **Caretaker permissions:** backend data and permissions support caretakers.
+  Caretakers can view assigned pets and complete today's care tasks, but the
+  current frontend does not include a complete caretaker invitation/assignment
+  flow.
+- **Responsive accessible UI:** desktop and mobile navigation, skip-to-content,
+  semantic landmarks, keyboard-operable controls, focus-visible states,
+  announced validation errors/toasts, color contrast polish targeting WCAG AA,
+  and reduced-motion handling.
+- **Frontend API layer:** a fetch-based `apiClient` normalizes JSON requests,
+  same-origin production calls and backend error shapes for the Pinia stores.
 
-- **Pet Management**:
-  - Owner users can manage pet details such as name, birthday, species, breed, and specific care needs.
-  - Pets use a small preset image picker. User-uploaded pet photos are intentionally out of scope here; they belong in the future Nuxt 4 rebuild with external object storage and database metadata.
+## Current Boundaries
 
-- **Care Activities (Needs)**:
-  - Needs are specific care activities required by pets, such as feeding, walking, or medication.
-  - **Need Details**:
-    - **Category**: Type of care activity (e.g., Feeding, Walking).
-    - **Description**: Detailed information about the need.
-    - **Duration or Quantity**: Needs can specify a duration in minutes or a quantity in milliliters or grams.
-  - **Need Management**:
-    - Needs can be added, viewed, updated, deleted, or toggled active/inactive by owners.
-    - Carers can view and complete needs.
-  - **Daily needs algorithm**:
-    - Active needs are automatically carried over to the next day and set to uncompleted. Inactive needs are not carried over. The rollover happens at midnight in the user's timezone.
-
-- **Activity History**:
-  - Logs of all care activities (completed, missed, or pending) provide comprehensive monitoring of pet care.
-
-- **Responsive and Accessible Design**:
-  - The application features a fully responsive layout with dedicated desktop and mobile navigation, optimized for various screen sizes including desktops, tablets, and smartphones.
-  - Accessibility is a first-class concern: keyboard-operable controls, a skip-to-content link, semantic landmarks and headings, associated form labels with announced validation errors, screen-reader live regions for notifications, improved color contrast targeting WCAG AA, and respect for the `prefers-reduced-motion` setting.
-
-- **Security and Data Integrity**:
-  - Robust error handling and authentication mechanisms ensure data integrity and privacy.
+- This app stays on Vue 3, Vite, Express and MongoDB/Mongoose. The Nuxt 4,
+  Bun and Postgres version will be a separate forked repository.
+- Pet images are preset metadata only (`dog`, `cat`, `bunny`). User-uploaded
+  pet photos belong in the rebuild with object storage metadata.
+- Auth tokens are stored in `localStorage` in this showcase. The rebuild should
+  move auth to httpOnly, `Secure`, `SameSite` cookies.
+- Full caretaker invitations, caretaker management screens, reminders and
+  product-grade activity analytics are future-product work, not unfinished
+  bugs in this showcase.
 
 ## How to Use the Application
 
@@ -83,21 +83,24 @@ For coding agents and future maintainers, start with [AGENTS.md](AGENTS.md) and
 
 ## Future Product Direction
 
-This app is developed and maintained on its current stack. Larger product work
-that changes the stack (Nuxt 4, relational DB, uploads) belongs in the separate
-forked rebuild. The likely next-version features are:
+The separate Nuxt 4 + Bun + Postgres rebuild should preserve the current domain
+rules and add the next product layer deliberately:
 
-1. **Caretaker Support Throughout the Application**:
-   - Extending caretaker functionalities to the frontend, allowing seamless management of caretaker permissions and responsibilities, including email-based invitations for adding caretakers.
-
-2. **Activity Reminders and Notifications**:
-   - A notification system to alert users of upcoming care activities, ensuring pets receive consistent care.
-
-3. **Native Mobile Applications**:
-   - Native applications for iOS and Android to provide a seamless mobile experience.
-
-4. **Uploaded Pet Photos**:
-   - User-uploaded pet images backed by object storage and SQL metadata, rather than database-stored image blobs.
+1. **Full caretaker workflow:** invitation by email, acceptance, removal,
+   owner-managed permissions and clear shared-pet dashboards.
+2. **Relational data model:** users, pets, pet caretakers, needs, care records
+   and pet images as first-class tables with migration traceability from legacy
+   Mongo ids.
+3. **Cookie-based auth:** httpOnly, `Secure`, `SameSite` sessions implemented in
+   Nuxt server routes.
+4. **Uploaded pet photos:** Supabase Storage or equivalent object storage with
+   SQL metadata, while preserving preset-image support.
+5. **Reminders and notifications:** scheduled care reminders, missed-task
+   summaries and notification preferences.
+6. **Activity history and analytics:** filterable care history, caretaker audit
+   trail and simple household consistency insights.
+7. **Future native clients:** optional iOS/Android work after the web rebuild
+   has stable API and auth contracts.
 
 #### Note
 

@@ -1,7 +1,7 @@
 // Fetch-based API client - replaces axios.
 // Drop-in: import { apiClient } from '@/services';
 
-const baseURL: string = import.meta.env.VITE_APP_BACKEND_URL;
+const getBaseURL = (): string => import.meta.env.VITE_APP_BACKEND_URL ?? '';
 
 export interface ApiError extends Error {
   response?: {
@@ -39,7 +39,7 @@ interface ApiResponse<T = unknown> {
  *    existing catch-block keeps working.
  */
 async function request<T = unknown>(opts: RequestOptions): Promise<ApiResponse<T>> {
-  const url = `${baseURL}${opts.url}`;
+  const url = `${getBaseURL()}${opts.url}`;
 
   const headers: Record<string, string> = { ...(opts.headers || {}) };
 

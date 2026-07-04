@@ -176,6 +176,34 @@ describe('PageRegister', () => {
     expect(usernameInput.attributes('aria-describedby')).toBe('reg-username-error');
   });
 
+  it('renders a top-level API error when the response has no field errors', async () => {
+    const err = new Error('400') as Error & {
+      response?: { status: number; data: Record<string, unknown> };
+    };
+    err.response = {
+      status: 400,
+      data: { message: 'Username already exists' },
+    };
+    mockedApiClient.mockRejectedValueOnce(err);
+
+    const wrapper = mount(PageRegister);
+
+    const passwordInput = wrapper.find('input[aria-label="Password"]');
+    await passwordInput.setValue('ValidPass1!');
+    await passwordInput.trigger('input');
+    await wrapper.find('input[aria-label="Confirm Password"]').setValue('ValidPass1!');
+    // biome-ignore lint/suspicious/noExplicitAny: component internals
+    (wrapper.vm as any).selectedTimezone = 'Europe/Helsinki';
+
+    await wrapper.find('form').trigger('submit.prevent');
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    const error = wrapper.get('#reg-form-error');
+    expect(error.attributes('role')).toBe('alert');
+    expect(error.text()).toContain('Username already exists');
+  });
+
   it('navigates back to landing on the Back button', async () => {
     const wrapper = mount(PageRegister);
 

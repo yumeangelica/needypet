@@ -20,6 +20,73 @@ These notes document the decisions that make that future rebuild easier.
 - Postgres for production, preferably with Supabase
 - Supabase Storage or another object store for future uploaded pet photos
 
+## Current feature inventory
+
+Preserve these behaviors unless a future product decision explicitly replaces
+them:
+
+- Users register with `userName`, `email`, strong password and IANA timezone.
+- Email confirmation gates the main home experience; users can resend
+  confirmation email when allowed by the backend token window.
+- Users can log in, restore a saved session, request a password reset, reset the
+  password from a token link, change password, update profile fields and delete
+  their account.
+- Owners can create, edit and delete pets with date-only birthdays and preset
+  image metadata (`source: "preset"`, `key: "dog" | "cat" | "bunny"`).
+- Owners can add, edit, delete, pause/resume and complete daily needs. Needs use
+  exactly one measurement shape: duration in minutes or quantity in `ml`/`g`.
+- Daily rollover copies active needs forward to the owner's local day and leaves
+  inactive needs paused. Historical days remain browsable.
+- Caretaker data and permissions exist in the backend. Caretakers can view pets
+  shared with them and complete today's needs, but assignment/invitation UI is
+  not complete in this repository.
+- The frontend uses same-origin API calls in production, a Pinia `ApiResult`
+  store contract and explicit client-side validation that mirrors server Zod
+  rules for user-facing forms.
+
+## Rebuild feature targets
+
+Design these into the Nuxt 4 architecture instead of bolting them onto this
+showcase:
+
+- Household/facility workspaces for multi-caretaker pet care. The requirement
+  spec mentions both households and pet care facilities, while this showcase
+  effectively models owner-owned pets plus direct caretaker references.
+- Full caretaker invitation and permission management flow.
+- First-class relational tables for users, pets, pet caretakers, needs, care
+  records and optional pet images, with nullable legacy ids for migration.
+- httpOnly cookie auth managed by Nuxt server routes.
+- Uploaded pet photos using object storage plus database metadata, while keeping
+  preset images available.
+- Reminder delivery, notification preferences and missed-care summaries.
+- Filterable care history and audit-friendly caretaker activity records.
+- Export/import tooling that can migrate this showcase's Mongo data through a
+  reviewable JSON bundle.
+
+## Requirement specification gaps for the rebuild
+
+These are promised or implied by `requirementSpecification.md`, but are not
+fully implemented in this showcase app. Treat them as product requirements for
+the Nuxt 4 rebuild, not as in-place work for this repository:
+
+- Household and pet-care-facility collaboration model, including whether pets
+  belong directly to users, households, facilities or teams.
+- Caretaker assignment, invitation and removal flow in the frontend, backed by
+  explicit permissions for viewing assigned pets and completing assigned needs.
+- Owner-only controls that are consistently enforced in the UI for editing pet
+  details, editing needs and pausing/resuming needs.
+- Carer-only completion flow that captures optional notes and preserves a clear
+  audit trail of who completed each care activity, when and in which timezone.
+- Automated reminders for upcoming or overdue activities, including delivery
+  channels, notification preferences and missed-care summary behavior.
+- Full care history and reporting filtered by pet and date, including completed,
+  pending, inactive/paused and missed activity states.
+- Activity scheduling/recurrence design beyond the current daily rollover model,
+  if the future app needs frequencies other than "carry active needs to the next
+  owner-local day".
+- User-uploaded pet photos with object storage and SQL metadata, while keeping
+  preset image keys available for migrated data and quick pet creation.
+
 ## What belongs in the separate Nuxt 4 rebuild instead
 
 - User-uploaded pet photos
@@ -141,6 +208,11 @@ columns during migration for traceability.
 - `care_records.date` is a UTC timestamp.
 - Need rollover should use the pet owner's timezone, not the caretaker's
   timezone.
+- Client and server should compare date-only values at day granularity, never by
+  shifting `YYYY-MM-DD` through the browser timezone.
+- The acting caretaker's timezone can be stored on care records for audit
+  context, but it must not decide whether a need belongs to the owner's current
+  day.
 
 ## Pet image strategy
 
@@ -215,4 +287,3 @@ Before considering a migration successful:
 In this repository, the useful prep work is documentation and a future export
 script. For the new Nuxt 4 repository, start with the relational schema and a
 small test fixture generated from this app's export shape.
-
