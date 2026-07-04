@@ -6,11 +6,11 @@ NeedyPet is designed to streamline pet care management within households and pet
 
 ## Repository Status
 
-This repository is a legacy portfolio snapshot of the Vue/Vite, Express, and
-MongoDB implementation. It should remain on the current stack for preservation,
-polish, documentation, and bug fixes. New product work should happen in a new
-Nuxt 4 application using Bun, SQLite locally, and Postgres/Supabase in
-production. Migration notes are documented in
+This repository is a modern showcase app on the Vue/Vite, Express, and MongoDB
+stack, and stays on that stack — active development, polish, features, tests,
+and documentation all happen here. A separate future product version will be
+forked as a new Nuxt 4 application using Bun, SQLite locally, and
+Postgres/Supabase in production. Rebuild notes are documented in
 [migrationReadiness.md](migrationReadiness.md).
 
 ## Application User Roles
@@ -28,7 +28,7 @@ production. Migration notes are documented in
 2. **Pet Profile Management**:
    - **Adding/Editing Pets**: Owners can add new pets, edit pet information, or delete pet profiles.
    - **Pet Details**: Profiles include the pet’s name, species, breed, birthday, and a detailed description.
-   - **Pet Images**: The legacy application supports preset pet images. User-uploaded pet photos are planned for the future Nuxt 4 rebuild and should use object storage plus SQL metadata.
+   - **Pet Images**: The application supports preset pet images. User-uploaded pet photos are planned for the future Nuxt 4 rebuild and should use object storage plus SQL metadata.
    - **Carer Access**: Pets can have carers in the backend data model. Carers can complete activities but cannot modify pet details or toggle activity statuses. Frontend caretaker assignment and invitation flows are planned.
 
 3. **Care Activities (Needs/Tasks)**:
@@ -54,7 +54,7 @@ production. Migration notes are documented in
 - **Front-end**: Developed with Vue 3 (Composition API), Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, and dayjs for responsive and state-driven UI across different devices and platforms.
 - **HTTP Communication**: Frontend-backend communication uses the browser-native `fetch` API through an internal service wrapper (`apiClient`).
 - **Email Services**: Nodemailer is used for account email verification and password resets.
-- **Testing and Quality**: Backend tests use the Node.js test runner and Supertest. Frontend tests use Vitest. Biome is used in both workspaces.
+- **Testing and Quality**: Backend tests use the Node.js test runner and Supertest. Frontend tests use Vitest. A single root Biome config lints and formats both the client and the server.
 - **Security**: Implements JWT-based authentication, password hashing, input validation, secure HTTP headers, and GDPR-aware data handling practices.
 - **Migration Readiness**: The current MongoDB model should be exported through a versioned JSON bundle before importing into the future relational schema. Embedded pet needs and care records should become separate SQL tables.
 

@@ -2,12 +2,12 @@
 
 ## Purpose
 
-This repository should remain a legacy portfolio snapshot of the current
-Vue/Vite, Express, and MongoDB application. The future product version should be
-built as a new Nuxt 4 application, not by gradually mutating this repository into
-the new stack.
+This repository is a modern showcase app on the Vue/Vite, Express, and MongoDB
+stack, and stays on that stack. The future product version will be built as a
+separate, forked Nuxt 4 application — not by gradually mutating this repository
+into the new stack.
 
-These notes document the decisions that make a future migration easier.
+These notes document the decisions that make that future rebuild easier.
 
 ## Target rebuild stack
 
@@ -20,18 +20,18 @@ These notes document the decisions that make a future migration easier.
 - Postgres for production, preferably with Supabase
 - Supabase Storage or another object store for future uploaded pet photos
 
-## What should stay out of this legacy repo
+## What belongs in the separate Nuxt 4 rebuild instead
 
 - User-uploaded pet photos
 - SQLite/Postgres migrations
 - Nuxt server routes
-- Large data-model refactors
+- Large data-model refactors that change this app's API shape
 - New product flows such as full caretaker invitations or reminder delivery
 
 Those should be designed in the new app with the relational schema from the
 start.
 
-## Current legacy data model
+## Current data model
 
 Mongo/Mongoose stores the domain in a nested shape:
 
@@ -144,7 +144,7 @@ columns during migration for traceability.
 
 ## Pet image strategy
 
-The legacy app uses preset pet image metadata:
+This app uses preset pet image metadata:
 
 ```json
 { "source": "preset", "key": "cat" }
@@ -212,7 +212,7 @@ Before considering a migration successful:
 
 ## Practical next step
 
-For this legacy repository, the useful prep work is documentation and a future
-export script. For the new Nuxt 4 repository, start with the relational schema
-and a small test fixture generated from the legacy export shape.
+In this repository, the useful prep work is documentation and a future export
+script. For the new Nuxt 4 repository, start with the relational schema and a
+small test fixture generated from this app's export shape.
 

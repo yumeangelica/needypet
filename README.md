@@ -6,9 +6,9 @@
 
 NeedyPet simplifies pet care coordination within households and pet care facilities. This user-friendly application empowers family members and pet caretakers to collaboratively manage pet health and activities. It ensures everyone is informed about the pets' daily needs and care activities, preventing common issues like overfeeding or missed medication, thus enhancing pet care through technology.
 
-## Portfolio Archive Status
+## Project Status
 
-This repository is a polished portfolio snapshot of the original Vue/Vite, Express, and MongoDB implementation. It is intentionally kept on this stack as evidence of the work completed here. Future product work should happen in a new repository, where the domain can be rebuilt with Nuxt 4, Bun, and Postgres without mixing migration code into this archive.
+This repository is a modern showcase app on the Vue/Vite, Express, and MongoDB stack, actively developed and maintained on that stack. A separate future product version will be forked into a new repository, where the domain is rebuilt with Nuxt 4, Bun, and Postgres — that rebuild is a distinct project, not an in-place migration of this app.
 
 For coding agents and future maintainers, start with [AGENTS.md](AGENTS.md) and
 [CLAUDE.md](CLAUDE.md). The future Nuxt 4 rebuild notes live in
@@ -30,7 +30,7 @@ For coding agents and future maintainers, start with [AGENTS.md](AGENTS.md) and
 
 - **Pet Management**:
   - Owner users can manage pet details such as name, birthday, species, breed, and specific care needs.
-  - Pets use a small preset image picker in this legacy version. User-uploaded pet photos should be implemented in the future Nuxt 4 rebuild with external object storage and database metadata, not added to this archive.
+  - Pets use a small preset image picker. User-uploaded pet photos are intentionally out of scope here; they belong in the future Nuxt 4 rebuild with external object storage and database metadata.
 
 - **Care Activities (Needs)**:
   - Needs are specific care activities required by pets, such as feeding, walking, or medication.
@@ -83,9 +83,9 @@ For coding agents and future maintainers, start with [AGENTS.md](AGENTS.md) and
 
 ## Future Product Direction
 
-This legacy repository should stay focused on bug fixes, polish, documentation,
-and tests. Larger product work should be designed in the future Nuxt 4 rebuild.
-The likely next-version features are:
+This app is developed and maintained on its current stack. Larger product work
+that changes the stack (Nuxt 4, relational DB, uploads) belongs in the separate
+forked rebuild. The likely next-version features are:
 
 1. **Caretaker Support Throughout the Application**:
    - Extending caretaker functionalities to the frontend, allowing seamless management of caretaker permissions and responsibilities, including email-based invitations for adding caretakers.
@@ -109,7 +109,7 @@ The likely next-version features are:
 - **Backend technologies**: Node.js, Express 5, MongoDB with Mongoose, JavaScript, Zod, jose, bcryptjs, Nodemailer, node-cron, Helmet, Biome, Node.js test runner, and Supertest.
 - **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, and Biome.
 - **Frontend API client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts`.
-- **Migration direction**: Keep this archive on MongoDB/Mongoose. For the future app, use a new Nuxt 4 codebase with SQLite locally, Postgres/Supabase in production, and the relational model outlined in [documentation/migrationReadiness.md](documentation/migrationReadiness.md).
+- **Rebuild direction**: This app stays on MongoDB/Mongoose. The separate future app uses a new Nuxt 4 codebase with SQLite locally, Postgres/Supabase in production, and the relational model outlined in [documentation/migrationReadiness.md](documentation/migrationReadiness.md).
 
 ## Development
 

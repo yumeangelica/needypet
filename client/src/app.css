@@ -6,9 +6,9 @@
 
 @theme {
   /* Brand colors mapped to Tailwind tokens */
-  --color-primary: #FBCDE6;
+  --color-primary: #fbcde6;
   --color-primary-foreground: rgb(178, 77, 137);
-  --color-foreground: #705E76;
+  --color-foreground: #705e76;
   --color-card-border: rgb(178, 110, 150);
   --color-destructive: #ff3b30;
   --color-success: #008c81;
@@ -17,21 +17,21 @@
   --color-muted-foreground: #5d5d5d;
 
   /* App-specific colors */
-  --color-status-done: #BCE3FF;
-  --color-surface-app: #EEDBFA;
-  --color-surface-inner: #FFEEF5;
-  --color-surface-field: #FBEAF6;
-  --color-surface-control: #FFE0F1;
+  --color-status-done: #bce3ff;
+  --color-surface-app: #eedbfa;
+  --color-surface-inner: #ffeef5;
+  --color-surface-field: #fbeaf6;
+  --color-surface-control: #ffe0f1;
   --color-home-pets-surface: rgba(238, 219, 250, 0.62);
   --color-need-inactive: var(--color-muted);
   --color-need-inactive-body: #f3f0f4;
   --color-form-field-bg: var(--color-well);
   --color-form-field-border: var(--color-border-hover);
   --color-form-button-secondary: var(--color-surface-control);
-  --color-form-button-secondary-hover: #F8D2EA;
+  --color-form-button-secondary-hover: #f8d2ea;
   --color-surface-control-soft: rgba(255, 224, 241, 0.52);
   --color-surface-control-hover: rgba(178, 77, 137, 0.1);
-  --color-surface-thumb: #FFFFFF;
+  --color-surface-thumb: #ffffff;
   --color-border-soft: rgba(178, 77, 137, 0.22);
   --color-border-field: rgba(178, 77, 137, 0.3);
   --color-border-subtle: rgba(178, 77, 137, 0.16);
@@ -44,16 +44,16 @@
   --color-danger-border: rgba(255, 59, 48, 0.4);
 
   /* Pastel duo card scheme: cream body + pink->lilac band on the lilac page */
-  --color-card-bg: #FFF9FC;
+  --color-card-bg: #fff9fc;
   --color-card-edge: rgba(204, 179, 216, 0.65);
-  --color-well: #F6ECFB;
+  --color-well: #f6ecfb;
   --color-well-soft: rgba(238, 219, 250, 0.55);
   /* rgb(178,77,137) is only ~3.5:1 on the band's pink; this darker tone is
      ~5.6:1 there, so small band text stays WCAG AA readable. */
   --color-primary-foreground-strong: rgb(140, 45, 100);
-  --gradient-card-band: linear-gradient(135deg, #FBCDE6 0%, #F3D9F3 55%, #EEDBFA 100%);
+  --gradient-card-band: linear-gradient(135deg, #fbcde6 0%, #f3d9f3 55%, #eedbfa 100%);
   /* Nav chrome: same family as the card band, slightly pinker */
-  --gradient-nav: linear-gradient(90deg, #FBCDE6 0%, #F8D7EE 55%, #F3D9F3 100%);
+  --gradient-nav: linear-gradient(90deg, #fbcde6 0%, #f8d7ee 55%, #f3d9f3 100%);
   --shadow-nav: 0 2px 12px rgba(178, 110, 150, 0.2);
   --shadow-nav-up: 0 -2px 12px rgba(178, 110, 150, 0.18);
   /* Frosted-glass surface (home pets backdrop) */
@@ -73,15 +73,15 @@
 
   /* Auth page colors */
   /* Soft lilac for input/select backgrounds (shared by form + auth fields). */
-  --color-auth-input-bg: #ECE0FB;
+  --color-auth-input-bg: #ece0fb;
   --color-auth-button: var(--color-primary);
   --color-auth-button-secondary: var(--color-surface-control);
 
   /* Button colors (button-primary remains as an accent for chip borders etc.) */
   --color-button-primary: #f3c3e3;
   /* Primary buttons share a soft pink->lilac sheen tied to the band gradient */
-  --gradient-button-primary: linear-gradient(135deg, #FBCDE6 0%, #F5D7F1 100%);
-  --gradient-button-primary-hover: linear-gradient(135deg, #F8C0DE 0%, #EECBEC 100%);
+  --gradient-button-primary: linear-gradient(135deg, #fbcde6 0%, #f5d7f1 100%);
+  --gradient-button-primary-hover: linear-gradient(135deg, #f8c0de 0%, #eecbec 100%);
 
   /* Reusable shadow recipes */
   --shadow-panel: 0 6px 16px rgba(178, 110, 150, 0.24);
@@ -97,7 +97,9 @@
   --shadow-focus-ring: 0 0 0 3px rgba(178, 110, 150, 0.15);
 
   /* Motion recipes: interactive = buttons/links/cards, field = input shells */
-  --transition-interactive: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s, opacity 0.15s, transform 0.1s;
+  --transition-interactive:
+    background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s, opacity 0.15s,
+    transform 0.1s;
   --transition-field: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 
   /* Layer scale (base layers stay literal: body::before 0, #app 1) */
@@ -113,7 +115,7 @@
   --field-min-height: 52px;
 
   /* Font family */
-  --font-sans: 'Comfortaa', 'Arial', sans-serif;
+  --font-sans: "Comfortaa", "Arial", sans-serif;
 
   /* Layout */
   --content-max-width: 800px;
@@ -183,7 +185,7 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url('./assets/images/needypet_background_desktop.webp');
+  background-image: url("./assets/images/needypet_background_desktop.webp");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -199,22 +201,37 @@ body::before {
 /* Tablet background */
 @media (max-width: 1200px) {
   body::before {
-    background-image: url('./assets/images/needypet_background_tablet.webp');
+    background-image: url("./assets/images/needypet_background_tablet.webp");
   }
 }
 
 /* Mobile background */
 @media (max-width: 768px) {
   body::before {
-    background-image: url('./assets/images/needypet_background_mobile.webp');
+    background-image: url("./assets/images/needypet_background_mobile.webp");
   }
 }
 
-h1, h2, h3, h4, h5, h6, a {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a {
   color: var(--color-primary-foreground);
 }
 
-h1, h2, h3, h4, h5, h6, p, a, li, button {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+li,
+button {
   overflow-wrap: break-word;
 }
 
@@ -234,20 +251,44 @@ h1, h2, h3, h4, h5, h6, p, a, li, button {
   fill: var(--color-primary-foreground);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   line-height: 1.25;
   text-wrap: balance;
 }
 
-h1 { font-size: 1.5rem; }
-h2 { font-size: 1.4rem; }
-h3 { font-size: 1.3rem; }
-h4 { font-size: 1.15rem; }
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+h4 {
+  font-size: 1.15rem;
+}
 
 /* Page title tiers (h1 sizes per page family; mobile sizes in the 568px block) */
-.page-title-sm { font-size: 1.15rem; }
-.page-title { font-size: 1.3rem; }
-.page-title-lg { font-size: 1.4rem; }
+.page-title-sm {
+  font-size: 1.15rem;
+}
+
+.page-title {
+  font-size: 1.3rem;
+}
+
+.page-title-lg {
+  font-size: 1.4rem;
+}
 
 strong {
   color: var(--color-primary-foreground);
@@ -1018,7 +1059,9 @@ input[type="date"].form-field-input::-webkit-calendar-picker-indicator {
   opacity: 0.6;
   padding: 4px;
   border-radius: 4px;
-  transition: opacity 0.15s, background 0.15s;
+  transition:
+    opacity 0.15s,
+    background 0.15s;
 }
 
 input[type="date"].form-field-input::-webkit-calendar-picker-indicator:hover {
@@ -1507,18 +1550,39 @@ input[type="number"]::-webkit-outer-spin-button {
   .custom-valid-message,
   .auth-field,
   .confirmation-message,
-  p, a, li {
+  p,
+  a,
+  li {
     font-size: 0.75rem;
   }
 
-  h2 { font-size: 1.2rem; }
-  h3 { font-size: 1.1rem; }
-  h4 { font-size: 0.9rem; }
-  h5 { font-size: 0.8rem; }
+  h2 {
+    font-size: 1.2rem;
+  }
 
-  .page-title-sm { font-size: 0.9rem; }
-  .page-title { font-size: 1.1rem; }
-  .page-title-lg { font-size: 1.2rem; }
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  h4 {
+    font-size: 0.9rem;
+  }
+
+  h5 {
+    font-size: 0.8rem;
+  }
+
+  .page-title-sm {
+    font-size: 0.9rem;
+  }
+
+  .page-title {
+    font-size: 1.1rem;
+  }
+
+  .page-title-lg {
+    font-size: 1.2rem;
+  }
 
   .custom-button,
   .action-button {
