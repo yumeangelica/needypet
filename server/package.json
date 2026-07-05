@@ -1,6 +1,6 @@
 {
   "name": "needypet-server",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "pet care management app",
   "main": "index.js",
   "scripts": {
@@ -17,16 +17,16 @@
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "cross-env": "^10.1.0",
-    "dayjs": "^1.11.19",
-    "dotenv": "^17.3.1",
+    "dayjs": "^1.11.21",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
-    "helmet": "^8.1.0",
-    "jose": "^6.2.0",
-    "mongoose": "^9.7.1",
-    "node-cron": "^4.4.1",
-    "nodemailer": "^9.0.1",
-    "zod": "^4.3.6"
+    "helmet": "^8.2.0",
+    "jose": "^6.2.3",
+    "mongoose": "^9.7.3",
+    "node-cron": "^4.5.0",
+    "nodemailer": "^9.0.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "supertest": "^7.2.2"

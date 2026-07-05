@@ -46,7 +46,7 @@ Postgres/Supabase in production. Rebuild notes are documented in
    - **Planned Reminders**: Automated reminders for upcoming or overdue activities are planned for a future version.
 
 5. **Activity History and Reporting**:
-   - **History Access**: Users can access a full history of all activities related to pet care, filtered by pet or date.
+   - **History Access**: Users can browse each pet's care tasks by date. Full report-style filtering, analytics, and audit dashboards are planned for the future Nuxt 4 rebuild.
 
 ## Technical Requirements
 

@@ -69,19 +69,22 @@ All `/api` routes require a valid bearer token.
 
 ### Auth (`/auth`)
 
-| Method | Path                                  | Description                          |
-| ------ | ------------------------------------- | ------------------------------------ |
-| POST   | `/users`                              | Register a new user.                 |
-| GET    | `/users/:id`                          | Get a user by id.                    |
-| PUT    | `/users/:id`                          | Update a user (profile or password). |
-| DELETE | `/users/:id`                          | Delete a user account.               |
-| POST   | `/login`                              | Log in and receive a token.          |
-| POST   | `/validatetoken`                      | Validate a token.                    |
-| POST   | `/verify-email-confirmation-token`    | Verify an email confirmation token.  |
-| POST   | `/resend-email-confirmation`          | Resend the confirmation email.       |
-| POST   | `/request-password-reset`             | Request a password reset email.      |
-| POST   | `/verify-password-reset-token`        | Verify a password reset token.       |
-| POST   | `/password-reset`                     | Reset the password.                  |
+`/auth` contains both public account-flow routes and routes that require a
+bearer token.
+
+| Method | Path                               | Access       | Description                          |
+| ------ | ---------------------------------- | ------------ | ------------------------------------ |
+| POST   | `/users`                           | Public       | Register a new user.                 |
+| GET    | `/users/:id`                       | Protected    | Get the current user by id.          |
+| PUT    | `/users/:id`                       | Protected    | Update a user (profile or password). |
+| DELETE | `/users/:id`                       | Protected    | Delete a user account.               |
+| POST   | `/login`                           | Public       | Log in and receive a token.          |
+| POST   | `/validatetoken`                   | Bearer token | Validate a token.                    |
+| POST   | `/verify-email-confirmation-token` | Public       | Verify an email confirmation token.  |
+| POST   | `/resend-email-confirmation`       | Protected    | Resend the confirmation email.       |
+| POST   | `/request-password-reset`          | Public       | Request a password reset email.      |
+| POST   | `/verify-password-reset-token`     | Public       | Verify a password reset token.       |
+| POST   | `/password-reset`                  | Public       | Reset the password.                  |
 
 ### Pets and needs (`/api`)
 
