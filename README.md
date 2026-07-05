@@ -28,16 +28,17 @@ currently includes:
 - **Pet management:** owners can create, view, update and delete pets with name,
   species, breed, description, date-only birthday (`YYYY-MM-DD`) and preset
   image metadata.
-- **Care tasks:** owners can add, edit, delete, complete and pause/resume daily
-  needs. Each need uses exactly one measurement type: duration in minutes or
-  quantity in milliliters/grams; care records must use the same type as their
-  target need.
+- **Care tasks:** owners can add, edit, delete and pause/resume daily needs.
+  Owners and assigned caretakers can complete today's care tasks. Each need uses
+  exactly one measurement type: duration in minutes or quantity in
+  milliliters/grams; care records must use the same type as their target need.
 - **Daily rollover:** active needs are copied forward to the next owner-local
-  day; inactive needs stay paused; historical needs remain browsable by date.
+  day; inactive needs stay paused; historical needs remain browsable by pet and
+  date.
 - **Caretaker permissions:** backend data and permissions support caretakers.
-  Caretakers can view assigned pets and complete today's care tasks, but the
-  current frontend does not include a complete caretaker invitation/assignment
-  flow.
+  Caretakers can view assigned pets and complete today's care tasks. Owner-only
+  edit controls are enforced in both the UI and API, but the current frontend
+  does not include a complete caretaker invitation/assignment flow.
 - **Responsive accessible UI:** desktop and mobile navigation, skip-to-content,
   semantic landmarks, keyboard-operable controls, focus-visible states,
   announced validation errors/toasts, color contrast polish targeting WCAG AA,
@@ -70,12 +71,13 @@ currently includes:
 
 3. **Viewing and Editing Pet Details**:
    - Access pet details by clicking on a pet card.
-   - Edit pet details or delete pets via the settings icon on the pet's page.
-   - Add needs by clicking **Add Need** and filling out the relevant information.
+   - Owners can edit pet details or delete pets via the settings icon on the pet's page.
+   - Owners can add needs by clicking **Add Need** and filling out the relevant information.
 
 4. **Managing Needs**:
    - Enter need details in the **Add Need** modal (category, description, measurement type, and value) and save.
-   - Needs can be managed on the need card on the pet's page: complete, edit, delete, or toggle active/inactive as necessary.
+   - Owners can edit, delete, or toggle needs active/inactive from the need card.
+   - Owners and assigned caretakers can complete today's care tasks.
    - Navigate between dates to view needs for different days.
    - Active needs are automatically carried over to the next day and set to uncompleted.
 
@@ -113,7 +115,7 @@ rules and add the next product layer deliberately:
 
 - **Runtime and package management**: Bun, with separate client and server packages.
 - **Backend technologies**: Node.js, Express 5, MongoDB with Mongoose, JavaScript, Zod, jose, bcryptjs, Nodemailer, node-cron, Helmet, Biome, Node.js test runner, and Supertest.
-- **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide Vue Next, dayjs, Vitest, and Biome.
+- **Frontend technologies**: Vue 3 with the Composition API, Vite, TypeScript, Tailwind CSS v4, Pinia, Vue Router, Reka UI, Lucide, dayjs, Vitest, and Biome.
 - **Frontend API client**: Native `fetch` with an internal typed wrapper (`apiClient`) in `client/src/services/index.ts`.
 - **Rebuild direction**: This app stays on MongoDB/Mongoose. The separate future app uses a new Nuxt 4 codebase with SQLite locally, Postgres/Supabase in production, and the relational model outlined in [documentation/migrationReadiness.md](documentation/migrationReadiness.md).
 

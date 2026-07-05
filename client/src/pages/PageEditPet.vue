@@ -1,7 +1,9 @@
 <template>
   <div class="app-page-root">
     <div id="main-content" role="main" tabindex="-1" :class="{ 'content-wrapper': !isMobile, 'mobile-content-wrapper': isMobile }">
-      <div class="form-container pet-form-container pet-panel">
+      <TheLoadingSpinner v-if="isLoading" message="Loading pet details..." />
+
+      <div v-else-if="canEdit" class="form-container pet-form-container pet-panel">
         <div class="card-band">
           <h1 class="form-header page-title">Update your fur baby's info 🐾</h1>
         </div>
@@ -60,10 +62,10 @@
         </div>
       </div>
 
-      <TheConfirmDialog :isOpen="showUpdateDialog" title="Save changes?" message="Save the new details for your fur baby?" confirmLabel="Save"
+      <TheConfirmDialog v-if="canEdit" :isOpen="showUpdateDialog" title="Save changes?" message="Save the new details for your fur baby?" confirmLabel="Save"
         @confirm="updatePet(); showUpdateDialog = false" @cancel="showUpdateDialog = false" />
 
-      <TheConfirmDialog :isOpen="showDeleteDialog" title="Say goodbye?" message="Remove this pet and all their care history? We'll miss them! 🐾" confirmLabel="Delete"
+      <TheConfirmDialog v-if="canEdit" :isOpen="showDeleteDialog" title="Say goodbye?" message="Remove this pet and all their care history? We'll miss them! 🐾" confirmLabel="Delete"
         variant="danger" :icon="Trash2" @confirm="deletePet(); showDeleteDialog = false" @cancel="showDeleteDialog = false" />
     </div>
     <TheFooter />
@@ -79,6 +81,7 @@ import { computed, onBeforeMount, type Ref, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import TheConfirmDialog from '@/components/TheConfirmDialog.vue';
 import TheFooter from '@/components/TheFooter.vue';
+import TheLoadingSpinner from '@/components/TheLoadingSpinner.vue';
 import ThePetImagePicker from '@/components/ThePetImagePicker.vue';
 import { DEFAULT_PET_IMAGE, normalizePetImage } from '@/lib/petImages';
 import { useAppStore } from '@/store/app';
@@ -99,6 +102,8 @@ const userStore = useUserStore();
 const showUpdateDialog = ref(false);
 const showDeleteDialog = ref(false);
 const dateErrorMessage = ref('');
+const isLoading = ref(true);
+const canEdit = ref(false);
 const existingPetObject: Ref<Pet> = ref({
   id: '',
   name: '',
@@ -115,11 +120,7 @@ const birthdayInputValue = computed(() => {
   return existingPetObject.value.birthday || '';
 });
 
-onBeforeMount(() => {
-  if (!existingPetObject.value?.id) {
-    loadPetData();
-  }
-});
+onBeforeMount(loadPetData);
 
 const dateSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -174,17 +175,33 @@ const deletePet = async () => {
   }
 };
 
-const loadPetData = async () => {
+async function loadPetData() {
   const petId = route.params.id as string;
-  if (petId) {
-    const petData = petStore.getPetById(petId);
-    if (petData) {
-      existingPetObject.value = { ...petData, image: normalizePetImage(petData.image) };
-    } else {
-      router.push({ name: 'pet', params: { id: petId } });
-    }
+  if (!petId) {
+    isLoading.value = false;
+    return;
   }
-};
+
+  isLoading.value = true;
+  canEdit.value = false;
+
+  let petData = petStore.getPetById(petId);
+
+  if (!petData) {
+    await petStore.getAllPets();
+    petData = petStore.getPetById(petId);
+  }
+
+  if (!petData || petData.owner?.id !== userStore.id) {
+    isLoading.value = false;
+    router.replace({ name: 'pet', params: { id: petId } });
+    return;
+  }
+
+  existingPetObject.value = { ...petData, image: normalizePetImage(petData.image) };
+  canEdit.value = true;
+  isLoading.value = false;
+}
 
 const cancelEdit = () => {
   router.push({ name: 'pet', params: { id: existingPetObject.value?.id } });

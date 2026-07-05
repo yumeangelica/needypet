@@ -33,10 +33,11 @@ them:
   their account.
 - Owners can create, edit and delete pets with date-only birthdays and preset
   image metadata (`source: "preset"`, `key: "dog" | "cat" | "bunny"`).
-- Owners can add, edit, delete, pause/resume and complete daily needs. Needs use
-  exactly one measurement shape: duration in minutes or quantity in `ml`/`g`.
+- Owners can add, edit, delete and pause/resume daily needs. Owners and assigned
+  caretakers can complete today's needs. Needs use exactly one measurement
+  shape: duration in minutes or quantity in `ml`/`g`.
 - Daily rollover copies active needs forward to the owner's local day and leaves
-  inactive needs paused. Historical days remain browsable.
+  inactive needs paused. Historical days remain browsable by pet and date.
 - Caretaker data and permissions exist in the backend. Caretakers can view pets
   shared with them and complete today's needs, but assignment/invitation UI is
   not complete in this repository.
@@ -73,8 +74,6 @@ the Nuxt 4 rebuild, not as in-place work for this repository:
   belong directly to users, households, facilities or teams.
 - Caretaker assignment, invitation and removal flow in the frontend, backed by
   explicit permissions for viewing assigned pets and completing assigned needs.
-- Owner-only controls that are consistently enforced in the UI for editing pet
-  details, editing needs and pausing/resuming needs.
 - Carer-only completion flow that captures optional notes and preserves a clear
   audit trail of who completed each care activity, when and in which timezone.
 - Automated reminders for upcoming or overdue activities, including delivery
