@@ -15,7 +15,7 @@
   "author": "yumeangelica",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "@biomejs/biome": "^2.5.2",
-    "concurrently": "^10.0.3"
+    "@biomejs/biome": "^2.5.9",
+    "concurrently": "^10.0.5"
   }
 }
